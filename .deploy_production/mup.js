@@ -21,7 +21,6 @@ module.exports = {
     },
     env: {
       PORT: 80,
-      CDN_URL: "http://wanchehui.cosgoal.com",
       ROOT_URL: 'http://platform.cosgoal.com',
       MONGO_URL: "mongodb://simontaosim:7686043104xsq@45.77.20.138:27017/wanchehui"
     },
