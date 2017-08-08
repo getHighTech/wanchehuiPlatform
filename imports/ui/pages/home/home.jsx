@@ -30,30 +30,14 @@ class Home extends Component {
   render() {
 
     return (
-      <div style={{background: 'rgb(236, 236, 236)',
+      <div style={{background: 'rgb(236, 236, 236)', position: 'relative', left: "-40px",
             padding: '5px',
             display: 'flex',
             flexDirection: 'row',
             flexWrap: 'wrap',
             justifyContent: 'center' }}>
         <Card title="用户总数" bordered={false}>{this.state.allUserCount}</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
+
        <br/>
      </div>
     );

@@ -10,6 +10,7 @@ import {
 import { Switch, Route } from 'react-router'
 
 import Layout from 'antd/lib/layout';
+const { Header, Content, Footer, Sider } = Layout;
 import Menu from 'antd/lib/menu';
 import MenuItem from 'antd/lib/menu/MenuItem';
 import Icon from 'antd/lib/icon/';
@@ -33,7 +34,7 @@ import {NoMatch, NoMatchHeader} from '/imports/ui/pages/not-found/not-found.jsx'
 
 const customHistory = createBrowserHistory()
 
-const { Header, Content, Footer, Sider } = Layout;
+
 
 const AppRoutes = ({location}) => {
   // console.log(customHistory.location);
@@ -169,7 +170,7 @@ class AppLayout extends React.Component {
 
         >
           <div className="logo" >
-            <img src="/img/wcars.png" style={{width: "100%"}}/>
+            <img src="/img/wcars.png" style={{width: "70%"}}/>
           </div>
           <br/><br/><br/>
 
@@ -195,24 +196,25 @@ class AppLayout extends React.Component {
               </Link>
 
             </Menu.Item>
-            <Menu.Item key="/blockchian">
-              <Link to="/blockchian">
-                <Icon type="chian" />
+            <Menu.Item key="/block">
+              <Link to="/blockchain">
+                <Icon type="block" />
                 <span className="nav-text">区块链</span>
               </Link>
 
             </Menu.Item>
-            <Menu.Item key="/rules">
-              <Link to="/cars">
-                <Icon type="car" />
-                <span className="nav-text">订单管理</span>
-              </Link>
 
-            </Menu.Item>
             <Menu.Item key="/paycodes">
               <Link to="/cars">
                 <Icon type="car" />
                 <span className="nav-text">支付🐎管理</span>
+              </Link>
+
+            </Menu.Item>
+            <Menu.Item key="/withdraw">
+              <Link to="/cars">
+                <Icon type="car" />
+                <span className="nav-text">提现管理</span>
               </Link>
 
             </Menu.Item>
@@ -224,10 +226,23 @@ class AppLayout extends React.Component {
               </Link>
 
             </Menu.Item>
+            <Menu.Item key="/owners">
+              <Link to="/owners">
+                <Icon type="car" />
+                <span className="nav-text">店家管理</span>
+              </Link>
+
+            </Menu.Item>
             <Menu.Item key="/about">
               <Link to="/about">
                 <Icon type="file-text" />
                 <span className="nav-text">合同管理</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/pictures">
+              <Link to="/pictures">
+                <Icon type="file-text" />
+                <span className="nav-text">图片管理</span>
               </Link>
             </Menu.Item>
             <Menu.Item key="3">
@@ -237,6 +252,13 @@ class AppLayout extends React.Component {
             <Menu.Item key="4">
               <Icon type="user" />
               <span className="nav-text">角色管理</span>
+            </Menu.Item>
+            <Menu.Item key="/rules">
+              <Link to="/cars">
+                <Icon type="car" />
+                <span className="nav-text">规则管理</span>
+              </Link>
+
             </Menu.Item>
             <Menu.Item key="5">
               <Icon type="tag" />
