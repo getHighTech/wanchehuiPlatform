@@ -9,8 +9,22 @@ import { connect } from 'sia.js'
 
 
 class Home extends Component {
+  constructor(props){
+    super(props);
+
+    let self = this;
+    self.state　= {
+      allUserCount: 0
+    }
+    Meteor.call("user.count.all", function(error, result){
+      console.log(result);
+      self.setState({
+        allUserCount: result
+      })
+    })
+  }
   componentDidMount(){
-    
+
   }
 
   render() {
@@ -22,7 +36,7 @@ class Home extends Component {
             flexDirection: 'row',
             flexWrap: 'wrap',
             justifyContent: 'center' }}>
-        <Card title="车辆总数" bordered={false}>Card content</Card>
+        <Card title="用户总数" bordered={false}>{this.state.allUserCount}</Card>
         <Card title="车辆总数" bordered={false}>Card content</Card>
         <Card title="车辆总数" bordered={false}>Card content</Card>
         <Card title="车辆总数" bordered={false}>Card content</Card>
