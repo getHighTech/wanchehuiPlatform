@@ -23,6 +23,9 @@ import createBrowserHistory from 'history/createBrowserHistory';
 import Home from '/imports/ui/pages/home/home.jsx';
 import HomeHeader from '/imports/ui/pages/home/HomeHeader.js';
 
+import Blockchain from '/imports/ui/pages/blockchain/Blockchain.jsx';
+import BlockchainHeader from '/imports/ui/pages/blockchain/BlockchainHeader.jsx';
+
 import Cars from '/imports/ui/pages/cars/Cars.jsx';
 import CarsHeader from '/imports/ui/pages/cars/CarsHeader.js';
 
@@ -77,6 +80,11 @@ class AppLayout extends React.Component {
           }
         });
         break;
+      case '/blockchian':
+        self.setState({
+          contentLoaded: false
+        })
+        break;
       case '/':
         self.setState({
           contentLoaded: true
@@ -127,6 +135,7 @@ class AppLayout extends React.Component {
         <Route exact path="/" component={Home}/>
         <Route path="/about" component={About}/>
         <Route path="/cars" component={Cars}/>
+        <Route path="/blockchain" component={Blockchain}/>
         <Route  component={NoMatch}/>
         </Switch>
       </div>
@@ -160,7 +169,7 @@ class AppLayout extends React.Component {
 
         >
           <div className="logo" >
-            <img src="/img/logo.png" style={{width: "100%"}}/>
+            <img src="/img/wcars.png" style={{width: "100%"}}/>
           </div>
           <br/><br/><br/>
 
@@ -176,6 +185,42 @@ class AppLayout extends React.Component {
               <Link to="/cars">
                 <Icon type="car" />
                 <span className="nav-text">车辆管理</span>
+              </Link>
+
+            </Menu.Item>
+            <Menu.Item key="/products">
+              <Link to="/cars">
+                <Icon type="car" />
+                <span className="nav-text">商品管理</span>
+              </Link>
+
+            </Menu.Item>
+            <Menu.Item key="/blockchian">
+              <Link to="/blockchian">
+                <Icon type="chian" />
+                <span className="nav-text">区块链</span>
+              </Link>
+
+            </Menu.Item>
+            <Menu.Item key="/rules">
+              <Link to="/cars">
+                <Icon type="car" />
+                <span className="nav-text">订单管理</span>
+              </Link>
+
+            </Menu.Item>
+            <Menu.Item key="/paycodes">
+              <Link to="/cars">
+                <Icon type="car" />
+                <span className="nav-text">支付🐎管理</span>
+              </Link>
+
+            </Menu.Item>
+
+            <Menu.Item key="/orders">
+              <Link to="/cars">
+                <Icon type="car" />
+                <span className="nav-text">订单管理</span>
               </Link>
 
             </Menu.Item>
@@ -205,6 +250,7 @@ class AppLayout extends React.Component {
             <Route exact path="/" component={HomeHeader}/>
             <Route exact path="/cars" component={CarsHeader}/>
             <Route path="/about" component={About}/>
+            <Route path="/blockchain" component={BlockchainHeader}/>
             <Route  component={NoMatchHeader}/>
             </Switch>
           </Header>
