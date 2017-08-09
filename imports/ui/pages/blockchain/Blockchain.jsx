@@ -4,10 +4,16 @@ const { Header, Content, Footer, Sider } = Layout;
 import Card from 'antd/lib/card/';
 import Col from 'antd/lib/col/';
 import Row from 'antd/lib/row/';
+import Switch from 'antd/lib/switch';
+import 'antd/lib/switch/style';
 import 'antd/lib/card/style';
 import 'antd/lib/col/style';
 import 'antd/lib/row/style';
-import { Tracker } from 'meteor/tracker'
+import { Tracker } from 'meteor/tracker';
+import {
+  BrowserRouter as Router,
+  Link,
+} from 'react-router-dom'
 // App component - represents the whole app
 class Blockchain extends Component {
   constructor(props){
@@ -18,55 +24,156 @@ class Blockchain extends Component {
         synced: '',
         currentblock: '',
         height: 0,
-        wallet: {
-          confirmedsiacoinbalance:"0",
-          encrypted:false,
-          rescanning:false,
-          siacoinclaimbalance:"0",
-          siafundbalance:"0",
-          unconfirmedincomingsiacoins:"0",
-          unconfirmedoutgoingsiacoins:"0",
-          unlocked:false,
-        }
+
+      },
+      wallet: {
+        confirmedsiacoinbalance:"0",
+        encrypted:false,
+        rescanning:false,
+        siacoinclaimbalance:"0",
+        siafundbalance:"0",
+        unconfirmedincomingsiacoins:"0",
+        unconfirmedoutgoingsiacoins:"0",
+        unlocked:false,
+        locking: false
       }
     }
 
-      Meteor.call('blockchain.check', function(error, result){
-        if (result!= undefined) {
-          self.setState({
-            consensus: {
-              synced: result.synced,
-              currentblock: result.currentblock,
-              height: result.height
-            }
-          });
-        }
+    this.checkBlock();
+    this.getBlockVersion();
+    this.getWallet();
+    this.seeSeeds();
 
-      });
-      Meteor.call('blockchain.getVersion', function(error, result){
-        if (result!= undefined) {
-          self.setState({
-            SiaVersion: result.version
-          });
-        }
-
-      })
-      Meteor.call('blockchain.getWallet', function(error, result){
-        if (result!= undefined) {
-          self.setState({
-            wallet: result
-          });
-        }
-
-      })
 
 
 
 
   }
 
+  checkBlock(){
+    let self = this;
+    Meteor.call('blockchain.check', function(error, result){
+      if (result!= undefined) {
+        self.setState({
+          consensus: {
+            synced: result.synced,
+            currentblock: result.currentblock,
+            height: result.height
+          }
+        });
+      }
+
+    });
+  }
+
+  seeSeeds(){
+    let self = this;
+    Meteor.call('blockchain.seeds', function(error, result){
+      console.log(error);
+      console.log(result);
+
+    });
+  }
+
+  getWallet(){
+    let self = this;
+    Meteor.call('blockchain.getWallet', function(error, result){
+      console.log(result);
+      if (result!= undefined) {
+        self.setState({
+          wallet: {
+            confirmedsiacoinbalance: result.confirmedsiacoinbalance,
+            encrypted:result.encrypted,
+            rescanning:result.rescanning,
+            siacoinclaimbalance:result.siacoinclaimbalance,
+            siafundbalance:result.siafundbalance,
+            unconfirmedincomingsiacoins:"0",
+            unconfirmedoutgoingsiacoins:"0",
+            unlocked:result.unlocked,
+            locking: false
+          }
+        });
+      }
+
+    });
+  }
+
+  getBlockVersion(){
+    let self = this;
+    Meteor.call('blockchain.getVersion', function(error, result){
+      if (result!= undefined) {
+        self.setState({
+          SiaVersion: result.version
+        });
+      }
+
+    });
+  }
+  unlockWallet(){
+    let self = this;
+    Meteor.call('blockchain.wallet.unlock', function(error, result){
+      console.log(error);
+      console.log(result);
+      self.dealWithWalletMessage(result);
+
+
+    });
+  }
+
+  initSeed(){
+    let self =  this;
+    Meteor.call('blockchain.init.seed', function(error, result){
+      console.log(error);
+      console.log(result);
+      self.getWallet();
+
+    })
+  }
+  initWallet(){
+    let self =  this;
+    Meteor.call('blockchain.wallet.init', function(error, result){
+      console.log(error);
+      console.log(result);
+      self.getWallet();
+    });
+  }
+
+  dealWithWalletMessage(msg){
+    if (msg.message == "error when calling /wallet/unlock: wallet has not been encrypted yet") {
+      console.log('need to seed');
+      this.initWallet();
+    }
+    if (msg.message == "error when calling /wallet/unlock: provided encryption key is incorrect") {
+      console.log('使用其他秘钥');
+      this.initSeed();
+    }
+    if (msg.message == "error when calling /wallet/unlock: wallet has already been unlocked") {
+      console.log('已经激活');
+      this.getWallet();
+    }
+  }
+
+  toggleWallet(checked){
+    let self = this;
+
+    if (checked) {
+
+
+      this.unlockWallet();
+    }else{
+      this.setState({
+        wallet: {
+          unlocked : false,
+          locking: false
+        }
+      });
+    }
+
+
+  }
+
   render() {
-    console.log(this.state)
+
     let synced = function(syn){
       if (syn) {
         return(
@@ -76,6 +183,26 @@ class Blockchain extends Component {
         return(
             <h3>正在同步</h3>
         )
+      }
+    }
+    let locked = function(unlocked){
+      if (unlocked) {
+        return(
+            <h3>状态：已经激活</h3>
+        )
+      }else{
+        return(
+            <h3>状态：未激活</h3>
+        )
+      }
+    };
+    let locking = function(islocking, unlocked){
+      if (islocking) {
+        return (
+            <h3>状态：正在激活</h3>
+        )
+      }else{
+        return locked(unlocked);
       }
     }
     return(
@@ -94,10 +221,15 @@ class Blockchain extends Component {
               <h3>区块高度为：{this.state.consensus.height}</h3>
               <p></p>
           </Card>
-          <Card title="账户：">
-              <p>Card content</p>
-              <p>Card content</p>
-              <p>Card content</p>
+          <Card title="账户：" extra={<div href="#">激活<Switch defaultChecked={this.state.wallet.unlocked} checked={this.state.wallet.unlocked} onChange={this.toggleWallet.bind(this)}/></div>} >
+            {locking(this.state.wallet.locking, this.state.wallet.unlocked)}<br/>
+            <h3>余额：{this.state.wallet.confirmedsiacoinbalance}&nbsp;SCS</h3><br/>
+            <p></p>
+          </Card>
+
+          <Card title="文件：" extra={<Link to="/">进入文件管理</Link>} >
+            <h3>共耗资</h3>
+            <h3>文件量</h3>
           </Card>
 
         </div>

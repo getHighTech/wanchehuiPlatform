@@ -198,7 +198,7 @@ class AppLayout extends React.Component {
             </Menu.Item>
             <Menu.Item key="/block">
               <Link to="/blockchain">
-                <Icon type="block" />
+                <Icon type="cloud" />
                 <span className="nav-text">区块链</span>
               </Link>
 
@@ -207,7 +207,14 @@ class AppLayout extends React.Component {
             <Menu.Item key="/paycodes">
               <Link to="/cars">
                 <Icon type="car" />
-                <span className="nav-text">支付🐎管理</span>
+                <span className="nav-text">支付编码管理</span>
+              </Link>
+
+            </Menu.Item>
+            <Menu.Item key="/tasks">
+              <Link to="/tasks">
+                <Icon type="smile" />
+                <span className="nav-text">任务管理</span>
               </Link>
 
             </Menu.Item>

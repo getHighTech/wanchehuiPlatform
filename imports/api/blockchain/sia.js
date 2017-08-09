@@ -2,11 +2,7 @@ const sia_seed = "duets coils eluded lexicon licks feel victim shackles guarded 
 import { connect } from 'sia.js'
 //链接区块链网络,链接成功后回调
 export function connectBlock(callback){
-  return connect('localhost:9980').then((siad)=>callback(siad)).catch(
-    (err) => {
-      console.log(err);
-    }
-  );
+  return connect('localhost:9980').then((siad)=>callback(siad));
 }
 //查看网络的基本信息
 export function checkConstants(){
@@ -22,11 +18,66 @@ export function checkConsensus(){
 
 }
 export function unlock(){
+  return connectBlock((siad)=>{
+    return siad.call({
+    url: '/wallet/unlock',
+    method: 'POST',
+    qs: {
+      encryptionpassword: sia_seed,
+    },
+  }).catch(
+    (err) => {
 
+      console.log(err);
+
+      return err;
+
+    }
+  )
+  });
+}
+export function seeSeeds(){
+  return connectBlock((siad)=> {
+    return siad.call("/wallet/seeds");
+  })
+}
+export function initWallet(){
+  return connectBlock((siad)=>{
+    return siad.call({
+    url: '/wallet/init',
+    method: 'POST',
+  }).catch(
+    (err) => {
+
+      console.log(err);
+
+      return err;
+
+    }
+  )
+  });
 }
 
 export function initSeed(){
+  return connectBlock((siad)=>{
+    return siad.call({
+    url: '/wallet/init/seed',
+    method: 'POST',
+    qs: {
+      encryptionpassword: sia_seed,
+      seed: sia_seed,
+      force: true,
+    },
+  }).catch(
+    (err) => {
 
+      console.log(err);
+
+      return err;
+
+    }
+  )
+  });
 }
 
 export function getVersion(){

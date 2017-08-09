@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import { Blockfiles } from './blockfiles.js'
-import {checkConsensus, getVersion, getWallet, unlock} from './sia.js'
+import {checkConsensus, getVersion, getWallet, unlock, initSeed, initWallet, seeSeeds} from './sia.js'
 Meteor.methods({
   "blockfiles.insert"(userId, blockPath, info, name, file){
     //检查sia网络状态
@@ -24,5 +24,14 @@ Meteor.methods({
   },
   'blockchain.wallet.unlock'(){
     return unlock();
+  },
+  'blockchain.init.seed'(){
+    return initSeed();
+  },
+  'blockchain.wallet.init'(){
+    return initWallet();
+  },
+  'blockchain.seeds'(){
+    return seeSeeds();
   }
 });
