@@ -14,6 +14,8 @@ import {
   BrowserRouter as Router,
   Link,
 } from 'react-router-dom'
+
+
 // App component - represents the whole app
 class Blockchain extends Component {
   constructor(props){
@@ -42,7 +44,8 @@ class Blockchain extends Component {
     this.checkBlock();
     this.getBlockVersion();
     this.getWallet();
-    this.seeSeeds();
+    // this.initSeed();
+    // this.seeSeeds();
 
 
 
@@ -56,9 +59,9 @@ class Blockchain extends Component {
       if (result!= undefined) {
         self.setState({
           consensus: {
-            synced: result.synced,
-            currentblock: result.currentblock,
-            height: result.height
+            synced: result.data.synced,
+            currentblock: result.data.currentblock,
+            height: result.data.height
           }
         });
       }
@@ -78,18 +81,17 @@ class Blockchain extends Component {
   getWallet(){
     let self = this;
     Meteor.call('blockchain.getWallet', function(error, result){
-      console.log(result);
       if (result!= undefined) {
         self.setState({
           wallet: {
-            confirmedsiacoinbalance: result.confirmedsiacoinbalance,
-            encrypted:result.encrypted,
-            rescanning:result.rescanning,
-            siacoinclaimbalance:result.siacoinclaimbalance,
-            siafundbalance:result.siafundbalance,
+            confirmedsiacoinbalance: result.data.confirmedsiacoinbalance,
+            encrypted:result.data.encrypted,
+            rescanning:result.data.rescanning,
+            siacoinclaimbalance:result.data.siacoinclaimbalance,
+            siafundbalance:result.data.siafundbalance,
             unconfirmedincomingsiacoins:"0",
             unconfirmedoutgoingsiacoins:"0",
-            unlocked:result.unlocked,
+            unlocked:result.data.unlocked,
             locking: false
           }
         });
@@ -114,7 +116,8 @@ class Blockchain extends Component {
     Meteor.call('blockchain.wallet.unlock', function(error, result){
       console.log(error);
       console.log(result);
-      self.dealWithWalletMessage(result);
+      console.log(result.response.data);
+      self.dealWithWalletMessage(result.response.data);
 
 
     });
@@ -139,6 +142,7 @@ class Blockchain extends Component {
   }
 
   dealWithWalletMessage(msg){
+    console.log(msg.message);
     if (msg.message == "error when calling /wallet/unlock: wallet has not been encrypted yet") {
       console.log('need to seed');
       this.initWallet();
