@@ -2,7 +2,7 @@ const sia_seed = "duets coils eluded lexicon licks feel victim shackles guarded 
 import { connect } from 'sia.js'
 //链接区块链网络,链接成功后回调
 export function connectBlock(callback){
-  return connect('localhost:9980').then((siad)=>callback(siad));
+  return connect('127.0.0.1:9980').then((siad)=>callback(siad));
 }
 //查看网络的基本信息
 export function checkConstants(){
@@ -22,6 +22,7 @@ export function unlock(){
     return siad.call({
     url: '/wallet/unlock',
     method: 'POST',
+    header: "Authorization: Basic OmZvb2Jhcg==",
     qs: {
       encryptionpassword: sia_seed,
     },
