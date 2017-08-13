@@ -1,4 +1,5 @@
-const sia_seed = "duets coils eluded lexicon licks feel victim shackles guarded kidneys eight joining sieve ointment sidekick punch bested lexicon cavernous drowning olive hookup taboo mechanic general royal leech polar acumen";
+const sia_seed = Meteor.settings.sia_seed;
+const sia_api_addr = "http://"+Meteor.settings.sia_api_addr;
 import { connect } from 'sia.js'
 //链接区块链网络,链接成功后回调
 export function connectBlock(callback){
@@ -7,12 +8,14 @@ export function connectBlock(callback){
 }
 //查看网络的基本信息
 export function checkConstants(){
+
   connectBlock((siad)=>{
 
   });
 }
 export function checkConsensus(){
-  return HTTP.call("GET", "http://45.32.25.210:8975/consensus", {
+  console.log(Meteor.settings.sia_api_addr);
+  return HTTP.call("GET", sia_api_addr+"/consensus", {
     headers: {
       'User-Agent': 'Sia-Agent',
     },
@@ -23,7 +26,7 @@ export function checkConsensus(){
 export function unlock(){
 
   try {
-    return HTTP.call("POST", "http://45.32.25.210:8975/wallet/unlock", {
+    return HTTP.call("POST", sia_api_addr+"/wallet/unlock", {
       headers: {
         'User-Agent': 'Sia-Agent',
       },
@@ -38,7 +41,7 @@ export function unlock(){
   }
 }
 export function seeSeeds(){
-  return HTTP.call("GET", "http://45.32.25.210:8975/wallet/seeds", {
+  return HTTP.call("GET", sia_api_addr+"/wallet/seeds", {
     headers: {
       'User-Agent': 'Sia-Agent',
     },
@@ -47,11 +50,14 @@ export function seeSeeds(){
 }
 export function initWallet(){
   try {
-    return HTTP.call("POST", "http://45.32.25.210:8975/wallet/init", {
+    return HTTP.call("POST", sia_api_addr+"/wallet/init", {
       headers: {
         'User-Agent': 'Sia-Agent',
       },
       auth: ":7686043104xsq",
+      params: {
+        encryptionpassword: sia_seed,
+      }
 
     });
   } catch (e) {
@@ -62,7 +68,7 @@ export function initWallet(){
 
 export function initSeed(){
   try {
-    return HTTP.call("POST", "http://45.32.25.210:8975//wallet/init/seed", {
+    return HTTP.call("POST", sia_api_addr+"/wallet/init/seed", {
       headers: {
         'User-Agent': 'Sia-Agent',
       },
@@ -91,7 +97,7 @@ export function getAdresses(){
 }
 export function getWallet(){
 
-  return HTTP.call("GET", "http://45.32.25.210:8975/wallet", {
+  return HTTP.call("GET", sia_api_addr+"/wallet", {
     headers: {
       'User-Agent': 'Sia-Agent',
     },

@@ -45,7 +45,9 @@ class Blockchain extends Component {
     this.getBlockVersion();
     this.getWallet();
     // this.initSeed();
-    // this.seeSeeds();
+    this.seeSeeds();
+
+    
 
 
 
@@ -56,6 +58,7 @@ class Blockchain extends Component {
   checkBlock(){
     let self = this;
     Meteor.call('blockchain.check', function(error, result){
+      console.log(result);
       if (result!= undefined) {
         self.setState({
           consensus: {
@@ -81,6 +84,7 @@ class Blockchain extends Component {
   getWallet(){
     let self = this;
     Meteor.call('blockchain.getWallet', function(error, result){
+      console.log(result);
       if (result!= undefined) {
         self.setState({
           wallet: {
@@ -103,6 +107,7 @@ class Blockchain extends Component {
   getBlockVersion(){
     let self = this;
     Meteor.call('blockchain.getVersion', function(error, result){
+      console.log(result);
       if (result!= undefined) {
         self.setState({
           SiaVersion: result.version
@@ -116,7 +121,6 @@ class Blockchain extends Component {
     Meteor.call('blockchain.wallet.unlock', function(error, result){
       console.log(error);
       console.log(result);
-      console.log(result.response.data);
       self.dealWithWalletMessage(result.response.data);
 
 
