@@ -2,7 +2,8 @@ const sia_seed = "duets coils eluded lexicon licks feel victim shackles guarded 
 import { connect } from 'sia.js'
 //链接区块链网络,链接成功后回调
 export function connectBlock(callback){
-  return connect('127.0.0.1:9980').then((siad)=>callback(siad));
+
+  return connect('45.32.25.210:8975').then((siad)=>callback(siad));
 }
 //查看网络的基本信息
 export function checkConstants(){
@@ -11,74 +12,73 @@ export function checkConstants(){
   });
 }
 export function checkConsensus(){
-
-  return connectBlock((siad)=>{
-    return siad.call('/consensus')
-  });
+  return HTTP.call("GET", "http://45.32.25.210:8975/consensus", {
+    headers: {
+      'User-Agent': 'Sia-Agent',
+    },
+    auth: ":7686043104xsq"
+  })
 
 }
 export function unlock(){
-  return connectBlock((siad)=>{
-    return siad.call({
-    url: '/wallet/unlock',
-    method: 'POST',
-    header: "Authorization: Basic OmZvb2Jhcg==",
-    qs: {
-      encryptionpassword: sia_seed,
-    },
-  }).catch(
-    (err) => {
 
-      console.log(err);
-
-      return err;
-
-    }
-  )
-  });
+  try {
+    return HTTP.call("POST", "http://45.32.25.210:8975/wallet/unlock", {
+      headers: {
+        'User-Agent': 'Sia-Agent',
+      },
+      auth: ":7686043104xsq",
+      params: {
+        encryptionpassword: sia_seed,
+      }
+    })
+  } catch (e) {
+    console.error('unlock err',e.message);
+    return e
+  }
 }
 export function seeSeeds(){
-  return connectBlock((siad)=> {
-    return siad.call("/wallet/seeds");
+  return HTTP.call("GET", "http://45.32.25.210:8975/wallet/seeds", {
+    headers: {
+      'User-Agent': 'Sia-Agent',
+    },
+    auth: ":7686043104xsq"
   })
 }
 export function initWallet(){
-  return connectBlock((siad)=>{
-    return siad.call({
-    url: '/wallet/init',
-    method: 'POST',
-  }).catch(
-    (err) => {
+  try {
+    return HTTP.call("POST", "http://45.32.25.210:8975/wallet/init", {
+      headers: {
+        'User-Agent': 'Sia-Agent',
+      },
+      auth: ":7686043104xsq",
 
-      console.log(err);
-
-      return err;
-
-    }
-  )
-  });
+    });
+  } catch (e) {
+    console.log("",e);
+    return e
+  }
 }
 
 export function initSeed(){
-  return connectBlock((siad)=>{
-    return siad.call({
-    url: '/wallet/init/seed',
-    method: 'POST',
-    qs: {
-      encryptionpassword: sia_seed,
-      seed: sia_seed,
-      force: true,
-    },
-  }).catch(
-    (err) => {
+  try {
+    return HTTP.call("POST", "http://45.32.25.210:8975//wallet/init/seed", {
+      headers: {
+        'User-Agent': 'Sia-Agent',
+      },
+      auth: ":7686043104xsq",
+      params: {
+        encryptionpassword: sia_seed,
+        seed: sia_seed,
+        force: true,
+      }
+    });
+  } catch (e) {
+    console.log("init seed", e);
+    return e
+  }
 
-      console.log(err);
 
-      return err;
-
-    }
-  )
-  });
 }
 
 export function getVersion(){
@@ -90,7 +90,11 @@ export function getAdresses(){
 
 }
 export function getWallet(){
-  return connectBlock((siad)=>{
-    return siad.call('/wallet')
-  });
+
+  return HTTP.call("GET", "http://45.32.25.210:8975/wallet", {
+    headers: {
+      'User-Agent': 'Sia-Agent',
+    },
+    auth: ":7686043104xsq"
+  })
 }
