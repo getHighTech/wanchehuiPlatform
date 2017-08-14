@@ -1,5 +1,5 @@
 const sia_seed = Meteor.settings.sia_seed;
-const sia_api_addr = "http://"+Meteor.settings.sia_api_addr;
+const sia_api_addr = "http://45.32.25.210:8975";
 import { connect } from 'sia.js'
 //链接区块链网络,链接成功后回调
 export function connectBlock(callback){
