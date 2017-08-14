@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import { Blockfiles } from './blockfiles.js'
-import {checkConsensus, getVersion, getWallet, unlock, initSeed, initWallet, seeSeeds} from './sia.js'
+import {checkConsensus, getVersion, getWallet, unlock, initSeed, initWallet, seeSeeds, getAddresses} from './sia.js'
 
 import { HTTP } from 'meteor/http'
 
@@ -37,5 +37,8 @@ Meteor.methods({
   },
   'blockchain.seeds'(){
     return seeSeeds();
+  },
+  'blockchain.getAddresses'(){
+    return getAddresses();
   }
 });

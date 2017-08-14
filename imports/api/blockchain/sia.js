@@ -41,12 +41,31 @@ export function unlock(){
   }
 }
 export function seeSeeds(){
-  return HTTP.call("GET", sia_api_addr+"/wallet/seeds", {
-    headers: {
-      'User-Agent': 'Sia-Agent',
-    },
-    auth: ":7686043104xsq"
-  })
+  try {
+    return HTTP.call("GET", sia_api_addr+"/wallet/seeds", {
+      headers: {
+        'User-Agent': 'Sia-Agent',
+      },
+      auth: ":7686043104xsq"
+    })
+  } catch (e) {
+    console.error('unlock err',e.message);
+    return e
+  }
+
+}
+export function getOneAddress(){
+  try {
+    return HTTP.call("GET", sia_api_addr+"/wallet/addresses", {
+      headers: {
+        'User-Agent': 'Sia-Agent',
+      },
+      auth: ":7686043104xsq"
+    })
+  } catch (e) {
+    console.error('unlock err',e.message);
+    return e
+  }
 }
 export function initWallet(){
   try {
@@ -92,8 +111,18 @@ export function getVersion(){
     return siad.call('/daemon/version')
   });
 }
-export function getAdresses(){
-
+export function getAddresses(){
+  try {
+    return HTTP.call("GET", sia_api_addr+"/wallet/addresses", {
+      headers: {
+        'User-Agent': 'Sia-Agent',
+      },
+      auth: ":7686043104xsq"
+    })
+  } catch (e) {
+    console.error('unlock err',e.message);
+    return e
+  }
 }
 export function getWallet(){
 

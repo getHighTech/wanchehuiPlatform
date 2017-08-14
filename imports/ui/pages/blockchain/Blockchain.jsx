@@ -38,7 +38,8 @@ class Blockchain extends Component {
         unconfirmedoutgoingsiacoins:"0",
         unlocked:false,
         locking: false
-      }
+      },
+      walletAddress: ''
     }
 
     this.checkBlock();
@@ -46,8 +47,9 @@ class Blockchain extends Component {
     this.getWallet();
     // this.initSeed();
     this.seeSeeds();
+    this.getWalletAddresses();
 
-    
+
 
 
 
@@ -68,7 +70,7 @@ class Blockchain extends Component {
           }
         });
       }
-
+      self.getWallet();
     });
   }
 
@@ -113,6 +115,20 @@ class Blockchain extends Component {
           SiaVersion: result.version
         });
       }
+
+    });
+  }
+
+  getWalletAddresses(){
+    let self = this;
+    Meteor.call('blockchain.getAddresses', function(error, result){
+      console.log(error);
+      console.log(result);
+      // if (result!= undefined) {
+      //   self.setState({
+      //     walletAddress: result.version
+      //   });
+      // }
 
     });
   }
