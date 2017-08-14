@@ -39,7 +39,7 @@ class Blockchain extends Component {
         unlocked:false,
         locking: false
       },
-      walletAddress: ''
+      walletAddresses: []
     }
 
     this.checkBlock();
@@ -122,13 +122,11 @@ class Blockchain extends Component {
   getWalletAddresses(){
     let self = this;
     Meteor.call('blockchain.getAddresses', function(error, result){
-      console.log(error);
-      console.log(result);
-      // if (result!= undefined) {
-      //   self.setState({
-      //     walletAddress: result.version
-      //   });
-      // }
+      if (result!= undefined) {
+        self.setState({
+          walletAddresses: result.data.addresses
+        });
+      }
 
     });
   }
@@ -197,6 +195,13 @@ class Blockchain extends Component {
   }
 
   render() {
+    console.log(this.state.walletAddresses);
+
+    let addresses = this.state.walletAddresses.map((address, index)=>{
+      return (
+        <li key={index}>{index+1}:<strong>{address}</strong><br/></li>
+      )
+    })
 
     let synced = function(syn){
       if (syn) {
@@ -229,6 +234,7 @@ class Blockchain extends Component {
         return locked(unlocked);
       }
     }
+
     return(
       <Content style={{ margin: '10px 16px 0' }}>
         <h3>版本：细亚网络{this.state.SiaVersion}</h3><br/>
@@ -254,6 +260,11 @@ class Blockchain extends Component {
           <Card title="文件：" extra={<Link to="/">进入文件管理</Link>} >
             <h3>共耗资</h3>
             <h3>文件量</h3>
+          </Card>
+          <Card title="账号地址：" extra={<Link to="#">添加新的账号</Link>} >
+            <ol style={{wordWrap: "break-word"}}>
+            {addresses}
+            </ol>
           </Card>
 
         </div>
