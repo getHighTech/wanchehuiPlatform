@@ -12,6 +12,7 @@ import { Switch, Route } from 'react-router'
 import Layout from 'antd/lib/layout';
 const { Header, Content, Footer, Sider } = Layout;
 import Menu from 'antd/lib/menu';
+
 import MenuItem from 'antd/lib/menu/MenuItem';
 import Icon from 'antd/lib/icon/';
 import Spin from 'antd/lib/spin/';
@@ -29,6 +30,9 @@ import BlockchainHeader from '/imports/ui/pages/blockchain/BlockchainHeader.jsx'
 
 import Cars from '/imports/ui/pages/cars/Cars.jsx';
 import CarsHeader from '/imports/ui/pages/cars/CarsHeader.js';
+
+import Products from '/imports/ui/pages/products/Products.jsx';
+import PageHeader from '/imports/ui/components/PageHeader.jsx';
 
 import {NoMatch, NoMatchHeader} from '/imports/ui/pages/not-found/not-found.jsx';
 
@@ -136,6 +140,7 @@ class AppLayout extends React.Component {
         <Route exact path="/" component={Home}/>
         <Route path="/about" component={About}/>
         <Route path="/cars" component={Cars}/>
+        <Route path="/products" component={Products}/>
         <Route path="/blockchain" component={Blockchain}/>
         <Route  component={NoMatch}/>
         </Switch>
@@ -190,8 +195,8 @@ class AppLayout extends React.Component {
 
             </Menu.Item>
             <Menu.Item key="/products">
-              <Link to="/cars">
-                <Icon type="car" />
+              <Link to="/products">
+                <Icon type="shop" />
                 <span className="nav-text">商品管理</span>
               </Link>
 
@@ -276,10 +281,9 @@ class AppLayout extends React.Component {
         <Layout>
           <Header style={{ background: '#fff', position: 'fixed', width: '100%', zIndex: 100 }} >
             <Switch>
-            <Route exact path="/" component={HomeHeader}/>
-            <Route exact path="/cars" component={CarsHeader}/>
-            <Route path="/about" component={About}/>
-            <Route path="/blockchain" component={BlockchainHeader}/>
+            <Route exact path="/" component={PageHeader}/>
+            <Route exact path="/products" component={PageHeader}/>
+            <Route exact path="/blockchain" component={PageHeader}/>
             <Route  component={NoMatchHeader}/>
             </Switch>
           </Header>
