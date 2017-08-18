@@ -12,36 +12,43 @@ class EventJob {
     //   afterEventName,
     //   positiveEventName,
     //   nagitiveEventName,
-    //   isBasic,
+    //   isBasic,//如果isBasic==true
+    // 那么有basicAction这个字段！
     // }
 
   }
   execute(eventName, userParams, callback){
     let job = EventJobs.findOne(eventName);
+    if(!job){
+      console.error("任务名称不存在");
+      return false;
+    }
+
+    if (job.beforeEventName) {
+      this.before(job.beforeEventName, userParams)
+    }
     if (job.isBasic) {
       try {
-        return basicEvents[eventName](userParams);
+        //执行basicAction,
+        eval('let basicAction='+job.basicAction);
+        return basicAction(userParams);
       } catch (err) {
         console.error(err);
       } finally {
         return false;
       }
     }
-    if(!job){
-      console.error("任务名称不存在");
-      return false;
-    }
-    if (job.beforeEventName) {
-      this.before(job.beforeEventName)
+    if (job.afterEventName) {
+      this.after(job.aferEventName, userParams)
     }
 
 
   }
-  before(eventName){
-
+  before(eventName, userParams){
+    this.execute(eventName, userParams);
   }
-  after(eventName, callback){
-
+  after(eventName, userParams){
+    this.execute(eventName, userParams);
   }
   positive(eventName, callback){
 
