@@ -19,6 +19,7 @@ class EventJob {
   }
   execute(eventName, userParams, callback){
     let job = EventJobs.findOne(eventName);
+    this.eventName = eventName;
     if(!job){
       console.error("任务名称不存在");
       return false;
