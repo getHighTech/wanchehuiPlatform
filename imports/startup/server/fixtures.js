@@ -201,7 +201,40 @@ Meteor.startup(() => {
           weight: 0,
         });
   }
+  let newFun = function(){
+    console.log("很好");
+  }
+  if (Roles.find({name: '超管员4'}).count() == 0) {
+        Roles.insert({
+          name: "超管员4",
+          weight: 0,
+          newFun: newFun.toString()
+        });
+  }
   let super_role  = Roles.findOne({name: '超级管理员'});
+  let super_role_test  = Roles.findOne({name: '超管员4'});
+  const util = require('util');
+  const vm = require('vm');
+
+  const sandbox = {
+    animal: 'cat',
+    count: 2
+  };
+
+  const script = new vm.Script('count += 1; name = "kitty";');
+
+  const context = new vm.createContext(sandbox);
+  for (let i = 0; i < 10; ++i) {
+    script.runInContext(context);
+  }
+  // const newComeSanbox = {
+  //
+  // }
+  // const newFunScript = new vm.Script('newCome=12;');
+  // newFunScript.runInContext(newComeSanbox);
+  // newComeSanbox;
+
+  console.log(util.inspect(sandbox.animal));
 
   if (Meteor.users.find({username: "superadmin"}).count()==0) {
     let admin_id = Accounts.createUser({

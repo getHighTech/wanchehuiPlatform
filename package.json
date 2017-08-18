@@ -12,6 +12,7 @@
     "indexof": "0.0.1",
     "invariant": "^2.2.2",
     "jquery": "^3.2.1",
+    "localeval": "^15.2.3",
     "meteor-node-stubs": "~0.2.3",
     "node-pre-gyp": "^0.6.32",
     "node-uuid": "^1.4.8",

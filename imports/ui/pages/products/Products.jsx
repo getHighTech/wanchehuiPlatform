@@ -46,6 +46,9 @@ class Products extends Component {
                <Menu.Item key="setting:3">本季度数据</Menu.Item>
              </MenuItemGroup>
            </SubMenu>
+           <Menu.Item key="online_premission">
+             <Icon type="online_premission" />上架申请
+           </Menu.Item>
          </Menu>
         <div>
           <Spin size="small" />
