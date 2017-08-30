@@ -21,6 +21,7 @@ import 'antd/lib/menu/style';
 import 'antd/lib/spin/style';
 import 'antd/lib/icon/style';
 import createBrowserHistory from 'history/createBrowserHistory';
+import {Row, Col} from "antd"
 
 import Home from '/imports/ui/pages/home/home.jsx';
 import HomeHeader from '/imports/ui/pages/home/HomeHeader.js';
@@ -32,13 +33,16 @@ import Cars from '/imports/ui/pages/cars/Cars.jsx';
 import CarsHeader from '/imports/ui/pages/cars/CarsHeader.js';
 
 import Products from '/imports/ui/pages/products/Products.jsx';
+import LoginForm from '/imports/ui/pages/login/Login.jsx';
 import PageHeader from '/imports/ui/components/PageHeader.jsx';
 
 import {NoMatch, NoMatchHeader} from '/imports/ui/pages/not-found/not-found.jsx';
 
 const customHistory = createBrowserHistory()
 
-
+if (!Meteor.userId()) {
+  customHistory.replace("/login")
+}
 
 const AppRoutes = ({location}) => {
   // console.log(customHistory.location);
@@ -91,6 +95,8 @@ class AppLayout extends React.Component {
         })
         break;
       case '/':
+
+
         self.setState({
           contentLoaded: true
         })
@@ -208,14 +214,14 @@ class AppLayout extends React.Component {
               </Link>
 
             </Menu.Item>
-            <Menu.Item key="/cards">
+            <Menu.Item key="/cards1">
               <Link to="/cards">
                 <Icon type="cloud" />
                 <span className="nav-text">卡片管理</span>
               </Link>
 
             </Menu.Item>
-            <Menu.Item key="/cards">
+            <Menu.Item key="/cards2">
               <Link to="/cards">
                 <Icon type="cloud" />
                 <span className="nav-text">事件管理 </span>
@@ -319,9 +325,24 @@ class AppLayout extends React.Component {
 
 
 const Login = () => (
-  <div>
-    <h2>Login</h2>
+  <div style={{
+    height: "100%",
+    paddingTop: "20%",
+    minWidth: 320,
+  }}>
+  <Row type="flex" justify="center">
+
+    <Col span={14}>
+      <h2 style={{textAlign: "center"}}>登录到万人车会平台</h2><br/>
+    </Col>
+
+  </Row>
+    <Row type="flex" justify="center">
+      <Col span={14}><LoginForm /></Col>
+
+    </Row>
   </div>
+
 )
 
 

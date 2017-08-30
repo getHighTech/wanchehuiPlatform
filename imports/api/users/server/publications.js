@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Follows } from '../../follows/follows.js';
-import { Roles } from '../../services/roles/roles.js';
+import { Roles } from '../../roles/roles.js';
 
 Meteor.publish('user.list.one', function(){
 
