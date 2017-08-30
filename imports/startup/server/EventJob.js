@@ -20,6 +20,7 @@ class EventJob {
   execute(eventName, userParams, callback){
     let job = EventJobs.findOne(eventName);
     this.eventName = eventName;
+    let backVal = undefined;
     if(!job){
       console.error("任务名称不存在");
       return false;
@@ -32,7 +33,8 @@ class EventJob {
       try {
         //执行basicAction,
         eval('let basicAction='+job.basicAction);
-        return basicAction(userParams);
+        backVal = basicAction(userParams);
+        return backVal;
       } catch (err) {
         console.error(err);
       } finally {
@@ -41,6 +43,15 @@ class EventJob {
     }
     if (job.afterEventName) {
       this.after(job.aferEventName, userParams)
+    }
+    if (backVal === undefined) {
+      return true;
+    }
+    if (backVal) {
+      this.positive(job.positiveEventName, userParams)
+    }
+    if (!backVal) {
+      this.nagitive(job.nagitiveEventName, userParams)
     }
 
 
@@ -51,10 +62,10 @@ class EventJob {
   after(eventName, userParams){
     this.execute(eventName, userParams);
   }
-  positive(eventName, callback){
+  positive(eventName, userParams){
 
   }
-  nagitive(eventName, callback){
+  nagitive(eventName, userParams){
 
   }
 }
