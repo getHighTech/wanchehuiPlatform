@@ -208,6 +208,20 @@ class AppLayout extends React.Component {
               </Link>
 
             </Menu.Item>
+            <Menu.Item key="/cards">
+              <Link to="/cards">
+                <Icon type="cloud" />
+                <span className="nav-text">卡片管理</span>
+              </Link>
+
+            </Menu.Item>
+            <Menu.Item key="/cards">
+              <Link to="/cards">
+                <Icon type="cloud" />
+                <span className="nav-text">事件管理 </span>
+              </Link>
+
+            </Menu.Item>
 
             <Menu.Item key="/paycodes">
               <Link to="/cars">

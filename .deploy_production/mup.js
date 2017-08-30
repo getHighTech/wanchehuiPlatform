@@ -36,7 +36,7 @@ module.exports = {
      imageFrontendServer: 'meteorhacks/mup-frontend-server',
      // lets you bind the docker container to a
      // specific network interface (optional)
-  
+
 
    },
   },
