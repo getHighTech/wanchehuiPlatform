@@ -27,17 +27,22 @@ const menu = (
     </Menu.Item>
 
     <Menu.Item>
-    <Link to="/login">
+    <Link to="/login" onClick={logOut()}>
       <Icon type="file-text" />
       <span className="nav-text">安全退出</span>
     </Link>
     </Menu.Item>
   </Menu>
 );
+function logOut(e){
+  Meteor.logout(function(){
+    console.log("logout");
+  });
+}
 
 const HeaderUserArea = () => (
   <Dropdown overlay={menu}>
-    <Button style={{ marginLeft: 8,
+    <Button  style={{ marginLeft: 8,
     display: "inline-block", }}>
       用户名 <Icon type="down" />
     </Button>
