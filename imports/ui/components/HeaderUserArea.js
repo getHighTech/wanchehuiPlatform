@@ -27,10 +27,10 @@ const menu = (
     </Menu.Item>
 
     <Menu.Item>
-    <Link to="/login" onClick={logOut()}>
+    <a onClick={logOut()}>
       <Icon type="file-text" />
       <span className="nav-text">安全退出</span>
-    </Link>
+    </a>
     </Menu.Item>
   </Menu>
 );

@@ -7,17 +7,24 @@ import "antd/lib/button/style";
 import "antd/lib/checkbox/style";
 const FormItem = Form.Item;
 import createBrowserHistory from 'history/createBrowserHistory';
+// JavaScript 模块导入（译者注：ES6 形式）
+import { browserHistory } from 'react-router'
 // App component - represents the whole app
 const history = createBrowserHistory();
 if (Meteor.userId()) {
-  history.replace('/');
+  history.push('/');
 }
 
 class Login extends Component {
 
   constructor(props){
     super(props);
+    console.log(this.props.history);
 
+  }
+  componentDidMount(){
+    const { history } = this.props;
+    console.log(this.props);
   }
 
   handleSubmit = (e) => {
@@ -28,6 +35,9 @@ class Login extends Component {
         let res = Meteor.loginWithPassword(values.userName, values.password , function(error, result){
           console.log(error);
           console.log(result);
+          // if (!error) {
+          //   browserHistory.replace("/")
+          // }
         });
         console.log(res);
         }

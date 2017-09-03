@@ -11,7 +11,7 @@ import { connect } from 'sia.js'
 class Home extends Component {
   constructor(props){
     super(props);
-
+    console.log(this.props);
     let self = this;
     self.state　= {
       allUserCount: 0
