@@ -13,13 +13,48 @@ export function prebuildAdmin(){
       editable: false,
       accesses: {
         isSuper: true,
-        users: true,
-        products: true,
-        orders: true,
-        coupons: true,
-        cars: true,
-        agencies: true,
-        statics: true,
+        users: {
+          read: true,
+          edit: true,
+          remove: true,
+          add: true,
+        },
+        products: {
+          read: true,
+          edit: true,
+          remove: true,
+          add: true,
+        },
+        orders: {
+          read: true,
+          edit: true,
+          remove: true,
+          add: true,
+        },
+        coupons: {
+          read: true,
+          edit: true,
+          remove: true,
+          add: true,
+        },
+        cars: {
+          read: true,
+          edit: true,
+          remove: true,
+          add: true,
+        },
+        agencies: {
+          read: true,
+          edit: true,
+          remove: true,
+          add: true,
+        },
+        statics: {
+          read: true,
+          edit: true,
+          remove: true,
+          add: true,
+        },
       }
     });
     let users = Meteor.users.find({username: "superAdmin"});
@@ -28,7 +63,9 @@ export function prebuildAdmin(){
       newUserId =   Accounts.createUser({
             username: "superAdmin",
             password: "superAdmin2017best",
+            roleId: newAdminId
           });
+      
     }
   }
 }
