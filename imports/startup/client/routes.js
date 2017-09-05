@@ -21,6 +21,7 @@ const Routes = ({ location }) =>
       <IndexRoute component={DashBoard} />
     </Route>
     <Route path="/login" component={Login}/>
+    <Route path="/*" component={Login}/>
   </Router>
   </Provider>;
 
