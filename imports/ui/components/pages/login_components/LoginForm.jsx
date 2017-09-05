@@ -14,24 +14,15 @@ class LoginWrap extends Component {
     super(props);
 
   }
-  componentDidMount(){
-    const { history } = this.props;
-    console.log(this.props);
-  }
 
   handleSubmit = (e) => {
       e.preventDefault();
+      let self = this;
       this.props.form.validateFields((err, values) => {
         if (!err) {
           console.log('Received values of form: ', values);
-        let res = Meteor.loginWithPassword(values.userName, values.password , function(error, result){
-          console.log(error);
-          console.log(result);
-          // if (!error) {
-          //   browserHistory.replace("/")
-          // }
-        });
-        console.log(res);
+          self.props.loginInfo(values);
+
         }
       });
     }

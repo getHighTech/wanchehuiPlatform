@@ -1,15 +1,18 @@
 import React from 'react';
-import HeaderUserArea from '/imports/ui/components/HeaderUserArea.js';
+import HeaderUserArea from './HeaderUserArea.js';
 
 
 const PageHeader = (path) => {
   let title = function(path){
-    switch (path.match.path) {
+    switch (path) {
       case "/products":
         return "商品管理"
         break;
       case "/blockchain":
         return "区块链"
+        break;
+      case "/":
+        return "控制面板"
         break;
       default:
         return "未定义页面";
@@ -26,7 +29,7 @@ const PageHeader = (path) => {
       justifyContent: 'space-around',
     }}>
 
-      <h2>{title(path)}</h2>
+      <h2>{title(path.path.pathname)}</h2>
       <HeaderUserArea  />
     </div>
   )

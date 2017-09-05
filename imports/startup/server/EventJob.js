@@ -61,6 +61,7 @@ class EventJob {
     this.basicAction = job.basicAction;
     this.editable = job.editable;
     this.deletable = job.deletable;
+    this.status = 1;
   }
   execute(eventName, userParams){
     let job = EventJobs.findOne({username: ob.eventName});
@@ -87,6 +88,16 @@ class EventJob {
         return false;
       }
     }
+
+    if (this.userParams.lastReturnParam != undefined) {
+      if (this.userParams.lastReturnParam === true) {
+        this.positive();
+      }
+      if (this.userParams.lastReturnParam === false) {
+        this.nagitive(); 
+      }
+    }
+
     if (job.afterEventName) {
       this.after();
     }
@@ -96,16 +107,20 @@ class EventJob {
 
   before(){
     this.execute(this.beforeEventName, this.userParams);
+
   }
   after(){
     this.execute(this.afterEventName, this.userParams);
+    this.status = 0;
   }
   positive(){
     this.execute(this.positiveEventName, this.userParams);
+    this.status = 0;
 
   }
   nagitive(){
     this.execute(this.nagitiveEventName, this.userParams);
+    this.status = 0;
   }
   destory(){
     if (this.id) {
