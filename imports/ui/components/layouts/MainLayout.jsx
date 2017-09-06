@@ -1,11 +1,14 @@
 'use strict';
 
 
-import React from 'react';
+import React, { Component } from 'react';
 import { push, replace, goBack } from 'react-router-redux';
 
 import { connect } from 'react-redux';
-import { Layout, Menu, Icon, message } from 'antd';
+import message from 'antd/lib/message';
+import Icon from 'antd/lib/icon';
+import Menu from 'antd/lib/menu';
+import Layout from 'antd/lib/layout';
 const { Header, Content, Footer, Sider } = Layout;
 import "antd/lib/layout/style";
 import "antd/lib/menu/style";
@@ -13,8 +16,9 @@ import "antd/lib/icon/style";
 import "antd/lib/message/style";
 
 import PageHeader from "./PageHeader.jsx";
-
-class MainLayout extends React.Component {
+import { createContainer } from 'meteor/react-meteor-data';
+import { Roles } from '/imports/api/roles/roles.js';
+class MainLayout extends Component {
   constructor(props) {
     super(props);
 
@@ -26,10 +30,13 @@ class MainLayout extends React.Component {
       dispatch(push("/login"));
       message.warning("请先登录！")
     }
+
   }
 
 
   render() {
+    let roles = this.props.roles;
+    console.log(roles);
     return (
       <Layout>
         <Sider
@@ -53,7 +60,7 @@ class MainLayout extends React.Component {
             </Menu.Item>
             <Menu.Item key="4">
               <Icon type="user" />
-              <span className="nav-text">nav 4</span>
+              <span className="nav-text">系统设置</span>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -80,7 +87,7 @@ class MainLayout extends React.Component {
             </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>
-            Ant Design ©2016 Created by Ant UED
+            SimonXu ©2017 MIT
           </Footer>
         </Layout>
       </Layout>
@@ -95,4 +102,11 @@ function mapStateToProps(state) {
    };
 }
 
-export default connect(mapStateToProps)(MainLayout);
+export default createContainer(() => {
+  if (Meteor.userId()) {
+    Meteor.subscribe('roles.all');
+  }
+  return {
+    roles: Roles.find({}).fetch(),
+  };
+}, connect(mapStateToProps)(MainLayout));

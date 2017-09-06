@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { Provider, connect } from 'react-redux';
 import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router';
 import { syncHistoryWithStore} from 'react-router-redux';
@@ -6,6 +6,7 @@ import configureStore from "/imports/ui/stores/mainStore";
 
 import MainLayout from '/imports/ui/components/layouts/MainLayout';
 import Login from '/imports/ui/components/pages/Login';
+import LoginForgot from '/imports/ui/components/pages/LoginForgot';
 import Users from '/imports/ui/components/pages/Users';
 import DashBoard from '/imports/ui/components/pages/DashBoard';
 
@@ -21,12 +22,11 @@ const Routes = ({ location }) =>
       <IndexRoute component={DashBoard} />
     </Route>
     <Route path="/login" component={Login}/>
+    <Route path="/login/forgot" component={LoginForgot}/>
     <Route path="/*" component={Login}/>
   </Router>
   </Provider>;
 
-Routes.propTypes = {
-  history: PropTypes.any,
-};
+
 
 export default Routes;

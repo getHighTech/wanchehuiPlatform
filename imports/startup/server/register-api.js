@@ -28,6 +28,7 @@ import '../../api/fans/server/publications.js';
 import '../../api/qa_posts/server/publications.js';
 import '../../api/follows/server/publications.js';
 import '/imports/api/services/server/publications.js';
+import '/imports/api/roles/server/publications.js';
 import '/imports/api/agencies/server/publications.js';
 import '/imports/api/balances/server/publications.js';
 import '/imports/api/appointments/server/publications.js';

@@ -11,6 +11,11 @@ export function prebuildAdmin(){
       weight: 0,
       deletable: false,
       editable: false,
+      recordAccess: {
+        read: [],
+        edit: [],
+        remove: [],
+      },
       accesses: {
         isSuper: true,
         users: {
@@ -55,6 +60,19 @@ export function prebuildAdmin(){
           remove: true,
           add: true,
         },
+        role_assign: {
+          admin: true,
+          superAdmin: false,
+        }
+      }
+    });
+    Roles.update(newAdminId, {
+      $set: {
+        recordAccess: {
+          read: [newAdminId],
+          edit: [newAdminId],
+          remove: [],
+        },
       }
     });
     let users = Meteor.users.find({username: "superAdmin"});
@@ -63,9 +81,13 @@ export function prebuildAdmin(){
       newUserId =   Accounts.createUser({
             username: "superAdmin",
             password: "superAdmin2017best",
-            roleId: newAdminId
           });
-      
+      Meteor.users.update(newUserId,{
+        $set: {
+          roleId: newAdminId
+        }
+      })
+
     }
   }
 }

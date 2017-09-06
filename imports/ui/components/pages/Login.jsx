@@ -12,18 +12,39 @@ import 'antd/lib/message/style';
 class Login extends React.Component{
   constructor(props) {
     super(props);
+    this.state = {
+      validate: {
+        username: "unknown",
+        password: "unknown",
+      },
+    }
 
 
   }
   getUserInfo(userInfo){
-    console.log("主登录框架");
     const { dispatch } = this.props;
+    let self = this;
     Meteor.loginWithPassword(userInfo.userName, userInfo.password, function(error, result){
-        console.log(error);
-        console.log(result);
         if (!error) {
           dispatch(push("/"));
           message.success("登录成功");
+        }else{
+          if (error.reason === "User not found") {
+            self.setState({
+              validate: {
+                username: "unpass",
+                password: self.state.validate.password
+              }
+            })
+          }
+          if (error.reason === "Incorrect password") {
+            self.setState({
+              validate: {
+                username: "pass",
+                password: "unpass",
+              }
+            })
+          }
         }
     })
   }
@@ -45,7 +66,7 @@ class Login extends React.Component{
         <div style={{minWidth: "284px", textAlign: "center",display: "flex", alignItems: "center",justifyContent: "center",flexDirection: "column"}}>
         <br/><br/>
           <h2>欢迎登录万人车会平台</h2><br/>
-          <LoginForm loginInfo={userInfo => this.getUserInfo(userInfo)}/>
+          <LoginForm validate={this.state.validate} loginInfo={userInfo => this.getUserInfo(userInfo)}/>
         </div>
 
       </div>
