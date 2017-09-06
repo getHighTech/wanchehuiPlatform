@@ -33,7 +33,7 @@ class EventJob {
       return null;
     }
 
-    let job = EventJobs.findOne({username: obj.eventName});
+    let job = EventJobs.findOne({eventName: obj.eventName});
     if (job) {
       initJob(job);
     }else{
@@ -61,6 +61,7 @@ class EventJob {
     this.basicAction = job.basicAction;
     this.editable = job.editable;
     this.deletable = job.deletable;
+    this.isHidden = job.isHidden;
     this.status = 1;
   }
   execute(eventName, userParams){
@@ -94,7 +95,7 @@ class EventJob {
         this.positive();
       }
       if (this.userParams.lastReturnParam === false) {
-        this.nagitive(); 
+        this.nagitive();
       }
     }
 

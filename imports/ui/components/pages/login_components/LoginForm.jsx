@@ -34,12 +34,34 @@ class LoginWrap extends Component {
   handleSubmit = (e) => {
       e.preventDefault();
       let self = this;
+
       if (!this.checkBlank(this.props.form)) {
         return false;
       }
       this.props.form.validateFields((err, values) => {
         if (!err) {
-          this.setState({
+          if (values.userName == undefined) {
+            self.setState({
+              username: {
+                validateStatus: "error",
+                help: "用户名不得为空",
+                hasFeedback: true,
+              },
+            });
+            return false;
+          }
+          if (values.password == undefined) {
+            self.setState({
+              password: {
+                validateStatus: "error",
+                help: "密码不得为空",
+                hasFeedback: true,
+              },
+            });
+            return false;
+          }
+
+          self.setState({
             username: {
               validateStatus: "validating",
               help: "正在验证",
@@ -83,7 +105,6 @@ class LoginWrap extends Component {
     }
 
     componentWillReceiveProps(nextProps){
-
       if (nextProps.validate.username === "unknown"){
         this.setState({
           username: {

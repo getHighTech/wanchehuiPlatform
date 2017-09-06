@@ -17,6 +17,7 @@ import '../../api/orders/methods.js';
 import '../../api/paycodes/methods.js';
 import '../../api/card_auths/methods.js';
 import '../../api/blockchain/methods.js';
+import '../../api/roles/methods.js';
 import '../../api/devices/methods.js';
 import '/imports/api/images/images.js';
 import '../../api/pages/server/publications.js';

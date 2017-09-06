@@ -63,7 +63,8 @@ export function prebuildAdmin(){
         role_assign: {
           admin: true,
           superAdmin: false,
-        }
+        },
+        users: [],
       }
     });
     Roles.update(newAdminId, {
@@ -86,7 +87,12 @@ export function prebuildAdmin(){
         $set: {
           roleId: newAdminId
         }
-      })
+      }),
+      Roles.update(newAdminId, {
+        $set: {
+          users: [newUserId]
+        }
+      });
 
     }
   }

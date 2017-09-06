@@ -6,6 +6,7 @@ import { push, replace, goBack } from 'react-router-redux';
 
 import { connect } from 'react-redux';
 import message from 'antd/lib/message';
+import "antd/lib/message/style";
 import Icon from 'antd/lib/icon';
 import Menu from 'antd/lib/menu';
 import Layout from 'antd/lib/layout';
@@ -13,7 +14,7 @@ const { Header, Content, Footer, Sider } = Layout;
 import "antd/lib/layout/style";
 import "antd/lib/menu/style";
 import "antd/lib/icon/style";
-import "antd/lib/message/style";
+
 
 import PageHeader from "./PageHeader.jsx";
 import { createContainer } from 'meteor/react-meteor-data';
@@ -35,8 +36,8 @@ class MainLayout extends Component {
 
 
   render() {
-    let roles = this.props.roles;
-    console.log(roles);
+    // let role = this.props.current_role;
+    // console.log(role);
     return (
       <Layout>
         <Sider
@@ -104,9 +105,9 @@ function mapStateToProps(state) {
 
 export default createContainer(() => {
   if (Meteor.userId()) {
-    Meteor.subscribe('roles.all');
+    Meteor.subscribe('roles.current');
   }
   return {
-    roles: Roles.find({}).fetch(),
+    current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
   };
 }, connect(mapStateToProps)(MainLayout));

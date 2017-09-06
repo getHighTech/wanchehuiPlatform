@@ -11,7 +11,8 @@ import "antd/lib/button/style";
 import "antd/lib/checkbox/style";
 const FormItem = Form.Item;
 import {Link} from 'react-router'
-
+import message from 'antd/lib/message';
+import "antd/lib/message/style";
 
 class LoginForgotFormStepOneWrap extends Component {
 
@@ -26,13 +27,65 @@ class LoginForgotFormStepOneWrap extends Component {
     }
 
   }
+  checkBlank(form){
+    //判断空值的验证
+    if (form.getFieldValue("userName") == "") {
+      this.setState({
+        username: {
+          validateStatus: "error",
+          help: "用户名不得为空",
+          hasFeedback: true,
+        },
+      });
+      return false;
+    }else{
+      this.setState({
+        username: {
+          validateStatus: "success",
+          help: "",
+          hasFeedback: false,
+        },
+      });
+      return true;
+    }
+    return false;
+
+  }
+
+  componentWillReceiveProps(nextProps){
+
+    this.checkBlank(nextProps.form);
+  }
   handleSubmit = (e) => {
       e.preventDefault();
       let self = this;
+      if (!this.checkBlank(this.props.form)) {
+        return false;
+      }
       this.props.form.validateFields((err, values) => {
         if (!err) {
-
-          console.log(values);
+          if (values.userName == undefined) {
+            self.setState({
+              username: {
+                validateStatus: "error",
+                help: "用户名不得为空",
+                hasFeedback: true,
+              },
+            });
+            return false;
+          }
+          Meteor.call("role.by.username", values.userName, function(error, result){
+            if (!error) {
+              if (!result) {
+                message.warning('此用户并不存在!');
+                return false;
+              }
+              if (result.accesses.isSuper) {
+                message.warning('您的超级管理员，不允许修改密码!');
+                return false;
+              }
+            }
+          })
 
         }
       });
@@ -47,9 +100,7 @@ class LoginForgotFormStepOneWrap extends Component {
             label="用户名"
             validateStatus={this.state.username.validateStatus} hasFeedback={this.state.username.hasFeedback} help={this.state.username.help}
           >
-          {getFieldDecorator('userName', {
-            rules: [{ required: true, message: '请输入您的用户名' }],
-          })(
+          {getFieldDecorator('userName')(
             <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />
           )}
           </FormItem>
