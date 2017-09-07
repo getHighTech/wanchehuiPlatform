@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Checkbox from 'antd/lib/checkbox';
 import Button from 'antd/lib/button';
 import Input from 'antd/lib/input';
 import Icon from 'antd/lib/icon';
@@ -7,12 +8,13 @@ import "antd/lib/form/style";
 import "antd/lib/icon/style";
 import "antd/lib/input/style";
 import "antd/lib/button/style";
+import "antd/lib/checkbox/style";
 const FormItem = Form.Item;
 import {Link} from 'react-router'
 import message from 'antd/lib/message';
 import "antd/lib/message/style";
 
-class LoginForgotFormStepOneWrap extends Component {
+class NewMemberApplyWrap extends Component {
 
   constructor(props){
     super(props);
@@ -112,5 +114,5 @@ class LoginForgotFormStepOneWrap extends Component {
     }
   }
 
-const LoginForgotFormStepOne = Form.create()(LoginForgotFormStepOneWrap);
-export default LoginForgotFormStepOne;
+const NewMemberApplyForm = Form.create()(NewMemberApplyWrap);
+export default NewMemberApplyForm;

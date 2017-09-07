@@ -9,6 +9,7 @@ import Login from '/imports/ui/components/pages/Login';
 import LoginForgot from '/imports/ui/components/pages/LoginForgot';
 import Users from '/imports/ui/components/pages/Users';
 import DashBoard from '/imports/ui/components/pages/DashBoard';
+import NewMemberApply from '/imports/ui/components/pages/NewMemberApply';
 
 
 const store = configureStore();
@@ -23,6 +24,7 @@ const Routes = ({ location }) =>
     </Route>
     <Route path="/login" component={Login}/>
     <Route path="/login/forgot" component={LoginForgot}/>
+    <Route path="/new_member/apply" component={NewMemberApply}/>
     <Route path="/*" component={Login}/>
   </Router>
   </Provider>;

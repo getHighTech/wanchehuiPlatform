@@ -134,15 +134,7 @@ class LoginWrap extends Component {
             help: "用户不存在",
             hasFeedback: true
           },
-        })
-      }
-      if (nextProps.validate.username === "pass") {
-        this.setState({
-          username: {
-            validateStatus: "success",
-            help: "",
-            hasFeedback: true
-          },
+
         })
       }
       if (nextProps.validate.password === "unpass") {
@@ -180,7 +172,7 @@ class LoginWrap extends Component {
             <Button type="primary" htmlType="submit" className="login-form-button">
               登录
             </Button>
-            或者 <a href="">申请成为万人车汇合作者</a>
+            或者 <Link to="/new_member/apply">申请成为万人车汇合作者</Link>
           </FormItem>
         </Form>
       );
