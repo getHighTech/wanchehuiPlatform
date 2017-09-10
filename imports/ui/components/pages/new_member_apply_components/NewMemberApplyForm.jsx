@@ -58,46 +58,13 @@ class NewMemberApplyWrap extends Component {
 
     this.checkBlank(nextProps.form);
   }
-  handleSubmit = (e) => {
-      e.preventDefault();
-      let self = this;
-      if (!this.checkBlank(this.props.form)) {
-        return false;
-      }
-      this.props.form.validateFields((err, values) => {
-        if (!err) {
-          if (values.userName == undefined) {
-            self.setState({
-              username: {
-                validateStatus: "error",
-                help: "用户名不得为空",
-                hasFeedback: true,
-              },
-            });
-            return false;
-          }
-          Meteor.call("role.by.username", values.userName, function(error, result){
-            if (!error) {
-              if (!result) {
-                message.warning('此用户并不存在!');
-                return false;
-              }
-              if (result.accesses.isSuper) {
-                message.warning('您的超级管理员，不允许修改密码!');
-                return false;
-              }
-            }
-          })
 
-        }
-      });
-    }
 
 
     render() {
       const { getFieldDecorator } = this.props.form;
       return (
-        <Form onSubmit={this.handleSubmit} className="login-form" id="">
+        <Form  className="login-form" id="">
           <FormItem
             label="您的称呼"
             validateStatus={this.state.username.validateStatus} hasFeedback={this.state.username.hasFeedback} help={this.state.username.help}
