@@ -13,6 +13,8 @@ const FormItem = Form.Item;
 import {Link} from 'react-router'
 import message from 'antd/lib/message';
 import "antd/lib/message/style";
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 class NewMemberApplyWrap extends Component {
 
@@ -97,18 +99,41 @@ class NewMemberApplyWrap extends Component {
       return (
         <Form onSubmit={this.handleSubmit} className="login-form" id="">
           <FormItem
-            label="用户名"
+            label="您的称呼"
             validateStatus={this.state.username.validateStatus} hasFeedback={this.state.username.hasFeedback} help={this.state.username.help}
           >
-          {getFieldDecorator('userName')(
+          {getFieldDecorator('applyName')(
+            <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />
+          )}
+          </FormItem>
+          <FormItem
+            label="你的邮箱"
+            validateStatus={this.state.username.validateStatus} hasFeedback={this.state.username.hasFeedback} help={this.state.username.help}
+          >
+          {getFieldDecorator('applyEmail')(
+            <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />
+          )}
+          </FormItem>
+          <FormItem
+            label="您的联系电话"
+            validateStatus={this.state.username.validateStatus} hasFeedback={this.state.username.hasFeedback} help={this.state.username.help}
+          >
+          {getFieldDecorator('applyMobile')(
             <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />
           )}
           </FormItem>
           <FormItem
             wrapperCol={{ span: 12, offset: 6 }}
           >
+            <Editor />
+          </FormItem>
+          <FormItem
+            wrapperCol={{ span: 12, offset: 6 }}
+          >
             <Button type="primary" htmlType="submit">下一步</Button>
           </FormItem>
+
+
         </Form>
       );
     }
