@@ -21,6 +21,10 @@ class Login extends React.Component{
 
 
   }
+  handleSubmit = (e) => {
+    
+  }
+
   getUserInfo(userInfo){
     const { dispatch } = this.props;
     let self = this;
