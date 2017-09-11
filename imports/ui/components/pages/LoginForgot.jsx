@@ -11,13 +11,6 @@ class LoginForgot extends React.Component{
     super(props);
 
   }
-  handleSubmitForm1(){
-    console.log("123");
-  }
-
-
-
-
 
   render() {
     return (

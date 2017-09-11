@@ -90,9 +90,12 @@ class NewMemberApplyWrap extends Component {
           )}
           </FormItem>
           <FormItem
-            wrapperCol={{ span: 12, offset: 6 }}
+          label="尽情介绍一下您的情况吧"
           >
-            <Editor />
+          {getFieldDecorator('applyMobile')(
+              <Editor />
+          )}
+
           </FormItem>
           <FormItem
             wrapperCol={{ span: 12, offset: 6 }}
