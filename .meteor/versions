@@ -81,6 +81,7 @@ mongo@1.2.0
 mongo-dev-server@1.0.1
 mongo-id@1.0.6
 mongo-livedata@1.0.12
+nimble:restivus@0.8.12
 nitrolabs:cdn@1.3.0
 npm-bcrypt@0.9.3
 npm-mongo@2.2.30
@@ -106,6 +107,7 @@ rzymek:moment-locale-zh-cn@2.14.1
 service-configuration@1.0.11
 session@1.1.7
 sha@1.0.9
+simple:json-routes@2.1.0
 spacebars@1.0.15
 spacebars-compiler@1.1.3
 srp@1.0.10

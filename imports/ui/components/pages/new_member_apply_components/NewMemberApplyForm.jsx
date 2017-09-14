@@ -97,17 +97,17 @@ class NewMemberApplyWrap extends Component {
       });
     }
     uploadImageCallBack(file) {
-      console.log(file);
+      console.log(file.type);
+
       return new Promise(
         (resolve, reject) => {
-          // const client = new upyun.Client(service[, options][, getHeaderSignCallback])
-          const xhr = new XMLHttpRequest();
-          xhr.open('GET', 'http://gegeyun.b0.aicdn.com/gegeyun/');
-          xhr.setRequestHeader('Authorization', 'Basic moobWt2PQbZkT8/iTjmuL4cUdwI=');
-          const data = new FormData();
-          data.append('image', file);
-
-          xhr.send(data);
+          // const xhr = new XMLHttpRequest();
+          // xhr.open('GET', 'http://gegeyun.b0.aicdn.com/gegeyun/');
+          // xhr.setRequestHeader('Authorization', 'Basic moobWt2PQbZkT8/iTjmuL4cUdwI=');
+          // const data = new FormData();
+          // data.append('image', file);
+          //
+          // xhr.send(data);
           // xhr.addEventListener('load', () => {
           //   const response = JSON.parse(xhr.responseText);
           //   resolve(response);
@@ -167,7 +167,12 @@ class NewMemberApplyWrap extends Component {
                   textAlign: { inDropdown: true },
                   link: { inDropdown: true },
                   history: { inDropdown: true },
-                  image: { uploadCallback: this.uploadImageCallBack.bind(this), alt: { present: true, mandatory: true } },
+                  image: {
+                    uploadCallback: this.uploadImageCallBack.bind(this), alt: { present: false, mandatory: false },
+                    urlEnabled: true,
+                    uploadEnabled: true,
+                    inputAccept: 'image/gif,image/jpeg,image/jpg,image/png,image/svg',
+                  },
                 }}
                 />
           )}
