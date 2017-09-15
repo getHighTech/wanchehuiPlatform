@@ -1,5 +1,5 @@
 var imageStore = new FS.Store.GridFS('images', {
-  mongoUrl: "mongodb://simontaosim:7686043104xsq@45.77.20.138:27017/wanchehui"
+  mongoUrl: "mongodb://120.27.22.78:27017/wanchehui"
 });
 let images = new FS.Collection('images', {
  stores: [imageStore]

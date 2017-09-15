@@ -22,7 +22,7 @@ Meteor.methods({
     var title = "万车汇订单";
     var amount = price.toString();
 
-    var uuid = require('node-uuid');
+    var uuid = require('uuid');
     var outTradeNo = uuid.v4();
     outTradeNo = outTradeNo.replace(/-/g, '');
 

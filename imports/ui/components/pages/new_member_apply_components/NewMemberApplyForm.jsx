@@ -50,13 +50,96 @@ class NewMemberApplyWrap extends Component {
     }
 
   }
+  //判断文本编辑器是否为空
+  checkBlockBlank(blocks){
+    if (blocks.length<=1) {
+      if (blocks[0].text == "") {
+        //=========更改状态
+        this.setState({
+          applyIntro: {
+            validateStatus: "error",
+            help: "麻烦介绍你自己嘛",
+            hasFeedback: true,
+          },
+
+        });
+        //=============
+        return false;
+      }else{
+        this.setState({
+          applyIntro: {
+            validateStatus: "success",
+            help: "",
+            hasFeedback: false,
+          },
+        });
+      }
+
+    }
+    return true;
+  }
+
   checkBlank(form){
     //判断空值的验证
-    if (form.getFieldValue("userName") == "") {
+    if (form.getFieldValue("applyIntro") == undefined) {
+      this.setState({
+        applyIntro: {
+          validateStatus: "error",
+          help: "麻烦介绍你自己不",
+          hasFeedback: true,
+        },
+
+      });
+    }else {
+      //文本块行数
+        let blocks = form.getFieldValue("applyIntro").blocks;
+        this.checkBlockBlank(blocks);
+
+    }
+
+    if (form.getFieldValue("applyName") == "") {
       this.setState({
         applyName: {
           validateStatus: "error",
-          help: "用户名不得为空",
+          help: "请填写您的称谓",
+          hasFeedback: true,
+        },
+
+      });
+    }else{
+      this.setState({
+        applyName: {
+          validateStatus: "success",
+          help: "",
+          hasFeedback: false,
+        },
+      });
+    }
+    //判断空值的验证
+    if (form.getFieldValue("applyMobile") == "") {
+      this.setState({
+        applyMobile: {
+          validateStatus: "error",
+          help: "请填写您的联系手机",
+          hasFeedback: true,
+        },
+
+      });
+    }else{
+      this.setState({
+        applyMobile: {
+          validateStatus: "success",
+          help: "",
+          hasFeedback: false,
+        },
+      });
+    }
+    //判断空值的验证
+    if (form.getFieldValue("applyEmail") == "") {
+      this.setState({
+        applyEmail: {
+          validateStatus: "error",
+          help: "请填写您的邮箱",
           hasFeedback: true,
         },
 
@@ -64,7 +147,7 @@ class NewMemberApplyWrap extends Component {
       return false;
     }else{
       this.setState({
-        applyName: {
+        applyEmail: {
           validateStatus: "success",
           help: "",
           hasFeedback: false,
@@ -83,12 +166,74 @@ class NewMemberApplyWrap extends Component {
   }
   handleSubmit = (e) => {
       e.preventDefault();
-      console.log("这是");
+      this.checkBlank(this.props.form);
+      let self = this;
       this.props.form.validateFields((err, values) => {
         if (!err) {
-          console.log(values);
+
+          if (values.applyName == undefined) {
+            this.setState({
+              applyName: {
+                validateStatus: "error",
+                help: "请填写您的称谓",
+                hasFeedback: true,
+              },
+
+            });
+
+          }
+          if (values.applyEmail == undefined) {
+            this.setState({
+              applyEmail: {
+                validateStatus: "error",
+                help: "请填写您的邮箱",
+                hasFeedback: true,
+              },
+
+            });
+          }
+          if (values.applyMobile == undefined) {
+            this.setState({
+              applyMobile: {
+                validateStatus: "error",
+                help: "请填写您的手机号",
+                hasFeedback: true,
+              },
+
+            });
+          }
+
+          if (values.applyIntro == undefined) {
+            this.setState({
+              applyIntro: {
+                validateStatus: "error",
+                help: "麻烦介绍一下您呢",
+                hasFeedback: true,
+              },
+
+            });
+            return false;
+          }
+          let blocks =  values.applyIntro.blocks;
+          if (!this.checkBlockBlank(blocks)) {
+              return false;
+          }
+          //提交的表单验证完毕
+          //开始将表单提交到数据库
+          let htmlcontent = draftToHtml(convertToRaw(self.state.contentState.getCurrentContent()));
+          Meteor.call("partners.apply",
+          values.applyName, values.applyEmail,
+          values.applyMobile, htmlcontent,
+          function(error, result){
+            console.error(error);
+            console.log(result);
+          });
+
+
+
         }
       });
+
     }
 
     onEditorStateChange(editorState) {
@@ -125,7 +270,7 @@ class NewMemberApplyWrap extends Component {
       const { contentState } = this.state;
       const { getFieldDecorator } = this.props.form;
 
-      console.log(draftToHtml(convertToRaw(contentState.getCurrentContent())));
+      console.log();
       return (
         <Form onSubmit={this.handleSubmit}  className="login-form" id="">
           <FormItem
@@ -141,7 +286,7 @@ class NewMemberApplyWrap extends Component {
             validateStatus={this.state.applyEmail.validateStatus} hasFeedback={this.state.applyEmail.hasFeedback} help={this.state.applyEmail.help}
           >
           {getFieldDecorator('applyEmail')(
-            <Input prefix={<Icon type="mail" style={{ fontSize: 13 }} />} placeholder="邮箱" />
+            <Input type="email" prefix={<Icon type="mail" style={{ fontSize: 13 }} />} placeholder="邮箱" />
           )}
           </FormItem>
           <FormItem
@@ -154,6 +299,7 @@ class NewMemberApplyWrap extends Component {
           </FormItem>
           <FormItem
           label="尽情介绍一下您的情况吧"
+          validateStatus={this.state.applyIntro.validateStatus} hasFeedback={this.state.applyIntro.hasFeedback} help={this.state.applyIntro.help}
           >
           {getFieldDecorator('applyIntro')(
               <Editor
