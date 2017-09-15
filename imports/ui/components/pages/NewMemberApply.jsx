@@ -42,7 +42,7 @@ class LoginForgot extends React.Component{
 }
 function mapStateToProps(state) {
   return {
-
+    new_member_apply: state.NewMemberApply
    };
 }
 
