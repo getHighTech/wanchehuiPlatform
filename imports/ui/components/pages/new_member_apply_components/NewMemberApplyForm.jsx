@@ -16,7 +16,7 @@ import "antd/lib/message/style";
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
-import { EditorState, convertToRaw } from 'draft-js';
+import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 
 class NewMemberApplyWrap extends Component {
@@ -47,6 +47,27 @@ class NewMemberApplyWrap extends Component {
       },
       contentState: EditorState.createEmpty(),
 
+    };
+
+
+  }
+  componentDidMount(){
+    const html = this.props.applyInfo.applyIntro;
+    console.log(html);
+    const contentBlock = htmlToDraft(html);
+    const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+    const editorState = EditorState.createWithContent(contentState);
+    this.setState({
+      contentState: editorState,
+    });
+    if (this.props.applyInfo.applyName != "") {
+      //保持住填写的内容
+
+      this.props.form.setFieldsValue({
+          applyName: this.props.applyInfo.applyName,
+          applyEmail: this.props.applyInfo.applyEmail,
+          applyMobile: this.props.applyInfo.applyMobile,
+      });
     }
 
   }
@@ -81,6 +102,7 @@ class NewMemberApplyWrap extends Component {
 
   checkBlank(form){
     //判断空值的验证
+
     if (form.getFieldValue("applyIntro") == undefined) {
       this.setState({
         applyIntro: {
@@ -95,6 +117,15 @@ class NewMemberApplyWrap extends Component {
         let blocks = form.getFieldValue("applyIntro").blocks;
         this.checkBlockBlank(blocks);
 
+    }
+    if (this.props.applyInfo.applyIntro != undefined) {
+      this.setState({
+        applyIntro: {
+          validateStatus: "success",
+          help: "",
+          hasFeedback: false,
+        },
+      });
     }
 
     if (form.getFieldValue("applyName") == "") {
@@ -172,7 +203,7 @@ class NewMemberApplyWrap extends Component {
         if (!err) {
 
           if (values.applyName == undefined) {
-            this.setState({
+            self.setState({
               applyName: {
                 validateStatus: "error",
                 help: "请填写您的称谓",
@@ -180,10 +211,10 @@ class NewMemberApplyWrap extends Component {
               },
 
             });
-
+            return false;
           }
           if (values.applyEmail == undefined) {
-            this.setState({
+            self.setState({
               applyEmail: {
                 validateStatus: "error",
                 help: "请填写您的邮箱",
@@ -191,9 +222,10 @@ class NewMemberApplyWrap extends Component {
               },
 
             });
+              return false;
           }
           if (values.applyMobile == undefined) {
-            this.setState({
+            self.setState({
               applyMobile: {
                 validateStatus: "error",
                 help: "请填写您的手机号",
@@ -201,10 +233,11 @@ class NewMemberApplyWrap extends Component {
               },
 
             });
+            return false;
           }
 
           if (values.applyIntro == undefined) {
-            this.setState({
+            self.setState({
               applyIntro: {
                 validateStatus: "error",
                 help: "麻烦介绍一下您呢",
@@ -215,19 +248,15 @@ class NewMemberApplyWrap extends Component {
             return false;
           }
           let blocks =  values.applyIntro.blocks;
-          if (!this.checkBlockBlank(blocks)) {
+          if (!self.checkBlockBlank(blocks)) {
               return false;
           }
           //提交的表单验证完毕
           //开始将表单提交到数据库
           let htmlcontent = draftToHtml(convertToRaw(self.state.contentState.getCurrentContent()));
-          Meteor.call("partners.apply",
-          values.applyName, values.applyEmail,
-          values.applyMobile, htmlcontent,
-          function(error, result){
-            console.error(error);
-            console.log(result);
-          });
+          self.props.synicFormInfo(
+            values.applyName, values.applyEmail, values.applyMobile, htmlcontent
+          );
 
 
 
@@ -270,7 +299,6 @@ class NewMemberApplyWrap extends Component {
       const { contentState } = this.state;
       const { getFieldDecorator } = this.props.form;
 
-      console.log();
       return (
         <Form onSubmit={this.handleSubmit}  className="login-form" id="">
           <FormItem
@@ -278,7 +306,7 @@ class NewMemberApplyWrap extends Component {
             validateStatus={this.state.applyName.validateStatus} hasFeedback={this.state.applyName.hasFeedback} help={this.state.applyName.help}
           >
           {getFieldDecorator('applyName')(
-            <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="您的姓名" />
+            <Input  prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="您的姓名" />
           )}
           </FormItem>
           <FormItem
@@ -304,6 +332,8 @@ class NewMemberApplyWrap extends Component {
           {getFieldDecorator('applyIntro')(
               <Editor
               onEditorStateChange={this.onEditorStateChange.bind(this)}
+               initialEditorState={contentState}
+                 editorState={contentState}
               localization={{
                 locale: 'zh',
               }}
