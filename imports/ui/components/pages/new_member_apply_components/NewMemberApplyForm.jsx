@@ -97,6 +97,7 @@ class NewMemberApplyWrap extends Component {
       }
 
     }
+
     return true;
   }
 
@@ -247,13 +248,14 @@ class NewMemberApplyWrap extends Component {
             });
             return false;
           }
+          let htmlcontent = draftToHtml(convertToRaw(self.state.contentState.getCurrentContent()));
+          console.log(values.applyIntro);
           let blocks =  values.applyIntro.blocks;
           if (!self.checkBlockBlank(blocks)) {
               return false;
           }
           //提交的表单验证完毕
           //开始将表单提交到数据库
-          let htmlcontent = draftToHtml(convertToRaw(self.state.contentState.getCurrentContent()));
           self.props.synicFormInfo(
             values.applyName, values.applyEmail, values.applyMobile, htmlcontent
           );
