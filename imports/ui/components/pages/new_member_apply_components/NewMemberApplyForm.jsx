@@ -23,6 +23,11 @@ class NewMemberApplyWrap extends Component {
 
   constructor(props){
     super(props);
+    const html = this.props.applyInfo.applyIntro;
+    const contentBlock = htmlToDraft(html);
+    const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+    const editorState = EditorState.createWithContent(contentState);
+
     this.state = {
       applyName: {
         validateStatus: "success",
@@ -45,21 +50,14 @@ class NewMemberApplyWrap extends Component {
         help: "",
         hasFeedback: false
       },
-      contentState: EditorState.createEmpty(),
+      contentState: editorState,
 
     };
 
 
   }
   componentDidMount(){
-    const html = this.props.applyInfo.applyIntro;
-    console.log(html);
-    const contentBlock = htmlToDraft(html);
-    const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-    const editorState = EditorState.createWithContent(contentState);
-    this.setState({
-      contentState: editorState,
-    });
+
     if (this.props.applyInfo.applyName != "") {
       //保持住填写的内容
 
@@ -234,10 +232,10 @@ class NewMemberApplyWrap extends Component {
               },
 
             });
-            return false;
           }
-
-          if (values.applyIntro == undefined) {
+          let htmlcontent = draftToHtml(convertToRaw(self.state.contentState.getCurrentContent()));
+          const contentBlock = htmlToDraft(htmlcontent);
+          if (contentBlock == undefined) {
             self.setState({
               applyIntro: {
                 validateStatus: "error",
@@ -248,10 +246,9 @@ class NewMemberApplyWrap extends Component {
             });
             return false;
           }
-          let htmlcontent = draftToHtml(convertToRaw(self.state.contentState.getCurrentContent()));
-          console.log(values.applyIntro);
-          let blocks =  values.applyIntro.blocks;
-          if (!self.checkBlockBlank(blocks)) {
+
+
+          if (!self.checkBlockBlank(contentBlock)) {
               return false;
           }
           //提交的表单验证完毕

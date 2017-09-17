@@ -16,7 +16,12 @@ class NewMemberApplyConfirm extends React.Component{
 
   render() {
     return (
-      <div>这是一个页面的基本机构，可以抄写</div>
+      <div style={{padding: "20px"}}>
+        <div style={{minWidth: "284px", textAlign: "center",display: "flex", alignItems: "center",justifyContent: "center",flexDirection: "column"}}>
+        <br/><br/>
+        <h2>确认以下信息</h2>
+        </div>
+     </div>
     )
   }
 }
