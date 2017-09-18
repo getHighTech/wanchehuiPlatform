@@ -8,7 +8,45 @@ import 'antd/lib/card/style';
 class DashBoard extends React.Component{
   constructor(props) {
     super(props);
+    this.state = {
+      allUsersMount: 0,
+      allCardsMount: 0,
 
+    }
+
+  }
+
+  updateUsersCount(){
+
+    let self  = this;
+    Meteor.call("users.count", function(error, result){
+
+      if (!error) {
+        self.setState({
+          allUsersMount: result
+        });
+      }
+    });
+  }
+
+  updateUsersCardsCount(){
+
+    let self = this;
+    Meteor.call("users.cards.count", function(error, result){
+      if (!error) {
+        self.setState({
+          allCardUsersMount: result
+        })
+      }
+    });
+  }
+
+  componentDidMount(){
+
+    let self = this;
+
+    this.updateUsersCount();
+    this.updateUsersCardsCount();
   }
 
 
@@ -23,11 +61,11 @@ class DashBoard extends React.Component{
             flexDirection: 'row',
             flexWrap: 'wrap',
             justifyContent: 'center' }}>
-            <Card title="总共的注册量：">
-              
+            <Card title="总共的注册量：" extra={<a href="/"></a>}>
+                {this.state.allUsersMount}
             </Card>
-            <Card title="总持卡人数:" >
-
+            <Card title="总持卡人数:" extra={<a href="/">进入文件管理</a>}>
+                {this.state.allCardUsersMount}
             </Card>
             <Card title="今日新增注册量:" >
 

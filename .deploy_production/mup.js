@@ -1,10 +1,10 @@
 module.exports = {
   servers: {
     one: {
-      host: '45.76.54.233',
+      host: '118.190.201.161',
       username: 'root',
       // pem:
-      password: '9Lb_E_8s37%uuBYr'
+      password: '7686043104Xsq@519'
       // or leave blank for authenticate from ssh-agent
     }
   },
@@ -21,8 +21,8 @@ module.exports = {
     },
     env: {
       PORT: 80,
-      ROOT_URL: 'http://platform.cosgoal.com',
-      MONGO_URL: "mongodb://simontaosim:7686043104xsq@45.77.20.138:27017/wanchehui"
+      ROOT_URL: 'http://p.cosgoal.com',
+      MONGO_URL: "mongodb://120.27.22.78:27017/wanchehui"
     },
 
     docker: {
