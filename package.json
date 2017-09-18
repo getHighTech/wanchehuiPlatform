@@ -10,6 +10,7 @@
     "bcrypt": "^1.0.3",
     "draftjs-to-html": "^0.7.5",
     "html-to-draftjs": "0.1.0-beta15",
+    "html-to-react": "^1.2.11",
     "indexof": "0.0.1",
     "qiniu-js": "^1.0.22",
     "react": "^15.6.1",

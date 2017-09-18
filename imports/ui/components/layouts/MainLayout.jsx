@@ -22,6 +22,9 @@ import { Roles } from '/imports/api/roles/roles.js';
 class MainLayout extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      menuActiveKey: "dashboard"
+    }
 
   }
   componentDidMount(){
@@ -31,7 +34,31 @@ class MainLayout extends Component {
       dispatch(push("/login"));
       message.warning("请先登录！")
     }
+    const pathname = this.props.routing.locationBeforeTransitions.pathname;
+    switch (pathname) {
+      case "/":
+      this.setState({
+        menuActiveKey: 'dashboard'
+      });
+      break;
+      default:
 
+    }
+
+  }
+  handleMenuItemClicked(item){
+    const key = item.key;
+    const { dispatch } = this.props;
+    switch (key) {
+      case 'dashboard':
+        dispatch(push('/'));
+        break;
+      case 'roles':
+        dispatch(push('/roles'))
+        break;
+      default:
+
+    }
   }
 
 
@@ -48,21 +75,24 @@ class MainLayout extends Component {
           }}
         >
           <div className="logo" />
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
-            <Menu.Item key="1">
+          <Menu theme="dark"
+          mode="inline" defaultSelectedKeys={[this.state.menuActiveKey]}
+          onClick={this.handleMenuItemClicked.bind(this)}
+          >
+            <Menu.Item key="dashboard">
+              <Icon type="bars" />
+              <span className="nav-text">控制面板</span>
+            </Menu.Item>
+            <Menu.Item key="users">
               <Icon type="user" />
-              <span className="nav-text">nav 1</span>
+              <span className="nav-text">用户管理</span>
             </Menu.Item>
-            <Menu.Item key="2">
-              <Icon type="video-camera" />
-              <span className="nav-text">nav 2</span>
+            <Menu.Item key="roles">
+              <Icon type="paper-clip" />
+              <span className="nav-text">角色管理</span>
             </Menu.Item>
-            <Menu.Item key="3">
-              <Icon type="upload" />
-              <span className="nav-text">nav 3</span>
-            </Menu.Item>
-            <Menu.Item key="4">
-              <Icon type="user" />
+            <Menu.Item key="setting">
+              <Icon type="setting" />
               <span className="nav-text">系统设置</span>
             </Menu.Item>
           </Menu>
@@ -102,6 +132,7 @@ class MainLayout extends Component {
 
 function mapStateToProps(state) {
   return {
+    routing: state.routing
    };
 }
 
