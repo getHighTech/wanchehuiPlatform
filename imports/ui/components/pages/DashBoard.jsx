@@ -5,6 +5,16 @@ import React from "react";
 import { connect } from 'react-redux';
 import Card from 'antd/lib/card/';
 import 'antd/lib/card/style';
+
+import Icon from 'antd/lib/icon';
+import "antd/lib/icon/style";
+
+import Button from 'antd/lib/button';
+import "antd/lib/button/style";
+
+import Tooltip from 'antd/lib/tooltip';
+import "antd/lib/tooltip/style";
+
 class DashBoard extends React.Component{
   constructor(props) {
     super(props);
@@ -54,6 +64,19 @@ class DashBoard extends React.Component{
 
 
   render() {
+
+    const CardExtra = () => (
+      <div>
+          <Tooltip placement="topLeft" title="刷新" arrowPointAtCenter>
+            <Button type="dashed" shape="circle" icon="reload" />
+          </Tooltip>
+
+          <Tooltip placement="topLeft" title="查看" arrowPointAtCenter>
+            <Button type="dashed" shape="circle" icon="eye-o" />
+          </Tooltip>
+      </div>
+    );
+
     return (
       <div style={{background: 'rgb(236, 236, 236)', position: 'relative', left: "-40px",
             padding: '5px',
@@ -61,19 +84,33 @@ class DashBoard extends React.Component{
             flexDirection: 'row',
             flexWrap: 'wrap',
             justifyContent: 'center' }}>
-            <Card title="总共的注册量：" extra={<a href="/"></a>}>
-                {this.state.allUsersMount}
+            <Card title="总共的注册量：" extra={
+              <CardExtra />
+            }>
+                <h1>{this.state.allUsersMount}</h1>
             </Card>
-            <Card title="总持卡人数:" extra={<a href="/">进入文件管理</a>}>
-                {this.state.allCardUsersMount}
+            <Card title="总持卡人数:" extra={
+              <CardExtra />
+
+            }>
+                <h1>{this.state.allCardUsersMount}</h1>
             </Card>
-            <Card title="今日新增注册量:" >
+            <Card title="今日新增注册量:" extra={
+              <CardExtra />
+
+            } >
 
             </Card>
-            <Card title="今日卡销量:" >
+            <Card title="今日卡销量:"  extra={
+              <CardExtra />
+
+            }>
 
             </Card>
-            <Card title="本周卡片销量:" >
+            <Card title="本周卡片销量:"  extra={
+              <CardExtra />
+
+            }>
 
             </Card>
       </div>
