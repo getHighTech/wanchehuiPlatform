@@ -12,8 +12,3 @@ export function findSuperAgencyByUserMobile(mobile){
   let agency = findSuperAgencyByUserMobile(mobile);
   return findSuperAgencyById(agency._id);
 }
-
-
-export function findOrCreateAgencyFromUser(userId){
-
-}
