@@ -3,6 +3,9 @@ import { Roles } from '../../api/roles/roles.js';
 export function prebuildAdmin(){
   let roles = Roles.find({name: "superAdmin"});
   let newAdminId = null;
+  if (roles.fetch()[0].deletable == undefined) {
+    Roles.remove({_id: roles.fetch()[0]._id});
+  }
   if (roles.count()==0) {
     newAdminId = Roles.insert({
       name: "superAdmin",
