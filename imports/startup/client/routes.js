@@ -9,6 +9,7 @@ import Login from '/imports/ui/components/pages/Login';
 import LoginForgot from '/imports/ui/components/pages/LoginForgot';
 import Users from '/imports/ui/components/pages/Users';
 import DashBoard from '/imports/ui/components/pages/DashBoard';
+import GiveCardToUsers from '/imports/ui/components/pages/GiveCardToUsers';
 import NewMemberApply from '/imports/ui/components/pages/NewMemberApply';
 import NewMemberApplyConfirm from '/imports/ui/components/pages/NewMemberApplyConfirm';
 
@@ -21,6 +22,7 @@ const Routes = ({ location }) =>
   <Router history={history}>
     <Route path="/" component={MainLayout} >
       <Route path="/users" component={Users}/>
+      <Route path="/give_card_to_users" component={GiveCardToUsers}/>
       <IndexRoute component={DashBoard} />
     </Route>
     <Route path="/login" component={Login}/>

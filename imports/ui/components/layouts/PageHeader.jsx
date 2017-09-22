@@ -12,7 +12,10 @@ const PageHeader = (path) => {
         return "区块链"
         break;
       case "/":
-        return "控制面板"
+        return "控制面板";
+        break;
+      case "/give_card_to_users":
+        return "分销链接数据丢失紧急补丁";
         break;
       default:
         return "未定义页面";

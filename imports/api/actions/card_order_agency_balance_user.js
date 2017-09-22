@@ -1,6 +1,6 @@
 export function userBuyCardFromAgencyByMobiles(userMobile, agencyMobile, carId){
   //验证order
-  let Order = findPaidOrderBy;
+  let Order = findPaidOrderBy
 }
 
 //特殊事件，用以找回丢失的数据和关系链

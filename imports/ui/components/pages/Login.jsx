@@ -9,6 +9,7 @@ import { push, replace, goBack } from 'react-router-redux';
 import message from 'antd/lib/message/';
 import 'antd/lib/message/style';
 
+
 class Login extends React.Component{
   constructor(props) {
     super(props);
@@ -22,7 +23,7 @@ class Login extends React.Component{
 
   }
   handleSubmit = (e) => {
-    
+
   }
 
   getUserInfo(userInfo){
