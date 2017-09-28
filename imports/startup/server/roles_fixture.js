@@ -3,10 +3,8 @@ import { Roles } from '../../api/roles/roles.js';
 export function prebuildAdmin(){
   let roles = Roles.find({name: "superAdmin"});
   let newAdminId = null;
-  if (roles.fetch()[0].deletable == undefined) {
-    Roles.remove({_id: roles.fetch()[0]._id});
-  }
-  if (roles.count()==0) {
+
+  if (roles.count()===0) {
     newAdminId = Roles.insert({
       name: "superAdmin",
       name_zh: "超级管理员",
@@ -79,25 +77,28 @@ export function prebuildAdmin(){
         },
       }
     });
-    let users = Meteor.users.find({username: "superAdmin"});
-    let newUserId = null;
-    if (users.count()==0) {
-      newUserId =   Accounts.createUser({
-            username: "superAdmin",
-            password: "superAdmin2017best",
-          });
-      console.log("超级管理员", newUserId);
-      Meteor.users.update(newUserId,{
-        $set: {
-          roleId: newAdminId
-        }
-      }),
-      Roles.update(newAdminId, {
-        $set: {
-          users: [newUserId]
-        }
-      });
 
-    }
   }
+  let users = Meteor.users.find({username: "superAdmin"});
+  let newUserId = null;
+  if (users.count() === 0) {
+    newUserId =   Accounts.createUser({
+          username: "superAdmin",
+          password: "superAdmin2017best",
+        });
+    console.log("超级管理员", newUserId);
+    Meteor.users.update(newUserId,{
+      $set: {
+        roleId: newAdminId
+      }
+    }),
+    Roles.update(newAdminId, {
+      $set: {
+        users: [newUserId]
+      }
+    });
+
+  }
+
+  return 1;
 }

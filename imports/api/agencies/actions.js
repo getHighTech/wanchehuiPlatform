@@ -2,11 +2,11 @@ import { Meteor } from 'meteor/meteor';
 import { Agencies } from './agencies.js';
 
 
-export functon findAgencyByUserId(userId){
+export function findAgencyByUserId(userId){
   return Agencies.findOne({userId});
 }
 
-export functon findAgencyByUserIdAndProductId(userId, productId){
+export function findAgencyByUserIdAndProductId(userId, productId){
   return Agencies.findOne({userId, productId});
 }
 
@@ -24,19 +24,19 @@ export function addNewAgency(userId, productId){
 
 
 
-export function findOrCreateAgencyByUserId(userId){
+export function findOrCreateAgencyByUserId(userId, productId){
   let agency = findAgencyByUserId(userId);
   if (agency) {
     return agency;
   }
-  agency = addNewAgency();
+  agency = addNewAgency(userId, productId);
   return agency;
 
 }
 
 export function updateSuperAgency(agencyId, superAgencyId){
   let agency = findAgencyById(agencyId);
-  return Agencies.update({
+  return Agencies.update(agencyId, {
     $set: {
       superAgencyId
     }
@@ -49,9 +49,14 @@ export function updateSuperAgencyFromUser(userId, superAgencyId){
 }
 
 export function findSuperAgencyById(id){
-  let agency = findAgencyById(id)
-  if (!agency.superAgencyId) {
+  let agency = findAgencyById(id);
+  if (agency.superAgencyId === undefined) {
     return null;
   }
-  return Agencies.findOne({superAgencyId: agency._id});
+  return Agencies.findOne({_id: agency.superAgencyId});
+}
+
+export function findSuperAgencyByUserId(userId){
+  let agency = findAgencyByUserId({_id: userId});
+  return findSuperAgencyById(agency._id);
 }

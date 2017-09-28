@@ -18,6 +18,7 @@ import "antd/lib/tooltip/style";
 class DashBoard extends React.Component{
   constructor(props) {
     super(props);
+    console.log(props);
     this.state = {
       allUsersMount: 0,
       allCardsMount: 0,

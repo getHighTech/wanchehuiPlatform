@@ -67,22 +67,39 @@ export function giveCardAndCouponsToUser(userId){
   })
 }
 
+export function checkUserHasCards(userId){
+  let user = findUserById(userId);
+  if (user.cards == undefined) {
+    return false;
+  }
+  return true;
+}
+
 
 export function findOrCreateUserByMobile(mobile){
-  let user =  Meteor.users.findOne({"profile.mobile": mobile});
+  let exists = false;
+  let user =  Meteor.users.findOne({"profile.mobile": mobile.toString()});
+  if (user) {
+
+    exists = true;
+  }
   if (user == undefined) {
     let user_id =   Accounts.createUser({
-          username: "mobile",
-          password: "mobile",
+          username: mobile.toString(),
+          password: mobile.toString(),
         });
       Meteor.users.update(user_id,{
           $set: {
-            "profile.mobile": mobile
+            "profile.mobile": mobile.toString()
           }
         });
     user = Meteor.users.findOne({_id: user_id});
   }
-  return user;
+
+  return {
+    exists,
+    user,
+  }
 }
 
 export function updateUsernameByMobile(mobile){

@@ -32,6 +32,7 @@ class Login extends React.Component{
     Meteor.loginWithPassword(userInfo.userName, userInfo.password, function(error, result){
         if (!error) {
           dispatch(push("/"));
+          console.log(result);
           message.success("登录成功");
         }else{
           if (error.reason === "User not found") {

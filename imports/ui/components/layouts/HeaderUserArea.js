@@ -18,10 +18,12 @@ import 'antd/lib/dropdown/style';
 class HeaderUserArea extends React.Component {
   constructor(props) {
     super(props);
-
+    let state = {
+      username: "载入中"
+    }
   }
   componentDidMount(){
-
+    // let username = Meteor.user().username;
   }
   loutOut(e){
     const { dispatch } = this.props;
@@ -36,15 +38,15 @@ class HeaderUserArea extends React.Component {
     const menu = (
       <Menu>
         <Menu.Item>
-        <Link to="/个人中心">
+        <Link to="/my">
           <Icon type="file-text" />
           <span className="nav-text">个人中心</span>
         </Link>
         </Menu.Item>
         <Menu.Item>
-        <Link to="/about">
+        <Link to="/messages">
           <Icon type="file-text" />
-          <span className="nav-text">个人资料</span>
+          <span className="nav-text">消息</span>
         </Link>
         </Menu.Item>
 

@@ -54,17 +54,30 @@ class MainLayout extends Component {
         dispatch(push('/'));
         break;
       case 'roles':
-        dispatch(push('/roles'))
+        dispatch(push('/roles'));
+        break;
+      case 'users':
+        dispatch(push('/users'));
+        break;
+      case 'orders':
+        dispatch(push('/orders'));
+        break;
+      case 'shops':
+        dispatch(push('/shops'));
+        break;
+      case 'settings':
+        dispatch(push('/settings'));
         break;
       default:
-
+        dispatch(push('/'));
+        break;
     }
   }
 
 
   render() {
-    // let role = this.props.current_role;
-    // console.log(role);
+    let role = this.props.current_role;
+    console.log(role);
     return (
       <Layout>
         <Sider
@@ -87,11 +100,19 @@ class MainLayout extends Component {
               <Icon type="user" />
               <span className="nav-text">用户管理</span>
             </Menu.Item>
+            <Menu.Item key="shops">
+              <Icon type="shop" />
+              <span className="nav-text">店铺管理</span>
+            </Menu.Item>
+            <Menu.Item key="orders">
+              <Icon type="book" />
+              <span className="nav-text">订单管理</span>
+            </Menu.Item>
             <Menu.Item key="roles">
               <Icon type="paper-clip" />
               <span className="nav-text">角色管理</span>
             </Menu.Item>
-            <Menu.Item key="setting">
+            <Menu.Item key="settings">
               <Icon type="setting" />
               <span className="nav-text">系统设置</span>
             </Menu.Item>

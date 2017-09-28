@@ -36,3 +36,4 @@ cfs:http-methods
 dynamic-import@0.1.1
 react-meteor-data
 nimble:restivus
+pfafman:filesaver

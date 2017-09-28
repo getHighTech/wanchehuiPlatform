@@ -25,9 +25,7 @@ Meteor.publish('get.subs.agencies', function(page, pagesize, superAgencyId){
 
 
 Meteor.publish('get.ids.agencies', function(ids){
-  console.log(ids);
   let agencies = Agencies.find({_id: {$in: ids}}, {sort: {createdAt: -1}});
-  console.log(agencies.fetch());
   return Agencies.find({_id: {$in: ids}}, {sort: {createdAt: -1}});
 });
 

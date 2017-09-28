@@ -8,8 +8,23 @@ const PageHeader = (path) => {
       case "/products":
         return "商品管理"
         break;
+      case "/shops":
+        return "店铺管理"
+        break;
+      case "/orders":
+        return "订单管理"
+        break;
+      case "/roles":
+        return "角色管理"
+        break;
       case "/blockchain":
         return "区块链"
+        break;
+      case "/settings":
+        return "系统设置"
+        break;
+      case "/users":
+        return "用户管理"
         break;
       case "/":
         return "控制面板";
