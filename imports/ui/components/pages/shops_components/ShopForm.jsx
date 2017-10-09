@@ -13,7 +13,7 @@ const FormItem = Form.Item;
 import {Link} from 'react-router'
 
 
-class LoginWrap extends Component {
+class ShopFormWrap extends Component {
 
   constructor(props){
     super(props);
@@ -27,7 +27,8 @@ class LoginWrap extends Component {
         validateStatus: "success",
         help: "",
         hasFeedback: false
-      }
+      },
+      
     }
   }
 
@@ -78,9 +79,6 @@ class LoginWrap extends Component {
         }
       });
     }
-    componentWillReceiveProps(nextProps){
-      console.log(nextProps);
-    }
 
     checkBlank(form){
       //判断空值的验证
@@ -108,47 +106,7 @@ class LoginWrap extends Component {
     }
 
     componentWillReceiveProps(nextProps){
-      if (nextProps.validate.username === "unknown"){
-        this.setState({
-          username: {
-            validateStatus: "success",
-            help: "",
-            hasFeedback: false
-          },
-        })
-      }
-      if (nextProps.validate.password === "unknown") {
-        this.setState({
-          password: {
-            validateStatus: "success",
-            help: "",
-            hasFeedback: false
-          },
-        })
-      }
 
-      this.checkBlank(nextProps.form);
-
-      //从父组件得到 props更新来网络验证
-      if (nextProps.validate.username === "unpass") {
-        this.setState({
-          username: {
-            validateStatus: "error",
-            help: "用户不存在",
-            hasFeedback: true
-          },
-
-        })
-      }
-      if (nextProps.validate.password === "unpass") {
-        this.setState({
-          password: {
-            validateStatus: "error",
-            help: "密码错误",
-            hasFeedback: true
-          },
-        })
-      }
     }
     render() {
       const { getFieldDecorator } = this.props.form;
@@ -156,31 +114,19 @@ class LoginWrap extends Component {
         <Form onSubmit={this.handleSubmit} className="login-form" id="sysLogForm">
           <FormItem validateStatus={this.state.username.validateStatus} hasFeedback={this.state.username.hasFeedback} help={this.state.username.help}>
             {getFieldDecorator('userName')(
-              <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />
+              <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="店铺名称" />
             )}
           </FormItem>
           <FormItem validateStatus={this.state.password.validateStatus} hasFeedback={this.state.password.hasFeedback} help={this.state.password.help}>
             {getFieldDecorator('password')(
-              <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="密码" />
+              <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="text" placeholder="联系电话" />
             )}
           </FormItem>
-          <FormItem>
-            {getFieldDecorator('remember', {
-              valuePropName: 'checked',
-              initialValue: true,
-            })(
-              <Checkbox>记住我</Checkbox>
-            )}
-            <Link className="login-form-forgot" to="/login/forgot">忘记密码</Link>
-            <Button type="primary" htmlType="submit" className="login-form-button">
-              登录
-            </Button>
-            或者 <Link to="/new_member/apply">申请成为万人车汇合作者</Link>
-          </FormItem>
+
         </Form>
       );
     }
   }
 
-const LoginForm = Form.create()(LoginWrap);
-export default LoginForm;
+const ShopForm = Form.create()(ShopFormWrap);
+export default ShopForm;
