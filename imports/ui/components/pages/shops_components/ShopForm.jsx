@@ -11,7 +11,7 @@ import "antd/lib/button/style";
 import "antd/lib/checkbox/style";
 const FormItem = Form.Item;
 import {Link} from 'react-router'
-
+import { Map } from 'react-amap';
 
 class ShopFormWrap extends Component {
 
@@ -28,8 +28,17 @@ class ShopFormWrap extends Component {
         help: "",
         hasFeedback: false
       },
-      
+
     }
+  }
+
+  componentDidMount(){
+
+      var map = new AMap.Map('container', {
+         center:[117.000923,36.675807],
+         zoom:11
+      });
+
   }
 
   handleSubmit = (e) => {
@@ -109,9 +118,12 @@ class ShopFormWrap extends Component {
 
     }
     render() {
+
+
+
       const { getFieldDecorator } = this.props.form;
       return (
-        <Form onSubmit={this.handleSubmit} className="login-form" id="sysLogForm">
+        <Form style={{height: "700px"}} onSubmit={this.handleSubmit} className="login-form" id="sysLogForm">
           <FormItem validateStatus={this.state.username.validateStatus} hasFeedback={this.state.username.hasFeedback} help={this.state.username.help}>
             {getFieldDecorator('userName')(
               <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="店铺名称" />
@@ -122,6 +134,7 @@ class ShopFormWrap extends Component {
               <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="text" placeholder="联系电话" />
             )}
           </FormItem>
+          <div id="container" tabIndex="0"></div>
 
         </Form>
       );

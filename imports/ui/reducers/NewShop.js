@@ -2,6 +2,7 @@
 function NewShop(
   state={
     name: "",
+    cover: "",
     address: {
       text: "",
       lng: 0,
@@ -18,6 +19,7 @@ function NewShop(
     tags: [],
     coupons: [],
     products: [],
+    applyStatus: "applied"
 
   },
   action
@@ -26,10 +28,12 @@ function NewShop(
     case NEW_SHOP_APPLY:
       // 覆盖申请状态
       return Object.assign({}, state, {
-        applyName: action.applyName,
-        applyEmail: action.applyEmail,
-        applyMobile: action.applyMobile,
-        applyIntro: action.applyIntro
+        name: action.name,
+        address: action.address,
+        mobile: action.mobile,
+        description: action.description,
+        cover: action.cover,
+        tags: action.tags,
       });
     case CREATE_MEMBER_APPLY:
       // 覆盖申请状态
