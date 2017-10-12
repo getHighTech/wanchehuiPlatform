@@ -34,10 +34,22 @@ class AddModal extends React.Component{
     }
   }
 
+
+  initAmap(){
+    var map = new AMap.Map('container', {
+            center: [117.00, 36.68],
+            zoom: 6
+        });
+    map.plugin(["AMap.ToolBar"], function() {
+        map.addControl(new AMap.ToolBar());
+    });
+  }
+
   showModal(){
     this.setState({
       visible: true,
     });
+    this.initAmap();
   }
   handleOk(){
     this.setState({

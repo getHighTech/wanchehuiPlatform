@@ -32,12 +32,36 @@ class ShopFormWrap extends Component {
     }
   }
 
-  componentDidMount(){
+  initAmap(){
+    //地图加载
+    var map = new AMap.Map("container", {
+        resizeEnable: true
+    });
+    //输入提示
+    var autoOptions = {
+        input: "tipinput"
+    };
+    var auto = new AMap.Autocomplete(autoOptions);
+    var placeSearch = new AMap.PlaceSearch({
+        map: map
+    });  //构造地点查询类
+    AMap.event.addListener(auto, "select", select);//注册监听，当选中某条记录时会触发
+    function select(e) {
+        placeSearch.setCity(e.poi.adcode);
+        placeSearch.search(e.poi.name);  //关键字查询查询
+    }
+  }
 
-      var map = new AMap.Map('container', {
-         center:[117.000923,36.675807],
-         zoom:11
-      });
+  componentDidMount(){
+    window.onload = function() {
+    	map.plugin(["AMap.ToolBar"], function() {
+    		map.addControl(new AMap.ToolBar());
+    	});
+    	if(location.href.indexOf('&guide=1')!==-1){
+    		map.setStatus({scrollWheel:false})
+    	}
+    }
+    this.initAmap();
 
   }
 
@@ -124,17 +148,24 @@ class ShopFormWrap extends Component {
       const { getFieldDecorator } = this.props.form;
       return (
         <Form style={{height: "700px"}} onSubmit={this.handleSubmit} className="login-form" id="sysLogForm">
-          <FormItem validateStatus={this.state.username.validateStatus} hasFeedback={this.state.username.hasFeedback} help={this.state.username.help}>
+          <FormItem label="店铺名称" validateStatus={this.state.username.validateStatus} hasFeedback={this.state.username.hasFeedback} help={this.state.username.help}>
             {getFieldDecorator('userName')(
-              <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="店铺名称" />
+              <Input placeholder="店铺名称" />
             )}
           </FormItem>
-          <FormItem validateStatus={this.state.password.validateStatus} hasFeedback={this.state.password.hasFeedback} help={this.state.password.help}>
+          <FormItem label="店铺地理位置" validateStatus={this.state.password.validateStatus} hasFeedback={this.state.password.hasFeedback} help={this.state.password.help}>
             {getFieldDecorator('password')(
-              <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="text" placeholder="联系电话" />
+              <Input type="text" placeholder="店铺地理位置" />
             )}
           </FormItem>
-          <div id="container" tabIndex="0"></div>
+           <input id="tipinput"/>
+          <div id="container" style={{height: "200px"}} tabIndex="0"></div>
+          <FormItem label="店铺详细地址" validateStatus={this.state.password.validateStatus} hasFeedback={this.state.password.hasFeedback} help={this.state.password.help}>
+            {getFieldDecorator('password')(
+              <Input type="text" placeholder="街道，几号,几楼等" />
+            )}
+          </FormItem>
+
 
         </Form>
       );

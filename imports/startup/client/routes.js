@@ -18,6 +18,9 @@ import NewMemberApply from '/imports/ui/components/pages/NewMemberApply';
 import NewMemberApplyConfirm from '/imports/ui/components/pages/NewMemberApplyConfirm';
 
 
+import ComponentTest from '/imports/ui/components/pages/component_test';
+
+
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
 
@@ -31,6 +34,7 @@ const Routes = ({ location }) =>
       <Route path="/roles" component={Roles}/>
       <Route path="/settings" component={Settings}/>
       <Route path="/give_card_to_users" component={GiveCardToUsers}/>
+      <Route path="/component_test" component={ComponentTest}/>
       <IndexRoute component={DashBoard} />
     </Route>
     <Route path="/login" component={Login}/>

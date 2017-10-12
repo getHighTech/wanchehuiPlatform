@@ -68,6 +68,9 @@ class MainLayout extends Component {
       case 'settings':
         dispatch(push('/settings'));
         break;
+      case 'component_test':
+        dispatch(push('/component_test'));
+        break;
       default:
         dispatch(push('/'));
         break;
@@ -115,6 +118,10 @@ class MainLayout extends Component {
             <Menu.Item key="settings">
               <Icon type="setting" />
               <span className="nav-text">系统设置</span>
+            </Menu.Item>
+            <Menu.Item key="component_test">
+              <Icon type="test" />
+              <span className="nav-text">组件测试页面</span>
             </Menu.Item>
           </Menu>
         </Sider>

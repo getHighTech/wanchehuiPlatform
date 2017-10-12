@@ -5,6 +5,9 @@ import HeaderUserArea from './HeaderUserArea.js';
 const PageHeader = (path) => {
   let title = function(path){
     switch (path) {
+      case "/component_test":
+        return "组件测试页面"
+        break;
       case "/products":
         return "商品管理"
         break;
