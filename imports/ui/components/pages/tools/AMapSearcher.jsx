@@ -2,9 +2,17 @@
 import React, { Component } from 'react';
 
 
+import AutoCompleteInput from './AutoCompleteInput.jsx';
+
 class AMapSearcher extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      searchText: "滴滴车主俱乐部",
+      currentCityCode: "010",
+      searchList: [],
+      amap: null
+    }
   }
 
   initAmap(){
@@ -31,10 +39,23 @@ class AMapSearcher extends Component {
         });
     }
 
-  componentDidMount(){
+    getText(value){
+      let self = this;
+      console.log(value);
+      this.setState({
+        searchText: value
+      });
+      window.onload = function() {
+        self.searchAMap(this.state.amap);
+      }
 
-    //地图加载
-    let mapObj = this.initAmap();
+    }
+    searchAMap(){
+      
+    }
+
+  getCurrentPix(mapObj){
+    let self = this;
     mapObj.plugin('AMap.Geolocation', function () {
         geolocation = new AMap.Geolocation({
             enableHighAccuracy: true,//是否使用高精度定位，默认:true
@@ -51,29 +72,39 @@ class AMapSearcher extends Component {
         });
         mapObj.addControl(geolocation);
         geolocation.getCurrentPosition();
-        AMap.event.addListener(geolocation, 'complete', onComplete);//返回定位信息
+        AMap.event.addListener(geolocation, 'complete', function(info){
+          console.log(info);
+          self.setState({
+            currentCityCode: info.addressComponent.citycode,
+            currentCity: info.addressComponent.city,
+          })
+        });//返回定位信息
         AMap.event.addListener(geolocation, 'error', onError);      //返回定位出错信息
     });
-     AMap.service(["AMap.PlaceSearch"], function() {
-         var placeSearch = new AMap.PlaceSearch({ //构造地点查询类
-             pageSize: 5,
-             pageIndex: 1,
-             city: "010", //城市
-             map: mapObj,
-             panel: "panel"
-         });
-         //关键字查询
-         placeSearch.search('滴滴车主俱乐部', function(status, result) {
-           console.log(result);
-          });
-     });
+  }
+
+  componentDidMount(){
+    let self = this;
+    //地图加载
      window.onload = function() {
-      map.plugin(["AMap.ToolBar"], function() {
-        map.addControl(new AMap.ToolBar());
+
+       let mapObj = self.initAmap();
+       self.setState({
+         amap: mapObj,
+       })
+
+      mapObj.plugin(["AMap.ToolBar"], function() {
+        mapObj.addControl(new AMap.ToolBar());
       });
       if(location.href.indexOf('&guide=1')!==-1){
-        map.setStatus({scrollWheel:false})
+        mapObj.setStatus({scrollWheel:false})
       }
+
+      self.getCurrentPix(mapObj);
+
+
+      self.searchAMap(mapObj);
+
      }
 
   }
@@ -81,10 +112,11 @@ class AMapSearcher extends Component {
 
 
   render(){
+    console.log(this.state);
     return (
       <div>
         <h1>这是高德自动检索定位组件</h1>
-        <input type="text" />
+        <AutoCompleteInput placeholder="请输入关键字查找地理位置" getText={(value)=> this.getText(value)}/>
         <div id="AMapContainer" style={{height: "600px", width: "600px"}}>
 
         </div>
