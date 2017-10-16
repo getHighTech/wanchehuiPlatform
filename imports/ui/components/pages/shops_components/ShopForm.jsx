@@ -158,8 +158,7 @@ class ShopFormWrap extends Component {
               <Input type="text" placeholder="店铺地理位置" />
             )}
           </FormItem>
-           <input id="tipinput"/>
-          <div id="container" style={{height: "200px"}} tabIndex="0"></div>
+           
           <FormItem label="店铺详细地址" validateStatus={this.state.password.validateStatus} hasFeedback={this.state.password.hasFeedback} help={this.state.password.help}>
             {getFieldDecorator('password')(
               <Input type="text" placeholder="街道，几号,几楼等" />
