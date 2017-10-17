@@ -15,6 +15,25 @@ Meteor.methods({
   },
   'users.cards.count'(){
     return allCardUsersMount();
+  },
+  'get.users.limit'(condition={},page=0, pagesize=20){
+    let users =  Meteor.users.find(condition, {
+      skip: page*pagesize, limit: pagesize,
+      sort: {createdAt: -1},
+      fields:
+        {
+          'roles': 1,
+          'profile': 1,
+          'username': 1,
+          'createdAt': 1,
+          'member_status': 1,
+          'coupons': 1,
+          'fansCount': 1,
+          'cards': 1,
+        }
+      }
+    );
+    return users.fetch();
   }
 
 

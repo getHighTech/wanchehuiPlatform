@@ -30,20 +30,26 @@ export const UserColumns = [
       key: 'carNumber',
     }, {
       title: '注册时间',
-      dataIndex: 'createAt',
-      key: 'createAt',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       render: (text, record) => {
-        console.log(record);
-        return (<span>无</span>);
+        return (<span>{moment(record.createdAt).format("YYYY-MM-DD HH:mm:ss")}</span>);
       }
     },
     {
       title: '是否有卡',
       dataIndex: 'hasCard',
       key: 'hasCard',
-      render: (text, record) => (
-        <span>授卡　&nbsp; | &nbsp; 禁卡</span>
-      )
+      render: (text, record) => {
+        if (record.cards === undefined) {
+          return(
+          <span>无　&nbsp; | &nbsp; 授卡</span>
+          );
+        }else{
+          return (<span>有　&nbsp; | &nbsp; 禁卡</span>);
+        }
+
+    }
     },{
       title: '操作',
       dataIndex: 'action',
@@ -58,10 +64,6 @@ export const UserColumns = [
             <Button shape="circle" icon="minus-circle"  style={actionStyle} />
           </Tooltip>
           <span className="ant-divider" />
-          <Tooltip placement="topLeft" title="编辑此记录" arrowPointAtCenter>
-            <Button shape="circle" icon="edit"  style={actionStyle} />
-          </Tooltip>
-
         </span>
       ),
     }

@@ -23,7 +23,8 @@ return Meteor.users.find(
 });
 
 Meteor.publish('users.limit', function(page=0, pagesize=20){
-  return Meteor.users.find({}, {
+  
+  let users =  Meteor.users.find({}, {
     skip: page*pagesize, limit: pagesize,
     sort: {createdAt: -1},
     fields:
@@ -39,4 +40,6 @@ Meteor.publish('users.limit', function(page=0, pagesize=20){
       }
     }
   );
+  return users;
+
 });

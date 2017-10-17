@@ -14,16 +14,22 @@ import { Roles } from '/imports/api/roles/roles.js';
 
 import { UserColumns } from '/imports/ui/static_data/UserColumns.js'
 
-
-import AddModal from './shops_components/AddModal.jsx';
-
 class Users extends React.Component{
   constructor(props) {
     super(props);
     let self = this;
     self.state = {
-      users: []
+      users: [],
+      totalCount: 500,
+      condition: {},
+      currentPage: 0,
     }
+
+
+
+  }
+  componentDidMount(){
+    let self = this;
     Meteor.subscribe('users.limit', 0, 20, {
       onReady: function(){
         self.setState({
@@ -31,36 +37,58 @@ class Users extends React.Component{
             skip: 0, limit: 20, sort: {createdAt: -1}
           }).fetch()
         });
-      }
-    })
 
+
+      }
+    });
+    Meteor.call('users.count', function(err,rlt){
+      self.setState({
+        totalCount: rlt,
+      });
+    });
   }
 
 
-  handleSearchInput(value){
+  handleSearchInput(str){
+    let condition = {
+      $or: [
+        {'profile.mobile': eval("/"+str+"/")},
+        {username: eval("/"+str+"/")},
+        {nickname:eval("/"+str+"/")}
+      ]
+    };
+    this.getPageUsers(0, 20, condition);
+    this.setState({
+      condition,
+      currentPage: 1,
+    });
 
-    console.log(value);
+
   }
   handlePageChange(page, pageSize){
     let self = this;
+    this.getPageUsers(page, pageSize, this.state.condition);
+
     $(document).scrollTop(0);
-    Meteor.subscribe('users.limit', page-1, 20, {
-      onReady: function(){
-        let users = Meteor.users.find({}, {
-          skip: (page-1)*pageSize, limit: pageSize, sort: {createdAt: -1}
-        }).fetch();
+  }
+
+  getPageUsers(page, pageSize, condition){
+    let self = this;
+    Meteor.call("get.users.limit",condition, page, pageSize, function(err, rlt){
+      if (!err) {
+        console.log(rlt);
         self.setState({
-          users,
-        })
+          users: rlt,
+          currentPage: page,
+        });
       }
-    })
+    });
   }
 
 
 
 
   render() {
-
       const headerMenuStyle ={
         display: 'flex',
         alignItems: 'center',
@@ -74,21 +102,18 @@ class Users extends React.Component{
     return (
       <div>
         <div style={headerMenuStyle}>
-          <AddModal />
-          <div>
           <Input.Search
-               placeholder="搜索用户相关"
-               style={{ width: 200 }}
+               placeholder="用户名｜电话｜昵称"
+               style={{ width: '75%' }}
                onSearch={value => console.log(value)}
                onInput={input => this.handleSearchInput(input.target.value) }
               />
-          </div>
         </div>
 
         <Table dataSource={this.state.users} rowKey='_id'
-         pagination={{defaultPageSize: 20, total: 2000,
+         pagination={{defaultPageSize: 20, total: this.state.totalCount,
             onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
-            showQuickJumper: true,
+            showQuickJumper: true, current: this.state.currentPage
           }}
           columns={UserColumns} />
         <br/>
