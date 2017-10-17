@@ -76,7 +76,6 @@ class Users extends React.Component{
     let self = this;
     Meteor.call("get.users.limit",condition, page, pageSize, function(err, rlt){
       if (!err) {
-        console.log(rlt);
         self.setState({
           users: rlt,
           currentPage: page,
