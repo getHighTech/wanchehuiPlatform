@@ -10,9 +10,17 @@ import "antd/lib/table/style";
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style';
 
+import Spin from 'antd/lib/spin';
+import 'antd/lib/spin/style';
+
 import { Roles } from '/imports/api/roles/roles.js';
 
 import { UserColumns } from '/imports/ui/static_data/UserColumns.js'
+
+import Modal from 'antd/lib/modal';
+import 'antd/lib/modal/style';
+
+const confirm = Modal.confirm;
 
 class Users extends React.Component{
   constructor(props) {
@@ -23,24 +31,53 @@ class Users extends React.Component{
       totalCount: 500,
       condition: {},
       currentPage: 0,
+      loadingTip: "加载中...",
+      tableLoading: true,
     }
 
 
 
   }
+  showConfirm(userId){
+    let self = this;
+    confirm({
+     title: '授卡确认',
+     content: '亲，您确实要把价值365元的授予此用户吗?',
+     onOk() {
+       console.log(userId);
+       self.setState({
+         loadingTip: "加载中......",
+         tableLoading: false,
+       });
+       
+     },
+     onCancel() {
+       self.setState({
+         loadingTip: "加载中......",
+         tableLoading: false,
+       });
+     },
+   });
+  }
+  bindJqueryEventForButtons(){
+    //加载数据后开始授卡和解卡事件
+    let self = this;
+
+    $(".give-user-card ").on('click', function(){
+      $(document).scrollTop(0);
+      self.setState({
+        tableLoading: true,
+        loadingTip: "正在授卡......",
+      });
+      let userId = $(this).find('span').attr('data-id');
+      self.showConfirm(userId);
+
+
+    });
+  }
   componentDidMount(){
     let self = this;
-    Meteor.subscribe('users.limit', 0, 20, {
-      onReady: function(){
-        self.setState({
-          users: Meteor.users.find({}, {
-            skip: 0, limit: 20, sort: {createdAt: -1}
-          }).fetch()
-        });
-
-
-      }
-    });
+    self.getPageUsers(1,20,this.state.condition);
     Meteor.call('users.count', function(err,rlt){
       self.setState({
         totalCount: rlt,
@@ -57,7 +94,7 @@ class Users extends React.Component{
         {nickname:eval("/"+str+"/")}
       ]
     };
-    this.getPageUsers(0, 20, condition);
+    this.getPageUsers(1, 20, condition);
     this.setState({
       condition,
       currentPage: 1,
@@ -66,20 +103,27 @@ class Users extends React.Component{
 
   }
   handlePageChange(page, pageSize){
-    let self = this;
+    $(document).scrollTop(0);
     this.getPageUsers(page, pageSize, this.state.condition);
 
-    $(document).scrollTop(0);
+
+
   }
 
   getPageUsers(page, pageSize, condition){
+    this.setState({
+      tableLoading: true,
+      loadingTip: "加载中...",
+    });
     let self = this;
-    Meteor.call("get.users.limit",condition, page, pageSize, function(err, rlt){
+    Meteor.call("get.users.limit",condition, page-1, pageSize, function(err, rlt){
       if (!err) {
         self.setState({
           users: rlt,
           currentPage: page,
+          tableLoading: false,
         });
+        self.bindJqueryEventForButtons();
       }
     });
   }
@@ -108,13 +152,15 @@ class Users extends React.Component{
                onInput={input => this.handleSearchInput(input.target.value) }
               />
         </div>
+        <Spin tip={this.state.loadingTip} spinning={this.state.tableLoading}>
+          <Table dataSource={this.state.users} rowKey='_id'
+           pagination={{defaultPageSize: 20, total: this.state.totalCount,
+              onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
+              showQuickJumper: true, current: this.state.currentPage
+            }}
+            columns={UserColumns} />
+        </Spin>
 
-        <Table dataSource={this.state.users} rowKey='_id'
-         pagination={{defaultPageSize: 20, total: this.state.totalCount,
-            onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
-            showQuickJumper: true, current: this.state.currentPage
-          }}
-          columns={UserColumns} />
         <br/>
         <br/>
         <br/>

@@ -9,6 +9,7 @@ import "antd/lib/tooltip/style";
 const actionStyle = {
    fontSize: 16, color: '#08c'
 };
+
 export const UserColumns = [
       {
         title: '头像',
@@ -43,10 +44,18 @@ export const UserColumns = [
       render: (text, record) => {
         if (record.cards === undefined) {
           return(
-          <span>无　&nbsp; | &nbsp; 授卡</span>
+          <span>无　&nbsp; | &nbsp;
+             <Button className="give-user-card"   style={actionStyle}>
+                <span data-id={record._id}>授卡</span>
+             </Button>
+             </span>
           );
         }else{
-          return (<span>有　&nbsp; | &nbsp; 禁卡</span>);
+          return (<span>有　&nbsp; | &nbsp;
+            <Button className="ban-user-card"  style={actionStyle}>
+               <span data-id={record._id}>禁卡</span>
+            </Button>
+            </span>);
         }
 
     }
