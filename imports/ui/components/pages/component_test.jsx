@@ -1,7 +1,7 @@
 //此组件用于在高德地图中定位输入的文本的位置
 import React, { Component } from 'react';
 
-import AMapSearcher from './tools/AMapSearcher.jsx';
+// import AMapSearcher from './tools/AMapSearcher.jsx';
 
 class ComponentTest extends Component {
   constructor(props) {
@@ -16,7 +16,7 @@ class ComponentTest extends Component {
             flexDirection: 'row',
             flexWrap: 'wrap',
             justifyContent: 'center' }}>
-        <AMapSearcher />
+            
       </div>
 
     )

@@ -21,8 +21,63 @@ import {
 var xlsx = require('node-xlsx');
 var fs = require('fs');
 const { URL } = require('url');
+
+const accessKeyId = "LTAIMzirFnS118vy";
+const accessKeySecret = "tPnXTfIPrjDDbLzM8qmetbjmRZE6E5";
 //各种服务端响应
 HTTP.methods({
+  '/images/upload/handler': {
+    post: function(img){
+      console.log(img);
+      let fs = require('fs');
+      var path = '/tmp/myfile.png';
+      var buffer = img; // your buffer
+      fs.open(path, 'w', function(err, fd) {
+          if (err) {
+            console.log(err);
+              // Something wrong creating the file
+          }
+          fs.write(fd, buffer, 0, buffer.length, null, function(err) {
+            console.log(err);
+              // Something wrong writing contents!
+          });
+      });
+
+      // var ALY = require('aliyun-sdk');
+      //
+      // var ossStream = require('aliyun-oss-upload-stream')(new ALY.OSS({
+      //   accessKeyId,
+      //   secretAccessKey: accessKeySecret,
+      //   endpoint: 'http://oss-cn-qingdao.aliyuncs.com',
+      //   apiVersion: '2013-10-15'
+      // }));
+      // var upload = ossStream.upload({
+      //   Bucket: 'wanchehui',
+      //   Key: 'Key(可以理解为文件名)'
+      // });
+      // // 可选配置
+      // upload.minPartSize(1048576); // 1M，表示每块part大小至少大于1M
+      //
+      // upload.on('error', function (error) {
+      //   console.log('error:', error);
+      // });
+      //
+      // upload.on('part', function (part) {
+      //   console.log('part:', part);
+      // });
+      //
+      // upload.on('uploaded', function (details) {
+      //   var s = (new Date() - startTime) / 1000;
+      //   console.log('details:', details);
+      //   console.log('Completed upload in %d seconds', s);
+      // });
+      //
+      // var read = fs.createReadStream(img);
+      // read.pipe(upload);
+      //
+      // var startTime = new Date();
+    }
+  },
    '/excels/upload/mobile_agency': {
      post: function(file) {
 

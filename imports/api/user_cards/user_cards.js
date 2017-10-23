@@ -2,4 +2,4 @@
 
 import { Mongo } from 'meteor/mongo';
 
-export const SysLogs = new Mongo.Collection('sys_logs');
+export const UserCards = new Mongo.Collection('user_cards');

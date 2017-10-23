@@ -20,6 +20,9 @@ import { UserColumns } from '/imports/ui/static_data/UserColumns.js'
 import Modal from 'antd/lib/modal';
 import 'antd/lib/modal/style';
 
+import message from 'antd/lib/message';
+import 'antd/lib/message/style'
+
 const confirm = Modal.confirm;
 
 class Users extends React.Component{
@@ -30,7 +33,7 @@ class Users extends React.Component{
       users: [],
       totalCount: 500,
       condition: {},
-      currentPage: 0,
+      currentPage: 1,
       loadingTip: "加载中...",
       tableLoading: true,
     }
@@ -38,18 +41,70 @@ class Users extends React.Component{
 
 
   }
-  showConfirm(userId){
+  banCard(userId){
     let self = this;
+    Meteor.call("cards.delete.by.user", userId, function(err, rlt){
+      if (!err) {
+        if (rlt !== "USER DONT HAS ANY CARDS") {
+          message.success('已经收回该用户卡片～');
+          return self.getPageUsers(self.state.currentPage, 20, self.state.condition);
+        }else{
+          message.error('错误，该用户并没有卡片');
+          return self.getPageUsers(self.state.currentPage, 20, self.state.condition);
+        }
+
+      }
+    });
+  }
+  giveCard(userId){
+    let self = this;
+    Meteor.call("cards.give.by.user", userId, function(err, rlt){
+      if (!err) {
+        if (rlt !== "NOT CARDS AVILIBLE") {
+          message.success('已经给出该用户卡片～');
+          return self.getPageUsers(self.state.currentPage, 20, self.state.condition);
+        }else{
+          message.error('系统还没有卡给此用户');
+          return self.getPageUsers(self.state.currentPage, 20, self.state.condition);
+        }
+
+
+      }
+    });
+  }
+  showConfirm(type, userId){
+    let self = this;
+    let confirmText = function(type){
+      switch (type) {
+        case "give":
+          return {
+            title: "授卡确认",
+            content: "亲，您确实要把价值365元的万人车汇黑卡授予此用户吗?"
+          }
+          break;
+        default:
+
+          return {
+            title: "禁止确认",
+            content: "亲，您确实要把此用户的卡片停用吗?"
+          }
+
+      }
+    }
+    let confirmObj = confirmText(type)
     confirm({
-     title: '授卡确认',
-     content: '亲，您确实要把价值365元的授予此用户吗?',
+     title: confirmObj.title,
+     content: confirmObj.content,
      onOk() {
-       console.log(userId);
-       self.setState({
-         loadingTip: "加载中......",
-         tableLoading: false,
-       });
-       
+       //开始授权卡
+       if (type === "give") {
+         return self.giveCard(userId);
+       }
+       if (type === "ban") {
+         return self.banCard(userId);
+       }
+
+
      },
      onCancel() {
        self.setState({
@@ -63,14 +118,25 @@ class Users extends React.Component{
     //加载数据后开始授卡和解卡事件
     let self = this;
 
-    $(".give-user-card ").on('click', function(){
+    $(".give-user-card ").unbind('click').on('click', function(){
       $(document).scrollTop(0);
       self.setState({
         tableLoading: true,
         loadingTip: "正在授卡......",
+      })
+      let userId = $(this).find('span').attr('data-id');
+      self.showConfirm("give", userId);
+
+
+    });
+    $(".ban-user-card").unbind('click').on('click', function(){
+      $(document).scrollTop(0);
+      self.setState({
+        tableLoading: true,
+        loadingTip: "正在禁止......",
       });
       let userId = $(this).find('span').attr('data-id');
-      self.showConfirm(userId);
+      self.showConfirm("ban", userId);
 
 
     });
@@ -111,17 +177,13 @@ class Users extends React.Component{
   }
 
   getPageUsers(page, pageSize, condition){
-    this.setState({
-      tableLoading: true,
-      loadingTip: "加载中...",
-    });
     let self = this;
-    Meteor.call("get.users.limit",condition, page-1, pageSize, function(err, rlt){
+    Meteor.call("get.users.limit",condition, page, pageSize, function(err, rlt){
       if (!err) {
         self.setState({
           users: rlt,
-          currentPage: page,
           tableLoading: false,
+          currentPage: page,
         });
         self.bindJqueryEventForButtons();
       }
@@ -148,7 +210,6 @@ class Users extends React.Component{
           <Input.Search
                placeholder="用户名｜电话｜昵称"
                style={{ width: '75%' }}
-               onSearch={value => console.log(value)}
                onInput={input => this.handleSearchInput(input.target.value) }
               />
         </div>
@@ -182,7 +243,6 @@ export default createContainer(() => {
   if (Meteor.userId()) {
     Meteor.subscribe('roles.current',{
       onReady: function(){
-        console.log('roles.current ready')
 
       }
     });

@@ -6,6 +6,8 @@ import "antd/lib/icon/style";
 import Tooltip from 'antd/lib/tooltip';
 import "antd/lib/tooltip/style";
 
+
+
 const actionStyle = {
    fontSize: 16, color: '#08c'
 };
@@ -27,8 +29,8 @@ export const UserColumns = [
       key: 'username',
     }, {
       title: '车牌号',
-      dataIndex: 'carNumber',
-      key: 'carNumber',
+      dataIndex: 'carnumber',
+      key: 'carnumber',
     }, {
       title: '注册时间',
       dataIndex: 'createdAt',
@@ -42,7 +44,7 @@ export const UserColumns = [
       dataIndex: 'hasCard',
       key: 'hasCard',
       render: (text, record) => {
-        if (record.cards === undefined) {
+        if (!(record.cards)) {
           return(
           <span>无　&nbsp; | &nbsp;
              <Button className="give-user-card"   style={actionStyle}>

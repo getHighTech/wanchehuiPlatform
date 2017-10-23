@@ -5,7 +5,9 @@ export function allUsersMount(){
 }
 
 export function allCardUsersMount(){
-  return Meteor.users.find({cards: {$exists: true}}).count();
+  return Meteor.users.find({cards: {$exists: false},
+    cards: {$not: {$in: [null]}}
+  }).count();
 }
 
 

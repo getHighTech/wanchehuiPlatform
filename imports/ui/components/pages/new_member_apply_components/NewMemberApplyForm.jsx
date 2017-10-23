@@ -274,21 +274,21 @@ class NewMemberApplyWrap extends Component {
 
       return new Promise(
         (resolve, reject) => {
-          // const xhr = new XMLHttpRequest();
-          // xhr.open('GET', 'http://gegeyun.b0.aicdn.com/gegeyun/');
-          // xhr.setRequestHeader('Authorization', 'Basic moobWt2PQbZkT8/iTjmuL4cUdwI=');
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/images/upload/handler');
           // const data = new FormData();
           // data.append('image', file);
-          //
-          // xhr.send(data);
-          // xhr.addEventListener('load', () => {
-          //   const response = JSON.parse(xhr.responseText);
-          //   resolve(response);
-          // });
-          // xhr.addEventListener('error', () => {
-          //   const error = JSON.parse(xhr.responseText);
-          //   reject(error);
-          // });
+
+          xhr.send(file);
+          xhr.addEventListener('load', () => {
+            const response = JSON.parse(xhr.responseText);
+            console.log(response);
+            resolve(response);
+          });
+          xhr.addEventListener('error', () => {
+            const error = JSON.parse(xhr.responseText);
+            reject(error);
+          });
         }
       );
     }
