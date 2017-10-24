@@ -26,56 +26,55 @@ const accessKeyId = "LTAIMzirFnS118vy";
 const accessKeySecret = "tPnXTfIPrjDDbLzM8qmetbjmRZE6E5";
 //各种服务端响应
 HTTP.methods({
+  
   '/images/upload/handler': {
-    post: function(img){
-      console.log(img);
-      let fs = require('fs');
-      var path = '/tmp/myfile.png';
-      var buffer = img; // your buffer
-      fs.open(path, 'w', function(err, fd) {
-          if (err) {
-            console.log(err);
-              // Something wrong creating the file
-          }
-          fs.write(fd, buffer, 0, buffer.length, null, function(err) {
-            console.log(err);
-              // Something wrong writing contents!
-          });
+    post: function(buffer){
+      let fs = require('fs');  let images = require("images");
+      let filename = (new Date()).getTime().toString()+".png";
+      let path = '/tmp/output'+filename;
+
+      images(buffer).save(path, {operation:50});
+      let ALY = require('aliyun-sdk');
+      let ossStream = require('aliyun-oss-upload-stream')(new ALY.OSS({
+        accessKeyId,
+        secretAccessKey: accessKeySecret,
+        endpoint: 'http://oss-cn-qingdao.aliyuncs.com',
+        apiVersion: '2013-10-15'
+      }));
+      var upload = ossStream.upload({
+        Bucket: 'wanchehui',
+        Key: "textedit"+filename
+      });
+      // 可选配置
+      upload.minPartSize(1048576); // 1M，表示每块part大小至少大于1M
+
+      upload.on('error', function (error) {
+        console.log('error:', error);
       });
 
-      // var ALY = require('aliyun-sdk');
-      //
-      // var ossStream = require('aliyun-oss-upload-stream')(new ALY.OSS({
-      //   accessKeyId,
-      //   secretAccessKey: accessKeySecret,
-      //   endpoint: 'http://oss-cn-qingdao.aliyuncs.com',
-      //   apiVersion: '2013-10-15'
-      // }));
-      // var upload = ossStream.upload({
-      //   Bucket: 'wanchehui',
-      //   Key: 'Key(可以理解为文件名)'
-      // });
-      // // 可选配置
-      // upload.minPartSize(1048576); // 1M，表示每块part大小至少大于1M
-      //
-      // upload.on('error', function (error) {
-      //   console.log('error:', error);
-      // });
-      //
-      // upload.on('part', function (part) {
-      //   console.log('part:', part);
-      // });
-      //
-      // upload.on('uploaded', function (details) {
-      //   var s = (new Date() - startTime) / 1000;
-      //   console.log('details:', details);
-      //   console.log('Completed upload in %d seconds', s);
-      // });
-      //
-      // var read = fs.createReadStream(img);
-      // read.pipe(upload);
-      //
-      // var startTime = new Date();
+      upload.on('part', function (part) {
+        console.log('part:', part);
+      });
+
+      upload.on('uploaded', function (details) {
+        var s = (new Date() - startTime) / 1000;
+        console.log('details:', details);
+        console.log('Completed upload in %d seconds', s);
+      });
+
+      var read = fs.createReadStream(path);
+      read.pipe(upload);
+      var startTime = new Date();
+      return {
+        "data":
+        {
+        "link":"http://wanchehui.oss-cn-qingdao.aliyuncs.com/"+"textedit"+filename,
+        "title":"for editor",
+        "status":200
+        }
+      };
+
+
     }
   },
    '/excels/upload/mobile_agency': {

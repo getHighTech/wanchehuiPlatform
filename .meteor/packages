@@ -37,3 +37,4 @@ dynamic-import@0.1.3
 react-meteor-data
 nimble:restivus
 pfafman:filesaver
+ostrio:meteor-root
