@@ -59,6 +59,7 @@ class Users extends React.Component{
   giveCard(userId){
     let self = this;
     Meteor.call("cards.give.by.user", userId, function(err, rlt){
+      console.log(rlt);
       if (!err) {
         if (rlt !== "NOT CARDS AVILIBLE") {
           message.success('已经给出该用户卡片～');
@@ -222,13 +223,6 @@ class Users extends React.Component{
             columns={UserColumns} />
         </Spin>
 
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
       </div>
     )
   }

@@ -44,6 +44,14 @@ class MainLayout extends Component {
       default:
 
     }
+    $(document).ready(function(){
+      $(this).unbind("click").on('click',function(e){
+        if ($(e.target).hasClass("on-dev-unfinished")) {
+          message.warning("仍然在开发中，敬请期待");
+        }
+      });
+    });
+
 
   }
   handleMenuItemClicked(item){
@@ -118,6 +126,10 @@ class MainLayout extends Component {
             <Menu.Item key="settings">
               <Icon type="setting" />
               <span className="nav-text">系统设置</span>
+            </Menu.Item>
+            <Menu.Item key="logs">
+              <Icon type="note" />
+              <span className="nav-text">系统日志</span>
             </Menu.Item>
             <Menu.Item key="component_test">
               <Icon type="test" />

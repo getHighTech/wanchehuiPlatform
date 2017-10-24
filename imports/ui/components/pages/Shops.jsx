@@ -71,13 +71,7 @@ class Shops extends React.Component{
         </div>
 
         <Table dataSource={dataSource} columns={ShopColumns} />
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
+      
       </div>
     )
   }

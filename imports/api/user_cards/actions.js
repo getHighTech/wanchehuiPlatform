@@ -54,6 +54,7 @@ export function giveCardByUserId(userId){
       cards: [card]
     }
   });
+  let user = Meteor.users.findOne({_id: userId});
   SysLogs.insert({
     type: "管理员日志",
     text: Meteor.user().username+"给了"+user.username+"一张黑卡",
