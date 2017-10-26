@@ -20,8 +20,8 @@ export function permitRoleRule(role, moduleName, weight, curd){
   if (isSuper) {
     return true;
   }
-  if (role.weight> weight !role.accesses[moduleName][curd]) {
-    return false;
-  }
+//  if (role.weight> weight !role.accesses[moduleName][curd]) {
+ //   return false;
+ // }
 
 }
