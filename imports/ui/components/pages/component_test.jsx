@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 
 // import AMapSearcher from './tools/AMapSearcher.jsx';
+import UserFinder from './tools/UserFinder.jsx';
 
 class ComponentTest extends Component {
   constructor(props) {
@@ -16,7 +17,7 @@ class ComponentTest extends Component {
             flexDirection: 'row',
             flexWrap: 'wrap',
             justifyContent: 'center' }}>
-            
+            <UserFinder />
       </div>
 
     )
