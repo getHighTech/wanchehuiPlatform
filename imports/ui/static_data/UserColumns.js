@@ -96,7 +96,7 @@ const SelectAction = {
   key: 'action',
   render: (text, record) => (
     <span>
-        <Button  className="on-dev-unfinished" shape="circle" icon="point"  style={actionStyle} />
+        <Button data-id={record._id}  className="select-user-id" shape="circle" icon="point"  style={actionStyle} />
     </span>
   ),
 };
@@ -105,5 +105,5 @@ export const UserColumns = [
       header,mobile, username,carnumber,createdAt,hasCards,action
 ];
 export const SelectUserColumns = [
-      header,mobile, username,carnumber,createdAt,hasCards,action
+    header,mobile, username,createdAt,SelectAction
 ];

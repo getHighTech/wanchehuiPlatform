@@ -16,6 +16,7 @@ import DashBoard from '/imports/ui/components/pages/DashBoard';
 import GiveCardToUsers from '/imports/ui/components/pages/GiveCardToUsers';
 import NewMemberApply from '/imports/ui/components/pages/NewMemberApply';
 import NewMemberApplyConfirm from '/imports/ui/components/pages/NewMemberApplyConfirm';
+import AgenciesRelations from '/imports/ui/components/pages/AgenciesRelations';
 
 
 import ComponentTest from '/imports/ui/components/pages/component_test';
@@ -34,6 +35,7 @@ const Routes = ({ location }) =>
       <Route path="/roles" component={Roles}/>
       <Route path="/settings" component={Settings}/>
       <Route path="/give_card_to_users" component={GiveCardToUsers}/>
+      <Route path="/agencies_relations" component={AgenciesRelations}/>
       <Route path="/component_test" component={ComponentTest}/>
       <IndexRoute component={DashBoard} />
     </Route>
