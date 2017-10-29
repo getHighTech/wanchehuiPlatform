@@ -1,4 +1,3 @@
-'use strict';
 
 import React from "react";
 
@@ -15,7 +14,7 @@ import 'antd/lib/spin/style';
 
 import { Roles } from '/imports/api/roles/roles.js';
 
-import { UserColumns } from '/imports/ui/static_data/UserColumns.js'
+import { UserColumns } from '../table_columns/UserColumns.js'
 
 import Modal from 'antd/lib/modal';
 import 'antd/lib/modal/style';
@@ -148,7 +147,7 @@ class Users extends React.Component{
     let self = this;
     self.getPageUsers(1,20,this.state.condition);
     countMeteorUsers(function(err, rlt){
-      
+
       if (!err) {
         self.setState({
           totalCount: rlt,

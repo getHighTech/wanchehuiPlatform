@@ -7,7 +7,7 @@ Meteor.methods({
   'get.agencies.limit'(condition, page, pageSize){
 
     let agencies =  Agencies.find(condition, {
-      skip: (page-1)*pagesize, limit: pagesize,
+      skip: (page-1)*pageSize, limit: pageSize,
       sort: {"createdAt": -1},
       fields:
         {

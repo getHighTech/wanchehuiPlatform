@@ -15,7 +15,7 @@ import 'antd/lib/spin/style';
 
 import { Roles } from '/imports/api/roles/roles.js';
 
-import { SelectUserColumns } from '/imports/ui/static_data/UserColumns.js'
+import { SelectUserColumns } from '../../table_columns/UserColumns.js'
 
 import Modal from 'antd/lib/modal';
 import 'antd/lib/modal/style';
@@ -40,38 +40,6 @@ class UserFinder extends React.Component{
 
 
 
-  }
-  banCard(userId){
-    let self = this;
-    Meteor.call("cards.delete.by.user", userId, function(err, rlt){
-      if (!err) {
-        if (rlt !== "USER DONT HAS ANY CARDS") {
-          message.success('已经收回该用户卡片～');
-          return self.getPageUsers(self.state.currentPage, 20, self.state.condition);
-        }else{
-          message.error('错误，该用户并没有卡片');
-          return self.getPageUsers(self.state.currentPage, 20, self.state.condition);
-        }
-
-      }
-    });
-  }
-  giveCard(userId){
-    let self = this;
-    Meteor.call("cards.give.by.user", userId, function(err, rlt){
-      console.log(rlt);
-      if (!err) {
-        if (rlt !== "NOT CARDS AVILIBLE") {
-          message.success('已经给出该用户卡片～');
-          return self.getPageUsers(self.state.currentPage, 20, self.state.condition);
-        }else{
-          message.error('系统还没有卡给此用户');
-          return self.getPageUsers(self.state.currentPage, 20, self.state.condition);
-        }
-
-
-      }
-    });
   }
 
   selectUserIdByJquery(){

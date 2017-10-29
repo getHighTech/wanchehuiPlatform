@@ -68,11 +68,11 @@ class UserFinderModal extends React.Component{
 
     return(
       <div>
-        <Tooltip placement="topLeft" title="查找并选择用户" arrowPointAtCenter>
+        <Tooltip placement="topLeft" title={this.props.text} arrowPointAtCenter>
           <Button onClick={this.showModal.bind(this)} shape="circle" icon="user"  style={{fontSize: "18px", color: "red"}} />
         </Tooltip>
         <Modal
-          title="查找并选择用户"
+          title={this.props.text}
           visible={this.state.visible}
           onOk={this.handleOk.bind(this)}
           onCancel={this.handleCancel.bind(this)}

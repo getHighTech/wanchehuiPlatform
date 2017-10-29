@@ -76,6 +76,9 @@ class MainLayout extends Component {
       case 'settings':
         dispatch(push('/settings'));
         break;
+      case 'agency_relations':
+        dispatch(push('/agencies_relations'));
+        break;
       case 'component_test':
         dispatch(push('/component_test'));
         break;
@@ -119,6 +122,10 @@ class MainLayout extends Component {
               <Icon type="book" />
               <span className="nav-text">订单管理</span>
             </Menu.Item>
+            <Menu.Item key="agency_relations">
+              <Icon type="paper-clip" />
+              <span className="nav-text">分销关系管理</span>
+            </Menu.Item>
             <Menu.Item key="roles">
               <Icon type="paper-clip" />
               <span className="nav-text">角色管理</span>
@@ -128,11 +135,11 @@ class MainLayout extends Component {
               <span className="nav-text">系统设置</span>
             </Menu.Item>
             <Menu.Item key="logs">
-              <Icon type="note" />
+              <Icon type="paper-clip" />
               <span className="nav-text">系统日志</span>
             </Menu.Item>
             <Menu.Item key="component_test">
-              <Icon type="test" />
+              <Icon type="paper-clip" />
               <span className="nav-text">组件测试页面</span>
             </Menu.Item>
           </Menu>
