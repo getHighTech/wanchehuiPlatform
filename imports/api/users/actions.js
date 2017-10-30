@@ -1,11 +1,6 @@
 import { Meteor } from 'meteor/meteor';
-<<<<<<< HEAD
-
-
-
-=======
 import { findAgencyById} from '../agencies/actions.js'
->>>>>>> 7dbafc4f6ab783647f20e6c8593a272795e13e51
+
 export function allUsersMount(){
   return Meteor.users.find().count();
 }
