@@ -26,7 +26,7 @@ const accessKeyId = "LTAIMzirFnS118vy";
 const accessKeySecret = "tPnXTfIPrjDDbLzM8qmetbjmRZE6E5";
 //各种服务端响应
 HTTP.methods({
-  
+
   '/images/upload/handler': {
     post: function(buffer){
       let fs = require('fs');  let images = require("images");

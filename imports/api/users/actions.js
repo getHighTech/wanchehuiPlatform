@@ -1,7 +1,11 @@
 import { Meteor } from 'meteor/meteor';
+<<<<<<< HEAD
 
 
 
+=======
+import { findAgencyById} from '../agencies/actions.js'
+>>>>>>> 7dbafc4f6ab783647f20e6c8593a272795e13e51
 export function allUsersMount(){
   return Meteor.users.find().count();
 }
@@ -11,6 +15,8 @@ export function allCardUsersMount(){
     cards: {$not: {$in: [null]}}
   }).count();
 }
+
+
 
 
 export function findUserByMobile(mobile){
@@ -113,4 +119,35 @@ export function updateUsernameByMobile(mobile){
       username: mobile
     }
   })
+}
+
+export function getLimitUserIds(condition, page, pageSize){
+  let users =  Meteor.users.find(condition, {
+    skip: (page-1)*pageSize, limit: pageSize,
+    sort: {"createdAt": -1},
+    fields:
+      {
+        _id: 1,
+        username: 1,
+        profile: 1,
+        nickname: 1,
+      }
+    }
+  );
+  let user_ids = [];
+  users.forEach((user)=>{
+    user_ids.push(user._id);
+  });
+  return user_ids;
+}
+
+export function getBasicUserById(userId){
+  return Meteor.users.findOne({_id: userId}, {fields: {
+      '_id': 1, 'username': 1, 'profile.mobile': 1, 'nickname': 1
+  }});
+}
+
+export function getUserByAgencyId(agencyId){
+  let agency = findAgencyById(agencyId);
+  return getBasicUserById(agency.userId);
 }

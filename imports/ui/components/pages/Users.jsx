@@ -1,4 +1,3 @@
-'use strict';
 
 import React from "react";
 
@@ -15,13 +14,15 @@ import 'antd/lib/spin/style';
 
 import { Roles } from '/imports/api/roles/roles.js';
 
-import { UserColumns } from '/imports/ui/static_data/UserColumns.js'
+import { UserColumns } from '../table_columns/UserColumns.js'
 
 import Modal from 'antd/lib/modal';
 import 'antd/lib/modal/style';
 
 import message from 'antd/lib/message';
 import 'antd/lib/message/style'
+
+import { countMeteorUsers, getMeteorUsersLimit } from '../../services/users.js';
 
 const confirm = Modal.confirm;
 
@@ -145,11 +146,15 @@ class Users extends React.Component{
   componentDidMount(){
     let self = this;
     self.getPageUsers(1,20,this.state.condition);
-    Meteor.call('users.count', function(err,rlt){
-      self.setState({
-        totalCount: rlt,
-      });
-    });
+    countMeteorUsers(function(err, rlt){
+
+      if (!err) {
+        self.setState({
+          totalCount: rlt,
+        });
+      }
+
+    })
   }
 
 
@@ -179,7 +184,7 @@ class Users extends React.Component{
 
   getPageUsers(page, pageSize, condition){
     let self = this;
-    Meteor.call("get.users.limit",condition, page, pageSize, function(err, rlt){
+    getMeteorUsersLimit(condition, page, pageSize, function(err, rlt){
       if (!err) {
         self.setState({
           users: rlt,
@@ -188,7 +193,7 @@ class Users extends React.Component{
         });
         self.bindJqueryEventForButtons();
       }
-    });
+    })
   }
 
 

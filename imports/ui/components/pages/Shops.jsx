@@ -12,7 +12,7 @@ import 'antd/lib/input/style';
 
 import { Roles } from '/imports/api/roles/roles.js';
 
-import { ShopColumns } from '/imports/ui/static_data/ShopColumns.js'
+import { ShopColumns } from '../table_columns/ShopColumns.js'
 
 
 import AddModal from './shops_components/AddModal.jsx';
@@ -71,7 +71,7 @@ class Shops extends React.Component{
         </div>
 
         <Table dataSource={dataSource} columns={ShopColumns} />
-      
+
       </div>
     )
   }

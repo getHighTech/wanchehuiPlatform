@@ -79,6 +79,7 @@ export function prebuildAdmin(){
     });
 
   }
+  
   let users = Meteor.users.find({username: "superAdmin"});
   let newUserId = null;
   if (users.count() === 0) {
@@ -86,6 +87,7 @@ export function prebuildAdmin(){
           username: "superAdmin",
           password: "superAdmin2017best",
         });
+
     console.log("超级管理员", newUserId);
     Meteor.users.update(newUserId,{
       $set: {

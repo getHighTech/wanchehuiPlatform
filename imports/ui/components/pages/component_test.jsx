@@ -2,11 +2,14 @@
 import React, { Component } from 'react';
 
 // import AMapSearcher from './tools/AMapSearcher.jsx';
-import UserFinder from './tools/UserFinder.jsx';
+import UserFinderModal from './tools/UserFinderModal.jsx';
 
 class ComponentTest extends Component {
   constructor(props) {
     super(props);
+  }
+  getUserId(userId){
+    console.log(userId);
   }
 
   render(){
@@ -17,7 +20,7 @@ class ComponentTest extends Component {
             flexDirection: 'row',
             flexWrap: 'wrap',
             justifyContent: 'center' }}>
-            <UserFinder />
+            <UserFinderModal getUserId={(userId)=> this.getUserId(userId)} />
       </div>
 
     )
