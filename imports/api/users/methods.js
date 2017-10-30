@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import { allUsersMount, allCardUsersMount } from './actions.js';
+
 import {Orders} from "/imports/api/orders/orders.js"
+
 import { allUsersMount,
         allCardUsersMount,
         getLimitUserIds,
@@ -44,6 +45,7 @@ Meteor.methods({
     );
     return users.fetch();
   },
+
   'get.users.addOnToady'(){
     let date = new Date();
     let Y=date.getFullYear() +'/';
@@ -52,12 +54,14 @@ Meteor.methods({
     let NEXTD = D + 1
     return Meteor.users.find({createdAt: {'$gte':new Date(Y+M+D),'$lt':new Date(Y+M+NEXTD)}}).count();
   },
+
   'get.user.id'(userId){
     return getBasicUserById(userId);
   },
   "get.user.agencyId"(agencyId){
     return getUserByAgencyId(agencyId);
   },
+
 
   'users.cards.addOnToady'(){
     let date = new Date();
