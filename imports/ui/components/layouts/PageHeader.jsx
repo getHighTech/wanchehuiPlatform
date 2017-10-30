@@ -15,6 +15,9 @@ const PageHeader = (path) => {
       case "/shops":
         return "店铺管理"
         break;
+      case "/shops/shop_item":
+      return "新增店铺"
+      break;
       case "/orders":
         return "订单管理"
         break;

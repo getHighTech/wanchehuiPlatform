@@ -25,6 +25,7 @@ import 'antd/lib/input/style';
 
 import { Roles } from '/imports/api/roles/roles.js';
 import ShopForm from './ShopForm.jsx';
+import {Link} from 'react-router';
 
 class AddModal extends React.Component{
   constructor(props){
@@ -72,7 +73,11 @@ class AddModal extends React.Component{
     return(
       <div>
         <Tooltip placement="topLeft" title="添加新店铺" arrowPointAtCenter>
-          <Button onClick={this.showModal.bind(this)} shape="circle" icon="plus"  style={{fontSize: "18px", color: "red"}} />
+        
+        <Link to="/shops/shop_item">
+          <Button shape="circle" icon="plus"  style={{fontSize: "18px", color: "red"}} ></Button>
+        </Link>
+
         </Tooltip>
         <Modal
           title="添加新店铺"
