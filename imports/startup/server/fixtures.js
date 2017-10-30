@@ -5,5 +5,6 @@ import { prebuildAdmin } from './roles_fixture.js';
 
 Meteor.startup(() => {
   prebuildAdmin();
+  //修复的用户没有createdAt的错误
 
   });
