@@ -8,6 +8,7 @@ import "antd/lib/tooltip/style";
 
 import UserById from './TableComponents/UserById'
 import UserByAgencyId from './TableComponents/UserByAgencyId'
+import ProductById from './TableComponents/ProductById'
 import UserFinderModal from '../pages/tools/UserFinderModal.jsx';
 
 const actionStyle = {
@@ -45,7 +46,7 @@ const product = {
   dataIndex: 'productId',
   key: 'productId',
   render: (text, record) => {
-    return (<span>{text}</span>);
+    return (<ProductById productId={text} />);
   }
 }
 

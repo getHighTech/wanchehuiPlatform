@@ -144,5 +144,8 @@ export function getBasicUserById(userId){
 
 export function getUserByAgencyId(agencyId){
   let agency = findAgencyById(agencyId);
+  if (agency == undefined) {
+    return {};
+  }
   return getBasicUserById(agency.userId);
 }
