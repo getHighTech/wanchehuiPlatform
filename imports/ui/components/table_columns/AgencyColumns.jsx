@@ -63,7 +63,7 @@ const superAgency = {
     if (record) {
       return (
         <div >
-            <UserByAgencyId agencyId={changeAgencyId} />
+            <UserByAgencyId agencyId={text} />
             <UserFinderModal text="选择并更改其上级" getUserId={(userId)=> getUserId(userId)} />
         </div>);
     }else{

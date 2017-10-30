@@ -43,6 +43,10 @@ class AgenciesRelations extends React.Component{
     }
   }
   handleSearchInput(str){
+    $('.agency-search-title h3').html('用户关键字：<b>\"'+str+"\"</b>的搜索结果");
+    if (str === '') {
+      $('.agency-search-title h3').html('最近的代理链');
+    }
     let condition = {
       $or: [
         {'profile.mobile': eval("/"+str+"/")},
@@ -70,11 +74,11 @@ class AgenciesRelations extends React.Component{
   }
 
   componentDidMount(){
-
+    let self = this;
     this.getPageAgencies(this.state.condition, 1, 20);
     $(document).bind("select-user-id", function(e, id){
       //处理选择用户事件
-      console.log(userId);
+      self.changeSuperAgency(id);
     })
   }
 
