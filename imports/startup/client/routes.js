@@ -20,7 +20,7 @@ import AgenciesRelations from '/imports/ui/components/pages/AgenciesRelations';
 
 
 import ComponentTest from '/imports/ui/components/pages/component_test';
-
+import ShopItem from '/imports/ui/components/pages/ShopItem';
 
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
@@ -31,6 +31,7 @@ const Routes = ({ location }) =>
     <Route path="/" component={MainLayout} >
       <Route path="/users" component={Users}/>
       <Route path="/shops" component={Shops}/>
+      <Route path="/shops/shop_item" component={ShopItem}/>
       <Route path="/orders" component={Orders}/>
       <Route path="/roles" component={Roles}/>
       <Route path="/settings" component={Settings}/>

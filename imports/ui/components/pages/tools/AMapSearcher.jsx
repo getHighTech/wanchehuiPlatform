@@ -92,7 +92,6 @@ class AMapSearcher extends Component {
     }
     return (
       <div>
-        <h1>这是高德自动检索定位组件</h1>
         <AutoCompleteInput
         fdata={this.state.searchList}
         placeholder="请输入关键字查找地理位置"
