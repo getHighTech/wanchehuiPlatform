@@ -16,6 +16,7 @@ import { ShopColumns } from '../table_columns/ShopColumns.js'
 
 
 import AddModal from './shops_components/AddModal.jsx';
+import CommonForm from './shops_components/CommonForm.jsx'
 
 class ShopItem extends React.Component{
   constructor(props) {
@@ -57,9 +58,7 @@ class ShopItem extends React.Component{
     //   };
 
     return (
-      <div>
-        test1111
-    </div>
+        <CommonForm />
       
         
     )
