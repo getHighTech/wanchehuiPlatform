@@ -48,11 +48,11 @@ Meteor.methods({
 
   'get.users.addOnToady'(){
     let date = new Date();
-    let Y=date.getFullYear() +'/';
-    let M= (date.getMonth()+1<10?'0'+(date.getMonth()+1) :date.getMonth()+1) +'/';
-    let D=date.getDate();
-    let NEXTD = D + 1
-    return Meteor.users.find({createdAt: {'$gte':new Date(Y+M+D),'$lt':new Date(Y+M+NEXTD)}}).count();
+    var currentDate = date.Format("yyyy/MM/dd");
+    let nextdate = (new Date((date/1000+86400)*1000))
+    var nextDate = nextdate.Format("yyyy/MM/dd");
+
+    return Meteor.users.find({createdAt: {'$gte':new Date(currentDate),'$lt':new Date(nextDate)}}).count();
   },
 
   'get.user.id'(userId){
@@ -65,11 +65,10 @@ Meteor.methods({
 
   'users.cards.addOnToady'(){
     let date = new Date();
-    let Y=date.getFullYear() +'/';
-    let M= (date.getMonth()+1<10?'0'+(date.getMonth()+1) :date.getMonth()+1) +'/';
-    let D=date.getDate();
-    let NEXTD = D + 1;
-    return Orders.find({createdAt: {'$gte':new Date(Y+M+D),'$lt':new Date(Y+M+NEXTD)}, status:'paid',type:'card'}).count();
+    let nextdate = (new Date((date/1000+86400)*1000))
+    var currentDate = date.Format("yyyy/MM/dd");
+    var nextDate = nextdate.Format("yyyy/MM/dd");
+    return Orders.find({createdAt: {'$gte':new Date(currentDate),'$lt':new Date(nextDate)}, status:'paid',type:'card'}).count();
 
   },
   'users.cards.addOnWeek'(){
@@ -78,11 +77,12 @@ Meteor.methods({
        day_of_week = 7
     }
     let date = new Date();
-    let Y=date.getFullYear() +'/';
-    let M= (date.getMonth()+1<10?'0'+(date.getMonth()+1) :date.getMonth()+1) +'/';
-    let D=date.getDate();
-    let EXD = D + 1
-    let NTD = D - day_of_week + 1;
-    return Orders.find({createdAt: {'$gte':new Date(Y+M+NTD),'$lt':new Date(Y+M+EXD)}, status:'paid',type:'card'}).count();
+    let exdate = (new Date((date/1000-day_of_week*86400)*1000))
+    var currentDate =  (new Date((date/1000+86400)*1000)).Format("yyyy/MM/dd");
+    var exDate = exdate.Format("yyyy/MM/dd");
+    console.log('11111111111111'+ currentDate);
+    console.log('222222222222222' + exDate);
+
+    return Orders.find({createdAt: {'$gt':new Date(exDate),'$lte':new Date(currentDate)}, status:'paid',type:'card'}).count();
   }
 });
