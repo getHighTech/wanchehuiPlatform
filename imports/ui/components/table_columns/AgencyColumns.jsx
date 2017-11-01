@@ -8,8 +8,14 @@ import "antd/lib/tooltip/style";
 
 import UserById from './TableComponents/UserById'
 import UserByAgencyId from './TableComponents/UserByAgencyId'
+import LookUpLowerAgencies from './TableComponents/LookUpLowerAgencies.js'
 import ProductById from './TableComponents/ProductById'
 import UserFinderModal from '../pages/tools/UserFinderModal.jsx';
+import {getAgencyId} from '/imports/ui/actions/current_deal_agency.js';
+
+
+import configureStore from "/imports/ui/stores/mainStore";
+const store = configureStore();
 
 const actionStyle = {
    fontSize: 16, color: '#08c'
@@ -50,17 +56,17 @@ const product = {
   }
 }
 
-
+let getUserId= function(userId){
+  //触发自定义的事件，把这个userId,在父组件内部处理
+  $(document).trigger("select-user-id",userId);
+}
 
 const superAgency = {
   title: '上级代理',
   dataIndex: 'superAgencyId',
   key: 'superAgencyId',
   render: (text, record) => {
-    let getUserId= function(userId){
-      //触发自定义的事件，把这个userId,在父组件内部处理
-      $(document).trigger("select-user-id",userId);
-    }
+
     if (record) {
       return (
         <div >
@@ -78,11 +84,8 @@ const lowerAgencies = {
   dataIndex: 'lowerAgencies',
   key: 'lowerAgencies',
   render: (text, record) => {
-    return (<span>
-      <Tooltip placement="topLeft" title="查看下级代理" arrowPointAtCenter>
-        <Button shape="circle" icon="eye" data-id={record._id} className="lookup-lower-agencies"  style={actionStyle} />
-      </Tooltip>
-      </span>)
+
+    return (<LookUpLowerAgencies agencyId={record._id} />)
   }
 }
 

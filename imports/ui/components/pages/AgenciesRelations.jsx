@@ -1,4 +1,3 @@
-'use strict';
 
 import React from "react";
 
@@ -28,18 +27,24 @@ import { getUserIdsLimit } from '../../services/users.js';
 
 const confirm = Modal.confirm;
 
+import watch from 'redux-watch'
+
+
 class AgenciesRelations extends React.Component{
   constructor(props) {
     super(props);
     let self = this;
     self.state = {
       agencies: [],
-      totalCount: 220,
+      totalCount: 50000,
       condition: {},
       currentPage: 1,
       loadingTip: "加载中...",
-      tableLoading: false,
+      tableLoading: true,
       pageSize: 20,
+      currentAgency: {
+
+      }
     }
   }
   handleSearchInput(str){
@@ -74,47 +79,50 @@ class AgenciesRelations extends React.Component{
   }
 
   componentDidMount(){
-    let self = this;
     this.getPageAgencies(this.state.condition, 1, 20);
-    $(document).bind("select-user-id", function(e, id){
-      //处理选择用户事件
-      self.changeSuperAgency(id);
-    })
+
   }
 
 
   changeSuperAgency(userId){
-    console.log(userId);
     this.getPageAgencies(this.state.condition, this.state.currentPage, 20);
   }
 
   handlePageChange(page){
-    this.setState({
-      condition: {
 
-      }
-    })
     this.getPageAgencies(this.state.condition, page, this.state.pageSize);
   }
 
+  componentWillReceiveProps(nextProps){
+    if (nextProps.CurrentDealAgency._id) {
+      let superAgencyId = nextProps.CurrentDealAgency._id;
+      $('.agency-search-title h3').html('所选用户所有下级关系');
+      this.getPageAgencies({superAgencyId}, this.state.currentPage, this.state.pageSize);
+    }
+  }
+
   getPageAgencies(condition, page, pageSize){
+    let self = this;
     this.setState({
       currentPage: page,
+      tableLoading:true,
+      condition,
     });
     $(document).scrollTop(0);
     getMeteorAgenciesLimit(condition, page, pageSize, (err,rlt)=>{
       if (!err) {
         this.setState({
-          agencies: rlt
+          agencies: rlt,
+          tableLoading:false
         })
       }else{
         console.log(err);
       }
-
     });
   }
 
   render() {
+
 
       const headerMenuStyle ={
         display: 'flex',
@@ -135,9 +143,10 @@ class AgenciesRelations extends React.Component{
                placeholder="用户名｜电话｜昵称"
                style={{ width: '75%' }}
                onInput={input => this.handleSearchInput(input.target.value) }
+               onSearch={val => this.handleSearchInput(val) }
               />
         </div>
-        <div className="agency-search-title"><h3 style={{textAlign: "center"}}>最近的代理链</h3></div>
+        <div className="agency-search-title"><h3 style={{textAlign: "center"}}>最新成交关系</h3></div>
         <Spin tip={this.state.loadingTip} spinning={this.state.tableLoading}>
           <Table dataSource={this.state.agencies} rowKey='_id'
           pagination={{defaultPageSize: 20, total: this.state.totalCount,
@@ -153,20 +162,8 @@ class AgenciesRelations extends React.Component{
 }
 function mapStateToProps(state) {
   return {
-
+      CurrentDealAgency: state.CurrentDealAgency,
    };
 }
 
-export default createContainer(() => {
-  if (Meteor.userId()) {
-    Meteor.subscribe('roles.current',{
-      onReady: function(){
-
-      }
-    });
-  }
-  return {
-    current_role: Roles.findOne({users: {$all: [Meteor.userId()]}}),
-
-  };
-}, connect(mapStateToProps)(AgenciesRelations));
+export default connect(mapStateToProps)(AgenciesRelations);
