@@ -1,6 +1,7 @@
 import React from "react";
 
 import {getUserById} from '/imports/ui/services/users.js'
+import UserBasicViewPopover from '../../pages/tools/UserBasicViewPopover.jsx';
 
 class UserById extends React.Component {
   constructor(props){
@@ -62,7 +63,7 @@ class UserById extends React.Component {
       return (<div>用户信息加载中</div>);
     }else{
       return (
-        <div>{this.state.username}<br/>&nbsp;|&nbsp;{this.state.mobile}</div>
+        <div><UserBasicViewPopover username={this.state.username}/><br/>&nbsp;|&nbsp;{this.state.mobile}</div>
       )
     }
 

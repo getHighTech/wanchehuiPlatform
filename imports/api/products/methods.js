@@ -1,7 +1,10 @@
+import { Meteor } from 'meteor/meteor';
+
 import { Products } from './products.js';
+import {getProductById} from './actions.js';
 
 
-Meteor.call({
+Meteor.methods({
   "products.insert"(product){
     Products.insert({
       name: product.name,
@@ -46,5 +49,8 @@ Meteor.call({
         onLine: product.onLine,
       }
     });
+  },
+  'get.product.id'(productId){
+    return getProductById(productId);
   }
 });

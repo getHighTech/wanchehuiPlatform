@@ -30,6 +30,7 @@
     "react-router-redux": "^4.0.8",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
+    "redux-watch": "^1.1.1",
     "sia.js": "^0.4.1",
     "uuid": "^3.1.0",
     "xlsx": "^0.11.4"

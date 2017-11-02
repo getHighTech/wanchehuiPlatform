@@ -1,8 +1,9 @@
-//此组件用于在高德地图中定位输入的文本的位置
+//此组件用于测试
 import React, { Component } from 'react';
 
 // import AMapSearcher from './tools/AMapSearcher.jsx';
-import UserFinderModal from './tools/UserFinderModal.jsx';
+// import UserFinderModal from './tools/UserFinderModal.jsx';
+import UserBasicViewPopover from './tools/UserBasicViewPopover.jsx';
 
 class ComponentTest extends Component {
   constructor(props) {
@@ -20,7 +21,7 @@ class ComponentTest extends Component {
             flexDirection: 'row',
             flexWrap: 'wrap',
             justifyContent: 'center' }}>
-            <UserFinderModal getUserId={(userId)=> this.getUserId(userId)} />
+            <UserBasicViewPopover username='18820965455'/>
       </div>
 
     )

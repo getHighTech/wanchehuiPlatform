@@ -17,13 +17,6 @@ import { Roles } from '/imports/api/roles/roles.js';
 
 import { SelectUserColumns } from '../../table_columns/UserColumns.js'
 
-import Modal from 'antd/lib/modal';
-import 'antd/lib/modal/style';
-
-import message from 'antd/lib/message';
-import 'antd/lib/message/style'
-
-const confirm = Modal.confirm;
 
 class UserFinder extends React.Component{
   constructor(props) {
