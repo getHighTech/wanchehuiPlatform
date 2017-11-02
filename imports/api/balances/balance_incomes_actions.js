@@ -1,14 +1,32 @@
 import {BalanceIncomes} from './balance_incomes.js';
 
+
+
 export function addNewBalanceIncomeFromAgency(agencyId, balanceId, amount, text){
   return BalanceIncomes.insert({
     reasonType: "agencyGive",
     balanceId,
     text,
     amount,
+    agency: agencyId,
     createdAt: new Date()
   });
 }
+
+export function noteIncome(reason, amount, text, balanceId){
+  switch (reason.type) {
+  case "agencyCard":
+    if (!reason.agencyId) {
+      return "AGENCYCARD TYPE SHOULD HAS AGENCYID IN NOT INCOME";
+    }
+    return addNewBalanceIncomeFromAgency(reason.agencyId, balanceId, amount ,text);
+  default:
+      return "NOT INCOME TYPE WRONG";
+
+  }
+}
+
+
 
 
 export function addIncomeRecord(balanceId, amount, text, reasonType){

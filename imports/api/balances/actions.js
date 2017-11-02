@@ -1,37 +1,33 @@
-import {findOrCreateBalanceByUser, addMountToBalance} from './balances_actions.js';
-import {addNewBalanceIncomeFromAgency, addIncomeRecord} from './balance_incomes_actions.js';
+import {findBalanceByUserId, addMountToBalance, loseMountFromBalance} from './balances_actions.js'
+import {noteIncome} from './balance_incomes_actions.js'
+import {noteCharge} from './balance_incomes_actions.js'
 
-
-export function addNewBalanceIncomeFromAgencyAndUpdateBalance(agencyId, balanceId, amount, text){
-  let incomeId = addNewBalanceIncomeFromAgency(agencyId, balanceId, amount, text);
-  if (incomeId == undefined) {
-    //收入记账失败
-    return {
-      error: "INCOME_INSERT_FAILED"
-    }
-
+export function giveUserMoney(userId, amount, reason){
+  let balance = findBalanceByUserId(userId);
+  if (!balance) {
+    return "BLANCE NOT FOUND IN giveUserMoney";
   }
-  return addMountToBalance(balanceId, amount);
+  let text = ''
+  if (reason.type === "agencyCard") {
+    text = '分销收入'
+  }
+  noteIncome(reason, amount, text, balance._id);
+  return addMountToBalance(balance._id, amount);
 }
 
-export function addMountToUser(userId, amount, text, reasonType){
-    let balance  = findOrCreateBalanceByUser(userId);
-    let incomeResult = addIncomeRecord(balance._id, amount, text, reasonType);
-    if (!incomeResult) {
-      return "BILL RECORD FAILED UNKNOWN"
-    }
-    return addMountToBalance(balance._id, amount);
-}
-
-//由于退款，减少用户的奖励
-export function chargeBalanceWithRefund(userId, money, text){
-  let balance = findBalanceByUserId(userId)
-  let chargeRlt = addNewBalanceChargeRefund(balance._id, userId,
-    text,
-    money, "done");
-  if (chargeRlt != 1) {
-    return "INSERT NEW CHARGE FAILED";
+export function loseUserMoney(userId, amount, reason){
+  let balance = findBalanceByUserId(userId);
+  if (!balance) {
+    return "BLANCE NOT FOUND IN loseUserMoney";
   }
-  return loseMountFromBalance(balance._id, money);
+  let text = ''
+  if (reason.type === "withdrawals") {
+    text = '提现金额';
+  }
+  if (reason.type === "refund") {
+    text = "用户已经退款";
+  }
 
+  noteCharge(reason, amount, text, balance._id);
+  return loseMountFromBalance(balance._id, amount);
 }
