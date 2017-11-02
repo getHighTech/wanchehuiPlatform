@@ -79,16 +79,6 @@ class AddModal extends React.Component{
         </Link>
 
         </Tooltip>
-        <Modal
-          title="添加新店铺"
-          visible={this.state.visible}
-          onOk={this.handleOk.bind(this)}
-          onCancel={this.handleCancel.bind(this)}
-          maskClosable={false}
-          style={{ top: 20 }}
-        >
-          <ShopForm submit={(params)=>this.handleFormSubmit.bind(this)}/>
-        </Modal>
       </div>
     );
   }

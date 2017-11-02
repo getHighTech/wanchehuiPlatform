@@ -37,22 +37,24 @@ const FormItem = Form.Item;
 
 
 import { Roles } from '/imports/api/roles/roles.js';
+import { Shops } from '/imports/api/shops/shops.js';
 
 class NormalCommonForm extends React.Component{
   constructor(props){
     super(props);
-    this.state={
-      visible: false,
-    }
   }
   handleSubmit = (e) => {
+    let self = this;
     e.preventDefault();
     this.props.form.validateFields((err, fieldsValue) => {
         if (err) {
           return;
             }
-        })    
-    }
+        else {
+          self.props.shopInfo(fieldsValue);
+      }
+    })  
+  }
 
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -114,92 +116,10 @@ class NormalCommonForm extends React.Component{
                 <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
             )}
             </FormItem>
-            <FormItem
-            {...formItemLayout}
-            label="店铺标签"
-            hasFeedback
-            >
-        {getFieldDecorator('shopTag', {
-            rules: [{ required: true, message: '店铺标签不能为空' }],
-            })(
-            <Input  placeholder="店铺标签" />
-            )}
-        </FormItem>
-        <FormItem
-        {...formItemLayout}
-        label="店铺营业时间"
-        hasFeedback
-        >
-        {getFieldDecorator('shopStarttime', {
-            rules: [{ required: true, message: '营业时间不能为空' }],
-            })(
-                <TimePicker format="hh:mm"  />
-            )}        
-            至  <TimePicker format="hh:mm"  />
-    
-        </FormItem>
-        
-        <FormItem
-        {...formItemLayout}
-        label="店铺封面"
-        hasFeedback
-        >
-        {getFieldDecorator('shopPicture', {
-            rules: [{ required: true, message: '图片不能为空' }],
-            })(
-            <Upload>
-                <Button>
-                <Icon type="upload" /> 上传图片
-                </Button>
-            </Upload>
-            )}    
-
-        </FormItem>
-
-        <FormItem
-        {...formItemLayout}
-        label="上传合同"
-        hasFeedback
-        >
-        {getFieldDecorator('shopContract', {
-            rules: [{ required: true, message: '合同不能为空' }],
-            })(
-            <Upload>
-                <Button >
-                    <Icon type="upload" /> 点击上传文件
-                </Button>
-            </Upload>
-            )}
-
-        </FormItem>
-
-        <FormItem
-        {...formItemLayout}
-        label="店铺地址"
-        hasFeedback
-        >
-        {getFieldDecorator('shopAddress', {
-            rules: [{ required: true, message: '店铺地址不能为空' }],
-            })(
-            <AMapSearcher />
-            )}
-        </FormItem>
-
-        <FormItem
-        {...formItemLayout}
-        label="店铺简介"
-        hasFeedback
-        >
-        {getFieldDecorator('shopDescrption', {
-        rules: [{ required: true, message: '店铺简介不能为空' }],
-        })(
-        <Input placeholder="店铺简介" />
-        )}
-        </FormItem>
-        <FormItem {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">创建店铺</Button>
-      </FormItem>
-    </Form>
+            <FormItem {...tailFormItemLayout}>
+              <Button type="primary" htmlType="submit">创建店铺</Button>
+            </FormItem>
+          </Form>
     );
   }
 }

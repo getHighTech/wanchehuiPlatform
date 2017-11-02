@@ -24,15 +24,23 @@ class ShopItem extends React.Component{
 
   }
 
-  handleSearchInput(value){
-
-    console.log(value);
+  getShopInfo (shopInfo){
+    Meteor.call("shops.insert", shopInfo, (error, result)=>{
+      console.log(error)
+      if (!error) {
+        console.log('++++++++++++++++++++++++++++')
+      }  
+    });
   }
+  componentDidMount(){
+    //如果存在ID，说明是编辑
+    if (this.props.params.id){
+      this.getShop()
+    }
+  }
+  getShop(){
 
-
-
-
-
+  }
   render() {
 
     // const dataSource = [
@@ -58,7 +66,7 @@ class ShopItem extends React.Component{
     //   };
 
     return (
-        <CommonForm />
+        <CommonForm shopInfo={shopInfo => this.getShopInfo(shopInfo)}/>
       
         
     )
