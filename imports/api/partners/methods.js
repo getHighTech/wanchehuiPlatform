@@ -3,10 +3,16 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import { HTTP } from 'meteor/http';
-import { PageContents } from './page_contents.js';
-import { Pages } from './pages.js';
-
+import {Partners} from './partners';
 
 Meteor.methods({
-  
+  'member.applies.insert'(applyName, applyEmail, applyMobile, applyIntro){
+    return Partners.insert({
+      applyName,
+      applyEmail,
+      applyMobile,
+      applyIntro,
+      createdAt: new Date()
+    });
+  }
 });

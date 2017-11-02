@@ -22,6 +22,9 @@ import { Roles } from '/imports/api/roles/roles.js';
 class MainLayout extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      menuActiveKey: "dashboard"
+    }
 
   }
   componentDidMount(){
@@ -31,13 +34,64 @@ class MainLayout extends Component {
       dispatch(push("/login"));
       message.warning("请先登录！")
     }
+    const pathname = this.props.routing.locationBeforeTransitions.pathname;
+    switch (pathname) {
+      case "/":
+      this.setState({
+        menuActiveKey: 'dashboard'
+      });
+      break;
+      default:
 
+    }
+    $(document).ready(function(){
+      $(this).unbind("click").on('click',function(e){
+        if ($(e.target).hasClass("on-dev-unfinished")) {
+          message.warning("仍然在开发中，敬请期待");
+        }
+      });
+    });
+
+
+  }
+  handleMenuItemClicked(item){
+    const key = item.key;
+    const { dispatch } = this.props;
+    switch (key) {
+      case 'dashboard':
+        dispatch(push('/'));
+        break;
+      case 'roles':
+        dispatch(push('/roles'));
+        break;
+      case 'users':
+        dispatch(push('/users'));
+        break;
+      case 'orders':
+        dispatch(push('/orders'));
+        break;
+      case 'shops':
+        dispatch(push('/shops'));
+        break;
+      case 'settings':
+        dispatch(push('/settings'));
+        break;
+      case 'agency_relations':
+        dispatch(push('/agencies_relations'));
+        break;
+      case 'component_test':
+        dispatch(push('/component_test'));
+        break;
+      default:
+        dispatch(push('/'));
+        break;
+    }
   }
 
 
   render() {
-    // let role = this.props.current_role;
-    // console.log(role);
+    let role = this.props.current_role;
+    console.log(role);
     return (
       <Layout>
         <Sider
@@ -48,22 +102,45 @@ class MainLayout extends Component {
           }}
         >
           <div className="logo" />
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
-            <Menu.Item key="1">
+          <Menu theme="dark"
+          mode="inline" defaultSelectedKeys={[this.state.menuActiveKey]}
+          onClick={this.handleMenuItemClicked.bind(this)}
+          >
+            <Menu.Item key="dashboard">
+              <Icon type="bars" />
+              <span className="nav-text">控制面板</span>
+            </Menu.Item>
+            <Menu.Item key="users">
               <Icon type="user" />
-              <span className="nav-text">nav 1</span>
+              <span className="nav-text">用户管理</span>
             </Menu.Item>
-            <Menu.Item key="2">
-              <Icon type="video-camera" />
-              <span className="nav-text">nav 2</span>
+            <Menu.Item key="shops">
+              <Icon type="shop" />
+              <span className="nav-text">店铺管理</span>
             </Menu.Item>
-            <Menu.Item key="3">
-              <Icon type="upload" />
-              <span className="nav-text">nav 3</span>
+            <Menu.Item key="orders">
+              <Icon type="book" />
+              <span className="nav-text">订单管理</span>
             </Menu.Item>
-            <Menu.Item key="4">
-              <Icon type="user" />
+            <Menu.Item key="agency_relations">
+              <Icon type="paper-clip" />
+              <span className="nav-text">分销关系管理</span>
+            </Menu.Item>
+            <Menu.Item key="roles">
+              <Icon type="paper-clip" />
+              <span className="nav-text">角色管理</span>
+            </Menu.Item>
+            <Menu.Item key="settings">
+              <Icon type="setting" />
               <span className="nav-text">系统设置</span>
+            </Menu.Item>
+            <Menu.Item key="logs">
+              <Icon type="paper-clip" />
+              <span className="nav-text">系统日志</span>
+            </Menu.Item>
+            <Menu.Item key="component_test">
+              <Icon type="paper-clip" />
+              <span className="nav-text">组件测试页面</span>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -102,6 +179,7 @@ class MainLayout extends Component {
 
 function mapStateToProps(state) {
   return {
+    routing: state.routing
    };
 }
 

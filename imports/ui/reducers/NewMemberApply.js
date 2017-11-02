@@ -1,4 +1,4 @@
-import {NEW_MEMBER_APPLY} from "../actions/new_member_apply.js";
+import {NEW_MEMBER_APPLY, CREATE_MEMBER_APPLY} from "../actions/new_member_apply.js";
 
 function NewMemberApply(state={applyName: "", applyEmail: "", applyMobile: "", applyIntro:""}, action){
   switch (action.type) {
@@ -10,7 +10,14 @@ function NewMemberApply(state={applyName: "", applyEmail: "", applyMobile: "", a
         applyMobile: action.applyMobile,
         applyIntro: action.applyIntro
       });
-    break;
+    case CREATE_MEMBER_APPLY:
+      // 覆盖申请状态
+      return Object.assign({}, state, {
+        applyName: '',
+        applyEmail: '',
+        applyMobile: '',
+        applyIntro: ''
+      });
 
     default:
       return state;

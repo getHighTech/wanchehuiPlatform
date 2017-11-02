@@ -78,6 +78,9 @@ class LoginWrap extends Component {
         }
       });
     }
+    componentWillReceiveProps(nextProps){
+      console.log(nextProps);
+    }
 
     checkBlank(form){
       //判断空值的验证
