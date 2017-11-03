@@ -2,7 +2,6 @@ import React from 'react';
 import { Provider, connect } from 'react-redux';
 import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router';
 import { syncHistoryWithStore} from 'react-router-redux';
-import configureStore from "/imports/ui/stores/mainStore";
 
 import MainLayout from '/imports/ui/components/layouts/MainLayout';
 import Login from '/imports/ui/components/pages/Login';
@@ -21,6 +20,7 @@ import AgenciesRelations from '/imports/ui/components/pages/AgenciesRelations';
 
 import ComponentTest from '/imports/ui/components/pages/component_test';
 import ShopItem from '/imports/ui/components/pages/ShopItem';
+import configureStore from "/imports/ui/stores/mainStore";
 
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);

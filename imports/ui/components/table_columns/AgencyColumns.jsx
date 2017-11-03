@@ -56,10 +56,7 @@ const product = {
   }
 }
 
-let getUserId= function(userId){
-  //触发自定义的事件，把这个userId,在父组件内部处理
-  $(document).trigger("select-user-id",userId);
-}
+
 
 const superAgency = {
   title: '上级代理',
@@ -71,7 +68,7 @@ const superAgency = {
       return (
         <div >
             <UserByAgencyId agencyId={text} />
-            <UserFinderModal text="选择并更改其上级" getUserId={(userId)=> getUserId(userId)} />
+            <UserFinderModal extraBackData={record} text="选择并更改其上级" />
         </div>);
     }else{
       return (<span>加载中</span>)

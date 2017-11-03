@@ -43,6 +43,9 @@ export function findOrCreateBalanceByUser(userId){
 
 export function addMountToBalance(balanceId, mount){
   let balance = findBalanceById(balanceId);
+  if (!balance) {
+    return "BALANCE NOT FOUND IN addMountToBalance";
+  }
   let balance_amount = balance.amount;
   balance_amount = balance_amount + mount;
   return Balances.update(balanceId, {

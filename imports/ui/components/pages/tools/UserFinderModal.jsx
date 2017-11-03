@@ -56,8 +56,7 @@ class UserFinderModal extends React.Component{
     console.log(params);
   }
 
-  getUserId(userId){
-    this.props.getUserId(userId);
+  selectClose(){
     this.setState({
       visible: false,
     });
@@ -80,7 +79,7 @@ class UserFinderModal extends React.Component{
           maskClosable={true}
           style={{ top: 20 }} footer={null}
         >
-        <UserFinder getUserId={(userId) =>  this.getUserId(userId)} />
+        <UserFinder extraBackData={this.props.extraBackData} selectClose={()=>this.selectClose()}  />
         </Modal>
       </div>
     );
