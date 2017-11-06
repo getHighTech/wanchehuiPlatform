@@ -41,6 +41,7 @@ class LookUpLowerAgencies extends React.Component {
 
 function mapStateToProps(state) {
   return {
+
       CurrentDealAgency: state.CurrentDealAgency,
    };
 }

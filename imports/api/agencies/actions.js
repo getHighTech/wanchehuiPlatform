@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Agencies } from './agencies.js';
 
-import {giveUserMoney} from '../balances/actions';
+import {giveUserMoney, loseUserMoney} from '../balances/actions';
+import {getProductTypeById} from '../products/actions';
 
 export function findAgencyByUserId(userId){
   return Agencies.findOne({userId});
@@ -78,20 +79,30 @@ export function getPageAgencies(conditon, page, pageSize){
   return agencies.fetch();
 }
 
-export function recycleSuperAgencyMoney(agencyId, reason){
+export function recycleSuperAgencyMoney(agencyId, reason, productId){
   let superAgency = findSuperAgencyById(agencyId);
   if (superAgency) {
     return "NO NEED TO RECYCLE BECAUSE THERE HAS NO SUPER";
   }
-  loseUserMoney(superAgency.userId, 3880, reason);
+  let amount1 = 0;
+  let amount2 = 0;
+  let product = getProductById(productId);
+  if (product.type === "card") {
+    amount1=3880;
+    amount2=1280
+  }else {
+    amount1 = product.agencyAmounts[0];
+    amount2 = product.agencyAmounts[1];
+  }
+  loseUserMoney(superAgency.userId, amount1, reason);
   let superSuperAgency = findSuperAgencyById(superAgency.superAgencyId);
   if (!superSuperAgency) {
     return "NO NEED TO RECYCLE BECAUSE THERE HAS NO SUPER SUPER";
   }
-  return loseUserMoney(superSuperAgency.userId, 1280, reason);
+  return loseUserMoney(superSuperAgency.userId, amount2, reason);
 }
 
-export function giveSuperAgencyMoney(agencyId, reason){
+export function giveSuperAgencyMoney(agencyId, reason, productId){
   let superAgency = findSuperAgencyById(agencyId);
   if (superAgency) {
     return "NO NEED TO GIVE MONEY BECAUSE THERE HAS NO SUPER";
@@ -104,7 +115,7 @@ export function giveSuperAgencyMoney(agencyId, reason){
   return givUserMoney(superSuperAgency.userId, 1280, reason);
 }
 
-export function changeSuperAgency(agencyId, superAgencyId, giveReason, loasReason){
+export function changeSuperAgency(agencyId, superAgencyId, giveReason, loseReason, productId){
   let agency = findAgencyById(agencyId);
   let note=""
   if (!agency) {
@@ -113,7 +124,7 @@ export function changeSuperAgency(agencyId, superAgencyId, giveReason, loasReaso
   if (agency.superAgencyId === superAgencyId) {
     return "AGENCY STILL"
   }else{
-    recycleSuperAgencyMoney(agencyId, loseReason);
+    recycleSuperAgencyMoney(agencyId, loseReason, productId, productId);
   }
   try {
     Agencies.update(agencyId, {
@@ -131,7 +142,7 @@ export function changeSuperAgency(agencyId, superAgencyId, giveReason, loasReaso
     return "SUPER AGENCY NOT FOUND IN changeSuperAgency"
   }
   if (updateRlt) {
-    return giveSuperAgencyMoney(superAgencyId, giveReason);
+    return giveSuperAgencyMoney(superAgencyId, giveReason, productId, productId);
   }
 
 }

@@ -12,8 +12,6 @@ import 'antd/lib/modal/style';
 
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
-import Table from 'antd/lib/table';
-import "antd/lib/table/style";
 import Button from 'antd/lib/button';
 import "antd/lib/button/style";
 import Icon from 'antd/lib/icon';
@@ -27,6 +25,8 @@ import { Roles } from '/imports/api/roles/roles.js';
 
 
 import UserFinder from './UserFinder';
+
+const confirm = Modal.confirm;
 
 class UserFinderModal extends React.Component{
   constructor(props){
@@ -56,7 +56,29 @@ class UserFinderModal extends React.Component{
     console.log(params);
   }
 
-  selectClose(){
+  selectClose(userId, data){
+    if (data.type="changeSuperAgency") {
+      console.log("响应改变上级代理状态");
+      confirm({
+         title: '改变上级代理确认',
+         content: '一旦你确认改变，之前的代理将损失已经获取的佣金，你选择的用户将得到一笔新的佣金,是否确认(请慎重操作)？',
+         onOk() {
+           return new Promise((resolve, reject) => {
+             console.log(resolve);
+             console.log(reject);
+             return reject();
+            //  setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+          }).catch((e) => {
+            console.log(e);
+            console.log('Oops errors!');
+            return reject();
+          });
+
+         },
+         onCancel() {},
+       });
+
+    }
     this.setState({
       visible: false,
     });
@@ -79,7 +101,7 @@ class UserFinderModal extends React.Component{
           maskClosable={true}
           style={{ top: 20 }} footer={null}
         >
-        <UserFinder extraBackData={this.props.extraBackData} selectClose={()=>this.selectClose()}  />
+        <UserFinder extraBackData={this.props.extraBackData} selectClose={(userId, data)=>this.selectClose(userId, data)}  />
         </Modal>
       </div>
     );
@@ -92,11 +114,4 @@ function mapStateToProps(state) {
    };
 }
 
-export default createContainer(() => {
-  if (Meteor.userId()) {
-    Meteor.subscribe('roles.current');
-  }
-  return {
-    current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
-  }
-},connect(mapStateToProps)(UserFinderModal));
+export default connect(mapStateToProps)(UserFinderModal);

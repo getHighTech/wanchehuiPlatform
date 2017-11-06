@@ -63,12 +63,15 @@ const superAgency = {
   dataIndex: 'superAgencyId',
   key: 'superAgencyId',
   render: (text, record) => {
-
+    let extraBackData = {
+      type: "changeSuperAgency",
+      record,
+    }
     if (record) {
       return (
         <div >
             <UserByAgencyId agencyId={text} />
-            <UserFinderModal extraBackData={record} text="选择并更改其上级" />
+            <UserFinderModal extraBackData={extraBackData} text="选择并更改其上级" />
         </div>);
     }else{
       return (<span>加载中</span>)

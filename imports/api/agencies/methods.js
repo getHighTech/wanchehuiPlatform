@@ -23,8 +23,8 @@ Meteor.methods({
     return agencies.fetch();
 
   },
-  'agencies.changeSuperAgency'(agencyId, superAgencyId, giveReason, loasReason){
-    return changeSuperAgency(agencyId, superAgencyId, giveReason, loseReason);
+  'agencies.changeSuperAgency'(agencyId, superAgencyId, giveReason, loseReason, productId){
+    return changeSuperAgency(agencyId, superAgencyId, giveReason, loseReason, productId);
   },
   'agency.userId'(userId){
     return findAgencyByUserId(userId);
