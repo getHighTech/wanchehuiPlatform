@@ -39,9 +39,7 @@ class UserFinder extends React.Component{
     let self = this;
     $('.select-user-id').unbind('click').on('click', function(){
       let userId = $(this).attr('data-id');
-      console.log(userId);
-      console.log(self.props.extraBackData);
-      self.props.selectClose();
+      self.props.selectClose(userId, self.props.extraBackData);
     })
   }
   componentDidMount(){

@@ -24,9 +24,15 @@ import Input from 'antd/lib/input';
 import 'antd/lib/input/style';
 
 import { Roles } from '/imports/api/roles/roles.js';
-
+import message from 'antd/lib/message';
+import 'antd/lib/message/style'
 
 import UserFinder from './UserFinder';
+import { changeSuperAgency, getAgencyByUserId } from '../../../services/agencies.js';
+
+
+const confirm = Modal.confirm;
+
 
 class UserFinderModal extends React.Component{
   constructor(props){
@@ -56,7 +62,58 @@ class UserFinderModal extends React.Component{
     console.log(params);
   }
 
-  selectClose(){
+  selectClose(userId, data){
+    if (data.type === "changeSuperAgency") {
+      confirm({
+        title: '你是否确认更改此用户的上级？（请谨慎操作）',
+        content: '如果您确认了更改，意味着原来的上级的的关系链失去其奖励，更新的关系链条就获得这个用户的销售奖励！！',
+        onOk() {
+          return getAgencyByUserId(userId, function(err,rlt){
+            console.log(err);
+            console.log(rlt);
+            if (!err) {
+
+              if (rlt!= "AGENCY NOT FOUND") {
+                changeSuperAgency(
+                  data.record._id,
+                  rlt._id,
+                  {
+                    type: "agencyCard",
+                    agencyId: rlt._id
+                  },
+                  {
+                    type: "refund",
+                    userId: data.record.userid,
+                    recyclerId: '',
+                  },
+                  data.record.productId,
+                  function(err, rlt){
+                    console.log(err);
+                    console.log(rlt);
+                    if (!err) {
+                      if (rlt === "BALANCE NOT FOUND IN addMountToBalance") {
+                        message.warn("更改成功，留意：您选择的用户没有上级代理为系统代理!");
+                      }
+                      if (rlt === "AGENCY STILL") {
+                        message.error("错误!!当前上级就是您选择的上级");
+
+                      }
+                    }
+                  });
+              }else{
+                message.error("该用户没有分销权，请重新选择用户！");
+              }
+            }
+            });
+
+
+            // setTimeout(resolve, 1000);
+
+        },
+        onCancel() {},
+      });
+    }
+
     this.setState({
       visible: false,
     });
@@ -79,7 +136,7 @@ class UserFinderModal extends React.Component{
           maskClosable={true}
           style={{ top: 20 }} footer={null}
         >
-        <UserFinder extraBackData={this.props.extraBackData} selectClose={()=>this.selectClose()}  />
+        <UserFinder extraBackData={this.props.extraBackData} selectClose={(userId, data)=>this.selectClose(userId, data)}  />
         </Modal>
       </div>
     );
@@ -87,6 +144,7 @@ class UserFinderModal extends React.Component{
 }
 
 function mapStateToProps(state) {
+  console.log(state)
   return {
 
    };
