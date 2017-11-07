@@ -7,11 +7,19 @@ export function getMeteorAgenciesLimit(condition, page, pageSize, callback){
   });
 }
 
+
+export function getAgencyByUserId(userId, callback){
+  return Meteor.call("agency.userId", userId, function(err, rlt){
+    callback(err, rlt);
+  })
+}
+
+
 export function changeSuperAgency(agencyId, superAgencyId, giveReason, loseReason, productId, callback){
   if (Meteor) {
-    return Meteor.call('agencies.changeSuperAgency', agencyId,
-       superAgencyId, giveReason, loseReason, productId, function(err, rlt){
-         callback(err, result);
-       })
+    Meteor.call('agencies.changeSuperAgency', agencyId,
+    superAgencyId,giveReason, loseReason, productId, function(err, rlt){
+      callback(err, rlt);
+    });
   }
-}
+};

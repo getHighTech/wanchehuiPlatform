@@ -15,32 +15,24 @@ class UserByAgencyId extends React.Component {
     }
   }
 
-  componentDidMount(){
-    let self  = this;
-    if (this.props.agencyId) {
-      return getUserByAgencyId(this.props.agencyId, (err,rlt)=>{
-        if (!err) {
-          if (!rlt) {
+  getUserByAgencyId(agencyId){
+    let self = this;
+    return getUserByAgencyId(agencyId, (err,rlt)=>{
+      if (!err) {
+        if (!rlt) {
+          self.setState({
+            username: "没有找到",
+            mobile: '',
+            loaded: false,
+          })
+        }
+        if (rlt.profile) {
+          if (rlt.profile.mobile) {
             self.setState({
-              username: "没有找到",
-              mobile: '',
+              username: rlt.username,
+              mobile: rlt.profile.mobile,
               loaded: false,
             })
-          }
-          if (rlt.profile) {
-            if (rlt.profile.mobile) {
-              self.setState({
-                username: rlt.username,
-                mobile: rlt.profile.mobile,
-                loaded: false,
-              })
-            }else{
-              self.setState({
-                username: rlt.username,
-                mobile: "用户暂无手机号",
-                loaded: false,
-              })
-            }
           }else{
             self.setState({
               username: rlt.username,
@@ -48,12 +40,33 @@ class UserByAgencyId extends React.Component {
               loaded: false,
             })
           }
+        }else{
+          self.setState({
+            username: rlt.username,
+            mobile: "用户暂无手机号",
+            loaded: false,
+          })
         }
-      });
+      }
+    });
+  }
+
+  componentWillReceiveProps(nextProps){
+    if (nextProps.AgencyChange.agencyId) {
+      this.getUserByAgencyId(nextProps.AgencyChange.agencyId);
     }else{
       console.log("shall be await")
     }
   }
+
+  componentDidMount(){
+    if (this.props.agencyId) {
+      this.getUserByAgencyId(this.props.agencyId);
+    }else{
+      console.log("shall be await")
+    }
+  }
+
 
   componentWillUnmount(){
     this.setState({
@@ -76,6 +89,7 @@ class UserByAgencyId extends React.Component {
 function mapStateToProps(state) {
   return {
       CurrentDealAgency: state.CurrentDealAgency,
+      AgencyChange: state.AgencyChange,
    };
 }
 

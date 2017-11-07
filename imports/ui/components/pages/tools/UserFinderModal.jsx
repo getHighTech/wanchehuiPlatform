@@ -22,9 +22,13 @@ import Input from 'antd/lib/input';
 import 'antd/lib/input/style';
 
 import { Roles } from '/imports/api/roles/roles.js';
-
+import message from 'antd/lib/message';
+import 'antd/lib/message/style'
 
 import UserFinder from './UserFinder';
+import { changeSuperAgency, getAgencyByUserId } from '../../../services/agencies.js';
+
+import {agencyRefresh} from '/imports/ui/actions/agency_change.js';
 
 const confirm = Modal.confirm;
 
@@ -57,28 +61,68 @@ class UserFinderModal extends React.Component{
   }
 
   selectClose(userId, data){
-    if (data.type="changeSuperAgency") {
-      console.log("响应改变上级代理状态");
+    let self = this;
+    const {dispatch}  = this.props;
+    if (data.type === "changeSuperAgency") {
+
       confirm({
-         title: '改变上级代理确认',
-         content: '一旦你确认改变，之前的代理将损失已经获取的佣金，你选择的用户将得到一笔新的佣金,是否确认(请慎重操作)？',
-         onOk() {
-           return new Promise((resolve, reject) => {
-             console.log(resolve);
-             console.log(reject);
-             return reject();
-            //  setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-          }).catch((e) => {
-            console.log(e);
-            console.log('Oops errors!');
-            return reject();
-          });
+        title: '你是否确认更改此用户的上级？（请谨慎操作）',
+        content: '如果您确认了更改，意味着原来的上级的的关系链失去其奖励，更新的关系链条就获得这个用户的销售奖励！！',
+        onOk() {
 
-         },
-         onCancel() {},
-       });
+          return getAgencyByUserId(userId, function(err,rlt){
+            let superAgencyId = null;
+            if (!err) {
 
+              if (rlt!= "AGENCY NOT FOUND") {
+                superAgencyId = rlt._id;
+                changeSuperAgency(
+                  data.record._id,
+                  rlt._id,
+                  {
+                    type: "agencyCard",
+                    agencyId: rlt._id
+                  },
+                  {
+                    type: "refund",
+                    userId: data.record.userid,
+                    recyclerId: '',
+                  },
+                  data.record.productId,
+                  function(err, rlt){
+                    console.log(err);
+                    console.log(rlt);
+                    if (!err) {
+                      if (rlt === "BALANCE NOT FOUND IN addMountToBalance") {
+                        message.warn("更改成功，留意：您选择的用户没有上级代理为系统代理!");
+                      }
+                      if (rlt === "AGENCY STILL") {
+                        message.error("错误!!当前上级就是您选择的上级");
+
+                      }
+                      if (rlt === 1) {
+                        dispatch(agencyRefresh(superAgencyId));
+                        self.props.changeSuperAgency(superAgencyId);
+                        
+                        message.warn("更改成功");
+
+                      }
+                    }
+                  });
+              }else{
+                message.error("该用户没有分销权，请重新选择用户！");
+              }
+            }
+            });
+
+
+            // setTimeout(resolve, 1000);
+
+        },
+        onCancel() {},
+      });
     }
+
     this.setState({
       visible: false,
     });

@@ -3,7 +3,9 @@ import {Balances} from './balances.js';
 import {findUserByUsername} from '../users/actions.js';
 
 export function findBalanceById(id){
+
   return Balances.findOne({_id: id});
+
 }
 
 export function findBalanceByUserId(userId){
@@ -33,10 +35,11 @@ export function createBlanceByUserId(userId){
 
 export function findOrCreateBalanceByUser(userId){
   let balance = findBalanceByUserId(userId);
-  if (balance === undefined) {
+  if (balance === undefined || balance === "BALANCE NOT FOUND") {
     let balanceId = createBlanceByUserId(userId);
     balance = findBalanceById(balanceId);
   }
+  console.log(balance)
   return balance;
 }
 
@@ -56,7 +59,12 @@ export function addMountToBalance(balanceId, mount){
 }
 
 export function loseMountFromBalance(balanceId, mount){
+
   let balance = findBalanceById(balanceId);
+  if (!balance) {
+    return "BALANCE NOT FOUND IN loseMountFromBalance";
+  }
+  console.log(balance);
   let balance_amount = balance.amount;
   balance_amount = balance_amount - mount;
   return Balances.update(balanceId, {

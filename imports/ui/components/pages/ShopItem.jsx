@@ -59,8 +59,8 @@ class ShopItem extends React.Component{
 
     return (
         <CommonForm />
-      
-        
+
+
     )
   }
 }

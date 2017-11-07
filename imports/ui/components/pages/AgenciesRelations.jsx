@@ -24,6 +24,7 @@ import 'antd/lib/message/style';
 
 import { getMeteorAgenciesLimit } from '../../services/agencies.js';
 import { getUserIdsLimit } from '../../services/users.js';
+import {refreshClear} from '/imports/ui/actions/agency_change.js';
 
 const confirm = Modal.confirm;
 
@@ -79,7 +80,13 @@ class AgenciesRelations extends React.Component{
   }
 
   componentDidMount(){
-    this.getPageAgencies(this.state.condition, 1, 20);
+    this.getPageAgencies({
+      $or: [
+        {'profile.mobile': eval("/"+''+"/")},
+        {username: eval("/"+''+"/")},
+        {nickname:eval("/"+''+"/")}
+      ]
+    }, 1, 20);
 
   }
 
@@ -99,22 +106,33 @@ class AgenciesRelations extends React.Component{
       $('.agency-search-title h3').html('所选用户所有下级关系');
       this.getPageAgencies({superAgencyId}, this.state.currentPage, this.state.pageSize);
     }
+    if (nextProps.AgencyChange.agencyId !== "") {
+
+      $('.agency-search-title h3').html('查看您选择用户的下级关系');
+
+      this.getPageAgencies({superAgencyId:nextProps.AgencyChange.agencyId }, this.state.currentPage, this.state.pageSize);
+
+    }
+
   }
 
   getPageAgencies(condition, page, pageSize){
     let self = this;
+    const {dispatch,AgencyChange} = this.props;
     this.setState({
       currentPage: page,
       tableLoading:true,
       condition,
     });
-    $(document).scrollTop(0);
     getMeteorAgenciesLimit(condition, page, pageSize, (err,rlt)=>{
       if (!err) {
+
         this.setState({
           agencies: rlt,
           tableLoading:false
-        })
+        });
+        dispatch(refreshClear());
+
       }else{
         console.log(err);
       }
@@ -163,6 +181,7 @@ class AgenciesRelations extends React.Component{
 function mapStateToProps(state) {
   return {
       CurrentDealAgency: state.CurrentDealAgency,
+      AgencyChange: state.AgencyChange,
    };
 }
 

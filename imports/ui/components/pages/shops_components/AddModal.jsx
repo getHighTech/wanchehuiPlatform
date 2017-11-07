@@ -27,6 +27,7 @@ import { Roles } from '/imports/api/roles/roles.js';
 import ShopForm from './ShopForm.jsx';
 import {Link} from 'react-router';
 
+
 class AddModal extends React.Component{
   constructor(props){
     super(props);
@@ -73,7 +74,7 @@ class AddModal extends React.Component{
     return(
       <div>
         <Tooltip placement="topLeft" title="添加新店铺" arrowPointAtCenter>
-        
+
         <Link to="/shops/shop_item">
           <Button shape="circle" icon="plus"  style={{fontSize: "18px", color: "red"}} ></Button>
         </Link>
