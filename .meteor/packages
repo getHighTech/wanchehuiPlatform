@@ -38,3 +38,4 @@ react-meteor-data
 nimble:restivus
 pfafman:filesaver
 ostrio:meteor-root
+grove:call-async

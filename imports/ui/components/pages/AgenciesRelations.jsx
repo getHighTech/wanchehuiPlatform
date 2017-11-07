@@ -121,8 +121,6 @@ class AgenciesRelations extends React.Component{
       condition,
     });
     getMeteorAgenciesLimit(condition, page, pageSize, (err,rlt)=>{
-      console.log(err);
-      console.log(rlt);
       if (!err) {
 
         this.setState({
