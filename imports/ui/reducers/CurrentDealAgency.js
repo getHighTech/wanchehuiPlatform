@@ -1,4 +1,4 @@
-import {GET_AGENCY_ID} from '../actions/current_deal_agency.js';
+import {GET_AGENCY_ID, CLEAR_AGENCY_ID} from '../actions/current_deal_agency.js';
 
 
 function CurrentDealAgency(state={_id: null, lowerAgencies: []}, action){
@@ -8,6 +8,8 @@ function CurrentDealAgency(state={_id: null, lowerAgencies: []}, action){
       _id: action.agencyId,
       lowerAgencies: [1,2],
     });
+  case CLEAR_AGENCY_ID:
+    return state;
 
   default:
 

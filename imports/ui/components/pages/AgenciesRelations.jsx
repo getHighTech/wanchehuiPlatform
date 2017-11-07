@@ -25,6 +25,7 @@ import 'antd/lib/message/style';
 import { getMeteorAgenciesLimit } from '../../services/agencies.js';
 import { getUserIdsLimit } from '../../services/users.js';
 import {refreshClear} from '/imports/ui/actions/agency_change.js';
+import {clearAgencyId} from '/imports/ui/actions/current_deal_agency.js';
 
 const confirm = Modal.confirm;
 
@@ -99,6 +100,7 @@ class AgenciesRelations extends React.Component{
       let superAgencyId = nextProps.CurrentDealAgency._id;
       $('.agency-search-title h3').html('所选用户所有下级关系');
       this.getPageAgencies({superAgencyId}, this.state.currentPage, this.state.pageSize);
+
     }
     if (nextProps.AgencyChange.agencyId !== "") {
 
@@ -119,6 +121,8 @@ class AgenciesRelations extends React.Component{
       condition,
     });
     getMeteorAgenciesLimit(condition, page, pageSize, (err,rlt)=>{
+      console.log(err);
+      console.log(rlt);
       if (!err) {
 
         this.setState({
@@ -126,6 +130,7 @@ class AgenciesRelations extends React.Component{
           tableLoading:false
         });
         dispatch(refreshClear());
+        dispatch(clearAgencyId());
 
       }else{
         console.log(err);
