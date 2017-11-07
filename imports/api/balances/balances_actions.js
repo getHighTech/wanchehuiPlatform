@@ -50,6 +50,9 @@ export function addMountToBalance(balanceId, mount){
     return "BALANCE NOT FOUND IN addMountToBalance";
   }
   let balance_amount = balance.amount;
+  if (!balance.amount) {
+    balance_amount = 0;
+  }
   balance_amount = balance_amount + mount;
   return Balances.update(balanceId, {
     $set: {
@@ -66,6 +69,9 @@ export function loseMountFromBalance(balanceId, mount){
   }
   console.log(balance);
   let balance_amount = balance.amount;
+  if (!balance.amount) {
+    balance_amount = 0;
+  }
   balance_amount = balance_amount - mount;
   return Balances.update(balanceId, {
     $set: {

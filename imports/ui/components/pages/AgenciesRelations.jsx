@@ -80,13 +80,7 @@ class AgenciesRelations extends React.Component{
   }
 
   componentDidMount(){
-    this.getPageAgencies({
-      $or: [
-        {'profile.mobile': eval("/"+''+"/")},
-        {username: eval("/"+''+"/")},
-        {nickname:eval("/"+''+"/")}
-      ]
-    }, 1, 20);
+    this.getPageAgencies(this.state.condition, 1, 20);
 
   }
 

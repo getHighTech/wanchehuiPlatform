@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import {getUserByAgencyId} from '/imports/ui/services/users.js'
 import UserBasicViewPopover from '../../pages/tools/UserBasicViewPopover.jsx';
+import {refreshClear} from '/imports/ui/actions/agency_change.js';
 
 
 class UserByAgencyId extends React.Component {
@@ -19,6 +20,7 @@ class UserByAgencyId extends React.Component {
     let self = this;
     return getUserByAgencyId(agencyId, (err,rlt)=>{
       if (!err) {
+        self.props.dispatch(refreshClear());
         if (!rlt) {
           self.setState({
             username: "没有找到",
@@ -54,8 +56,6 @@ class UserByAgencyId extends React.Component {
   componentWillReceiveProps(nextProps){
     if (nextProps.AgencyChange.agencyId) {
       this.getUserByAgencyId(nextProps.AgencyChange.agencyId);
-    }else{
-      console.log("shall be await")
     }
   }
 
