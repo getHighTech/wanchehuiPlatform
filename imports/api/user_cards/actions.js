@@ -1,11 +1,12 @@
 import {Cards} from '../cards/cards.js';
 import {UserCards} from './user_cards.js';
 import {SysLogs} from '../sys_logs/sys_logs';
+import {findOrCreateAgencyByUserId} from '../agencies/actions.js'
 
 export function deleteCardByUserId(userId){
   let user = Meteor.users.findOne({_id: userId});
   let user_card = UserCards.findOne({userId});
-  if (!user_card) {
+  if (user_card) {
     //系统日志
     UserCards.remove({_id: user_card._id});
   }else{
@@ -54,6 +55,8 @@ export function giveCardByUserId(userId){
       cards: [card]
     }
   });
+  let agency=findOrCreateAgencyByUserId(userId, card._id);
+  console.log(agency);
   let user = Meteor.users.findOne({_id: userId});
   SysLogs.insert({
     type: "管理员日志",
