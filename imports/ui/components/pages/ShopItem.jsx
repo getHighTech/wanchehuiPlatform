@@ -15,7 +15,7 @@ import { Roles } from '/imports/api/roles/roles.js';
 import { ShopColumns } from '../table_columns/ShopColumns.js'
 
 
-import AddModal from './shops_components/AddModal.jsx';
+import CommonModal from './shops_components/CommonModal.jsx';
 import CommonForm from './shops_components/CommonForm.jsx'
 
 class ShopItem extends React.Component{
@@ -43,27 +43,7 @@ class ShopItem extends React.Component{
   }
   render() {
 
-    // const dataSource = [
-    //     {
-    //         key: '1',
-    //         cover: "/img/h_icon.png",
-    //         name: '小李维修站',
-    //         address: "成都市黄泉9路13号",
-    //         mobile: "1344444444"
-    //     }
-    //   ];
 
-
-
-    //   const headerMenuStyle ={
-    //     display: 'flex',
-    //     alignItems: 'center',
-    //     justifyItems: 'center',
-    //     justifyContent: 'space-around',
-    //     borderStyle: 'solid',
-    //     padding: '15px',
-    //     borderWidth: 'thin'
-    //   };
 
     return (
         <CommonForm shopInfo={shopInfo => this.getShopInfo(shopInfo)}/>
@@ -74,15 +54,8 @@ class ShopItem extends React.Component{
 }
 function mapStateToProps(state) {
   return {
-
+      ShopForm: state.ShopForm,
    };
 }
 
-export default createContainer(() => {
-  if (Meteor.userId()) {
-    Meteor.subscribe('roles.current');
-  }
-  return {
-    current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
-  };
-}, connect(mapStateToProps)(ShopItem));
+export default  connect(mapStateToProps)(ShopItem);

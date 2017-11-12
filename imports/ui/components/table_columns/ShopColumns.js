@@ -10,40 +10,40 @@ const actionStyle = {
    fontSize: 16, color: '#08c'
 };
 export const ShopColumns = [
-      {
-        title: '封面',
-        dataIndex: 'cover',
-        key: 'cover',
-        render: text => <img style={{width: '100px'}} src={text} />,
-      },
+      // {
+      //   title: '封面',
+      //   dataIndex: 'cover',
+      //   key: 'cover',
+      //   render: text => <img style={{width: '100px'}} src={text} />,
+      // },
       {
       title: '店名',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'shopName',
+      key: 'shopName',
     }, {
       title: '地址',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'shopAddress',
+      key: 'shopAddress',
     }, {
       title: '联系电话',
-      dataIndex: 'mobile',
-      key: 'mobile',
+      dataIndex: 'shopPhone',
+      key: 'shopPhone',
     },{
       title: '操作',
       dataIndex: 'action',
       key: 'action',
       render: (text, record) => (
         <span>
-          <Tooltip placement="topLeft" title="查看详情" arrowPointAtCenter>
+          <Tooltip placement="topLeft" title={this.state.modalTitle} arrowPointAtCenter>
             <Button shape="circle" icon="eye"  style={actionStyle} />
           </Tooltip>
           <span className="ant-divider" />
           <Tooltip placement="topLeft" title="删除此记录" arrowPointAtCenter>
-            <Button shape="circle" icon="delete"  style={actionStyle} />
+            <Button shape="circle" onClick={this.deleteThisShop} icon="delete"  style={actionStyle} />
           </Tooltip>
           <span className="ant-divider" />
           <Tooltip placement="topLeft" title="编辑此记录" arrowPointAtCenter>
-            <Button shape="circle" icon="edit"  style={actionStyle} />
+            <Button shape="circle" onClick={this.updateShopInfo} icon="edit" style={actionStyle} />
           </Tooltip>
 
         </span>

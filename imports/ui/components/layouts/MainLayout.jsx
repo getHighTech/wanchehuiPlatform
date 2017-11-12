@@ -1,6 +1,3 @@
-'use strict';
-
-
 import React, { Component } from 'react';
 import { push, replace, goBack } from 'react-router-redux';
 
@@ -90,10 +87,7 @@ class MainLayout extends Component {
 
 
   render() {
-    let role = this.props.current_role;
-    console.log(role);
-    return (
-      <Layout>
+    return(  <Layout>
         <Sider
           breakpoint="lg"
           collapsedWidth="0"
@@ -171,8 +165,6 @@ class MainLayout extends Component {
           </Footer>
         </Layout>
       </Layout>
-
-
     );
   }
 }

@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 
 import { Agencies } from './agencies.js';
 
+import {changeSuperAgency, findAgencyByUserId} from './actions.js'
+
 
 Meteor.methods({
   'get.agencies.limit'(condition, page, pageSize){
@@ -20,5 +22,11 @@ Meteor.methods({
     );
     return agencies.fetch();
 
+  },
+  'agencies.changeSuperAgency'(agencyId, superAgencyId, giveReason, loasReason){
+    return changeSuperAgency(agencyId, superAgencyId, giveReason, loseReason);
+  },
+  'agency.userId'(userId){
+    return findAgencyByUserId(userId);
   }
 });

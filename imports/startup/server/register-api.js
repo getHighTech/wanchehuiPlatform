@@ -4,6 +4,7 @@ import '/imports/api/users/server/publications.js';
 import '/imports/api/partners/methods.js';
 import '/imports/api/products/methods.js';
 import '/imports/api/shops/methods.js';
+import '/imports/api/balances/methods.js';
 import '/imports/api/users/methods.js';
 import '/imports/api/agencies/methods.js';
 import '/imports/api/cards/methods.js';

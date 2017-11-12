@@ -17,13 +17,6 @@ import { Roles } from '/imports/api/roles/roles.js';
 
 import { SelectUserColumns } from '../../table_columns/UserColumns.js'
 
-import Modal from 'antd/lib/modal';
-import 'antd/lib/modal/style';
-
-import message from 'antd/lib/message';
-import 'antd/lib/message/style'
-
-const confirm = Modal.confirm;
 
 class UserFinder extends React.Component{
   constructor(props) {
@@ -46,7 +39,9 @@ class UserFinder extends React.Component{
     let self = this;
     $('.select-user-id').unbind('click').on('click', function(){
       let userId = $(this).attr('data-id');
-      self.props.getUserId(userId);
+      console.log(userId);
+      console.log(self.props.extraBackData);
+      self.props.selectClose();
     })
   }
   componentDidMount(){
@@ -137,16 +132,4 @@ function mapStateToProps(state) {
    };
 }
 
-export default createContainer(() => {
-  if (Meteor.userId()) {
-    Meteor.subscribe('roles.current',{
-      onReady: function(){
-
-      }
-    });
-  }
-  return {
-    current_role: Roles.findOne({users: {$all: [Meteor.userId()]}}),
-
-  };
-}, connect(mapStateToProps)(UserFinder));
+export default connect(mapStateToProps)(UserFinder);

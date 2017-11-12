@@ -1,6 +1,9 @@
 import React from "react";
+import { connect } from 'react-redux';
 
 import {getUserByAgencyId} from '/imports/ui/services/users.js'
+import UserBasicViewPopover from '../../pages/tools/UserBasicViewPopover.jsx';
+
 
 class UserByAgencyId extends React.Component {
   constructor(props){
@@ -58,15 +61,22 @@ class UserByAgencyId extends React.Component {
     });
   }
   render(){
+
     if (this.state.loaded) {
       return (<div>用户信息加载中</div>);
     }else{
       return (
-        <div>{this.state.username}<br/>&nbsp;|&nbsp;{this.state.mobile}</div>
+        <div ><UserBasicViewPopover username={this.state.username}/><br/>&nbsp;|&nbsp;{this.state.mobile}</div>
       )
     }
 
   }
 }
 
-export default UserByAgencyId;
+function mapStateToProps(state) {
+  return {
+      CurrentDealAgency: state.CurrentDealAgency,
+   };
+}
+
+export default connect(mapStateToProps)(UserByAgencyId);

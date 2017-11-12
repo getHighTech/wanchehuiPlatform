@@ -12,6 +12,16 @@ export function allCardUsersMount(){
 }
 
 
+export function findUserByUsername(username){
+  let user = Meteor.users.findOne({"username": username});
+  if (!user) {
+    return "USER NOT FOUND";
+  }
+  return user;
+
+}
+
+
 
 
 export function findUserByMobile(mobile){
@@ -150,43 +160,42 @@ export function getUserByAgencyId(agencyId){
   return getBasicUserById(agency.userId);
 }
 
-Date.prototype.Format = function(format){ 
+Date.prototype.Format = function(format){
 
-  var o = { 
+  var o = {
 
-  "M+" : this.getMonth()+1, //month 
+  "M+" : this.getMonth()+1, //month
 
-  "d+" : this.getDate(), //day 
+  "d+" : this.getDate(), //day
 
-  "h+" : this.getHours(), //hour 
+  "h+" : this.getHours(), //hour
 
-  "m+" : this.getMinutes(), //minute 
+  "m+" : this.getMinutes(), //minute
 
-  "s+" : this.getSeconds(), //second 
+  "s+" : this.getSeconds(), //second
 
-  "q+" : Math.floor((this.getMonth()+3)/3), //quarter 
+  "q+" : Math.floor((this.getMonth()+3)/3), //quarter
 
-  "S" : this.getMilliseconds() //millisecond 
-
-  }
-
-  if(/(y+)/.test(format)) { 
-
-  format = format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+  "S" : this.getMilliseconds() //millisecond
 
   }
 
-  for(var k in o) { 
+  if(/(y+)/.test(format)) {
 
-    if(new RegExp("("+ k +")").test(format)) { 
+  format = format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
 
-      format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length)); 
+  }
 
-    } 
+  for(var k in o) {
 
-  } 
+    if(new RegExp("("+ k +")").test(format)) {
 
-  return format; 
+      format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+
+    }
+
+  }
+
+  return format;
 
 }
-
