@@ -24,7 +24,6 @@ import "antd/lib/select/style";
 import "antd/lib/upload/style";
 import 'antd/lib/modal/style';
 import AMapSearcher from '../tools/AMapSearcher.jsx';
-import { console } from 'meteor/tools';
 
 const FormItem = Form.Item;
 

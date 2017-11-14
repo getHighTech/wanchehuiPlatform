@@ -96,15 +96,25 @@ class Shops extends React.Component{
     }
     )
   }
-  onClickShow = (e) => {
-    e.preventDefault();
+  onClickShow = (ShopId) => {
+    let self = this
     this.setState({
       modalVisible: true,
       modalInsert: false,
       modalTitle: "查看店铺",
       modalEditable: false,
-    }
-    )
+    })
+    Meteor.call('shops.findShopById',ShopId, function(error,result){
+      if(!error){
+        console.log("获取数据成功");
+        console.log(self.refs);
+        console.log(self.refs.test);
+        
+      }else{
+        console.log("获取数据失败");
+      }
+    })
+    console.log('显示单条数据')
   }
 
   getPageShops(page,pageSize,condition){
@@ -127,6 +137,7 @@ class Shops extends React.Component{
   }
 
 
+
   componentDidMount(){
     console.log('加载店铺数据')
     this.getPageShops(1,20,this.state.condition);
@@ -136,7 +147,6 @@ class Shops extends React.Component{
           totalCount: rlt,
         });
       }
-
     })
     
   }
@@ -160,12 +170,11 @@ class Shops extends React.Component{
         fontSize: 16, color: '#08c'
      };
       const ShopColumns = [
-        // {
-        //   title: '封面',
-        //   dataIndex: 'cover',
-        //   key: 'cover',
-        //   render: text => <img style={{width: '100px'}} src={text} />,
-        // },
+        {
+          title: '店铺ID',
+          dataIndex: '_id',
+          key: '_id',
+        },
         {
         title: '店名',
         dataIndex: 'shopName',
@@ -185,7 +194,7 @@ class Shops extends React.Component{
         render: (text, record) => (
           <span>
             <Tooltip placement="topLeft" title="查看店铺" arrowPointAtCenter>
-              <Button shape="circle" onClick={this.onClickShow.bind(this)} icon="eye"  style={actionStyle} />
+              <Button shape="circle" onClick={ () => this.onClickShow(record._id)}  icon="eye"  style={actionStyle} />
             </Tooltip>
             <span className="ant-divider" />
             <Tooltip placement="topLeft" title="删除此记录" arrowPointAtCenter>
@@ -215,6 +224,8 @@ class Shops extends React.Component{
           modalInsert ={this.state.modalInsert}
           componentModalVisible = {this.state.componentModalVisible}
           onCancel = { this.hideModal}
+          getPageShops = {this.getPageShops.bind(this)}
+          ref="test"
           />
           <div>
           <Input.Search
@@ -226,7 +237,7 @@ class Shops extends React.Component{
           </div>
         </div>
 
-        <Table dataSource={this.state.shopsData} columns={ShopColumns} />
+        <Table rowKey={record => record._id} dataSource={this.state.shopsData} columns={ShopColumns} />
 
       </div>
     )

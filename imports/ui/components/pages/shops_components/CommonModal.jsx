@@ -44,6 +44,9 @@ class CommonModal extends React.Component{
     });
   }
 
+  test(str){
+      console.log(str)
+  }
    /**
    * 设置表单要显示的数据
    */
@@ -59,12 +62,17 @@ class CommonModal extends React.Component{
     }
   }
 
+  reflashTable(){
+    this.props.getPageShops(1,20,{});
+  }
   componentDidMounted(){
     if(this.props.modalInsert){
       this.setFormData({});
     }
     console.log('组件加载完成！！！')
   }
+
+ 
 
   // onClickInsert = (e) => {
   //   e.preventDefault();
@@ -100,18 +108,27 @@ class CommonModal extends React.Component{
 
     //将转化好的数据传给后端
     if(this.props.modalInsert){
-      //新增店铺
-      console.log("新增店铺");
+      //新增店铺到数据库
       Meteor.call("shops.insert", newObj, function(error,result){
-        console.log(error);
-        console.log(result);
+        if(!error){
+          console.log("新增店铺"); 
+          console.log(result);
+          //数据变化后，刷新表格
+          console.log("刷新表格成功");
+          
+        }else{
+          console.log(error);
+        }
       })
+      this.reflashTable();
       this.setFormData({});
     }else{
       console.log("升级店铺");
       this.setFormData({});
     }
   }
+
+
 
 
 

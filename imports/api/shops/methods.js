@@ -25,4 +25,11 @@ Meteor.methods({
           );
           return shops.fetch();
         },
+    'shops.findShopById'(shopId){
+      let shop = Shops.findOne({_id:shopId})
+      if (!shop) {
+        return "SHOP NOT FOUND";
+      }
+      return shop;
+    }
 })
