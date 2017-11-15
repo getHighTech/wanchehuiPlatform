@@ -16,11 +16,11 @@ import "antd/lib/button/style";
 
 import { Roles } from '/imports/api/roles/roles.js';
 
-import { ShopColumns } from '../table_columns/ShopColumns.js'
 import {countShops,getMeteorShopsLimit} from '../../services/shops.js'
 
 
 import CommonModal from './shops_components/CommonModal.jsx';
+import { getShopById } from '/imports/ui/actions/shops.js';
 
 class Shops extends React.Component{
   constructor(props) {
@@ -53,25 +53,6 @@ class Shops extends React.Component{
     componentModalVisible: false,
   };
 
-  
-  // showModal = () => {
-  //   this.setState({
-  //     modalVisible: true,
-  //   });
-  // }
-  // handleOk = (e) => {
-  //   console.log(e);
-  //   this.setState({
-  //     modalVisible: false,
-  //   });
-  // }
-  // handleCancel = (e) => {
-  //   console.log(e);
-  //   this.setState({
-  //     modalVisible: false,
-  //   });
-  // }
-
   hideModal = () => {
     this.setState({modalVisible: false});
   };
@@ -98,23 +79,24 @@ class Shops extends React.Component{
   }
   onClickShow = (ShopId) => {
     let self = this
-    this.setState({
+    self.setState({
       modalVisible: true,
       modalInsert: false,
       modalTitle: "查看店铺",
       modalEditable: false,
     })
     Meteor.call('shops.findShopById',ShopId, function(error,result){
+      const {dispatch } = self.props;
       if(!error){
-        console.log("获取数据成功");
-        console.log(self.refs);
-        console.log(self.refs.test);
-        
+        dispatch(getShopById(result));
+        console.log('调用redux方法');
+        console.log(self.props.singleShop)
       }else{
         console.log("获取数据失败");
       }
     })
-    console.log('显示单条数据')
+   console.log(self.refs.test);
+  //  self.refs.test
   }
 
   getPageShops(page,pageSize,condition){
@@ -133,7 +115,6 @@ class Shops extends React.Component{
         console.log('获取单页数据失败')
       }
     })
-    console.log("加载单页数据")
   }
 
 
@@ -156,7 +137,7 @@ class Shops extends React.Component{
 
 
   render() {
-
+      const {singleShop} = this.props
       const headerMenuStyle ={
         display: 'flex',
         alignItems: 'center',
@@ -204,7 +185,6 @@ class Shops extends React.Component{
             <Tooltip placement="topLeft" title="编辑此记录" arrowPointAtCenter>
               <Button shape="circle" onClick={this.onClickUpdate.bind(this)} icon="edit" style={actionStyle} />
             </Tooltip>
-    
           </span>
         ),
       }
@@ -217,27 +197,28 @@ class Shops extends React.Component{
         <Tooltip placement="topLeft" title="添加新店铺" arrowPointAtCenter>
           <Button shape="circle" icon="plus"  onClick={this.onClickInsert}  style={{fontSize: "18px", color: "red"}} ></Button>
         </Tooltip>
-          <CommonModal  
-          modalVisible={this.state.modalVisible} 
-          modalEditable={this.state.modalEditable} 
-          modalTitle={this.state.modalTitle} 
-          modalInsert ={this.state.modalInsert}
-          componentModalVisible = {this.state.componentModalVisible}
-          onCancel = { this.hideModal}
-          getPageShops = {this.getPageShops.bind(this)}
-          ref="test"
-          />
-          <div>
-          <Input.Search
-               placeholder="搜索店铺相关"
-               style={{ width: 200 }}
-               onSearch={value => console.log(value)}
-               onInput={input => this.handleSearchInput(input.target.value) }
-              />
-          </div>
+        <CommonModal  
+        modalVisible={this.state.modalVisible} 
+        modalEditable={this.state.modalEditable} 
+        modalTitle={this.state.modalTitle} 
+        modalInsert ={this.state.modalInsert}
+        componentModalVisible = {this.state.componentModalVisible}
+        onCancel = { this.hideModal}
+        getPageShops = {this.getPageShops.bind(this)}
+        ref = "test"
+        // ref={ (input) => {this.modalComponent = input}}
+        />
+        <div>
+        <Input.Search
+              placeholder="搜索店铺相关"
+              style={{ width: 200 }}
+              onSearch={value => console.log(value)}
+              onInput={input => this.handleSearchInput(input.target.value) }
+            />
         </div>
+      </div>
 
-        <Table rowKey={record => record._id} dataSource={this.state.shopsData} columns={ShopColumns} />
+      <Table rowKey={record => record._id} dataSource={this.state.shopsData} columns={ShopColumns} />
 
       </div>
     )
@@ -245,7 +226,8 @@ class Shops extends React.Component{
 }
 function mapStateToProps(state) {
   return {
-
+    singleShop: state.ShopsList.singleShop
+    
    };
 }
 

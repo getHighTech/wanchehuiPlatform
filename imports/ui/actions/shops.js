@@ -1,12 +1,10 @@
-export const NEW_SHOP_BY_ADMIN = "NEW_SHOP_BY_ADMIN";
-export const GET_NEW_PAGE_SHOPS = "GET_NEW_PAGE_SHOPS";
+export const SHOW_SHOP = "SHOW_SHOP";
 
 
 
-
-export const GET_NEW_PAGE_SHOPS = (params) => {
+export function getShopById(shop){
     return{
-        type:"GET_NEW_PAGE_SHOPS",
-        params
+        type:SHOW_SHOP,
+        shop
     }
 }

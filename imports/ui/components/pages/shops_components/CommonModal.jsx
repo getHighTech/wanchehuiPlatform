@@ -45,7 +45,7 @@ class CommonModal extends React.Component{
   }
 
   test(str){
-      console.log(str)
+      console.log(str);
   }
    /**
    * 设置表单要显示的数据
@@ -65,11 +65,7 @@ class CommonModal extends React.Component{
   reflashTable(){
     this.props.getPageShops(1,20,{});
   }
-  componentDidMounted(){
-    if(this.props.modalInsert){
-      this.setFormData({});
-    }
-    console.log('组件加载完成！！！')
+  componentWillMount(){
   }
 
  
@@ -133,7 +129,6 @@ class CommonModal extends React.Component{
 
 
   handleCancel = (e) => {
-    console.log(e);
     this.props.onCancel();
   }
 
@@ -144,6 +139,7 @@ class CommonModal extends React.Component{
 
 
   render(){
+    const {singleShop} = this.props
     return(
       <div>
         <Modal
@@ -154,7 +150,7 @@ class CommonModal extends React.Component{
           maskClosable={false}
           style={{ top: 20 }}
         >
-          <ShopForm ref={(input) => { this.formComponent = input; }}/>
+          <ShopForm shop = {this.props.singleShop} ref={(input) => { this.formComponent = input; }}/>
         </Modal>
       </div>
     );
@@ -162,8 +158,9 @@ class CommonModal extends React.Component{
 }
 
 function mapStateToProps(state) {
+  console.log(state.ShopsList.singleShop)
   return {
-
+    singleShop: state.ShopsList.singleShop
    };
 }
 

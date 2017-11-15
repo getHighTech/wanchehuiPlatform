@@ -12,8 +12,6 @@ import 'antd/lib/input/style';
 
 import { Roles } from '/imports/api/roles/roles.js';
 
-import { ShopColumns } from '../table_columns/ShopColumns.js'
-
 
 import CommonModal from './shops_components/CommonModal.jsx';
 import CommonForm from './shops_components/CommonForm.jsx'
