@@ -52,7 +52,7 @@ class NormalCommonForm extends React.Component{
         if (err) {
           return;
         }else{
-          dispatch(shopFormInput(fieldsValue.shopPhone, fieldsValue.shopName));
+          dispatch(shopFormInput(fieldsValue.shopPhone, fieldsValue.shopName,fieldsValue.shopDescrption));
         }
         })
     }
@@ -209,6 +209,17 @@ class NormalCommonForm extends React.Component{
                 rules: [{ required: true, message: '填入手机号' }],
             })(
                 <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
+            )}
+            </FormItem>
+            <FormItem
+             {...formItemLayout}
+            label="店铺简介"
+             hasFeedback
+             >
+             {getFieldDecorator('shopDescrption', {
+            rules: [{ required: true, message: '店铺简介不能为空' }],
+            })(
+            <Input placeholder="店铺简介" />
             )}
             </FormItem>
 

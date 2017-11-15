@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import { Products } from './products.js';
-import {getProductById} from './actions.js';
+import {getProductTypeById} from './actions.js';
 
 
 Meteor.methods({
@@ -51,6 +51,6 @@ Meteor.methods({
     });
   },
   'get.product.id'(productId){
-    return getProductById(productId);
+    return getProductTypeById(productId);
   }
 });

@@ -1,18 +1,15 @@
-export const USERFINDER_SELECT_USER = "USERFINDER_SELECT_USER";
-export const CHECK_USER_HAS_AGENCY = "CHECK_USER_HAS_AGENCY";
-export const UPDATE_USER_AGENCY_NEEDED = "UPDATE_USER_AGENCY_NEEDED";
+export const AGENCY_REFRESH = "AGENCY_REFRESH";
+export const REFRESH_CLEAR = "REFRESH_CLEAR";
 
-export function userFinderSelectUser(userId, extraData){
+export function agencyRefresh(agencyId){
+  console.log(agencyId);
   return {
-    type: USERFINDER_SELECT_USER,
-    userId,
-    extraData
+    type: AGENCY_REFRESH, agencyId
   }
 }
 
-export function checkUserHasAgency(userId){
+export function refreshClear(){
   return {
-    type: CHECK_USER_HAS_AGENCY,
-    userId,
+    type: REFRESH_CLEAR,
   }
 }

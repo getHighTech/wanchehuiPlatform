@@ -8,9 +8,10 @@ import "antd/lib/tooltip/style";
 
 import UserById from './TableComponents/UserById'
 import UserByAgencyId from './TableComponents/UserByAgencyId'
-import LookUpLowerAgencies from './TableComponents/LookUpLowerAgencies.js'
 import ProductById from './TableComponents/ProductById'
-import UserFinderModal from '../pages/tools/UserFinderModal.jsx';
+import AgencyChange from './TableComponents/AgencyChange';
+import LookUpLowerAgencies from './TableComponents/LookUpLowerAgencies.js'
+
 import {getAgencyId} from '/imports/ui/actions/current_deal_agency.js';
 
 
@@ -63,13 +64,14 @@ const superAgency = {
   dataIndex: 'superAgencyId',
   key: 'superAgencyId',
   render: (text, record) => {
-
+    let extraBackData = {
+      type: "changeSuperAgency",
+      record,
+    }
     if (record) {
       return (
-        <div >
-            <UserByAgencyId agencyId={text} />
-            <UserFinderModal extraBackData={record} text="选择并更改其上级" />
-        </div>);
+        <AgencyChange extraBackData={extraBackData} agencyId={text} />
+      );
     }else{
       return (<span>加载中</span>)
     }

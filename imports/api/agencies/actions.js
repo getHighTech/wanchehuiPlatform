@@ -1,10 +1,17 @@
 import { Meteor } from 'meteor/meteor';
 import { Agencies } from './agencies.js';
 
-import {giveUserMoney} from '../balances/actions';
+import {giveUserMoney, loseUserMoney} from '../balances/actions';
+
+import {getProductTypeById} from '../products/actions';
+
 
 export function findAgencyByUserId(userId){
-  return Agencies.findOne({userId});
+  let agency = Agencies.findOne({userId});
+  if (!agency) {
+    return "AGENCY NOT FOUND";
+  }
+  return agency;
 }
 
 export function findAgencyByUserIdAndProductId(userId, productId){
@@ -16,6 +23,7 @@ export function findAgencyById(id){
 }
 
 export function addNewAgency(userId, productId){
+
   return Agencies.insert({
     userId,
     productId,
@@ -51,6 +59,9 @@ export function updateSuperAgencyFromUser(userId, superAgencyId){
 
 export function findSuperAgencyById(id){
   let agency = findAgencyById(id);
+  if (!agency) {
+    return null;
+  }
   if (agency.superAgencyId === undefined) {
     return null;
   }
@@ -78,60 +89,71 @@ export function getPageAgencies(conditon, page, pageSize){
   return agencies.fetch();
 }
 
-export function recycleSuperAgencyMoney(agencyId, reason){
+export function recycleSuperAgencyMoney(agencyId, reason, productId){
   let superAgency = findSuperAgencyById(agencyId);
-  if (superAgency) {
+  if (!superAgency) {
     return "NO NEED TO RECYCLE BECAUSE THERE HAS NO SUPER";
   }
-  loseUserMoney(superAgency.userId, 3880, reason);
+  let amount1 = 0;
+  let amount2 = 0;
+  let product = getProductTypeById(productId);
+  if (product.type === "card") {
+    amount1=3880;
+    amount2=1280
+  }else {
+    amount1 = product.agencyAmounts[0];
+    amount2 = product.agencyAmounts[1];
+  }
+  loseUserMoney(superAgency.userId, amount1, reason);
   let superSuperAgency = findSuperAgencyById(superAgency.superAgencyId);
   if (!superSuperAgency) {
     return "NO NEED TO RECYCLE BECAUSE THERE HAS NO SUPER SUPER";
   }
-  return loseUserMoney(superSuperAgency.userId, 1280, reason);
+  return loseUserMoney(superSuperAgency.userId, amount2, reason);
 }
 
-export function giveSuperAgencyMoney(agencyId, reason){
-  let superAgency = findSuperAgencyById(agencyId);
-  if (superAgency) {
-    return "NO NEED TO GIVE MONEY BECAUSE THERE HAS NO SUPER";
+
+export function giveAgencyMoney(agencyId, reason){
+  let agency = findAgencyById(agencyId);
+  if (!agency) {
+    return "NO NEED TO GIVE MONEY BECAUSE THERE HAS NO AGENCY";
   }
-  giveUserMoney(superAgency.userId, 3880, reason);
-  let superSuperAgency = findSuperAgencyById(superAgency.superAgencyId);
-  if (!superSuperAgency) {
+  giveUserMoney(agency.userId, 3880, reason);
+  let superAgency = findAgencyById(agency.superAgencyId);
+  if (!superAgency) {
     return "NO NEED TO GIVE MONEY BECAUSE THERE HAS NO SUPER SUPER";
   }
-  return givUserMoney(superSuperAgency.userId, 1280, reason);
+  console.log("superAgency", superAgency);
+  return giveUserMoney(superAgency.userId, 1280, reason);
 }
 
-export function changeSuperAgency(agencyId, superAgencyId, giveReason, loasReason){
+export function changeSuperAgency(agencyId, superAgencyId, giveReason, loseReason, productId){
+
   let agency = findAgencyById(agencyId);
   let note=""
   if (!agency) {
     return "AGENCY NOT FOUND IN changeSuperAgency";
   }
-  if (agency.superAgencyId === superAgencyId) {
-    return "AGENCY STILL"
-  }else{
-    recycleSuperAgencyMoney(agencyId, loseReason);
-  }
-  try {
-    Agencies.update(agencyId, {
-      $set: {
-        superAgencyId,
-      }
-    });
-  } catch (err) {
-    console.error(err);
-  } finally {
-    return "UNKNOW ERROR";
-  }
   let superAgency = findAgencyById(superAgencyId);
   if (!superAgency) {
     return "SUPER AGENCY NOT FOUND IN changeSuperAgency"
   }
-  if (updateRlt) {
-    return giveSuperAgencyMoney(superAgencyId, giveReason);
+  if (agency.superAgencyId === superAgencyId) {
+    return "AGENCY STILL"
+  }else{
+    recycleSuperAgencyMoney(agencyId, loseReason, productId, productId);
   }
+  let updateRlt = Agencies.update(agencyId, {
+      $set: {
+        superAgencyId,
+      }
+    });
+
+
+  if (updateRlt) {
+
+    return giveAgencyMoney(superAgencyId, giveReason);
+  }
+  return 0;
 
 }

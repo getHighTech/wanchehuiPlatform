@@ -5,6 +5,8 @@ import { browserHistory } from 'react-router';
 import NewMemberApply from '/imports/ui/reducers/NewMemberApply'
 import ShopForm from '/imports/ui/reducers/ShopForm.js'
 import CurrentDealAgency from '/imports/ui/reducers/CurrentDealAgency.js'
+import AgencyChange from '/imports/ui/reducers/AgencyChange.js'
+import {WithDraws, getWithDraw} from '/imports/ui/reducers/WithDraws.js'
 
 const rmiddleware = routerMiddleware(browserHistory)
 export default function configureStore(initialState) {
@@ -18,7 +20,11 @@ export default function configureStore(initialState) {
       routing: routerReducer,
       NewMemberApply,
       CurrentDealAgency,
-      ShopForm,
+
+      AgencyChange,
+      WithDraws,
+      getWithDraw,
+
     }),
     initialState,
     enhancer);
