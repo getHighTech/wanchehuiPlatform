@@ -10,7 +10,7 @@ export function giveUserMoney(userId, amount, reason){
   }
   let text = ''
   if (reason.type === "agencyCard") {
-    text = '分销收入'
+    text = '分享奖励'
   }
   noteIncome(reason, amount, text, balance._id);
   console.log(balance);
