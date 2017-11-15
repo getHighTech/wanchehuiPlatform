@@ -37,25 +37,35 @@ const FormItem = Form.Item;
 
 import {shopFormInput} from '/imports/ui/actions/shop_form.js';
 import { Roles } from '/imports/api/roles/roles.js';
+import { Shops } from '/imports/api/shops/shops.js';
 
 class NormalCommonForm extends React.Component{
   constructor(props){
     super(props);
-    this.state={
-      visible: false,
-    }
   }
   handleSubmit = (e) => {
+    let self = this;
+    
     e.preventDefault();
     const {dispatch, ShopForm} = this.props;　
     this.props.form.validateFields((err, fieldsValue) => {
         if (err) {
           return;
+<<<<<<< HEAD
         }else{
           dispatch(shopFormInput(fieldsValue.shopPhone, fieldsValue.shopName,fieldsValue.shopDescrption));
         }
         })
     }
+=======
+            }
+        else {
+          self.props.shopInfo(fieldsValue);
+          dispatch(shopFormInput(fieldsValue.shopPhone, fieldsValue.shopName));
+      }
+    })  
+  }
+>>>>>>> 2772809abb8612cbf4c6ca60711dc9e26b703f1d
 
   componentDidMount(){
 
@@ -197,7 +207,7 @@ class NormalCommonForm extends React.Component{
             {getFieldDecorator('shopName', {
                 rules: [{ required: true, message: '店铺名称不能为空' }],
             })(
-                <Input className="shop-name-input" prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="店铺名称" />
+                <Input className="shop-name-input" disabled={this.props.modalEditable} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="店铺名称" />
             )}
             </FormItem>
 
@@ -208,9 +218,10 @@ class NormalCommonForm extends React.Component{
             {getFieldDecorator('shopPhone', {
                 rules: [{ required: true, message: '填入手机号' }],
             })(
-                <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
+                <Input addonBefore={prefixSelector} disabled={this.props.modalEditable}  style={{ width: '100%' }} />
             )}
             </FormItem>
+<<<<<<< HEAD
             <FormItem
              {...formItemLayout}
             label="店铺简介"
@@ -227,6 +238,12 @@ class NormalCommonForm extends React.Component{
         <Button type="primary" htmlType="submit">创建店铺</Button>
       </FormItem>
     </Form>
+=======
+            <FormItem {...tailFormItemLayout}>
+              <Button type="primary" htmlType="submit">创建店铺</Button>
+            </FormItem>
+          </Form>
+>>>>>>> 2772809abb8612cbf4c6ca60711dc9e26b703f1d
     );
   }
 }
@@ -234,6 +251,7 @@ class NormalCommonForm extends React.Component{
 const CommonForm = Form.create()(NormalCommonForm);
 
 function mapStateToProps(state) {
+  console.log(state)
   return {
       ShopForm: state.ShopForm,
    };

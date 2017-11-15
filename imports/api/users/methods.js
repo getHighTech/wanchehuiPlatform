@@ -80,9 +80,6 @@ Meteor.methods({
     let exdate = (new Date((date/1000-day_of_week*86400)*1000))
     var currentDate =  (new Date((date/1000+86400)*1000)).Format("yyyy/MM/dd");
     var exDate = exdate.Format("yyyy/MM/dd");
-    console.log('11111111111111'+ currentDate);
-    console.log('222222222222222' + exDate);
-
     return Orders.find({createdAt: {'$gt':new Date(exDate),'$lte':new Date(currentDate)}, status:'paid',type:'card'}).count();
   }
 });

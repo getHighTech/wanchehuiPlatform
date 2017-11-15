@@ -12,10 +12,8 @@ import 'antd/lib/input/style';
 
 import { Roles } from '/imports/api/roles/roles.js';
 
-import { ShopColumns } from '../table_columns/ShopColumns.js'
 
-
-import AddModal from './shops_components/AddModal.jsx';
+import CommonModal from './shops_components/CommonModal.jsx';
 import CommonForm from './shops_components/CommonForm.jsx'
 
 class ShopItem extends React.Component{
@@ -24,23 +22,31 @@ class ShopItem extends React.Component{
 
   }
 
-  handleSearchInput(value){
-
-    console.log(value);
+  getShopInfo (shopInfo){
+    Meteor.call("shops.insert", shopInfo, (error, result)=>{
+      console.log(error)
+      if (!error) {
+        console.log('++++++++++++++++++++++++++++')
+      }  
+    });
   }
+  componentDidMount(){
+    //如果存在ID，说明是编辑
+    if (this.props.params.id){
+      this.getShop()
+    }
+  }
+  getShop(){
 
-
-
-
-
+  }
   render() {
 
 
 
     return (
-        <CommonForm />
-
-
+        <CommonForm shopInfo={shopInfo => this.getShopInfo(shopInfo)}/>
+      
+        
     )
   }
 }

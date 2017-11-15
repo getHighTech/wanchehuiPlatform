@@ -1,4 +1,14 @@
+<<<<<<< HEAD
 import {AGENCY_REFRESH, REFRESH_CLEAR} from '../actions/agency_change.js';
+=======
+funtion AgencyChange(state={
+  loading: true,
+  tips: "未启动",
+  agencyId: '', superAgencyId: '',
+  giveReason: {
+    type: "agencyCard",
+    agencyId: "",
+>>>>>>> 2772809abb8612cbf4c6ca60711dc9e26b703f1d
 
 function AgencyChange(state={
   loading: false,
