@@ -24,6 +24,7 @@ import "antd/lib/select/style";
 import "antd/lib/upload/style";
 import 'antd/lib/modal/style';
 import AMapSearcher from '../tools/AMapSearcher.jsx';
+import { Roles } from '/imports/api/roles/roles.js';
 
 const FormItem = Form.Item;
 
@@ -49,7 +50,8 @@ class ShopFormWrap extends Component {
 
     componentDidMount(){
 
-      // this.setState({
+      // this.setState({F
+
       //   editdisable:this.props.modalEditable
       // })
     }
@@ -96,7 +98,7 @@ class ShopFormWrap extends Component {
         {getFieldDecorator('shopName', {
             rules: [{ required: true, message: '店铺名称不能为空' }],
         })(
-            <Input className="shop-name-input" defaultValue={this.props.shop.shopName} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="店铺名称" />
+            <Input className="shop-name-input" disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="店铺名称" />
         )}
         </FormItem>
 
@@ -107,7 +109,7 @@ class ShopFormWrap extends Component {
         {getFieldDecorator('shopPhone', {
             rules: [{ required: true, message: '填入手机号' }],
         })(
-            <Input  style={{ width: '100%' }} />
+            <Input  disabled={this.props.editState} style={{ width: '100%' }} />
         )}
         </FormItem>
         <FormItem
@@ -117,7 +119,7 @@ class ShopFormWrap extends Component {
         {getFieldDecorator('shopAddress', {
             rules: [{ required: true, message: '输入店铺地址' }],
         })(
-            <Input style={{ width: '100%' }} />
+            <Input disabled={this.props.editState} style={{ width: '100%' }} />
         )}
         </FormItem>
       </Form>
@@ -126,4 +128,18 @@ class ShopFormWrap extends Component {
   }
 
 const ShopForm = Form.create()(ShopFormWrap);
-export default ShopForm;
+
+function mapStateToProps(state) {
+  return {
+    editState: !state.ShopsList.modalEditable
+   };
+}
+
+export default createContainer(() => {
+  if (Meteor.userId()) {
+    Meteor.subscribe('roles.current');
+  }
+  return {
+    current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
+  };
+}, connect(mapStateToProps)(ShopForm));

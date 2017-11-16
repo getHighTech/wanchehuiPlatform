@@ -69,17 +69,6 @@ class CommonModal extends React.Component{
   }
 
  
-
-  // onClickInsert = (e) => {
-  //   e.preventDefault();
-  //   // this.setFormData({});  // insert时弹出的表单应该是空的
-  //   this.setState({
-  //     modalVisible: true,
-  //     modalTitle: '新增店铺',
-  //     modalInsert: true,
-  //   }, () => this.setFormData({}));
-  // };
-  
   handleModalOk = () => {
     let validated = true;
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated); // 不知道有没有更好的办法
@@ -103,7 +92,7 @@ class CommonModal extends React.Component{
     this.hideModal();
 
     //将转化好的数据传给后端
-    if(this.props.modalInsert){
+    if(this.props.modalState){
       //新增店铺到数据库
       Meteor.call("shops.insert", newObj, function(error,result){
         if(!error){
@@ -139,7 +128,7 @@ class CommonModal extends React.Component{
 
 
   render(){
-    const {singleShop} = this.props
+    const {singleShop, modalState} = this.props
     return(
       <div>
         <Modal
@@ -150,7 +139,7 @@ class CommonModal extends React.Component{
           maskClosable={false}
           style={{ top: 20 }}
         >
-          <ShopForm shop = {this.props.singleShop} ref={(input) => { this.formComponent = input; }}/>
+          <ShopForm  ref={(input) => { this.formComponent = input; }}/>
         </Modal>
       </div>
     );
@@ -158,9 +147,9 @@ class CommonModal extends React.Component{
 }
 
 function mapStateToProps(state) {
-  console.log(state.ShopsList.singleShop)
   return {
-    singleShop: state.ShopsList.singleShop
+    singleShop: state.ShopsList.singleShop,
+    modalState: state.ShopsList.modalInsert
    };
 }
 

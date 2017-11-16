@@ -13,6 +13,11 @@ import Tooltip from 'antd/lib/tooltip';
 import "antd/lib/tooltip/style";
 import Button from 'antd/lib/button';
 import "antd/lib/button/style";
+import Switch from 'antd/lib/switch';
+import "antd/lib/switch/style";
+import Modal from 'antd/lib/modal';
+import 'antd/lib/modal/style';
+
 
 import { Roles } from '/imports/api/roles/roles.js';
 
@@ -20,16 +25,30 @@ import {countShops,getMeteorShopsLimit} from '../../services/shops.js'
 
 
 import CommonModal from './shops_components/CommonModal.jsx';
-import { getShopById } from '/imports/ui/actions/shops.js';
+import { showShop, editShop } from '/imports/ui/actions/shops.js';
+
+const confirm = Modal.confirm;
 
 class Shops extends React.Component{
   constructor(props) {
     super(props);
 
   }
+  
+ showConfirm(title) {
+    confirm({
+      title: title,
+      onOk() {
+        return new Promise((resolve, reject) => {
+          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+        }).catch(() => console.log('Oops errors!'));
+      },
+      onCancel() {},
+    });
+  }
+  
 
   handleSearchInput(value){
-
     console.log(value);
   }
 
@@ -67,15 +86,26 @@ class Shops extends React.Component{
     }
     )
   }
-  onClickUpdate = (e) => {
-    e.preventDefault();
+  onClickUpdate = (ShopId) => {
+    let self = this
     this.setState({
       modalVisible: true,
       modalInsert: false,
       modalTitle: "编辑店铺",
       modalEditable: true,
-    }
-    )
+    })
+    Meteor.call('shops.findShopById',ShopId, function(error,result){
+      const {dispatch } = self.props;
+      if(!error){
+        dispatch(editShop(result));
+        console.log('编辑店铺');
+        console.log(self.props.singleShop);
+        console.log("当前弹框是否为新增弹框" + self.props.modalState )
+        console.log("不能编辑" + self.props.editState )
+      }else{
+        console.log("获取数据失败");
+      }
+    })
   }
   onClickShow = (ShopId) => {
     let self = this
@@ -88,16 +118,22 @@ class Shops extends React.Component{
     Meteor.call('shops.findShopById',ShopId, function(error,result){
       const {dispatch } = self.props;
       if(!error){
-        dispatch(getShopById(result));
-        console.log('调用redux方法');
-        console.log(self.props.singleShop)
+        dispatch(showShop(result));
+        console.log('查看店铺');
+        console.log(self.props.singleShop);
+        console.log("当前弹框是否为新增弹框" + self.props.modalState )
+        console.log("不能编辑" + self.props.editState )
       }else{
         console.log("获取数据失败");
       }
     })
-   console.log(self.refs.test);
+  //  console.log(self.refs.test);
   //  self.refs.test
   }
+  // deleteThisShop = (ShopId) => {
+  //   let self = this
+
+  // }
 
   getPageShops(page,pageSize,condition){
     let self = this;
@@ -116,8 +152,15 @@ class Shops extends React.Component{
       }
     })
   }
-
-
+  onChange(checked) {
+    let self = this;
+    console.log(`switch to ${checked}`);
+    if(checked){
+      self.showConfirm('确定关闭店铺吗？')
+    }else{
+      self.showConfirm('确定打开店铺吗？')
+    }
+  }
 
   componentDidMount(){
     console.log('加载店铺数据')
@@ -129,6 +172,7 @@ class Shops extends React.Component{
         });
       }
     })
+
     
   }
 
@@ -137,7 +181,7 @@ class Shops extends React.Component{
 
 
   render() {
-      const {singleShop} = this.props
+      const {singleShop, modalState, editState} = this.props
       const headerMenuStyle ={
         display: 'flex',
         alignItems: 'center',
@@ -150,40 +194,48 @@ class Shops extends React.Component{
       const actionStyle = {
         fontSize: 16, color: '#08c'
      };
+     const switchStyle = {
+       
+     }
       const ShopColumns = [
         {
           title: '店铺ID',
           dataIndex: '_id',
           key: '_id',
+          width: 150,
         },
         {
         title: '店名',
         dataIndex: 'shopName',
         key: 'shopName',
+        width: 150,
       }, {
         title: '地址',
         dataIndex: 'shopAddress',
         key: 'shopAddress',
+        width: 150,
       }, {
         title: '联系电话',
         dataIndex: 'shopPhone',
         key: 'shopPhone',
+        width: 150,
       },{
         title: '操作',
         dataIndex: 'action',
         key: 'action',
+        width: 150,
         render: (text, record) => (
           <span>
             <Tooltip placement="topLeft" title="查看店铺" arrowPointAtCenter>
               <Button shape="circle" onClick={ () => this.onClickShow(record._id)}  icon="eye"  style={actionStyle} />
             </Tooltip>
             <span className="ant-divider" />
-            <Tooltip placement="topLeft" title="删除此记录" arrowPointAtCenter>
-              <Button shape="circle" onClick={this.deleteThisShop} icon="delete"  style={actionStyle} />
+            <Tooltip placement="topLeft" title="编辑此记录" arrowPointAtCenter>
+              <Button shape="circle" onClick={ () => this.onClickUpdate(record._id)} icon="edit" style={actionStyle} />
             </Tooltip>
             <span className="ant-divider" />
-            <Tooltip placement="topLeft" title="编辑此记录" arrowPointAtCenter>
-              <Button shape="circle" onClick={this.onClickUpdate.bind(this)} icon="edit" style={actionStyle} />
+            <Tooltip placement="topLeft" title="开关店铺" arrowPointAtCenter>
+              <Switch checkedChildren="营业" unCheckedChildren="关闭"  defaultChecked={true} onChange={this.onChange}  />
             </Tooltip>
           </span>
         ),
@@ -199,10 +251,7 @@ class Shops extends React.Component{
         </Tooltip>
         <CommonModal  
         modalVisible={this.state.modalVisible} 
-        modalEditable={this.state.modalEditable} 
         modalTitle={this.state.modalTitle} 
-        modalInsert ={this.state.modalInsert}
-        componentModalVisible = {this.state.componentModalVisible}
         onCancel = { this.hideModal}
         getPageShops = {this.getPageShops.bind(this)}
         ref = "test"
@@ -226,9 +275,10 @@ class Shops extends React.Component{
 }
 function mapStateToProps(state) {
   return {
-    singleShop: state.ShopsList.singleShop
-    
-   };
+    singleShop: state.ShopsList.singleShop,
+    modalState: state.ShopsList.modalInsert,    
+    editState: !state.ShopsList.modalEditable
+  };
 }
 
 export default createContainer(() => {
@@ -239,3 +289,5 @@ export default createContainer(() => {
     current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
   };
 }, connect(mapStateToProps)(Shops));
+
+
