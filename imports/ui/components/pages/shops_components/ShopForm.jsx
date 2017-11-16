@@ -50,10 +50,6 @@ class ShopFormWrap extends Component {
 
     componentDidMount(){
 
-      // this.setState({F
-
-      //   editdisable:this.props.modalEditable
-      // })
     }
 
 

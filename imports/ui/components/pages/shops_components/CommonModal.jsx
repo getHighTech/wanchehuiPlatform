@@ -78,6 +78,7 @@ class CommonModal extends React.Component{
     }
     //处理收到的表单的数据
     const newObj = {};
+    console.log(newObj);
     const oldObj = this.formComponent.getFieldsValue(); 
     //把表单中跟时间有关系的参数进行时间格式化
     for (const key in oldObj) {
@@ -139,7 +140,7 @@ class CommonModal extends React.Component{
           maskClosable={false}
           style={{ top: 20 }}
         >
-          <ShopForm  ref={(input) => { this.formComponent = input; }}/>
+          <ShopForm shop = {this.props.singleShop} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
