@@ -96,7 +96,7 @@ class ShopFormWrap extends Component {
         {getFieldDecorator('shopName', {
             rules: [{ required: true, message: '店铺名称不能为空' }],
         })(
-            <Input className="shop-name-input" defaultValue={this.props.shop.shopName} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="店铺名称" />
+            <Input className="shop-name-input"  prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="店铺名称" />
         )}
         </FormItem>
 
