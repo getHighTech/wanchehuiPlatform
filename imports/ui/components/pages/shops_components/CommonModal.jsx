@@ -68,7 +68,7 @@ class CommonModal extends React.Component{
   componentWillMount(){
   }
 
- 
+
 
   // onClickInsert = (e) => {
   //   e.preventDefault();
@@ -79,7 +79,7 @@ class CommonModal extends React.Component{
   //     modalInsert: true,
   //   }, () => this.setFormData({}));
   // };
-  
+
   handleModalOk = () => {
     let validated = true;
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated); // 不知道有没有更好的办法
@@ -89,7 +89,7 @@ class CommonModal extends React.Component{
     }
     //处理收到的表单的数据
     const newObj = {};
-    const oldObj = this.formComponent.getFieldsValue(); 
+    const oldObj = this.formComponent.getFieldsValue();
     //把表单中跟时间有关系的参数进行时间格式化
     for (const key in oldObj) {
       if (oldObj[key] instanceof Date){
@@ -107,11 +107,11 @@ class CommonModal extends React.Component{
       //新增店铺到数据库
       Meteor.call("shops.insert", newObj, function(error,result){
         if(!error){
-          console.log("新增店铺"); 
+          console.log("新增店铺");
           console.log(result);
           //数据变化后，刷新表格
           console.log("刷新表格成功");
-          
+
         }else{
           console.log(error);
         }

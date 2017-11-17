@@ -67,15 +67,14 @@ class Shops extends React.Component{
     }
     )
   }
-  onClickUpdate = (e) => {
-    e.preventDefault();
+  onClickUpdate = (ShopId) => {
+    let self = this;
     this.setState({
       modalVisible: true,
       modalInsert: false,
       modalTitle: "编辑店铺",
       modalEditable: true,
-    }
-    )
+    })
   }
   onClickShow = (ShopId) => {
     let self = this
@@ -87,6 +86,7 @@ class Shops extends React.Component{
     })
     Meteor.call('shops.findShopById',ShopId, function(error,result){
       const {dispatch } = self.props;
+      console.log(self.props);
       if(!error){
         dispatch(getShopById(result));
         console.log('调用redux方法');
@@ -129,7 +129,7 @@ class Shops extends React.Component{
         });
       }
     })
-    
+
   }
 
 
@@ -183,13 +183,13 @@ class Shops extends React.Component{
             </Tooltip>
             <span className="ant-divider" />
             <Tooltip placement="topLeft" title="编辑此记录" arrowPointAtCenter>
-              <Button shape="circle" onClick={this.onClickUpdate.bind(this)} icon="edit" style={actionStyle} />
+              <Button shape="circle" onClick={ ()=>this.onClickUpdate(record._id)} icon="edit" style={actionStyle} />
             </Tooltip>
           </span>
         ),
       }
     ];
-    
+
 
     return (
       <div>
@@ -197,10 +197,10 @@ class Shops extends React.Component{
         <Tooltip placement="topLeft" title="添加新店铺" arrowPointAtCenter>
           <Button shape="circle" icon="plus"  onClick={this.onClickInsert}  style={{fontSize: "18px", color: "red"}} ></Button>
         </Tooltip>
-        <CommonModal  
-        modalVisible={this.state.modalVisible} 
-        modalEditable={this.state.modalEditable} 
-        modalTitle={this.state.modalTitle} 
+        <CommonModal
+        modalVisible={this.state.modalVisible}
+        modalEditable={this.state.modalEditable}
+        modalTitle={this.state.modalTitle}
         modalInsert ={this.state.modalInsert}
         componentModalVisible = {this.state.componentModalVisible}
         onCancel = { this.hideModal}
@@ -227,7 +227,7 @@ class Shops extends React.Component{
 function mapStateToProps(state) {
   return {
     singleShop: state.ShopsList.singleShop
-    
+
    };
 }
 

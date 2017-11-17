@@ -51,13 +51,6 @@ class NormalCommonForm extends React.Component{
     this.props.form.validateFields((err, fieldsValue) => {
         if (err) {
           return;
-<<<<<<< HEAD
-        }else{
-          dispatch(shopFormInput(fieldsValue.shopPhone, fieldsValue.shopName,fieldsValue.shopDescrption));
-        }
-        })
-    }
-=======
             }
         else {
           self.props.shopInfo(fieldsValue);
@@ -65,7 +58,6 @@ class NormalCommonForm extends React.Component{
       }
     })  
   }
->>>>>>> 2772809abb8612cbf4c6ca60711dc9e26b703f1d
 
   componentDidMount(){
 
@@ -221,29 +213,10 @@ class NormalCommonForm extends React.Component{
                 <Input addonBefore={prefixSelector} disabled={this.props.modalEditable}  style={{ width: '100%' }} />
             )}
             </FormItem>
-<<<<<<< HEAD
-            <FormItem
-             {...formItemLayout}
-            label="店铺简介"
-             hasFeedback
-             >
-             {getFieldDecorator('shopDescrption', {
-            rules: [{ required: true, message: '店铺简介不能为空' }],
-            })(
-            <Input placeholder="店铺简介" />
-            )}
-            </FormItem>
-
-        <FormItem {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">创建店铺</Button>
-      </FormItem>
-    </Form>
-=======
             <FormItem {...tailFormItemLayout}>
               <Button type="primary" htmlType="submit">创建店铺</Button>
             </FormItem>
           </Form>
->>>>>>> 2772809abb8612cbf4c6ca60711dc9e26b703f1d
     );
   }
 }
