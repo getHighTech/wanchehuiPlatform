@@ -35,10 +35,10 @@ export function addNewAgency(userId, productId){
 
 export function findOrCreateAgencyByUserId(userId, productId){
   let agency = findAgencyByUserId(userId);
-  if (agency) {
-    return agency;
+
+  if (agency === "AGENCY NOT FOUND") {
+    agency = addNewAgency(userId, productId);
   }
-  agency = addNewAgency(userId, productId);
   return agency;
 
 }
