@@ -7,7 +7,6 @@ Meteor.methods({
             shopName: params.shopName,
             shopPhone: params.shopPhone,
             shopAddress: params.shopAddress,
-            state:1,
             createdAt : new Date(),
           });
     },
@@ -20,7 +19,6 @@ Meteor.methods({
                 'shopName': 1,
                 'shopAddress': 1,
                 'shopPhone': 1,
-                'state': 1,
                 'createdAt': 1,
               }
             }

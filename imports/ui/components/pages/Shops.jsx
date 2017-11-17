@@ -25,7 +25,7 @@ import {countShops,getMeteorShopsLimit} from '../../services/shops.js'
 
 
 import CommonModal from './shops_components/CommonModal.jsx';
-import { showShop, editShop } from '/imports/ui/actions/shops.js';
+import { showShop, editShop,addShop } from '/imports/ui/actions/shops.js';
 
 const confirm = Modal.confirm;
 
@@ -60,16 +60,7 @@ class Shops extends React.Component{
     totalCount: 500,
     condition: {},
     modalVisible: false,  // modal是否可见
-    modalEditable: true, //modal是否可以编辑
     modalTitle: '',  // modal标题
-    modalInsert: true,  // 当前modal是用来insert还是update
-    modalReadonly: false,
-    // 图片预览相关状态
-    previewVisible: false,  // 是否显示图片预览modal
-    previewImages: [], // 要预览的图片
-
-    // 用户自定义组件modal, 一般用于实现单条记录的更新
-    componentModalVisible: false,
   };
 
   hideModal = () => {
@@ -77,14 +68,17 @@ class Shops extends React.Component{
   };
 
   onClickInsert = (e) => {
+    let self = this
     e.preventDefault();
-    this.setState({
+    const {dispatch } = self.props;
+    self.setState({
       modalVisible: true,
-      modalInsert: true,
-      modalTitle: "新增店铺",
-      modalEditable: true,
-    }
-    )
+      modalTitle: "新增店铺"
+    })
+    dispatch(addShop())
+    console.log("当前不可编辑" + self.props.editState)
+    console.log("当前是否为新增店铺" + self.props.modalState)
+    console.log(self.props.singleShop)
   }
   onClickUpdate = (ShopId) => {
     let self = this
@@ -99,9 +93,9 @@ class Shops extends React.Component{
       if(!error){
         dispatch(editShop(result));
         console.log('编辑店铺');
-        console.log(self.props.singleShop);
-        console.log("当前弹框是否为新增弹框" + self.props.modalState )
-        console.log("不能编辑" + self.props.editState )
+        console.log("当前不可编辑" + self.props.editState)
+        console.log("当前是否为新增店铺" + self.props.modalState)
+        console.log(self.props.singleShop)
       }else{
         console.log("获取数据失败");
       }
@@ -111,18 +105,16 @@ class Shops extends React.Component{
     let self = this
     self.setState({
       modalVisible: true,
-      modalInsert: false,
       modalTitle: "查看店铺",
-      modalEditable: false,
     })
     Meteor.call('shops.findShopById',ShopId, function(error,result){
       const {dispatch } = self.props;
       if(!error){
         dispatch(showShop(result));
         console.log('查看店铺');
-        console.log(self.props.singleShop);
-        console.log("当前弹框是否为新增弹框" + self.props.modalState )
-        console.log("不能编辑" + self.props.editState )
+        console.log("当前不可编辑" + self.props.editState)
+        console.log("当前是否为新增店铺" + self.props.modalState)
+        console.log(self.props.singleShop)
       }else{
         console.log("获取数据失败");
       }
@@ -181,7 +173,7 @@ class Shops extends React.Component{
 
 
   render() {
-      const {singleShop, modalState, editState} = this.props
+      const {singleShop, modalState, editState,allState} = this.props
       const headerMenuStyle ={
         display: 'flex',
         alignItems: 'center',
@@ -275,6 +267,7 @@ class Shops extends React.Component{
 }
 function mapStateToProps(state) {
   return {
+    allState: state.ShopsList,
     singleShop: state.ShopsList.singleShop,
     modalState: state.ShopsList.modalInsert,    
     editState: !state.ShopsList.modalEditable
