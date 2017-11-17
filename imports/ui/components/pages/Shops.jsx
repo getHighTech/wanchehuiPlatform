@@ -17,7 +17,8 @@ import Switch from 'antd/lib/switch';
 import "antd/lib/switch/style";
 import Modal from 'antd/lib/modal';
 import 'antd/lib/modal/style';
-
+import message from 'antd/lib/message';
+import 'antd/lib/message/style';
 
 import { Roles } from '/imports/api/roles/roles.js';
 
@@ -34,20 +35,56 @@ class Shops extends React.Component{
     super(props);
 
   }
-  
- showConfirm(title) {
+  showChangeConfirm(state,shopId) {
+    // let self = this
+    // const title = ""
+    // const content = ""
+    // Meteor.call('shops.findShopById',shopId, function(error,result){
+    //   const { dispatch } = self.props;
+    //   if(!error){
+    //     if (!result.shopState){
+    //       self.setState({
+    //         confirmTitle:"确定关闭店铺吗？",
+    //         confirmContent:"店铺关闭后，将禁用该店铺一切功能！"
+    //       })
+    //     }else{
+    //       self.setState({
+    //         confirmTitle:"确定开启店铺吗？",
+    //         confirmContent: "店铺开启后，将激活该店铺一切功能！"
+    //       })
+    //     }
+    //   }else{
+    //     console.log("获取数据失败");
+    //   }
+    // })
     confirm({
-      title: title,
+      title: '确定关闭/开启店铺吗？！',
+      content: '店铺关闭/开启后，将激活/禁用店铺一切功能！',
+      okText: '是',
+      okType: 'danger',
+      cancelText: '否',
       onOk() {
-        return new Promise((resolve, reject) => {
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        }).catch(() => console.log('Oops errors!'));
+        console.log('OK');
+        Meteor.call('shops.changeShopState',shopId, function(error,result){
+          if(!error){
+              console.log(result)
+              if (result.shopState){
+                message.success('店铺关闭成功！')
+              }else{
+                message.success('店铺开启成功！')
+              }
+          }else{
+            console.log("店铺状态改变失败！")
+          }
+        })
       },
-      onCancel() {},
+      onCancel() {
+        console.log('Cancel');
+        message.error('店铺开启失败');
+      },
     });
   }
   
-
   handleSearchInput(value){
     console.log(value);
   }
@@ -61,6 +98,9 @@ class Shops extends React.Component{
     condition: {},
     modalVisible: false,  // modal是否可见
     modalTitle: '',  // modal标题
+    confirmTitle: '',
+    confirmContent: '',
+    
   };
 
   hideModal = () => {
@@ -80,15 +120,14 @@ class Shops extends React.Component{
     console.log("当前是否为新增店铺" + self.props.modalState)
     console.log(self.props.singleShop)
   }
-  onClickUpdate = (ShopId) => {
+
+  onClickUpdate = (shopId) => {
     let self = this
     this.setState({
       modalVisible: true,
-      modalInsert: false,
       modalTitle: "编辑店铺",
-      modalEditable: true,
     })
-    Meteor.call('shops.findShopById',ShopId, function(error,result){
+    Meteor.call('shops.findShopById',shopId, function(error,result){
       const {dispatch } = self.props;
       if(!error){
         dispatch(editShop(result));
@@ -101,13 +140,14 @@ class Shops extends React.Component{
       }
     })
   }
-  onClickShow = (ShopId) => {
+
+  onClickShow = (shopId) => {
     let self = this
     self.setState({
       modalVisible: true,
       modalTitle: "查看店铺",
     })
-    Meteor.call('shops.findShopById',ShopId, function(error,result){
+    Meteor.call('shops.findShopById',shopId, function(error,result){
       const {dispatch } = self.props;
       if(!error){
         dispatch(showShop(result));
@@ -115,17 +155,13 @@ class Shops extends React.Component{
         console.log("当前不可编辑" + self.props.editState)
         console.log("当前是否为新增店铺" + self.props.modalState)
         console.log(self.props.singleShop)
+        self.fromModal.prop.setFormData(result);
+        console.log(self.fromModal)
       }else{
         console.log("获取数据失败");
       }
     })
-  //  console.log(self.refs.test);
-  //  self.refs.test
   }
-  // deleteThisShop = (ShopId) => {
-  //   let self = this
-
-  // }
 
   getPageShops(page,pageSize,condition){
     let self = this;
@@ -144,15 +180,7 @@ class Shops extends React.Component{
       }
     })
   }
-  onChange(checked) {
-    let self = this;
-    console.log(`switch to ${checked}`);
-    if(checked){
-      self.showConfirm('确定关闭店铺吗？')
-    }else{
-      self.showConfirm('确定打开店铺吗？')
-    }
-  }
+
 
   componentDidMount(){
     console.log('加载店铺数据')
@@ -164,13 +192,7 @@ class Shops extends React.Component{
         });
       }
     })
-
-    
   }
-
-
-
-
 
   render() {
       const {singleShop, modalState, editState,allState} = this.props
@@ -227,7 +249,7 @@ class Shops extends React.Component{
             </Tooltip>
             <span className="ant-divider" />
             <Tooltip placement="topLeft" title="开关店铺" arrowPointAtCenter>
-              <Switch checkedChildren="营业" unCheckedChildren="关闭"  defaultChecked={true} onChange={this.onChange}  />
+              <Switch checkedChildren="营业" unCheckedChildren="关闭"  defaultChecked={record.shopState} onChange={() => this.showChangeConfirm(record.shopState,record._id)}  />
             </Tooltip>
           </span>
         ),
@@ -246,8 +268,7 @@ class Shops extends React.Component{
         modalTitle={this.state.modalTitle} 
         onCancel = { this.hideModal}
         getPageShops = {this.getPageShops.bind(this)}
-        ref = "test"
-        // ref={ (input) => {this.modalComponent = input}}
+        ref = {(input) => { this.fromModal = input; }}
         />
         <div>
         <Input.Search
@@ -270,7 +291,7 @@ function mapStateToProps(state) {
     allState: state.ShopsList,
     singleShop: state.ShopsList.singleShop,
     modalState: state.ShopsList.modalInsert,    
-    editState: !state.ShopsList.modalEditable
+    editState: !state.ShopsList.modalEditable,
   };
 }
 

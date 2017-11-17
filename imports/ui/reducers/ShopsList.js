@@ -1,4 +1,4 @@
-import {SHOW_SHOP, EDIT_SHOP, ADD_SHOP} from "../actions/shops.js";
+import { SHOW_SHOP, EDIT_SHOP, ADD_SHOP, SWITCH_SHOP } from "../actions/shops.js";
 
 
 const initialState = {

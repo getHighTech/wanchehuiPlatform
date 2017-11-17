@@ -49,7 +49,6 @@ class ShopFormWrap extends Component {
 
 
     componentDidMount(){
-
     }
 
 

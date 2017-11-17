@@ -22,6 +22,5 @@ export function addShop(state){
     return{
         type:ADD_SHOP,
         state
-
     }
 }
