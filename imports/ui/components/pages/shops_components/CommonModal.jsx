@@ -129,7 +129,7 @@ class CommonModal extends React.Component{
 
 
   render(){
-    const {singleShop, modalState} = this.props
+    const {singleShop, modalState, editState} = this.props
     return(
       <div>
         <Modal
@@ -140,7 +140,7 @@ class CommonModal extends React.Component{
           maskClosable={false}
           style={{ top: 20 }}
         >
-          <ShopForm shop = {this.props.singleShop} ref = {(input) => { this.formComponent = input; }} />
+          <ShopForm editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
@@ -150,7 +150,8 @@ class CommonModal extends React.Component{
 function mapStateToProps(state) {
   return {
     singleShop: state.ShopsList.singleShop,
-    modalState: state.ShopsList.modalInsert
+    modalState: state.ShopsList.modalInsert,
+    editState: !state.ShopsList.modalEditable
    };
 }
 

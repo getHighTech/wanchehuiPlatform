@@ -125,17 +125,4 @@ class ShopFormWrap extends Component {
 
 const ShopForm = Form.create()(ShopFormWrap);
 
-function mapStateToProps(state) {
-  return {
-    editState: !state.ShopsList.modalEditable
-   };
-}
-
-export default createContainer(() => {
-  if (Meteor.userId()) {
-    Meteor.subscribe('roles.current');
-  }
-  return {
-    current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
-  };
-}, connect(mapStateToProps)(ShopForm));
+export default ShopForm;
