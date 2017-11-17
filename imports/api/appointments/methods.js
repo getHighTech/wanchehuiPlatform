@@ -9,7 +9,6 @@ Meteor.methods({
     let arrangement = Arrangements.findOne({
       serviceId: appoint.serviceId,
       type: "预约",date: appoint.date});
-      console.log(arrangement);
     if (arrangement == undefined) {
       //去做没有时间安排的服务业务
 

@@ -15,7 +15,6 @@ export function payOut(){
 export function bindCard(order){
   //绑卡,暂时只考虑一张卡的情况
   let card = Cards.findOne({_id: order.productId});
-  console.log(card);
   let sellOutCount = card.sellOutCount;
   if (sellOutCount == undefined) {
     sellOutCount = 0;

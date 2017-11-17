@@ -5,7 +5,13 @@
     "start": "meteor run"
   },
   "dependencies": {
+<<<<<<< HEAD
     "antd": "^2.13.3",
+=======
+    "aliyun-oss-upload-stream": "^1.3.0",
+    "aliyun-sdk": "^1.10.18",
+    "antd": "^2.12.0",
+>>>>>>> 560ff80d5e3882250d2883fe7ec035f96044e8a2
     "autoprefixer": "^7.1.4",
     "babel-runtime": "^6.26.0",
     "bcrypt": "^1.0.3",
@@ -20,6 +26,7 @@
     "qiniu-js": "^1.0.22",
     "react": "^15.6.1",
     "react-addons-pure-render-mixin": "^15.6.0",
+    "react-amap": "^1.0.3",
     "react-dom": "^15.6.1",
     "react-draft-wysiwyg": "^1.10.12",
     "react-redux": "^5.0.6",
@@ -27,8 +34,10 @@
     "react-router-redux": "^4.0.8",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
+    "redux-watch": "^1.1.1",
     "sia.js": "^0.4.1",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "xlsx": "^0.11.4"
   },
   "devDependencies": {},
   "postcss": {

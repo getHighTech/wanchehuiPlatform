@@ -19,6 +19,28 @@ import draftToHtml from 'draftjs-to-html';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 
+function uploadImageCallBack(file) {
+
+  return new Promise(
+    (resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/images/upload/handler');
+      xhr.send(file);
+
+      xhr.addEventListener('load', () => {
+        const response = JSON.parse(xhr.responseText);
+        resolve(response);
+      });
+      xhr.addEventListener('error', () => {
+        const error = JSON.parse(xhr.responseText);
+        reject(error);
+
+      });
+    }
+  );
+}
+
+
 class NewMemberApplyWrap extends Component {
 
   constructor(props){
@@ -269,29 +291,7 @@ class NewMemberApplyWrap extends Component {
         contentState: editorState,
       });
     }
-    uploadImageCallBack(file) {
-      console.log(file.type);
 
-      return new Promise(
-        (resolve, reject) => {
-          // const xhr = new XMLHttpRequest();
-          // xhr.open('GET', 'http://gegeyun.b0.aicdn.com/gegeyun/');
-          // xhr.setRequestHeader('Authorization', 'Basic moobWt2PQbZkT8/iTjmuL4cUdwI=');
-          // const data = new FormData();
-          // data.append('image', file);
-          //
-          // xhr.send(data);
-          // xhr.addEventListener('load', () => {
-          //   const response = JSON.parse(xhr.responseText);
-          //   resolve(response);
-          // });
-          // xhr.addEventListener('error', () => {
-          //   const error = JSON.parse(xhr.responseText);
-          //   reject(error);
-          // });
-        }
-      );
-    }
 
 
     render() {
@@ -336,6 +336,9 @@ class NewMemberApplyWrap extends Component {
               localization={{
                 locale: 'zh',
               }}
+              toolbarClassName="rdw-storybook-toolbar"
+               wrapperClassName="rdw-storybook-wrapper"
+               editorClassName="rdw-storybook-editor"
               toolbar={{
                   inline: { inDropdown: true },
                   list: { inDropdown: true },
@@ -343,10 +346,7 @@ class NewMemberApplyWrap extends Component {
                   link: { inDropdown: true },
                   history: { inDropdown: true },
                   image: {
-                    uploadCallback: this.uploadImageCallBack.bind(this), alt: { present: false, mandatory: false },
-                    urlEnabled: true,
-                    uploadEnabled: true,
-                    inputAccept: 'image/gif,image/jpeg,image/jpg,image/png,image/svg',
+                    uploadCallback: uploadImageCallBack, alt: { present: true, mandatory: false },
                   },
                 }}
                 />

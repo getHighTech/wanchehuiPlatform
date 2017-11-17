@@ -1,6 +1,3 @@
-'use strict';
-
-
 import React, { Component } from 'react';
 import { push, replace, goBack } from 'react-router-redux';
 
@@ -44,6 +41,14 @@ class MainLayout extends Component {
       default:
 
     }
+    $(document).ready(function(){
+      $(this).unbind("click").on('click',function(e){
+        if ($(e.target).hasClass("on-dev-unfinished")) {
+          message.warning("仍然在开发中，敬请期待");
+        }
+      });
+    });
+
 
   }
   handleMenuItemClicked(item){
@@ -54,19 +59,35 @@ class MainLayout extends Component {
         dispatch(push('/'));
         break;
       case 'roles':
-        dispatch(push('/roles'))
+        dispatch(push('/roles'));
+        break;
+      case 'users':
+        dispatch(push('/users'));
+        break;
+      case 'orders':
+        dispatch(push('/orders'));
+        break;
+      case 'shops':
+        dispatch(push('/shops'));
+        break;
+      case 'settings':
+        dispatch(push('/settings'));
+        break;
+      case 'agency_relations':
+        dispatch(push('/agencies_relations'));
+        break;
+      case 'component_test':
+        dispatch(push('/component_test'));
         break;
       default:
-
+        dispatch(push('/'));
+        break;
     }
   }
 
 
   render() {
-    // let role = this.props.current_role;
-    // console.log(role);
-    return (
-      <Layout>
+    return(  <Layout>
         <Sider
           breakpoint="lg"
           collapsedWidth="0"
@@ -87,13 +108,33 @@ class MainLayout extends Component {
               <Icon type="user" />
               <span className="nav-text">用户管理</span>
             </Menu.Item>
+            <Menu.Item key="shops">
+              <Icon type="shop" />
+              <span className="nav-text">店铺管理</span>
+            </Menu.Item>
+            <Menu.Item key="orders">
+              <Icon type="book" />
+              <span className="nav-text">订单管理</span>
+            </Menu.Item>
+            <Menu.Item key="agency_relations">
+              <Icon type="paper-clip" />
+              <span className="nav-text">分销关系管理</span>
+            </Menu.Item>
             <Menu.Item key="roles">
               <Icon type="paper-clip" />
               <span className="nav-text">角色管理</span>
             </Menu.Item>
-            <Menu.Item key="setting">
+            <Menu.Item key="settings">
               <Icon type="setting" />
               <span className="nav-text">系统设置</span>
+            </Menu.Item>
+            <Menu.Item key="logs">
+              <Icon type="paper-clip" />
+              <span className="nav-text">系统日志</span>
+            </Menu.Item>
+            <Menu.Item key="component_test">
+              <Icon type="paper-clip" />
+              <span className="nav-text">组件测试页面</span>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -124,8 +165,6 @@ class MainLayout extends Component {
           </Footer>
         </Layout>
       </Layout>
-
-
     );
   }
 }

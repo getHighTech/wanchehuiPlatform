@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import {getRoleByUsername} from './basic_actions.js';
+import {getRoleByUsername} from './actions.js';
 
 Meteor.methods({
   'role.by.username'(username) {

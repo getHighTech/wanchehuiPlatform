@@ -1,0 +1,1 @@
+export const NEW_SHOP_BY_ADMIN = "NEW_SHOP_BY_ADMIN";

@@ -1,12 +1,27 @@
 import { Meteor } from 'meteor/meteor';
+import { findAgencyById} from '../agencies/actions.js'
 
 export function allUsersMount(){
   return Meteor.users.find().count();
 }
 
 export function allCardUsersMount(){
-  return Meteor.users.find({cards: {$exists: true}}).count();
+  return Meteor.users.find({cards: {$exists: false},
+    cards: {$not: {$in: [null]}}
+  }).count();
 }
+
+
+export function findUserByUsername(username){
+  let user = Meteor.users.findOne({"username": username});
+  if (!user) {
+    return "USER NOT FOUND";
+  }
+  return user;
+
+}
+
+
 
 
 export function findUserByMobile(mobile){
@@ -67,22 +82,39 @@ export function giveCardAndCouponsToUser(userId){
   })
 }
 
+export function checkUserHasCards(userId){
+  let user = findUserById(userId);
+  if (user.cards == undefined) {
+    return false;
+  }
+  return true;
+}
+
 
 export function findOrCreateUserByMobile(mobile){
-  let user =  Meteor.users.findOne({"profile.mobile": mobile});
+  let exists = false;
+  let user =  Meteor.users.findOne({"profile.mobile": mobile.toString()});
+  if (user) {
+
+    exists = true;
+  }
   if (user == undefined) {
     let user_id =   Accounts.createUser({
-          username: "mobile",
-          password: "mobile",
+          username: mobile.toString(),
+          password: mobile.toString(),
         });
       Meteor.users.update(user_id,{
           $set: {
-            "profile.mobile": mobile
+            "profile.mobile": mobile.toString()
           }
         });
     user = Meteor.users.findOne({_id: user_id});
   }
-  return user;
+
+  return {
+    exists,
+    user,
+  }
 }
 
 export function updateUsernameByMobile(mobile){
@@ -92,4 +124,78 @@ export function updateUsernameByMobile(mobile){
       username: mobile
     }
   })
+}
+
+export function getLimitUserIds(condition, page, pageSize){
+  let users =  Meteor.users.find(condition, {
+    skip: (page-1)*pageSize, limit: pageSize,
+    sort: {"createdAt": -1},
+    fields:
+      {
+        _id: 1,
+        username: 1,
+        profile: 1,
+        nickname: 1,
+      }
+    }
+  );
+  let user_ids = [];
+  users.forEach((user)=>{
+    user_ids.push(user._id);
+  });
+  return user_ids;
+}
+
+export function getBasicUserById(userId){
+  return Meteor.users.findOne({_id: userId}, {fields: {
+      '_id': 1, 'username': 1, 'profile.mobile': 1, 'nickname': 1
+  }});
+}
+
+export function getUserByAgencyId(agencyId){
+  let agency = findAgencyById(agencyId);
+  if (agency == undefined) {
+    return {};
+  }
+  return getBasicUserById(agency.userId);
+}
+
+Date.prototype.Format = function(format){
+
+  var o = {
+
+  "M+" : this.getMonth()+1, //month
+
+  "d+" : this.getDate(), //day
+
+  "h+" : this.getHours(), //hour
+
+  "m+" : this.getMinutes(), //minute
+
+  "s+" : this.getSeconds(), //second
+
+  "q+" : Math.floor((this.getMonth()+3)/3), //quarter
+
+  "S" : this.getMilliseconds() //millisecond
+
+  }
+
+  if(/(y+)/.test(format)) {
+
+  format = format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+
+  }
+
+  for(var k in o) {
+
+    if(new RegExp("("+ k +")").test(format)) {
+
+      format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+
+    }
+
+  }
+
+  return format;
+
 }

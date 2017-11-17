@@ -18,12 +18,14 @@ import "antd/lib/tooltip/style";
 class DashBoard extends React.Component{
   constructor(props) {
     super(props);
+    console.log(props);
     this.state = {
       allUsersMount: 0,
-      allCardsMount: 0,
-
+      allCardUsersMount: 0,
+      usersAddOnToday: 0,
+      salesOnToday: 0,
+      salesInThisWeek: 0
     }
-
   }
 
   updateUsersCount(){
@@ -50,6 +52,34 @@ class DashBoard extends React.Component{
       }
     });
   }
+  updateUsersAddOnToday (){
+    Meteor.call("get.users.addOnToady", (error, result)=>{
+      if (!error) {
+        this.setState({
+          usersAddOnToday: result
+        })
+      }
+    });
+  }
+  updateSalesOnToday (){
+    Meteor.call("users.cards.addOnToady", (error, result)=>{
+      if (!error) {
+        this.setState({
+          salesOnToday: result
+        })
+      }
+    });
+  }
+
+  updateSalesInThisWeek (){
+    Meteor.call("users.cards.addOnWeek", (error, result)=>{
+      if (!error) {
+        this.setState({
+          salesInThisWeek: result
+        })
+      }
+    });
+  }
 
   componentDidMount(){
 
@@ -57,6 +87,9 @@ class DashBoard extends React.Component{
 
     this.updateUsersCount();
     this.updateUsersCardsCount();
+    this.updateUsersAddOnToday();
+    this.updateSalesOnToday();
+    this.updateSalesInThisWeek();
   }
 
 
@@ -99,19 +132,19 @@ class DashBoard extends React.Component{
               <CardExtra />
 
             } >
-
+            <h1>{this.state.usersAddOnToday}</h1>
             </Card>
             <Card title="今日卡销量:"  extra={
               <CardExtra />
-
+              
             }>
-
+            <h1>{this.state.salesOnToday}</h1>
             </Card>
             <Card title="本周卡片销量:"  extra={
               <CardExtra />
 
             }>
-
+            <h1>{this.state.salesInThisWeek}</h1>
             </Card>
       </div>
     )

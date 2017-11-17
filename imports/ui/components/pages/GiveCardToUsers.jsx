@@ -12,6 +12,7 @@ import message from 'antd/lib/message';
 
 import Icon from 'antd/lib/icon';
 
+
 import 'antd/lib/icon/style/';
 import "antd/lib/button/style/";
 import 'antd/lib/upload/style/';
@@ -22,7 +23,10 @@ class GiveCardToUser extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-      users: []
+      fail: 0,
+      success: 0,
+      found: 0,
+      messages: [],
     }
 
   }
@@ -34,14 +38,18 @@ class GiveCardToUser extends React.Component{
       action: '/excels/upload/mobile_agency',
       headers: {
         authorization: 'authorization-text',
+        contentType: "application/x-www-form-urlencoded;charset=utf8",
       },
       onChange(info) {
         if (info.file.status !== 'uploading') {
-          console.log(info.file, info.fileList);
+          console.log("上传完毕");
         }
         if (info.file.status === 'done') {
           self.setState({
-            users: info.file.response,
+            fail: info.file.response.fail,
+            success: info.file.response.success,
+            found: info.file.response.found,
+            messages: info.file.response.messages
           });
           message.success(`${info.file.name} file uploaded successfully`);
         } else if (info.file.status === 'error') {
@@ -49,21 +57,14 @@ class GiveCardToUser extends React.Component{
         }
       },
     };
-
-    let listUsers = function(){
-      return self.state.users.map((user, index)=>{
-        console.log(user.length);
-        if (user.length > 1) {
-          return (
-            <div key={index}>
-              <span>{user[0]}</span>|<span>{user[1]}</span>
-            </div>
-          )
-        }
-
+    let listMessages = () => {
+      return self.state.messages.map((item, index) => {
+        console.log(item);
+        return (
+          <li key={index}><div dangerouslySetInnerHTML={{__html: item}} /></li>
+        )
       });
     }
-
 
 
     return (
@@ -78,9 +79,18 @@ class GiveCardToUser extends React.Component{
               </Button>
             </Upload>
             <br/>
-            <div style={{width: "50%"}}>
-            <h3>显示</h3>
-            {listUsers()}
+            <div style={{width: "90%"}}>
+            <h3>详细信息:</h3>
+              <ul>
+                <li>需要处理：{this.state.found}个用户</li>
+                <li>
+                  <ul>
+                    {listMessages()}
+                  </ul>
+                </li>
+                <li><div dangerouslySetInnerHTML={{__html: this.state.found}} /></li>
+              </ul>
+
             </div>
       </div>
     )
