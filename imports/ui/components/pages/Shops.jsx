@@ -155,7 +155,7 @@ class Shops extends React.Component{
         console.log("当前不可编辑" + self.props.editState)
         console.log("当前是否为新增店铺" + self.props.modalState)
         console.log(self.props.singleShop)
-        self.fromModal.prop.setFormData(result);
+        // self.fromModal.setFormData(result);
         console.log(self.fromModal)
       }else{
         console.log("获取数据失败");

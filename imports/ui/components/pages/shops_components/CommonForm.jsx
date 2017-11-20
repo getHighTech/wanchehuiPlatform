@@ -126,9 +126,9 @@ class NormalCommonForm extends React.Component{
       //         <TimePicker format="hh:mm"  />
       //     )}
       //     至  <TimePicker format="hh:mm"  />
-      //
+      
       // </FormItem>
-      //
+      
       // <FormItem
       // {...formItemLayout}
       // label="店铺封面"
@@ -143,9 +143,9 @@ class NormalCommonForm extends React.Component{
       //         </Button>
       //     </Upload>
       //     )}
-      //
+      
       // </FormItem>
-      //
+      
       // <FormItem
       // {...formItemLayout}
       // label="上传合同"
@@ -160,9 +160,9 @@ class NormalCommonForm extends React.Component{
       //         </Button>
       //     </Upload>
       //     )}
-      //
+      
       // </FormItem>
-      //
+      
       // <FormItem
       // {...formItemLayout}
       // label="店铺地址"
@@ -174,7 +174,7 @@ class NormalCommonForm extends React.Component{
       //     <AMapSearcher />
       //     )}
       // </FormItem>
-      //
+      
       // <FormItem
       // {...formItemLayout}
       // label="店铺简介"
