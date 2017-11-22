@@ -140,7 +140,7 @@ class CommonModal extends React.Component{
           maskClosable={false}
           style={{ top: 20 }}
         >
-          <ShopForm editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
+          <ShopForm shop = {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
