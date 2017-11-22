@@ -59,6 +59,7 @@ class ShopFormWrap extends Component {
     componentWillReceiveProps(nextProps){
 
     }
+
     render() {
       const { getFieldDecorator } = this.props.form;
       
@@ -111,31 +112,7 @@ class ShopFormWrap extends Component {
             <Input  disabled={this.props.editState} style={{ width: '100%' }} />
         )}
         </FormItem>
-        <FormItem
-        {...formItemLayout}
-        label="店铺营业时间"
-        hasFeedback
-        >
-        {getFieldDecorator('shopStartTime', {
-            initialValue: moment('08:00', format),
-            rules: [{ required: true, message: '营业时间不能为空' }],
-            })(
-              <TimePicker  format={format} />
-            )}
-        
-        </FormItem>
-        <FormItem
-        {...formItemLayout}
-        label="店铺打烊时间"
-        hasFeedback
-        >
-        {getFieldDecorator('shopCloseTime', {
-          initialValue: moment('22:00', format),
-            rules: [{ required: true, message: '打烊时间不能为空' }],
-            })(
-              <TimePicker  format={format} />
-            )}
-        </FormItem>
+
         {/* <FormItem
       {...formItemLayout}
               label="上传合同"
@@ -173,9 +150,10 @@ class ShopFormWrap extends Component {
           hasFeedback
           >
       {getFieldDecorator('shopTag', {
+        initialValue: this.props.shop.shopTag,
           rules: [{ required: true, message: '店铺标签不能为空' }],
           })(
-          <Input  placeholder="店铺标签" />
+          <Input  disabled={this.props.editState} placeholder="店铺标签" />
           )}
       </FormItem>
       <FormItem
@@ -184,9 +162,10 @@ class ShopFormWrap extends Component {
           hasFeedback
         >
           {getFieldDecorator('shopDescrption', {
+            initialValue: this.props.shop.shopDescrption,
           rules: [{ required: true, message: '店铺简介不能为空' }],
           })(
-          <Input placeholder="店铺简介" />
+          <Input disabled={this.props.editState} placeholder="店铺简介" />
           )}
         </FormItem>
       <FormItem

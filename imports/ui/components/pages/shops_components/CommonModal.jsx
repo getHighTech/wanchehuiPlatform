@@ -131,6 +131,7 @@ class CommonModal extends React.Component{
 
   handleCancel = (e) => {
     this.props.onCancel();
+    this.setFormData({});
   }
 
   hideModal = () => {
