@@ -80,6 +80,7 @@ class CommonModal extends React.Component{
   //   }, () => this.setFormData({}));
   // };
 
+
   handleModalOk = () => {
     let validated = true;
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated); // 不知道有没有更好的办法
@@ -89,7 +90,12 @@ class CommonModal extends React.Component{
     }
     //处理收到的表单的数据
     const newObj = {};
+// <<<<<<< HEAD
+//     const oldObj = this.formComponent.getFieldsValue();
+// =======
+    console.log(newObj);
     const oldObj = this.formComponent.getFieldsValue();
+// >>>>>>> 9896c5b174e2ff98381308732fc0234bd902711e
     //把表单中跟时间有关系的参数进行时间格式化
     for (const key in oldObj) {
       if (oldObj[key] instanceof Date){
@@ -103,7 +109,7 @@ class CommonModal extends React.Component{
     this.hideModal();
 
     //将转化好的数据传给后端
-    if(this.props.modalInsert){
+    if(this.props.modalState){
       //新增店铺到数据库
       Meteor.call("shops.insert", newObj, function(error,result){
         if(!error){
@@ -139,7 +145,7 @@ class CommonModal extends React.Component{
 
 
   render(){
-    const {singleShop} = this.props
+    const {singleShop, modalState, editState} = this.props
     return(
       <div>
         <Modal
@@ -150,7 +156,7 @@ class CommonModal extends React.Component{
           maskClosable={false}
           style={{ top: 20 }}
         >
-          <ShopForm shop = {this.props.singleShop} ref={(input) => { this.formComponent = input; }}/>
+          <ShopForm shop= {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
@@ -158,9 +164,10 @@ class CommonModal extends React.Component{
 }
 
 function mapStateToProps(state) {
-  console.log(state.ShopsList.singleShop)
   return {
-    singleShop: state.ShopsList.singleShop
+    singleShop: state.ShopsList.singleShop,
+    modalState: state.ShopsList.modalInsert,
+    editState: !state.ShopsList.modalEditable
    };
 }
 

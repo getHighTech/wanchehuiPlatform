@@ -7,6 +7,7 @@ Meteor.methods({
             shopName: params.shopName,
             shopPhone: params.shopPhone,
             shopAddress: params.shopAddress,
+            shopState: true, //true为营业，fasle为关闭
             createdAt : new Date(),
           });
     },
@@ -19,6 +20,7 @@ Meteor.methods({
                 'shopName': 1,
                 'shopAddress': 1,
                 'shopPhone': 1,
+                'shopState':1 ,
                 'createdAt': 1,
               }
             }
@@ -31,5 +33,14 @@ Meteor.methods({
         return "SHOP NOT FOUND";
       }
       return shop;
+    },
+    'shops.changeShopState'(shopId){
+      let shop = Shops.findOne({_id:shopId})
+       Shops.update(shopId, {
+        $set: {
+          shopState: !shop.shopState,
+        }
+      });
+      return shop
     }
 })
