@@ -27,6 +27,8 @@ import { Roles } from '/imports/api/roles/roles.js';
 import ShopForm from './ShopForm.jsx';
 import {Link} from 'react-router';
 
+
+
 class CommonModal extends React.Component{
   constructor(props){
     super(props);
@@ -69,18 +71,8 @@ class CommonModal extends React.Component{
   }
 
  
-
-  // onClickInsert = (e) => {
-  //   e.preventDefault();
-  //   // this.setFormData({});  // insert时弹出的表单应该是空的
-  //   this.setState({
-  //     modalVisible: true,
-  //     modalTitle: '新增店铺',
-  //     modalInsert: true,
-  //   }, () => this.setFormData({}));
-  // };
-  
   handleModalOk = () => {
+    let self = this
     let validated = true;
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated); // 不知道有没有更好的办法
     if (!validated) {
@@ -89,6 +81,7 @@ class CommonModal extends React.Component{
     }
     //处理收到的表单的数据
     const newObj = {};
+    console.log(newObj);
     const oldObj = this.formComponent.getFieldsValue(); 
     //把表单中跟时间有关系的参数进行时间格式化
     for (const key in oldObj) {
@@ -100,27 +93,37 @@ class CommonModal extends React.Component{
     }
     console.log(newObj);
     // 至此表单中的数据格式转换完毕
-    this.hideModal();
+    self.hideModal();
 
     //将转化好的数据传给后端
-    if(this.props.modalInsert){
+    if(self.props.modalState){
       //新增店铺到数据库
       Meteor.call("shops.insert", newObj, function(error,result){
         if(!error){
           console.log("新增店铺"); 
           console.log(result);
           //数据变化后，刷新表格
+          self.reflashTable();
+          self.setFormData({});
           console.log("刷新表格成功");
-          
         }else{
           console.log(error);
         }
       })
-      this.reflashTable();
-      this.setFormData({});
+
     }else{
-      console.log("升级店铺");
-      this.setFormData({});
+      console.log('店铺升级')
+      Meteor.call('shops.update',this.props.singleShop, newObj, function(error,result){
+        if(!error){
+          console.log('店铺升级成功')
+          console.log(result);
+          self.reflashTable();
+          self.setFormData({});
+        }else{
+          console.log(error);
+        }
+      })
+
     }
   }
 
@@ -130,6 +133,7 @@ class CommonModal extends React.Component{
 
   handleCancel = (e) => {
     this.props.onCancel();
+    this.setFormData({});
   }
 
   hideModal = () => {
@@ -139,7 +143,7 @@ class CommonModal extends React.Component{
 
 
   render(){
-    const {singleShop} = this.props
+    const {singleShop, modalState, editState, shopAddress} = this.props
     return(
       <div>
         <Modal
@@ -150,7 +154,7 @@ class CommonModal extends React.Component{
           maskClosable={false}
           style={{ top: 20 }}
         >
-          <ShopForm shop = {this.props.singleShop} ref={(input) => { this.formComponent = input; }}/>
+          <ShopForm shopAddress= {this.props.shopAddress} shop= {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
@@ -158,9 +162,11 @@ class CommonModal extends React.Component{
 }
 
 function mapStateToProps(state) {
-  console.log(state.ShopsList.singleShop)
   return {
-    singleShop: state.ShopsList.singleShop
+    singleShop: state.ShopsList.singleShop,
+    modalState: state.ShopsList.modalInsert,
+    editState: !state.ShopsList.modalEditable,
+    shopAddress: state.ShopsList.shopAddress
    };
 }
 
