@@ -27,6 +27,8 @@ import { Roles } from '/imports/api/roles/roles.js';
 import ShopForm from './ShopForm.jsx';
 import {Link} from 'react-router';
 
+
+
 class CommonModal extends React.Component{
   constructor(props){
     super(props);
@@ -141,7 +143,7 @@ class CommonModal extends React.Component{
 
 
   render(){
-    const {singleShop, modalState, editState} = this.props
+    const {singleShop, modalState, editState, shopAddress} = this.props
     return(
       <div>
         <Modal
@@ -152,7 +154,7 @@ class CommonModal extends React.Component{
           maskClosable={false}
           style={{ top: 20 }}
         >
-          <ShopForm shop= {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
+          <ShopForm shopAddress= {this.props.shopAddress} shop= {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
@@ -163,7 +165,8 @@ function mapStateToProps(state) {
   return {
     singleShop: state.ShopsList.singleShop,
     modalState: state.ShopsList.modalInsert,
-    editState: !state.ShopsList.modalEditable
+    editState: !state.ShopsList.modalEditable,
+    shopAddress: state.ShopsList.shopAddress
    };
 }
 

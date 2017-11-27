@@ -28,6 +28,7 @@ import {countShops,getMeteorShopsLimit} from '../../services/shops.js'
 import CommonModal from './shops_components/CommonModal.jsx';
 import { showShop, editShop,addShop } from '/imports/ui/actions/shops.js';
 
+
 const confirm = Modal.confirm;
 
 class Shops extends React.Component{

@@ -24,6 +24,7 @@ import "antd/lib/select/style";
 import "antd/lib/upload/style";
 import 'antd/lib/modal/style';
 import AMapSearcher from '../tools/AMapSearcher.jsx';
+import AMapComplete from '../tools/AMapComplete.jsx';
 import { Roles } from '/imports/api/roles/roles.js';
 import moment from 'moment';
 
@@ -33,24 +34,25 @@ const format = 'HH:mm';
 
 class ShopFormWrap extends Component {
 
+
     constructor(props){
       super(props);
 
     }
 
-    state = {
-      editdisable: false 
-    }
+
     //初次挂载去获取数据
     componentWillMount(){
       //如果是新增店铺，清空表单
 
       //如果是编辑店铺，把获取的数据填进输入框里
+    
 
     }
 
 
     componentDidMount(){
+      console.log("383838383")
     }
 
 
@@ -172,12 +174,16 @@ class ShopFormWrap extends Component {
         {...formItemLayout}
         label='店铺地址'
         >
-        {getFieldDecorator('shopAddress', {
-          initialValue: this.props.shop.shopAddress,
-          rules: [{ required: true, message: '输入店铺地址' }],
-        })(
-            <Input disabled={this.props.editState} style={{ width: '100%' }} />
-        )}
+          {getFieldDecorator('shopAddress', {
+            initialValue: this.props.shopAddress,
+          rules: [{ required: true, message: '店铺简介不能为空' }],
+          })(
+            <AMapComplete 
+            editState={this.props.editState} 
+            initialValue={this.props.shop.shopAddress}
+            />
+          )}
+
         </FormItem>
       </Form>
       );
