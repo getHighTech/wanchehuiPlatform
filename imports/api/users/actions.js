@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
-import { findAgencyById} from '../agencies/actions.js'
-
+import { findAgencyById} from '../agencies/actions.js';
+import {Orders} from "/imports/api/orders/orders.js";
 export function allUsersMount(){
   return Meteor.users.find().count();
 }
@@ -11,6 +11,14 @@ export function allCardUsersMount(){
   }).count();
 }
 
+export function chengduCardUsersMount(){
+  return Orders.find({"status":"paid","area":"CHENGDU"}).count();
+}
+
+export function beijingCardUsersMount(){
+  console.log(Orders.find({"status":"paid","area":"BEIJING"}).count());
+  return Orders.find({"status":"paid","area":"BEIJING"}).count();
+}
 
 export function findUserByUsername(username){
   let user = Meteor.users.findOne({"username": username});

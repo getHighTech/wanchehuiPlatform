@@ -8,6 +8,8 @@ import { allUsersMount,
         getLimitUserIds,
         getBasicUserById,
         getUserByAgencyId,
+        chengduCardUsersMount,
+        beijingCardUsersMount
       } from './actions.js';
 
 Meteor.methods({
@@ -23,6 +25,12 @@ Meteor.methods({
   },
   'users.cards.count'(){
     return allCardUsersMount();
+  },
+  'users.cards.chengducount'(){
+    return chengduCardUsersMount();
+  },
+  'users.cards.beijingcount'(){
+    return beijingCardUsersMount();
   },
 
   'get.userIds.limit'(condition, page, pageSize){

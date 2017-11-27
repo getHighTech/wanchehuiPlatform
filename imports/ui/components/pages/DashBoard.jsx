@@ -24,7 +24,9 @@ class DashBoard extends React.Component{
       allCardUsersMount: 0,
       usersAddOnToday: 0,
       salesOnToday: 0,
-      salesInThisWeek: 0
+      salesInThisWeek: 0,
+      chengduCardUsersMount:0,
+      beijingCardUsersMount:0,
     }
   }
 
@@ -81,6 +83,29 @@ class DashBoard extends React.Component{
     });
   }
 
+  updateUsersCardsCountInChengDu(){
+    let self = this;
+    Meteor.call("users.cards.chengducount", function(error, result){
+      if (!error) {
+        self.setState({
+          chengduCardUsersMount: result
+        })
+      }
+    });
+  }
+
+
+  updateUsersCardsCountInBeiJing(){
+    let self = this;
+    Meteor.call("users.cards.beijingcount", function(error, result){
+      if (!error) {
+        self.setState({
+          beijingCardUsersMount: result
+        })
+      }
+    });
+  }
+
   componentDidMount(){
 
     let self = this;
@@ -90,6 +115,8 @@ class DashBoard extends React.Component{
     this.updateUsersAddOnToday();
     this.updateSalesOnToday();
     this.updateSalesInThisWeek();
+    this.updateUsersCardsCountInBeiJing();
+    this.updateUsersCardsCountInChengDu();
   }
 
 
@@ -136,7 +163,7 @@ class DashBoard extends React.Component{
             </Card>
             <Card title="今日卡销量:"  extra={
               <CardExtra />
-              
+
             }>
             <h1>{this.state.salesOnToday}</h1>
             </Card>
@@ -145,6 +172,18 @@ class DashBoard extends React.Component{
 
             }>
             <h1>{this.state.salesInThisWeek}</h1>
+            </Card>
+            <Card title="成都地区持卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.chengduCardUsersMount}</h1>
+            </Card>
+            <Card title="北京地区持卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.beijingCardUsersMount}</h1>
             </Card>
       </div>
     )
