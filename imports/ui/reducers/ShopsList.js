@@ -1,4 +1,4 @@
-import { SHOW_SHOP, EDIT_SHOP, ADD_SHOP, SWITCH_SHOP } from "../actions/shops.js";
+import { SHOW_SHOP, EDIT_SHOP, ADD_SHOP, SWITCH_SHOP ,SHANG_SHOP} from "../actions/shops.js";
 
 
 const initialState = {
@@ -26,6 +26,12 @@ const initialState = {
         return Object.assign({}, state,{
           singleShop: {},
           modalInsert: true,
+          modalEditable: true
+        })
+        case SHANG_SHOP:
+        return Object.assign({}, state, {
+          singleShop: action.shop,
+          modalInsert: false,
           modalEditable: true
         })
         default:

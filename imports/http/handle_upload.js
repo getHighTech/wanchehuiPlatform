@@ -29,7 +29,8 @@ HTTP.methods({
 
   '/images/upload/handler': {
     post: function(buffer){
-      let fs = require('fs');  let images = require("images");
+      let fs = require('fs');  
+      let images = require("images");
       let filename = (new Date()).getTime().toString()+".png";
       let path = '/tmp/output'+filename;
 

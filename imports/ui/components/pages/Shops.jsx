@@ -26,7 +26,7 @@ import {countShops,getMeteorShopsLimit} from '../../services/shops.js'
 
 
 import CommonModal from './shops_components/CommonModal.jsx';
-import { showShop, editShop,addShop } from '/imports/ui/actions/shops.js';
+import { showShop, editShop,addShop,shangShop } from '/imports/ui/actions/shops.js';
 
 const confirm = Modal.confirm;
 
@@ -99,23 +99,16 @@ class Shops extends React.Component{
     console.log("当前是否为新增店铺" + self.props.modalState)
     console.log(self.props.singleShop)
   }
-// <<<<<<< HEAD
-//   onClickUpdate = (ShopId) => {
-//     let self = this;
-// =======
 
   onClickUpdate = (shopId) => {
     let self = this
-// >>>>>>> 9896c5b174e2ff98381308732fc0234bd902711e
     this.setState({
       modalVisible: true,
       modalTitle: "编辑店铺",
-// <<<<<<< HEAD
-//       modalEditable: true,
-// =======
     })
     Meteor.call('shops.findShopById',shopId, function(error,result){
       const {dispatch } = self.props;
+      console.log(result);
       if(!error){
         dispatch(editShop(result));
         console.log('编辑店铺');
@@ -125,7 +118,6 @@ class Shops extends React.Component{
       }else{
         console.log("获取数据失败");
       }
-// >>>>>>> 9896c5b174e2ff98381308732fc0234bd902711e
     })
   }
 
@@ -145,12 +137,32 @@ class Shops extends React.Component{
         console.log("当前不可编辑" + self.props.editState)
         console.log("当前是否为新增店铺" + self.props.modalState)
         console.log(self.props.singleShop)
-        self.fromModal.prop.setFormData(result);
+        // self.fromModal.setFormData(result);
         console.log(self.fromModal)
       }else{
         console.log("获取数据失败");
       }
     })
+  }
+  onClickShang = (shopId) =>{
+    let self =this;
+    this.setState({
+      modalVisible:true,
+      modalTitle:"上市",
+    })
+    Meteor.call('shops.findShopById',shopId,function(error,result){
+        const {dispatch } = self.props;
+        console.log(result);
+        console.log("当前是否为新增店铺" + self.props.modalState)
+
+        if(!error){
+          console.log("111");
+          dispatch(shangShop(result));
+        }else{
+          console.log("获取数据失败");
+        }
+    })
+
   }
 
   getPageShops(page,pageSize,condition){
@@ -239,6 +251,10 @@ class Shops extends React.Component{
               <Button shape="circle" onClick={ () => this.onClickUpdate(record._id)} icon="edit" style={actionStyle} />
             </Tooltip>
             <span className="ant-divider" />
+            <Tooltip placement="topLeft" title="上市" arrowPointAtCenter>
+              <Button shape="circle" onClick={ () => this.onClickShang(record._id)} icon="star" style={actionStyle} />
+            </Tooltip>
+            <span className="ant-divider" />
 
             <Tooltip placement="topLeft" title="开关店铺" arrowPointAtCenter>
               <Switch checkedChildren="营业" unCheckedChildren="关闭"  defaultChecked={record.shopState} onChange={() => this.showChangeConfirm(record.shopState,record._id)}  />
@@ -280,8 +296,8 @@ class Shops extends React.Component{
   }
 }
 function mapStateToProps(state) {
+  console.log(state);
   return {
-
     allState: state.ShopsList,
     singleShop: state.ShopsList.singleShop,
     modalState: state.ShopsList.modalInsert,

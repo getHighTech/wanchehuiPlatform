@@ -3,10 +3,13 @@ import { Shops } from './shops.js'
 
 Meteor.methods({
     'shops.insert'(params){
+      console.log(params)
         return Shops.insert({
             shopName: params.shopName,
             shopPhone: params.shopPhone,
             shopAddress: params.shopAddress,
+            shopDescrption:params.shopDescrption,
+            shopTag:params.shopTag,
             shopState: true, //true为营业，fasle为关闭
             createdAt : new Date(),
           });
@@ -42,5 +45,16 @@ Meteor.methods({
         }
       });
       return shop
-    }
+    },
+    'shops.update'(shop, params){
+      Shops.update(shop, {
+        $set: {
+          shopName: params.shopName,
+          shopAddress: params.shopAddress,
+          shopPhone: params.shopPhone,
+          shopDescrption:params.shopDescrption,
+          shopTag:params.shopTag,
+        }
+      });
+    },
 })
