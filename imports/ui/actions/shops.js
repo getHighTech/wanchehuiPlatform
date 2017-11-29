@@ -1,7 +1,7 @@
 export const ADD_SHOP = "ADD_SHOP";
 export const SHOW_SHOP = "SHOW_SHOP";
 export const EDIT_SHOP = "EDIT_SHOP";
-export const SHANG_SHOP ="SHANG_SHOP"
+export const GET_SHOP_ADDRESS = "GET_SHOP_ADDRESS";
 
 
 
@@ -27,10 +27,9 @@ export function addShop(state){
     }
 }
 
-export function shangShop(shop){
-  console.log(shop);
+export function getShopAddress(AddressName){
     return{
-        type:SHANG_SHOP,
-        shop
+        type:GET_SHOP_ADDRESS,
+        AddressName
     }
 }

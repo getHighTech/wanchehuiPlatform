@@ -28,6 +28,7 @@ import {countShops,getMeteorShopsLimit} from '../../services/shops.js'
 import CommonModal from './shops_components/CommonModal.jsx';
 import { showShop, editShop,addShop,shangShop } from '/imports/ui/actions/shops.js';
 
+
 const confirm = Modal.confirm;
 
 class Shops extends React.Component{
@@ -249,10 +250,6 @@ class Shops extends React.Component{
             <span className="ant-divider" />
             <Tooltip placement="topLeft" title="编辑此记录" arrowPointAtCenter>
               <Button shape="circle" onClick={ () => this.onClickUpdate(record._id)} icon="edit" style={actionStyle} />
-            </Tooltip>
-            <span className="ant-divider" />
-            <Tooltip placement="topLeft" title="上市" arrowPointAtCenter>
-              <Button shape="circle" onClick={ () => this.onClickShang(record._id)} icon="star" style={actionStyle} />
             </Tooltip>
             <span className="ant-divider" />
 

@@ -229,13 +229,13 @@ class DashBoard extends React.Component{
             }>
             <h1>{this.state.salesInThisWeek}</h1>
             </Card>
-            <Card title="成都地区持卡量:"  extra={
+            <Card title="成都地区交易量:"  extra={
               <CardExtra />
 
             }>
             <h1>{this.state.chengduCardUsersMount}</h1>
             </Card>
-            <Card title="北京地区持卡量:"  extra={
+            <Card title="北京地区交易量:"  extra={
               <CardExtra />
 
             }>

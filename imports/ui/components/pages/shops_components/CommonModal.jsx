@@ -27,6 +27,8 @@ import { Roles } from '/imports/api/roles/roles.js';
 import ShopForm from './ShopForm.jsx';
 import {Link} from 'react-router';
 
+
+
 class CommonModal extends React.Component{
   constructor(props){
     super(props);
@@ -70,15 +72,7 @@ class CommonModal extends React.Component{
 
 
 
-  // onClickInsert = (e) => {
-  //   e.preventDefault();
-  //   // this.setFormData({});  // insert时弹出的表单应该是空的
-  //   this.setState({
-  //     modalVisible: true,
-  //     modalTitle: '新增店铺',
-  //     modalInsert: true,
-  //   }, () => this.setFormData({}));
-  // };
+
 
 
   handleModalOk = () => {
@@ -91,12 +85,9 @@ class CommonModal extends React.Component{
     }
     //处理收到的表单的数据
     const newObj = {};
-// <<<<<<< HEAD
-//     const oldObj = this.formComponent.getFieldsValue();
-// =======
+
     console.log(newObj);
     const oldObj = this.formComponent.getFieldsValue();
-// >>>>>>> 9896c5b174e2ff98381308732fc0234bd902711e
     //把表单中跟时间有关系的参数进行时间格式化
     for (const key in oldObj) {
       if (oldObj[key] instanceof Date){
@@ -158,7 +149,7 @@ class CommonModal extends React.Component{
 
 
   render(){
-    const {singleShop, modalState, editState} = this.props
+    const {singleShop, modalState, editState, shopAddress} = this.props
     return(
       <div>
         <Modal
@@ -169,7 +160,7 @@ class CommonModal extends React.Component{
           maskClosable={false}
           style={{ top: 20 }}
         >
-          <ShopForm shop= {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
+          <ShopForm shopAddress= {this.props.shopAddress} shop= {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
@@ -180,7 +171,8 @@ function mapStateToProps(state) {
   return {
     singleShop: state.ShopsList.singleShop,
     modalState: state.ShopsList.modalInsert,
-    editState: !state.ShopsList.modalEditable
+    editState: !state.ShopsList.modalEditable,
+    shopAddress: state.ShopsList.shopAddress
    };
 }
 
