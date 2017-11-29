@@ -22,6 +22,7 @@ class ComponentTest extends Component {
             flexWrap: 'wrap',
             justifyContent: 'center' }}>
             <UserBasicViewPopover username='18820965455'/>
+            <div>11111</div>
       </div>
 
     )
