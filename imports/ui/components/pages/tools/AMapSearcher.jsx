@@ -86,6 +86,7 @@ class AMapSearcher extends Component {
 
 
 
+
   render(){
     if (this.state.mapCenter.length >= 2) {
       let mapObj = this.initAmap();
