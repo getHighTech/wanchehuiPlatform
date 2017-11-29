@@ -12,7 +12,7 @@ module.exports = {
 
   meteor: {
     name: 'wanchehui_platform_test',
-    path: '../../',
+    path: '../',
     // "setupMongo": true,
     servers: {
       one: {}
@@ -21,13 +21,12 @@ module.exports = {
       serverOnly: true,
     },
     env: {
-      PORT: 8080,
-      // CDN_URL: "http://wanchehui.cosgoal.com",
+      PORT: 7654,
       ROOT_URL: 'http://p.10000cars.cn',
       MONGO_URL: "mongodb://wanchehui:Wanchehui112358@139.198.3.158:27017/wanchehui"
     },
 
-    dockerImage: 'abernix/meteord:base',
+    dockerImage: 'abernix/meteord:node-8.4.0-base',
     deployCheckWaitTime: 240
   },
 
