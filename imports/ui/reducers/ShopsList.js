@@ -29,6 +29,7 @@ const initialState = {
           modalInsert: true,
           modalEditable: true
         })
+
         case GET_SHOP_ADDRESS:
         return Object.assign({}, state,{
           shopAddress: action.AddressName

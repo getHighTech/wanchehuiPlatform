@@ -20,11 +20,9 @@ export default function configureStore(initialState) {
       routing: routerReducer,
       NewMemberApply,
       CurrentDealAgency,
-
       AgencyChange,
       WithDraws,
       getWithDraw,
-
       ShopsList,
     }),
     initialState,

@@ -20,6 +20,7 @@ export function editShop(shop){
 }
 
 export function addShop(state){
+  console.log(state);
     return{
         type:ADD_SHOP,
         state

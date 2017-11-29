@@ -24,7 +24,13 @@ class DashBoard extends React.Component{
       allCardUsersMount: 0,
       usersAddOnToday: 0,
       salesOnToday: 0,
-      salesInThisWeek: 0
+      salesInThisWeek: 0,
+      chengduCardUsersMount:0,
+      beijingCardUsersMount:0,
+      SalesOnTodayInBeiJing:0,
+      SalesOnTodayInChengDu:0,
+      SalesInThisWeekInBeiJing:0,
+      SalesInThisWeekInChengDu:0
     }
   }
 
@@ -81,6 +87,77 @@ class DashBoard extends React.Component{
     });
   }
 
+  updateUsersCardsCountInChengDu(){
+    let self = this;
+    Meteor.call("users.cards.chengducount", function(error, result){
+      if (!error) {
+        self.setState({
+          chengduCardUsersMount: result
+        })
+      }
+    });
+  }
+
+
+  updateUsersCardsCountInBeiJing(){
+    let self = this;
+    Meteor.call("users.cards.beijingcount", function(error, result){
+      if (!error) {
+        self.setState({
+          beijingCardUsersMount: result
+        })
+      }
+    });
+  }
+
+  updateSalesOnTodayInChengDu(){
+    let self = this;
+    Meteor.call("get.orders.addOnToadyInChengDu", function(error, result){
+      if (!error) {
+        self.setState({
+          SalesOnTodayInChengDu: result
+        })
+      }
+    });
+  }
+
+  updateSalesOnTodayInBeiJing(){
+    let self = this;
+    Meteor.call("get.orders.addOnToadyInBeiJing", function(error, result){
+      console.log(result);
+      if (!error) {
+        self.setState({
+          SalesOnTodayInBeiJing: result
+        })
+      }
+    });
+  }
+
+  updateSalesInThisWeekInBeiJing(){
+    let self = this;
+    Meteor.call("get.orders.InThisWeekInBeiJing", function(error, result){
+      console.log(result);
+      if (!error) {
+        self.setState({
+          SalesInThisWeekInBeiJing: result
+        })
+      }
+    });
+  }
+
+
+  updateSalesInThisWeekInChengDu(){
+    let self = this;
+    Meteor.call("get.orders.InThisWeekInChengDu", function(error, result){
+      console.log(result);
+      if (!error) {
+        self.setState({
+          SalesInThisWeekInChengDu: result
+        })
+      }
+    });
+  }
+
   componentDidMount(){
 
     let self = this;
@@ -90,6 +167,12 @@ class DashBoard extends React.Component{
     this.updateUsersAddOnToday();
     this.updateSalesOnToday();
     this.updateSalesInThisWeek();
+    this.updateSalesInThisWeekInBeiJing();
+    this.updateSalesInThisWeekInChengDu();
+    this.updateUsersCardsCountInBeiJing();
+    this.updateUsersCardsCountInChengDu();
+    this.updateSalesOnTodayInBeiJing();
+    this.updateSalesOnTodayInChengDu();
   }
 
 
@@ -136,7 +219,7 @@ class DashBoard extends React.Component{
             </Card>
             <Card title="今日卡销量:"  extra={
               <CardExtra />
-              
+
             }>
             <h1>{this.state.salesOnToday}</h1>
             </Card>
@@ -145,6 +228,44 @@ class DashBoard extends React.Component{
 
             }>
             <h1>{this.state.salesInThisWeek}</h1>
+            </Card>
+            <Card title="成都地区交易量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.chengduCardUsersMount}</h1>
+            </Card>
+            <Card title="北京地区交易量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.beijingCardUsersMount}</h1>
+            </Card>
+            <Card title="今日北京地区售卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.SalesOnTodayInBeiJing}</h1>
+            </Card>
+            <Card title="今日成都地区售卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.SalesOnTodayInChengDu}</h1>
+            </Card>
+
+            <Card title="本周北京地区售卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.SalesInThisWeekInBeiJing}</h1>
+            </Card>
+
+            <Card title="本周成都地区售卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.SalesInThisWeekInChengDu}</h1>
             </Card>
       </div>
     )

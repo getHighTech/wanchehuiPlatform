@@ -70,7 +70,11 @@ class CommonModal extends React.Component{
   componentWillMount(){
   }
 
- 
+
+
+
+
+
   handleModalOk = () => {
     let self = this
     let validated = true;
@@ -81,8 +85,9 @@ class CommonModal extends React.Component{
     }
     //处理收到的表单的数据
     const newObj = {};
+
     console.log(newObj);
-    const oldObj = this.formComponent.getFieldsValue(); 
+    const oldObj = this.formComponent.getFieldsValue();
     //把表单中跟时间有关系的参数进行时间格式化
     for (const key in oldObj) {
       if (oldObj[key] instanceof Date){
@@ -100,12 +105,13 @@ class CommonModal extends React.Component{
       //新增店铺到数据库
       Meteor.call("shops.insert", newObj, function(error,result){
         if(!error){
-          console.log("新增店铺"); 
+          console.log("新增店铺");
           console.log(result);
           //数据变化后，刷新表格
           self.reflashTable();
           self.setFormData({});
           console.log("刷新表格成功");
+
         }else{
           console.log(error);
         }
