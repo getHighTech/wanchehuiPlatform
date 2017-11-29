@@ -12,12 +12,16 @@ export function allCardUsersMount(){
 }
 
 export function chengduCardUsersMount(){
-  return Orders.find({"status":"paid","area":"CHENGDU"}).count();
+  return Orders.find({"status":"paid","area":"CHENGDU","type":"card"}).count();
 }
 
 export function beijingCardUsersMount(){
-  console.log(Orders.find({"status":"paid","area":"BEIJING"}).count());
-  return Orders.find({"status":"paid","area":"BEIJING"}).count();
+  console.log(Orders.find({"status":"paid","area":"BEIJING","type":"card"}).count());
+  return Orders.find({"status":"paid","area":"BEIJING","type":"card"}).count();
+}
+
+export function SalesOnTodayInBeiJing(){
+
 }
 
 export function findUserByUsername(username){
