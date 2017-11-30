@@ -25,8 +25,10 @@ import "antd/lib/upload/style";
 import 'antd/lib/modal/style';
 import AMapSearcher from '../tools/AMapSearcher.jsx';
 import { Roles } from '/imports/api/roles/roles.js';
+import moment from 'moment';
 
 const FormItem = Form.Item;
+const format = 'HH:mm';
 
 
 class ShopFormWrap extends Component {
@@ -49,7 +51,6 @@ class ShopFormWrap extends Component {
 
 
     componentDidMount(){
-
     }
 
 
@@ -58,6 +59,7 @@ class ShopFormWrap extends Component {
     componentWillReceiveProps(nextProps){
 
     }
+
     render() {
       const { getFieldDecorator } = this.props.form;
       
@@ -92,9 +94,10 @@ class ShopFormWrap extends Component {
         hasFeedback
         >
         {getFieldDecorator('shopName', {
+            initialValue: this.props.shop.shopName,
             rules: [{ required: true, message: '店铺名称不能为空' }],
         })(
-            <Input className="shop-name-input" disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder={this.props.shop.shopName} />
+            <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="店铺名称" />
         )}
         </FormItem>
 
@@ -103,17 +106,75 @@ class ShopFormWrap extends Component {
         label="店铺电话"
         >
         {getFieldDecorator('shopPhone', {
+          initialValue: this.props.shop.shopPhone,
             rules: [{ required: true, message: '填入手机号' }],
         })(
             <Input  disabled={this.props.editState} style={{ width: '100%' }} />
         )}
         </FormItem>
+
+        {/* <FormItem
+      {...formItemLayout}
+              label="上传合同"
+              hasFeedback
+          >
+            {getFieldDecorator('shopContract', {
+                rules: [{ required: true, message: '合同不能为空' }],
+                })(
+                <Upload>
+                    <Button >
+                        <Icon type="upload" /> 点击上传文件
+                    </Button>
+                </Upload>
+                )}
+        </FormItem>
         <FormItem
+      {...formItemLayout}
+      label="店铺封面"
+      hasFeedback
+      >
+      {getFieldDecorator('shopPicture', {
+          rules: [{ required: true, message: '图片不能为空' }],
+          })(
+          <Upload>
+              <Button>
+              <Icon type="upload" /> 上传图片
+              </Button>
+          </Upload>
+          )}
+      
+      </FormItem> */}
+      <FormItem
+          {...formItemLayout}
+          label="店铺标签"
+          hasFeedback
+          >
+      {getFieldDecorator('shopTag', {
+        initialValue: this.props.shop.shopTag,
+          rules: [{ required: true, message: '店铺标签不能为空' }],
+          })(
+          <Input  disabled={this.props.editState} placeholder="店铺标签" />
+          )}
+      </FormItem>
+      <FormItem
+          {...formItemLayout}
+          label="店铺简介"
+          hasFeedback
+        >
+          {getFieldDecorator('shopDescrption', {
+            initialValue: this.props.shop.shopDescrption,
+          rules: [{ required: true, message: '店铺简介不能为空' }],
+          })(
+          <Input disabled={this.props.editState} placeholder="店铺简介" />
+          )}
+        </FormItem>
+      <FormItem
         {...formItemLayout}
-        label='地址'
+        label='店铺地址'
         >
         {getFieldDecorator('shopAddress', {
-            rules: [{ required: true, message: '输入店铺地址' }],
+          initialValue: this.props.shop.shopAddress,
+          rules: [{ required: true, message: '输入店铺地址' }],
         })(
             <Input disabled={this.props.editState} style={{ width: '100%' }} />
         )}

@@ -70,6 +70,7 @@ class CommonModal extends React.Component{
 
  
   handleModalOk = () => {
+    let self = this
     let validated = true;
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated); // 不知道有没有更好的办法
     if (!validated) {
@@ -90,27 +91,37 @@ class CommonModal extends React.Component{
     }
     console.log(newObj);
     // 至此表单中的数据格式转换完毕
-    this.hideModal();
+    self.hideModal();
 
     //将转化好的数据传给后端
-    if(this.props.modalState){
+    if(self.props.modalState){
       //新增店铺到数据库
       Meteor.call("shops.insert", newObj, function(error,result){
         if(!error){
           console.log("新增店铺"); 
           console.log(result);
           //数据变化后，刷新表格
+          self.reflashTable();
+          self.setFormData({});
           console.log("刷新表格成功");
-          
         }else{
           console.log(error);
         }
       })
-      this.reflashTable();
-      this.setFormData({});
+
     }else{
-      console.log("升级店铺");
-      this.setFormData({});
+      console.log('店铺升级')
+      Meteor.call('shops.update',this.props.singleShop, newObj, function(error,result){
+        if(!error){
+          console.log('店铺升级成功')
+          console.log(result);
+          self.reflashTable();
+          self.setFormData({});
+        }else{
+          console.log(error);
+        }
+      })
+
     }
   }
 
@@ -120,6 +131,7 @@ class CommonModal extends React.Component{
 
   handleCancel = (e) => {
     this.props.onCancel();
+    this.setFormData({});
   }
 
   hideModal = () => {
@@ -140,7 +152,8 @@ class CommonModal extends React.Component{
           maskClosable={false}
           style={{ top: 20 }}
         >
-          <ShopForm shop = {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
+
+          <ShopForm shop= {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
