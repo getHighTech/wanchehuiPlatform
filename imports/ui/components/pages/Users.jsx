@@ -24,6 +24,9 @@ import 'antd/lib/message/style'
 
 import { countMeteorUsers, getMeteorUsersLimit } from '../../services/users.js';
 
+
+import {getOneUser} from '/imports/ui/actions/current_deal_user.js';
+
 const confirm = Modal.confirm;
 
 class Users extends React.Component{
@@ -75,6 +78,12 @@ class Users extends React.Component{
   }
   deleteUser(userId){
     let self = this;
+    const {dispatch }  = this.props;
+    dispatch(getOneUser(null, ""));
+    this.setState({
+      tableLoading: true,
+      loadingTip: "正在转移和清理用户数据，请稍后",
+    })
     Meteor.call("users.remove", userId, function(err,rlt){
       if (!err) {
         if (rlt === 1) {
@@ -86,6 +95,10 @@ class Users extends React.Component{
           return self.getPageUsers(self.state.currentPage, 20, self.state.condition);
         }
       }
+      self.setState({
+        tableLoading: false,
+        loadingTip: "加载中"
+      })
     });
   }
   showConfirm(type, userId){

@@ -190,17 +190,24 @@ export function removeUserById(userId){
         username: "deletedUser"+user.username,
         password: "deletedUser2017best",
       });
+    let mobile = "13000000000"
+  if (user.profile != undefined) {
+    if (user.profile.mobile != undefined) {
+      mobile = user.profile.mobile
+    }
+  }
   Meteor.users.update(deletedUserId, {
     $set: {
       carnumber: "京A00000",
       profile: {
-        mobile: user.profile.mobile
+        mobile: mobile,
       }
     }
   });
   let agency = giveCardByUserId(deletedUserId);
   //迁移所有下级代理
-  MoveAgenciesFromOneUserToAnother(agency.userId, userId);
+  console.log("删除的用户生成的代理节点",agency);
+  MoveAgenciesFromOneUserToAnother(deletedUserId, userId);
   //清理要删除的用户的所有相关
   Orders.remove({createdBy: userId});
   let balance = Balances.find({userId});

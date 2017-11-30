@@ -128,19 +128,23 @@ export function giveAgencyMoney(agencyId, reason){
 }
 
 export function changeSuperAgency(agencyId, superAgencyId, giveReason, loseReason, productId){
-
+  console.log("不知有没有节点",agencyId);
   let agency = findAgencyById(agencyId);
   let note=""
   if (!agency) {
+    console.log('AGENCY NOT FOUND IN changeSuperAgency');
     return "AGENCY NOT FOUND IN changeSuperAgency";
   }
   let superAgency = findAgencyById(superAgencyId);
   if (!superAgency) {
+    console.log("SUPER AGENCY NOT FOUND IN changeSuperAgency");
     return "SUPER AGENCY NOT FOUND IN changeSuperAgency"
   }
   if (agency.superAgencyId === superAgencyId) {
+    console.log('AGENCY_STILL');
     return "AGENCY STILL"
   }else{
+    console.log('回收旧上级的钱');
     recycleSuperAgencyMoney(agencyId, loseReason, productId, productId);
   }
   let updateRlt = Agencies.update(agencyId, {
@@ -151,7 +155,7 @@ export function changeSuperAgency(agencyId, superAgencyId, giveReason, loseReaso
 
 
   if (updateRlt) {
-
+    console.log('给钱给新上级');
     return giveAgencyMoney(superAgencyId, giveReason);
   }
   return 0;
@@ -161,8 +165,11 @@ export function changeSuperAgency(agencyId, superAgencyId, giveReason, loseReaso
 export function MoveAgenciesFromOneUserToAnother(tagetUserId, fromUserId){
   let targetAgency = findAgencyByUserId(tagetUserId);
   let fromAgency = findAgencyByUserId(fromUserId);
+  console.log("需要改变的代理节点",fromAgency._id);
   let lowerAgencies = Agencies.find({superAgencyId: fromAgency._id});
+  console.log("旧的节点下级代理总数",lowerAgencies.count());
   lowerAgencies.forEach((item)=>{
+    console.log(item);
     changeSuperAgency(item._id, targetAgency._id,   {
         type: "agencyCard",
         agencyId: item._id
