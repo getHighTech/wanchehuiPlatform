@@ -56,7 +56,6 @@ export function giveCardByUserId(userId){
     }
   });
   let agency=findOrCreateAgencyByUserId(userId, card._id);
-  console.log(agency);
   let user = Meteor.users.findOne({_id: userId});
   SysLogs.insert({
     type: "管理员日志",
@@ -65,4 +64,5 @@ export function giveCardByUserId(userId){
     note: "不稳定操作，开发应当避免，并寻找成因并优化",
     createdAt: new Date(),
   });
+  return agency;
 }

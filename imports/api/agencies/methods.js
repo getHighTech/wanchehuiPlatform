@@ -23,7 +23,11 @@ Meteor.methods({
     return agencies.fetch();
 
   },
-  'agencies.changeSuperAgency'(agencyId, superAgencyId, giveReason, loseReason, productId){
+  'agencies.changeSuperAgency'(agencyId, superAgencyId, giveReason={
+    type: "agencyCard"
+  }, loseReason={
+    type:  "refund"
+  }, productId){
     return changeSuperAgency(agencyId, superAgencyId, giveReason, loseReason, productId);
   },
   'agency.userId'(userId){

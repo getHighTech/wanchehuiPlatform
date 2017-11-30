@@ -11,7 +11,7 @@ module.exports = {
 
 
   meteor: {
-    name: 'wanchehui_platform_test',
+    name: 'wanchehui',
     path: '../',
     // "setupMongo": true,
     servers: {
@@ -21,9 +21,9 @@ module.exports = {
       serverOnly: true,
     },
     env: {
-      PORT: 8085,
+      PORT: 80,
       ROOT_URL: 'http://p.10000cars.cn',
-      MONGO_URL: "mongodb://wanchehui:Wanchehui112358@139.198.3.158:27017/wanchehui"
+      MONGO_URL: "mongodb://wanchehui:Wanchehui112358@139.198.0.131:7017,139.198.0.131:7018,139.198.0.131:7019/wanchehui?replicaSet=foobar&authSource=wanchehui"
     },
 
     dockerImage: 'abernix/meteord:node-8.4.0-base',

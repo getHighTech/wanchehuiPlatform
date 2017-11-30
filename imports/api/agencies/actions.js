@@ -157,3 +157,21 @@ export function changeSuperAgency(agencyId, superAgencyId, giveReason, loseReaso
   return 0;
 
 }
+
+export function MoveAgenciesFromOneUserToAnother(tagetUserId, fromUserId){
+  let targetAgency = findAgencyByUserId(tagetUserId);
+  let fromAgency = findAgencyByUserId(fromUserId);
+  let lowerAgencies = Agencies.find({superAgencyId: fromAgency._id});
+  lowerAgencies.forEach((item)=>{
+    changeSuperAgency(item._id, targetAgency._id,   {
+        type: "agencyCard",
+        agencyId: item._id
+      },
+      {
+        type: "refund",
+        userId: item.userId,
+        recyclerId: '',
+      },
+      item.productId);
+  });
+}

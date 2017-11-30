@@ -1,6 +1,15 @@
 import { Meteor } from 'meteor/meteor';
-import { findAgencyById} from '../agencies/actions.js';
+import { findAgencyById, MoveAgenciesFromOneUserToAnother} from '../agencies/actions.js';
+import {giveCardByUserId} from '../user_cards/actions.js';
 import {Orders} from "/imports/api/orders/orders.js";
+import {UserCards} from "/imports/api/user_cards/user_cards.js";
+import { Balances } from "/imports/api/balances/balances.js";
+import { BalanceIncomes } from "/imports/api/balances/balance_incomes.js";
+import { BalanceCharges } from "/imports/api/balances/balance_charges.js";
+import { Devices } from "/imports/api/devices/devices.js";
+import { Bankcards } from "/imports/api/bankcards/bankcards.js";
+import { Messages } from "/imports/api/messages/messages.js";
+
 export function allUsersMount(){
   return Meteor.users.find().count();
 }
@@ -170,6 +179,41 @@ export function getUserByAgencyId(agencyId){
     return {};
   }
   return getBasicUserById(agency.userId);
+}
+
+export function removeUserById(userId){
+  let user = Meteor.users.findOne({_id: userId});
+  if (Meteor.users.find({username: "deletedUser"+user.username}).count()>=0) {
+    Meteor.users.remove({username: "deletedUser"+user.username});
+  }
+  let deletedUserId =  Accounts.createUser({
+        username: "deletedUser"+user.username,
+        password: "deletedUser2017best",
+      });
+  Meteor.users.update(deletedUserId, {
+    $set: {
+      carnumber: "京A00000",
+      profile: {
+        mobile: user.profile.mobile
+      }
+    }
+  });
+  let agency = giveCardByUserId(deletedUserId);
+  //迁移所有下级代理
+  MoveAgenciesFromOneUserToAnother(agency.userId, userId);
+  //清理要删除的用户的所有相关
+  Orders.remove({createdBy: userId});
+  let balance = Balances.find({userId});
+  BalanceIncomes.remove({balanceId: balance._id});
+  BalanceCharges.remove({balanceId: balance._id});
+  Balances.remove({userId});
+  Bankcards.remove({userId});
+  Devices.remove({userId});
+  Messages.remove({userId});
+  UserCards.remove({userId});
+
+  return Meteor.users.remove({_id: userId});
+
 }
 
 Date.prototype.Format = function(format){
