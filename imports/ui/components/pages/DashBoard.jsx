@@ -257,12 +257,34 @@ class DashBoard extends React.Component{
             }>
             <h1>{this.state.salesInThisWeek}</h1>
             </Card>
+            <div style={{width:'100%',height:'20'}}></div>
+
             <Card title="成都地区交易量:"  extra={
               <CardExtra />
 
             }>
             <h1>{this.state.chengduCardUsersMount}</h1>
             </Card>
+            <Card title="今日成都地区售卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.SalesOnTodayInChengDu}</h1>
+            </Card>
+            <Card title="本周成都地区售卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.SalesInThisWeekInChengDu}</h1>
+            </Card>
+            <Card title="本月成都地区售卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.SalesInThisMonthInChengDu}</h1>
+            </Card>
+            <div style={{width:'100%',height:'20'}}></div>
+
             <Card title="北京地区交易量:"  extra={
               <CardExtra />
 
@@ -275,12 +297,7 @@ class DashBoard extends React.Component{
             }>
             <h1>{this.state.SalesOnTodayInBeiJing}</h1>
             </Card>
-            <Card title="今日成都地区售卡量:"  extra={
-              <CardExtra />
 
-            }>
-            <h1>{this.state.SalesOnTodayInChengDu}</h1>
-            </Card>
 
             <Card title="本周北京地区售卡量:"  extra={
               <CardExtra />
@@ -289,24 +306,14 @@ class DashBoard extends React.Component{
             <h1>{this.state.SalesInThisWeekInBeiJing}</h1>
             </Card>
 
-            <Card title="本周成都地区售卡量:"  extra={
-              <CardExtra />
 
-            }>
-            <h1>{this.state.SalesInThisWeekInChengDu}</h1>
-            </Card>
             <Card title="本月北京地区售卡量:"  extra={
               <CardExtra />
 
             }>
             <h1>{this.state.SalesInThisMonthInBeiJing}</h1>
             </Card>
-            <Card title="本月成都地区售卡量:"  extra={
-              <CardExtra />
 
-            }>
-            <h1>{this.state.SalesInThisMonthInChengDu}</h1>
-            </Card>
       </div>
     )
   }
