@@ -145,26 +145,7 @@ class Shops extends React.Component{
       }
     })
   }
-  onClickShang = (shopId) =>{
-    let self =this;
-    this.setState({
-      modalVisible:true,
-      modalTitle:"上市",
-    })
-    Meteor.call('shops.findShopById',shopId,function(error,result){
-        const {dispatch } = self.props;
-        console.log(result);
-        console.log("当前是否为新增店铺" + self.props.modalState)
 
-        if(!error){
-          console.log("111");
-          dispatch(shangShop(result));
-        }else{
-          console.log("获取数据失败");
-        }
-    })
-
-  }
 
   getPageShops(page,pageSize,condition){
     let self = this;
