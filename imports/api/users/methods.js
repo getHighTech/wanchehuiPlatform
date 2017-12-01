@@ -158,7 +158,7 @@ Meteor.methods({
     let day_of_month =new Date().getDate();
     let exdate=(new Date((date/1000-day_of_month*86400)*1000));
     var exDate = exdate.Format("yyyy/MM/dd");
-    return Orders.find({createdAt: {'$gt':new Date(exDate),'$lte':new Date(currentDate)}, status:'paid',type:'card',area:'CHENGDU'}).count();
+    return Orders.find({createdAt: {'$gte':new Date(exDate),'$lte':new Date(currentDate)}, status:'paid',type:'card',area:'CHENGDU'}).count();
   },
 
   'users.remove'(userId){
