@@ -1,7 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 
-import { Cards } from '../cards/cards.js';
-
 import { deleteCardByUserId, giveCardByUserId } from './actions';
 
 Meteor.methods({

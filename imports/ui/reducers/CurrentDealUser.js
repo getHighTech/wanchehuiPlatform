@@ -1,11 +1,12 @@
-import GET_ONE_USER from '../actions/current_deal_user.js';
+import {GET_ONE_USER} from '../actions/current_deal_user.js';
 
 
-export function CurrentDealAgency(state={}, action){
+export default function CurrentDealUser(state={userId: null, removing: 0, operaType: ""}, action){
   switch (action.type) {
   case GET_ONE_USER:
     return Object.assign({},state, {
-      _id: action.userId,
+      userId: action.userId,
+      operaType: action.operaType,
     })
   default:
     return state;
