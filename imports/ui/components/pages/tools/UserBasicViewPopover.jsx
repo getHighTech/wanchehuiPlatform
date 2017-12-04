@@ -23,6 +23,7 @@ class UserBasicViewPopover extends Component {
   }
   handleVisibleChange(visible){
     const {dispatch, userId} = this.props;
+    console.log(userId);
     dispatch(getOneUser(userId, "lookup"))
     this.setState({ visible });
   }

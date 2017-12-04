@@ -70,14 +70,14 @@ class UserBasicView extends Component {
   render() {
 
     let balanceExist = (balanceAmount) => {
-      if (balanceAmount) {
+      if (balanceAmount && this.props.loadState) {
         return (
           <div>
           <div style={{textAlign: "center"}}>最近５笔收支:</div>
 
           <Tabs defaultActiveKey="1" onChange={this.handleTabChange.bind(this)}>
              <TabPane tab="收入" key="1">
-                  <IncomeList count={5} balanceId={this.state.balance._id}/>
+                  <IncomeList count={5} balanceId={this.state.balance._id} data={this.state.lastFiveIncome} />
              </TabPane>
 
              <TabPane tab="支出" key="2">Content of Tab Pane 2</TabPane>
