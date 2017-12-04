@@ -70,7 +70,7 @@ const superAgency = {
     }
     if (record) {
       return (
-        <AgencyChange extraBackData={extraBackData} agencyId={text} />
+        <AgencyChange userId={record.userId} extraBackData={extraBackData} agencyId={text} />
       );
     }else{
       return (<span>加载中</span>)
