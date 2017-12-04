@@ -12,6 +12,9 @@ const PageHeader = (path) => {
       case "/products":
         return "商品管理"
         break;
+      case "/withdrawals":
+        return "提现管理"
+        break;
       case "/shops":
         return "店铺管理"
         break;
