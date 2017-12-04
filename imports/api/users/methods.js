@@ -8,6 +8,8 @@ import { allUsersMount,
         getLimitUserIds,
         getBasicUserById,
         getUserByAgencyId,
+        chengduCardUsersMount,
+        beijingCardUsersMount,
       } from './actions.js';
 
 Meteor.methods({
@@ -23,6 +25,12 @@ Meteor.methods({
   },
   'users.cards.count'(){
     return allCardUsersMount();
+  },
+  'users.cards.chengducount'(){
+    return chengduCardUsersMount();
+  },
+  'users.cards.beijingcount'(){
+    return beijingCardUsersMount();
   },
 
   'get.userIds.limit'(condition, page, pageSize){
@@ -55,6 +63,8 @@ Meteor.methods({
     return Meteor.users.find({createdAt: {'$gte':new Date(currentDate),'$lt':new Date(nextDate)}}).count();
   },
 
+
+
   'get.user.id'(userId){
     return getBasicUserById(userId);
   },
@@ -71,6 +81,27 @@ Meteor.methods({
     return Orders.find({createdAt: {'$gte':new Date(currentDate),'$lt':new Date(nextDate)}, status:'paid',type:'card'}).count();
 
   },
+
+
+  'get.orders.addOnToadyInChengDu'(){
+    let date = new Date();
+    var currentDate = date.Format("yyyy/MM/dd");
+    let nextdate = (new Date((date/1000+86400)*1000))
+    var nextDate = nextdate.Format("yyyy/MM/dd");
+    console.log(Orders.find({createdAt: {'$gte':new Date(currentDate),'$lt':new Date(nextDate)},"type":"card","area":"CHENGDU",status:'paid',}).count());
+    return Orders.find({createdAt: {'$gte':new Date(currentDate),'$lt':new Date(nextDate)},"type":"card","area":"CHENGDU",status:'paid',}).count();
+  },
+
+
+  'get.orders.addOnToadyInBeiJing'(){
+    let date = new Date();
+    var currentDate = date.Format("yyyy/MM/dd");
+    let nextdate = (new Date((date/1000+86400)*1000))
+    var nextDate = nextdate.Format("yyyy/MM/dd");
+    return Orders.find({createdAt: {'$gte':new Date(currentDate),'$lt':new Date(nextDate)},"type":"card","area":"BEIJING",status:'paid',}).count();
+  },
+
+
   'users.cards.addOnWeek'(){
     var day_of_week = new Date().getDay()
     if( day_of_week == 0){
@@ -81,5 +112,30 @@ Meteor.methods({
     var currentDate =  (new Date((date/1000+86400)*1000)).Format("yyyy/MM/dd");
     var exDate = exdate.Format("yyyy/MM/dd");
     return Orders.find({createdAt: {'$gt':new Date(exDate),'$lte':new Date(currentDate)}, status:'paid',type:'card'}).count();
+  },
+
+  'get.orders.InThisWeekInBeiJing'(){
+    var day_of_week = new Date().getDay()
+    if( day_of_week == 0){
+       day_of_week = 7
+    }
+    let date = new Date();
+    let exdate = (new Date((date/1000-day_of_week*86400)*1000))
+    var currentDate =  (new Date((date/1000+86400)*1000)).Format("yyyy/MM/dd");
+    var exDate = exdate.Format("yyyy/MM/dd");
+    return Orders.find({createdAt: {'$gt':new Date(exDate),'$lte':new Date(currentDate)}, status:'paid',type:'card',area:'BEIJING'}).count();
+  },
+
+  'get.orders.InThisWeekInChengDu'(){
+    var day_of_week = new Date().getDay()
+    if( day_of_week == 0){
+       day_of_week = 7
+    }
+    let date = new Date();
+    let exdate = (new Date((date/1000-day_of_week*86400)*1000))
+    var currentDate =  (new Date((date/1000+86400)*1000)).Format("yyyy/MM/dd");
+    var exDate = exdate.Format("yyyy/MM/dd");
+    return Orders.find({createdAt: {'$gt':new Date(exDate),'$lte':new Date(currentDate)}, status:'paid',type:'card',area:'CHENGDU'}).count();
   }
+
 });

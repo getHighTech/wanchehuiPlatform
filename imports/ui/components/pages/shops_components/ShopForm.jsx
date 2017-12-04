@@ -46,7 +46,7 @@ class ShopFormWrap extends Component {
       //如果是新增店铺，清空表单
 
       //如果是编辑店铺，把获取的数据填进输入框里
-    
+
 
     }
 
@@ -64,8 +64,8 @@ class ShopFormWrap extends Component {
 
     render() {
       const { getFieldDecorator } = this.props.form;
-      
-      
+
+
           const formItemLayout = {
               labelCol: {
                 xs: { span: 24 },
@@ -99,6 +99,7 @@ class ShopFormWrap extends Component {
             initialValue: this.props.shop.shopName,
             rules: [{ required: true, message: '店铺名称不能为空' }],
         })(
+
             <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="店铺名称" />
         )}
         </FormItem>
@@ -144,7 +145,7 @@ class ShopFormWrap extends Component {
               </Button>
           </Upload>
           )}
-      
+
       </FormItem> */}
       <FormItem
           {...formItemLayout}
@@ -178,8 +179,8 @@ class ShopFormWrap extends Component {
             initialValue: this.props.shopAddress,
           rules: [{ required: true, message: '店铺简介不能为空' }],
           })(
-            <AMapComplete 
-            editState={this.props.editState} 
+            <AMapComplete
+            editState={this.props.editState}
             initialValue={this.props.shop.shopAddress}
             />
           )}
