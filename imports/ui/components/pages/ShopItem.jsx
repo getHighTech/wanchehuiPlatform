@@ -27,7 +27,7 @@ class ShopItem extends React.Component{
       console.log(error)
       if (!error) {
         console.log('++++++++++++++++++++++++++++')
-      }  
+      }
     });
   }
   componentDidMount(){
@@ -44,15 +44,10 @@ class ShopItem extends React.Component{
 
 
     return (
-<<<<<<< HEAD
 
         <CommonForm shopInfo={shopInfo => this.getShopInfo(shopInfo)}/>
 
-=======
-        <CommonForm shopInfo={shopInfo => this.getShopInfo(shopInfo)}/>
-      
-        
->>>>>>> 14dbb8a3b6943e39586b57a93e5a37da23b4fe6f
+
     )
   }
 }
