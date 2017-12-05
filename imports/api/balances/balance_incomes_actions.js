@@ -38,3 +38,18 @@ export function addIncomeRecord(balanceId, amount, text, reasonType){
     createdAt: new Date()
   });
 }
+
+export function getIncomeRecords(page, pagesize, balanceId, userId){
+  return BalanceIncomes.find({balanceId, userId},{
+    skip: (page-1)*pagesize, limit: pagesize,
+    sort: {"createdAt": -1},
+    fields:
+      {
+        'agency': 1,
+        'text': 1,
+        'amount': 1,
+        'createdAt': 1,
+        'reasonType': 1
+      }
+    })
+}

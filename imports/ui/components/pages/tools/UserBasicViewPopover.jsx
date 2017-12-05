@@ -6,9 +6,11 @@ import Popover from 'antd/lib/popover';
 import 'antd/lib/popover/style';
 import Button from 'antd/lib/button';
 import 'antd/lib/button/style'
+import { connect } from 'react-redux';
 
 import UserBasicView from './UserBasicView.jsx';
 
+import {getOneUser} from '/imports/ui/actions/current_deal_user.js';
 
 class UserBasicViewPopover extends Component {
   state = {
@@ -19,7 +21,10 @@ class UserBasicViewPopover extends Component {
       visible: false,
     });
   }
-  handleVisibleChange = (visible) => {
+  handleVisibleChange(visible){
+    const {dispatch, userId} = this.props;
+    console.log(userId);
+    dispatch(getOneUser(userId, "lookup"))
     this.setState({ visible });
   }
   render() {
@@ -34,12 +39,17 @@ class UserBasicViewPopover extends Component {
         trigger="click"
         placement="bottom"
         visible={this.state.visible}
-        onVisibleChange={this.handleVisibleChange}
+        onVisibleChange={this.handleVisibleChange.bind(this)}
       >
         <a type="primary">{this.props.username}</a>
       </Popover>
     );
   }
 }
+function mapStateToProps(state) {
+  return {
+      CurrentDealUser: state.CurrentDealUser
+   };
+}
 
-export default UserBasicViewPopover;
+export default connect(mapStateToProps)(UserBasicViewPopover);

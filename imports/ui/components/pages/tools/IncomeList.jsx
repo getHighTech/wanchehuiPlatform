@@ -9,6 +9,18 @@ import './UserBasicView.less';
 
 
 class IncomeList extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      data: []
+    }
+  }
+
+  componentDidMount(){
+
+  }
+
   render(){
     return(
       <div>

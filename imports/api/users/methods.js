@@ -9,7 +9,7 @@ import { allUsersMount,
         getBasicUserById,
         getUserByAgencyId,
         chengduCardUsersMount,
-        beijingCardUsersMount,
+        beijingCardUsersMount,removeUserById
       } from './actions.js';
 
 Meteor.methods({
@@ -136,6 +136,9 @@ Meteor.methods({
     var currentDate =  (new Date((date/1000+86400)*1000)).Format("yyyy/MM/dd");
     var exDate = exdate.Format("yyyy/MM/dd");
     return Orders.find({createdAt: {'$gt':new Date(exDate),'$lte':new Date(currentDate)}, status:'paid',type:'card',area:'CHENGDU'}).count();
+  },
+  'users.remove'(userId){
+    return removeUserById(userId);
   }
 
 });

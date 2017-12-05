@@ -18,3 +18,10 @@ export function findLowerAgenciesById(id, callback){
     return callback(error, result);
   })
 }
+
+
+export function getIncomeRecords(page, pagesize, balanceId, userId, callback){
+  return Meteor.call("get.limit.balance_incomes", page, pagesize, balanceId, userId, function(err, result){
+    return callback(err, result);
+  });
+}

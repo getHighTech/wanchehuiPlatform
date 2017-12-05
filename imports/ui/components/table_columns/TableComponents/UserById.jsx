@@ -63,7 +63,7 @@ class UserById extends React.Component {
       return (<div>用户信息加载中</div>);
     }else{
       return (
-        <div><UserBasicViewPopover username={this.state.username}/><br/>&nbsp;|&nbsp;{this.state.mobile}</div>
+        <div><UserBasicViewPopover userId={this.props.userId} username={this.state.username}/><br/>&nbsp;|&nbsp;{this.state.mobile}</div>
       )
     }
 

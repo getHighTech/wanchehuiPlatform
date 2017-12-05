@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
-import { findBalanceByUserId,　findBalanceByUsername } from './balances_actions.js'
+import { findBalanceByUserId,　findBalanceByUsername, getIncomeRecords } from './balances_actions.js'
 
 Meteor.methods({
   "balances.userId"(userId){
@@ -8,6 +8,9 @@ Meteor.methods({
   },
   "balance.username"(username){
     return findBalanceByUsername(username);
+  },
+  "get.limit.balance_incomes"(page, pagesize, condition, balanceId, userId){
+    return getIncomeRecords(page, pagesize, condition, balanceId, userId);
   }
 
 });

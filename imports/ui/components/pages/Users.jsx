@@ -24,6 +24,9 @@ import 'antd/lib/message/style'
 
 import { countMeteorUsers, getMeteorUsersLimit } from '../../services/users.js';
 
+
+import {getOneUser} from '/imports/ui/actions/current_deal_user.js';
+
 const confirm = Modal.confirm;
 
 class Users extends React.Component{
@@ -60,7 +63,6 @@ class Users extends React.Component{
   giveCard(userId){
     let self = this;
     Meteor.call("cards.give.by.user", userId, function(err, rlt){
-      console.log(rlt);
       if (!err) {
         if (rlt !== "NOT CARDS AVILIBLE") {
           message.success('已经给出该用户卡片～');
@@ -74,6 +76,31 @@ class Users extends React.Component{
       }
     });
   }
+  deleteUser(userId){
+    let self = this;
+    const {dispatch }  = this.props;
+    dispatch(getOneUser(null, ""));
+    this.setState({
+      tableLoading: true,
+      loadingTip: "正在转移和清理用户数据，请稍后",
+    })
+    Meteor.call("users.remove", userId, function(err,rlt){
+      if (!err) {
+        if (rlt === 1) {
+          message.success('该用户已经删除');
+          return self.getPageUsers(self.state.currentPage, 20, self.state.condition);
+        }else{
+          message.error('出错');
+          console.log(err);
+          return self.getPageUsers(self.state.currentPage, 20, self.state.condition);
+        }
+      }
+      self.setState({
+        tableLoading: false,
+        loadingTip: "加载中"
+      })
+    });
+  }
   showConfirm(type, userId){
     let self = this;
     let confirmText = function(type){
@@ -84,6 +111,11 @@ class Users extends React.Component{
             content: "亲，您确实要把价值365元的万人车汇黑卡授予此用户吗?"
           }
           break;
+        case "remove":
+          return {
+            title: "删除确认",
+            content: "亲，您确实要永久删除此用户吗，操作不可逆转哦"
+          }
         default:
 
           return {
@@ -104,6 +136,9 @@ class Users extends React.Component{
        }
        if (type === "ban") {
          return self.banCard(userId);
+       }
+       if (type === "remove") {
+         return  self.deleteUser(userId);
        }
 
 
@@ -155,6 +190,15 @@ class Users extends React.Component{
       }
 
     })
+  }
+
+  componentWillReceiveProps(nextProps){
+    console.log(nextProps);
+    if (nextProps.CurrentDealUser.userId != null) {
+      if (nextProps.CurrentDealUser.operaType === "remove") {
+        this.showConfirm("remove", nextProps.CurrentDealUser.userId);
+      }
+    }
   }
 
 
@@ -234,20 +278,8 @@ class Users extends React.Component{
 }
 function mapStateToProps(state) {
   return {
-
+      CurrentDealUser: state.CurrentDealUser
    };
 }
 
-export default createContainer(() => {
-  if (Meteor.userId()) {
-    Meteor.subscribe('roles.current',{
-      onReady: function(){
-
-      }
-    });
-  }
-  return {
-    current_role: Roles.findOne({users: {$all: [Meteor.userId()]}}),
-
-  };
-}, connect(mapStateToProps)(Users));
+export default connect(mapStateToProps)(Users);

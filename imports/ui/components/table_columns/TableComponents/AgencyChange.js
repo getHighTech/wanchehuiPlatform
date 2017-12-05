@@ -18,7 +18,7 @@ class AgencyChange extends React.Component {
     })
   }
 
-  
+
 
 
   render(){
@@ -28,7 +28,7 @@ class AgencyChange extends React.Component {
       if (self.state.agencyId !=="") {
         console.log(self.state.agencyId)
         return (
-          <UserByAgencyId agencyId={self.state.agencyId} />
+          <UserByAgencyId  agencyId={self.state.agencyId} />
         )
       }
       return (

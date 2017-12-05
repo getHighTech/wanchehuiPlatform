@@ -5,7 +5,7 @@ import Icon from 'antd/lib/icon';
 import "antd/lib/icon/style";
 import Tooltip from 'antd/lib/tooltip';
 import "antd/lib/tooltip/style";
-
+import UserOperas from './TableComponents/UserOperas.js'
 
 
 const actionStyle = {
@@ -73,22 +73,9 @@ const action = {
   title: '操作',
   dataIndex: 'action',
   key: 'action',
-  render: (text, record) => (
-    <span>
-      <Tooltip placement="topLeft" title="查看详情" arrowPointAtCenter>
-        <Button className="on-dev-unfinished" shape="circle" icon="eye"  style={actionStyle} />
-      </Tooltip>
-      <span className="ant-divider" />
-      <Tooltip placement="topLeft" title="封号" arrowPointAtCenter>
-        <Button  className="on-dev-unfinished" shape="circle" icon="lock"  style={actionStyle} />
-      </Tooltip>
-      <span className="ant-divider" />
-      <Tooltip placement="topLeft" title="重置密码" arrowPointAtCenter>
-        <Button  className="on-dev-unfinished" shape="circle" icon="key"  style={actionStyle} />
-      </Tooltip>
-      <span className="ant-divider" />
-    </span>
-  ),
+  render: (text, record) => {
+    return (<UserOperas userId={record._id} />)
+  },
 };
 const SelectAction = {
   title: '选择',
