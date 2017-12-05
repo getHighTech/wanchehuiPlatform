@@ -1,4 +1,4 @@
-import {GET_ONE_USER} from '../actions/current_deal_user.js';
+import {GET_ONE_USER, GET_ONE_PAGE_INCOMES} from '../actions/current_deal_user.js';
 
 
 export default function CurrentDealUser(state={userId: null, removing: 0, operaType: "", loading: false, incomes: [], charges: []}, action){
