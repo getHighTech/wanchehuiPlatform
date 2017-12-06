@@ -20,7 +20,11 @@ import {
 
 var xlsx = require('node-xlsx');
 var fs = require('fs');
+var path = require('path');
 const { URL } = require('url');
+var formidable = require('formidable'),
+http = require('http'),
+util = require('util');
 
 const accessKeyId = "LTAIMzirFnS118vy";
 const accessKeySecret = "tPnXTfIPrjDDbLzM8qmetbjmRZE6E5";
@@ -29,11 +33,12 @@ HTTP.methods({
 
   '/images/upload/handler': {
     post: function(buffer){
+     
       let fs = require('fs');  
       let images = require("images");
       let filename = (new Date()).getTime().toString()+".png";
       let path = '/tmp/output'+filename;
-
+    
       images(buffer).save(path, {operation:50});
       let ALY = require('aliyun-sdk');
       let ossStream = require('aliyun-oss-upload-stream')(new ALY.OSS({
@@ -70,6 +75,97 @@ HTTP.methods({
         "data":
         {
         "link":"http://wanchehui.oss-cn-qingdao.aliyuncs.com/"+"textedit"+filename,
+        "title":"for editor",
+        "status":200
+        }
+      };
+
+
+    }
+  },
+  '/images/upload': {
+    stream: true,
+    post: function(buffer){
+      console.log("解析上传数据")
+      // console.log(this.request);
+      fs.writeFileSync('/tmp/buffer', buffer, 'ascii');
+      // console.log(buffer.toString('ascii', 0, buffer.length));
+      // let images = require("images")
+      // images(buffer).save(path, {operation:50});
+      let form = new formidable.IncomingForm();
+      form.uploadDir = '/tmp';
+      form.multiples = true;
+      form.parse(this.request, function(err, fields, files) {
+        console.log(err);
+        let filePath = '';
+        //如果提交文件的form中将上传文件的input名设置为tmpFile，就从tmpFile中取上传文件。否则取for in循环第一个上传的文件。
+        if(files.tmpFile){
+            filePath = files.tmpFile.path;
+        } else {
+            for(var key in files){
+                if( files[key].path && filePath==='' ){
+                    filePath = files[key].path;
+                    break;
+                }
+            }
+        }
+        console.log(filePath);
+        let targetDir = '/tmp/upload';
+        if (!fs.existsSync(targetDir)) {
+            fs.mkdir(targetDir);
+        }
+        let fileExt = filePath.substring(filePath.lastIndexOf('.'));
+        let fileName = new Date().getTime() + 'jpeg';
+        let targetFile = path.join(targetDir, fileName);
+        //移动文件
+        fs.renameSync(filePath, targetFile, function (err) {
+            if (err) {
+                console.info(err);
+                // res.json({code:-1, message:'操作失败'});
+            } else {
+                //上传成功，返回文件的相对路径
+                var fileUrl = '/upload/' + fileName;
+                // res.json({code:0, fileUrl:fileUrl});
+            }
+        });
+      });
+
+      // images.images(buffer).save(path, {operation:50});
+      // let ALY = require('aliyun-sdk');
+      // let ossStream = require('aliyun-oss-upload-stream')(new ALY.OSS({
+      //   accessKeyId,
+      //   secretAccessKey: accessKeySecret,
+      //   endpoint: 'http://oss-cn-qingdao.aliyuncs.com',
+      //   apiVersion: '2013-10-15'
+      // }));
+      // var upload = ossStream.upload({
+      //   Bucket: 'wanchehui',
+      //   Key: "textedit"+filename
+      // });
+      // // 可选配置
+      // upload.minPartSize(1048576); // 1M，表示每块part大小至少大于1M
+
+      // upload.on('error', function (error) {
+      //   console.log('error:', error);
+      // });
+
+      // upload.on('part', function (part) {
+      //   console.log('part:', part);
+      // });
+
+      // upload.on('uploaded', function (details) {
+      //   var s = (new Date() - startTime) / 1000;
+      //   console.log('details:', details);
+      //   console.log('Completed upload in %d seconds', s);
+      // });
+
+      // var read = fs.createReadStream(path);
+      // read.pipe(upload);
+      // var startTime = new Date();
+      return {
+        "data":
+        {
+        "link":"服务器测响应",
         "title":"for editor",
         "status":200
         }

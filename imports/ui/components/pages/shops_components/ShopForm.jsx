@@ -39,8 +39,29 @@ class ShopFormWrap extends Component {
       super(props);
 
     }
+    state = {
+      fileList: []
+    };
+    componentWillReceiveProps(nextProps){
+        this.setState(nextProps);
+    }
+
+    handleChange(info) {
+      console.log(info)
 
 
+
+      if (info.file.status === 'uploading') {
+          console.log("上传中。");
+      }
+      if (info.file.status === 'done') {
+          console.log("上传成功。");
+      } else if (info.file.status === 'error') {
+          console.log("上传失败。");
+      }
+
+      console.log(info.event)
+    }
     //初次挂载去获取数据
     componentWillMount(){
       //如果是新增店铺，清空表单
@@ -49,10 +70,9 @@ class ShopFormWrap extends Component {
 
 
     }
-
+  
 
     componentDidMount(){
-      console.log("383838383")
     }
 
 
@@ -63,6 +83,13 @@ class ShopFormWrap extends Component {
     }
 
     render() {
+
+      const uploadProps = {
+        action: '/images/upload',
+        onChange: this.handleChange,
+        listType: 'picture',
+      };
+      
       const { getFieldDecorator } = this.props.form;
 
 
@@ -130,7 +157,7 @@ class ShopFormWrap extends Component {
                     </Button>
                 </Upload>
                 )}
-        </FormItem>
+        </FormItem> */}
         <FormItem
       {...formItemLayout}
       label="店铺封面"
@@ -139,14 +166,14 @@ class ShopFormWrap extends Component {
       {getFieldDecorator('shopPicture', {
           rules: [{ required: true, message: '图片不能为空' }],
           })(
-          <Upload>
+          <Upload {...uploadProps}>
               <Button>
               <Icon type="upload" /> 上传图片
               </Button>
           </Upload>
           )}
 
-      </FormItem> */}
+      </FormItem>
       <FormItem
           {...formItemLayout}
           label="店铺标签"
