@@ -23,6 +23,7 @@ import configureStore from "/imports/ui/stores/mainStore";
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
 
+
 //将有表单操作的对象管理设置成动态路由
 const DBTableContainer = (location, cb) => {
   require.ensure([], require => {

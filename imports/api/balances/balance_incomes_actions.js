@@ -39,7 +39,7 @@ export function addIncomeRecord(balanceId, amount, text, reasonType){
   });
 }
 
-export function getIncomeRecords(page, pagesize, balanceId, userId){
+export function getIncomeRecords(page=0, pagesize=5, balanceId=null, userId=null){
   return BalanceIncomes.find({balanceId, userId},{
     skip: (page-1)*pagesize, limit: pagesize,
     sort: {"createdAt": -1},
