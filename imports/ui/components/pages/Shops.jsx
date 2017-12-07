@@ -37,7 +37,8 @@ class Shops extends React.Component{
 
   }
   showChangeConfirm(state,shopId) {
-
+    console.log(state);
+    console.log(shopId);
     confirm({
       title: '确定关闭/开启店铺吗？！',
       content: '店铺关闭/开启后，将激活/禁用店铺一切功能！',
@@ -102,6 +103,7 @@ class Shops extends React.Component{
   }
 
   onClickUpdate = (shopId) => {
+    console.log(shopId);
     let self = this
     this.setState({
       modalVisible: true,
