@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import { showbalancedata } from '/imports/ui/actions/withdrawals.js';
 
-import {getMeteorBalanceCharge} from '../../services/balancecharges.js'
+import {getMeteorBalanceCharge,countBalanceCharge} from '../../services/balancecharges.js'
 
 
 class Withdrawals extends React.Component{
@@ -19,7 +19,34 @@ state= {
   balanceChargesData:[],
   loadingTip:"加载中...",
   condition: {},
+  currentPage:1,
+  totalCount:500,
 }
+
+
+
+
+componentDidMount(){
+  let self = this;
+  this.getBalanceCharge(1,20,this.state.condition);
+  countBalanceCharge(function(err,rlt){
+      if(!err){
+        self.setState({
+          totalCount:rlt,
+        })
+        console.log(rlt);
+      }
+  })
+}
+
+
+
+handlePageChange(page, pageSize){
+  $(document).scrollTop(0);
+  this.getBalanceCharge(page, pageSize, this.state.condition);
+  console.log(page,pageSize,this.state.condition);
+}
+
 
 getBalanceCharge(page,pageSize,condition){
   let self =this;
@@ -27,15 +54,11 @@ getBalanceCharge(page,pageSize,condition){
     if(!err){
       self.setState({
         balanceChargesData:rlt,
+        currentPage:page,
       })
       console.log(rlt);
     }
   })
-}
-
-
-componentDidMount(){
-  this.getBalanceCharge(1,20,this.state.condition);
 }
 
 
@@ -77,7 +100,12 @@ componentDidMount(){
     },
   ];
     return (
-      <div>  <Table  dataSource={this.state.balanceChargesData} columns={BalanceColumns} /></div>
+      <div>  <Table  dataSource={this.state.balanceChargesData}  rowKey='_id'
+      pagination={{defaultPageSize: 20, total: this.state.totalCount,
+         onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
+         showQuickJumper: true, current: this.state.currentPage
+       }}
+       columns={BalanceColumns} /></div>
     )
   }
 }

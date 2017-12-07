@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { findBalanceByUserId,　findBalanceByUsername } from './balances_actions.js'
 import {findBalanceChargeData} from './balance_charge_actions.js'
 import {BalanceCharges} from './balance_charges';
-
+import {allBalanceChargeCount} from './actions.js';
 
 Meteor.methods({
   "balances.userId"(userId){
@@ -12,11 +12,12 @@ Meteor.methods({
     return findBalanceByUsername(username);
   },
   "balance.chargesdata"(condition={},page=1, pageSize=20){
-    let chargesdata = BalanceCharges.find(condition,{
-      ship:(page-1)*pageSize,limit:pageSize,
-      sort:{"createdAt":-1},
+    console.log(page,pageSize);
+    let chargesdata =  BalanceCharges.find(condition, {
+      skip: (page-1)*pageSize, limit: pageSize,
+      sort: {"createdAt": -1},
       fields:
-      {
+        {
         'text':1,
         "money":1,
         'bankId':1,
@@ -25,10 +26,11 @@ Meteor.methods({
       }
     })
     console.log(chargesdata.fetch());
-
     return chargesdata.fetch();
+  },
+
+  "balancecharge.count"(){
+    return allBalanceChargeCount();
   }
-
-
 
 });

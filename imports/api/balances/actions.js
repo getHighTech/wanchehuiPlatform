@@ -1,6 +1,9 @@
 import {addMountToBalance, loseMountFromBalance, findOrCreateBalanceByUser} from './balances_actions.js'
 import {noteIncome} from './balance_incomes_actions.js'
 import {noteCharge} from './balance_charge_actions.js'
+import {BalanceCharges} from './balance_charges';
+
+
 
 export function giveUserMoney(userId, amount, reason){
   console.log('userId', userId);
@@ -33,4 +36,9 @@ export function loseUserMoney(userId, amount, reason){
 
   noteCharge(reason, amount, text, balance._id);
   return loseMountFromBalance(balance._id, amount);
+}
+
+
+export function allBalanceChargeCount(){
+  return BalanceCharges.find().count();
 }
