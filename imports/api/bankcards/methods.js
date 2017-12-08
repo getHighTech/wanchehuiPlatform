@@ -11,5 +11,9 @@ Meteor.methods({
   },
   'bankcards.remove'(id){
     return Bankcards.remove(id);
+  },
+
+  'bankcards.accountNumber'(_id){
+    return Bankcards.findOne({userId:_id}).accountNumber;
   }
 });
