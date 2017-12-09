@@ -1,7 +1,7 @@
 import {Balances} from './balances.js';
 
-import {findUserByUsername} from '../users/actions.js';
-
+import {findUserByUsername } from '../users/actions.js';
+import { getIncomeRecords } from './balance_incomes_actions.js'
 export function findBalanceById(id){
 
   return Balances.findOne({_id: id});
@@ -13,6 +13,7 @@ export function findBalanceByUserId(userId){
   if (!balance) {
     return "BALANCE NOT FOUND";
   }
+  balance.incomes = getIncomeRecords(1, 5, balance._id, userId);
   return balance;
 }
 

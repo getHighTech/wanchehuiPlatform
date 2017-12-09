@@ -18,6 +18,10 @@ class IncomeList extends Component {
   }
 
   componentDidMount(){
+  
+  }
+
+  componentWillReceiveProps(nextProps){
 
   }
 

@@ -29,7 +29,7 @@ class UserBasicView extends Component {
   }
 
   getIncomes(balanceId){
-    
+
   }
 
   getCharges(balanceId){
@@ -55,7 +55,8 @@ class UserBasicView extends Component {
       this.setState({
         loading: false,
         balance: rlt,
-      })
+      });
+    
     })
   }
   componentWillReceiveProps(nextProps){
@@ -68,7 +69,7 @@ class UserBasicView extends Component {
     console.log(key);
   }
   render() {
-
+    console.log(this.state);
     let balanceExist = (balanceAmount) => {
       if (balanceAmount && this.props.loadState) {
         return (
@@ -77,7 +78,7 @@ class UserBasicView extends Component {
 
           <Tabs defaultActiveKey="1" onChange={this.handleTabChange.bind(this)}>
              <TabPane tab="收入" key="1">
-                  <IncomeList count={5} balanceId={this.state.balance._id} data={this.state.lastFiveIncome} />
+                  <IncomeList count={5} balanceId={this.state.balance._id} userId={this.state.balance.userId} data={this.state.lastFiveIncome} />
              </TabPane>
 
              <TabPane tab="支出" key="2">Content of Tab Pane 2</TabPane>
