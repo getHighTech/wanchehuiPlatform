@@ -9,13 +9,12 @@ export function demo(goods){
 }
 export function* getOnePageIncomes(action){
   try {
-      console.log(action);
-      const user = yield fetch('/api/v1/balances/xxx/xxxuserid/incomes/0/:pagesiz');
-      yield put({type: GET_ONE_USER, userId: user});
+    console.log("test saga");
    } catch (e) {
       yield put({type: GET_ONE_USER, userId: e.message});
    }
 }
+
 function* mySaga() {
   yield takeEvery(GET_ONE_PAGE_INCOMES, getOnePageIncomes);
 }

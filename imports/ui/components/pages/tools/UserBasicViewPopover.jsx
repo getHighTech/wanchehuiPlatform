@@ -24,7 +24,7 @@ class UserBasicViewPopover extends Component {
   handleVisibleChange(visible){
     const {dispatch, userId} = this.props;
     if (visible) {
-      dispatch({type: "GET_ONE_PAGE_INCOMES", userId, operaType: "lookup"});
+      dispatch(getOnePageIncomes(userId, "lookup"));
 
     }else{
       dispatch(getOnePageIncomes(null, "clear"));
