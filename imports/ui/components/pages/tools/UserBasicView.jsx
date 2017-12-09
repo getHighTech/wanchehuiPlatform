@@ -56,11 +56,7 @@ class UserBasicView extends Component {
         loading: false,
         balance: rlt,
       });
-      console.log("开始请求数据");
-      Meteor.call("get.limit.balance_incomes", 0, 5, rlt.balanceId, rlt.userId, function(err, rlt){
-        console.log(err);
-        console.log(rlt);
-      });
+    
     })
   }
   componentWillReceiveProps(nextProps){
@@ -73,6 +69,7 @@ class UserBasicView extends Component {
     console.log(key);
   }
   render() {
+    console.log(this.state);
     let balanceExist = (balanceAmount) => {
       if (balanceAmount && this.props.loadState) {
         return (
