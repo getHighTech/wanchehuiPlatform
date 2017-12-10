@@ -62,7 +62,8 @@ export function getChargesRecords(page=1, pagesize=5, userId=null){
         'money': 1,
         'bankId': 1,
         'status': 1,
-        'reasonType': 1
+        'reasonType': 1,
+        'createdAt': 1
       }
     }).fetch();
 }
@@ -76,7 +77,8 @@ export function getChargesRecordsAll(userId=null){
         'money': 1,
         'bankId': 1,
         'status': 1,
-        'reasonType': 1
+        'reasonType': 1,
+        'createdAt': 1
       }
     }).fetch();
 }

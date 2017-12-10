@@ -6,6 +6,7 @@ import Tabs from 'antd/lib/tabs';
 import 'antd/lib/tabs/style';
 import Button from 'antd/lib/button';
 import 'antd/lib/button/style';
+
 import './UserBasicView.less';
 
 import IncomeList from './IncomeList';
@@ -19,6 +20,9 @@ class UserBasicView extends Component {
     super(props);
     this.state={
       loading: true,
+      modalshow: false,
+      totalIn: '',
+      totalOut: '',
       balance: {
 
       }
@@ -46,8 +50,11 @@ class UserBasicView extends Component {
         console.error(rlt);
         this.setState({
           loading: false,
+          totalIn: '',
+          totalOut: '',
           balance: {
             amount: 0,
+
           },
         });
         return false;
@@ -68,24 +75,47 @@ class UserBasicView extends Component {
   handleTabChange(key){
     console.log(key);
   }
+  handleCheckAllBtn(){
+    let self = this;
+    console.log('click effect');
+    this.setState({
+      loading: true,
+    })
+    Meteor.call("balances.userId.all", this.state.balance.userId, function(err, rlt){
+      if (!err) {
+        console.log(rlt);
+        self.setState({
+          loading: false,
+          totalIn: rlt.totalIn,
+          totalOut: rlt.totalOut,
+          balance: rlt,
+        })
+      }
+    });
+  }
   render() {
     console.log(this.state);
     let balanceExist = (balanceAmount) => {
       if (balanceAmount && this.props.loadState) {
         return (
           <div>
-          <div style={{textAlign: "center", width: "375px"}}>最近５笔收支:</div>
+          <div style={{textAlign: "center"}}>最近５笔收支:</div>
 
           <Tabs defaultActiveKey="1" onChange={this.handleTabChange.bind(this)}>
-             <TabPane tab="收入" key="1">
+             <TabPane tab={"收入"+this.state.totalIn/100} key="1">
                   <IncomeList count={5} balanceId={this.state.balance._id} userId={this.state.balance.userId} data={this.state.balance.incomes} />
              </TabPane>
 
-             <TabPane tab="支出" key="2">
+             <TabPane tab={"支出"+this.state.totalOut/100} key="2">
                   <ChargeList count={5} data={this.state.balance.charges} />
              </TabPane>
            </Tabs>
+           <div style={{textAlign: "center"}}>
+             <Button onClick={this.handleCheckAllBtn.bind(this)}  type="dashed">查看更多明细</Button>
            </div>
+
+           </div>
+
         );
       }else{
         return (
@@ -105,9 +135,7 @@ class UserBasicView extends Component {
             {balanceExist(this.state.balance.amount)}
           </Spin>
         </div>
-        <div style={{textAlign: "center"}}>
-          <Button  type="dashed">查看更多明细</Button>
-        </div>
+
       </div>
 
     );

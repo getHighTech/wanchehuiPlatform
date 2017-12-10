@@ -28,7 +28,7 @@ class IncomeList extends Component {
   render(){
     const incomeListItems = this.props.data.map((item, index)=>{
       return (
-        <div key={index} style={{textAlign: "center", width: "375px"}}>
+        <div key={index} style={{textAlign: "center"}}>
           <div style={{display: "flex", justifyContent: "space-around"}}>
             <div style={{width: "40px", wordBreak: 'break-all'}}>来自<br/>{item.agencyUser.username}</div>
             <div  style={{width: "40px", wordBreak: 'break-all'}}>{item.text}</div>

@@ -27,6 +27,7 @@ class ChargeList extends Component {
 
   render(){
     const chargeListItems = this.props.data.map((item, index)=>{
+      console.log(item.bank);
       return (
         <div key={index}>
           <div style={{display: "flex", justifyContent: "space-around"}}>

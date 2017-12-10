@@ -42,7 +42,7 @@ export function findBalanceByUserIdAll(userId){
   balance.charges = getChargesRecordsAll(userId);
   for (var i = 0; i < balance.charges.length; i++) {
     balance.charges[i].bank = Bankcards.findOne({_id: balance.charges[i].bankId});
-    balance.totalOut += balance.charges[i].totalOut;
+    balance.totalOut += balance.charges[i].money;
   }
   return balance;
 }
