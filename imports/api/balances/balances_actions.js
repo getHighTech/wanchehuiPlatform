@@ -1,7 +1,9 @@
 import {Balances} from './balances.js';
 
-import {findUserByUsername } from '../users/actions.js';
-import { getIncomeRecords } from './balance_incomes_actions.js'
+import {findUserByUsername, getUserByAgencyId } from '../users/actions.js';
+import { getIncomeRecords, getIncomeRecordsAll } from './balance_incomes_actions.js'
+import { getChargesRecords, getChargesRecordsAll } from './balance_charge_actions.js'
+import { Bankcards } from '../bankcards/bankcards.js';
 export function findBalanceById(id){
 
   return Balances.findOne({_id: id});
@@ -13,7 +15,35 @@ export function findBalanceByUserId(userId){
   if (!balance) {
     return "BALANCE NOT FOUND";
   }
+  //默认取前5条
   balance.incomes = getIncomeRecords(1, 5, balance._id, userId);
+  for (var i = 0; i < balance.incomes.length; i++) {
+    balance.incomes[i].agencyUser = getUserByAgencyId(balance.incomes[i].agency);
+  }
+  balance.charges = getChargesRecords(1, 5, userId);
+  for (var i = 0; i < balance.charges.length; i++) {
+    balance.charges[i].bank = Bankcards.findOne({_id: balance.charges[i].bankId});
+  }
+  return balance;
+}
+
+export function findBalanceByUserIdAll(userId){
+  let balance = Balances.findOne({userId});
+  if (!balance) {
+    return "BALANCE NOT FOUND";
+  }
+  balance.totalIn = 0;
+  balance.incomes = getIncomeRecordsAll(balance._id, userId);
+  for (var i = 0; i < balance.incomes.length; i++) {
+    balance.incomes[i].agencyUser = getUserByAgencyId(balance.incomes[i].agency);
+    balance.totalIn += balance.incomes[i].amount;
+  }
+  balance.totalOut = 0
+  balance.charges = getChargesRecordsAll(userId);
+  for (var i = 0; i < balance.charges.length; i++) {
+    balance.charges[i].bank = Bankcards.findOne({_id: balance.charges[i].bankId});
+    balance.totalOut += balance.charges[i].totalOut;
+  }
   return balance;
 }
 

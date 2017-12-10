@@ -53,3 +53,16 @@ export function getIncomeRecords(page=1, pagesize=5, balanceId=null, userId=null
       }
     }).fetch();
 }
+export function getIncomeRecordsAll(balanceId=null, userId=null){
+  return BalanceIncomes.find({balanceId, userId},{
+    sort: {"createdAt": -1},
+    fields:
+      {
+        'agency': 1,
+        'text': 1,
+        'amount': 1,
+        'createdAt': 1,
+        'reasonType': 1
+      }
+    }).fetch();
+}
