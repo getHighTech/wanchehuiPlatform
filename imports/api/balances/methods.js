@@ -6,6 +6,7 @@ import {allBalanceChargeCount} from './actions.js';
 import { Bankcards } from "/imports/api/bankcards/bankcards.js";
 
 
+import { getIncomeRecords } from './balance_incomes_actions.js'
 
 Meteor.methods({
   "balances.userId"(userId){
@@ -14,6 +15,7 @@ Meteor.methods({
   "balance.username"(username){
     return findBalanceByUsername(username);
   },
+
   "balance.chargesdata"(condition={},page=1, pageSize=20){
     console.log(page,pageSize);
     let chargesdata =  BalanceCharges.find(condition, {
@@ -37,6 +39,12 @@ Meteor.methods({
   },
   'bankcards.accountNumber'(_id){
     return Bankcards.findOne({userId:_id}).accountNumber;
-  }
+  },
+  'bankcards.accouts'(ids) {
+    return Bankcards.find({userId: {$in: ids}}).fetch();
+  },
+  "get.limit.balance_incomes"(page, pagesize, balanceId, userId){
+    return getIncomeRecords(page, pagesize, balanceId, userId);
+  },
 
 });

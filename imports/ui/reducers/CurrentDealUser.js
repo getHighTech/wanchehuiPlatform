@@ -12,6 +12,7 @@ export default function CurrentDealUser(state={userId: null, removing: 0, operaT
       charges: []
     });
   case GET_ONE_PAGE_INCOMES:
+    console.log(action);
     return state;
   default:
     return state;

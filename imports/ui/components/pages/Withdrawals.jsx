@@ -27,7 +27,11 @@ state= {
 
 componentDidMount(){
   let self = this;
+
   this.getBalanceCharge(1,20,this.state.condition);
+  // console.log(self.state.balanceChargesData);
+  // console.log("componentDidMount",self.state.balanceChargesData[0]);
+
   countBalanceCharge(function(err,rlt){
       if(!err){
         self.setState({
@@ -35,7 +39,6 @@ componentDidMount(){
         })
       }
   })
-
 }
 
 
@@ -48,7 +51,7 @@ handlePageChange(page, pageSize){
 
 
 getBalanceCharge(page,pageSize,condition){
-  let self =this;
+  let self = this;
   getMeteorBalanceCharge(condition,page,pageSize,function(err,rlt){
     if(!err){
       console.log(rlt)
@@ -70,22 +73,22 @@ getBalanceCharge(page,pageSize,condition){
         dataIndex: '_id',
         key: '_id',
         width: 150,
+      },{
+        title: '银行卡号',
+        dataIndex: 'bankId',
+        key: 'bankId',
+        width: 150,
       },
       {
       title: '金额',
       dataIndex: 'money',
       key: 'money',
-      width: 150,
-    }, {
-      title: '银行卡号',
-      dataIndex: 'bankId',
-      key: 'bankId',
-      width: 150,
-    }, {
+      width: 100,
+    },  {
       title: '姓名',
       dataIndex: 'userId',
-      key: 'name',
-      width: 150,
+      key: 'userId',
+      width: 100,
     },
     {
       title: '时间',
