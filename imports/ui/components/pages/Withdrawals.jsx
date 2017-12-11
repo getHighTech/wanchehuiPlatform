@@ -7,6 +7,9 @@ import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import { showbalancedata } from '/imports/ui/actions/withdrawals.js';
 import {getMeteorBalanceCharge,countBalanceCharge} from '../../services/balancecharges.js'
+import { Menu, Icon } from 'antd';
+const SubMenu = Menu.SubMenu;
+const MenuItemGroup = Menu.ItemGroup;
 
 
 class Withdrawals extends React.Component{
@@ -20,8 +23,16 @@ state= {
   condition: {},
   currentPage:1,
   totalCount:500,
+  current: 'mail',
 }
 
+
+handleClick = (e) => {
+  console.log('click ', e.key);
+  this.setState({
+    current: e.key,
+  });
+}
 
 
 
@@ -95,6 +106,9 @@ getBalanceCharge(page,pageSize,condition){
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 150,
+      render: (text, record) => {
+        return (<span>{moment(record.createdAt).format("YYYY-MM-DD HH:mm:ss")}</span>);
+      }
     },
     {
       title: '状态',
@@ -104,7 +118,24 @@ getBalanceCharge(page,pageSize,condition){
     },
   ];
     return (
-      <div>  <Table  dataSource={this.state.balanceChargesData}  rowKey='_id'
+      <div>
+      <Menu
+        onClick={this.handleClick}
+        selectedKeys={[this.state.current]}
+        mode="horizontal"
+      >
+        <Menu.Item key="unpaid" >
+          <Icon type="mail" />未打款
+        </Menu.Item>
+        <Menu.Item key="paid">
+          <Icon type="mail" />已打款
+        </Menu.Item>
+        <Menu.Item key="revoke">
+          <Icon type="mail" />已撤销
+        </Menu.Item>
+      </Menu>
+
+      <Table  dataSource={this.state.balanceChargesData}  rowKey='_id'
       pagination={{defaultPageSize: 20, total: this.state.totalCount,
          onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
          showQuickJumper: true, current: this.state.currentPage
