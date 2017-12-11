@@ -20,7 +20,7 @@ class UserBasicView extends Component {
     super(props);
     this.state={
       loading: true,
-      modalshow: false,
+      moreDetailBtn: "visible",
       totalIn: '',
       totalOut: '',
       balance: {
@@ -50,6 +50,7 @@ class UserBasicView extends Component {
         console.error(rlt);
         this.setState({
           loading: false,
+          moreDetailBtn: "visible",
           totalIn: '',
           totalOut: '',
           balance: {
@@ -61,6 +62,7 @@ class UserBasicView extends Component {
       }
       this.setState({
         loading: false,
+        moreDetailBtn: "visible",
         balance: rlt,
       });
 
@@ -77,8 +79,8 @@ class UserBasicView extends Component {
   }
   handleCheckAllBtn(){
     let self = this;
-    console.log('click effect');
     this.setState({
+      moreDetailBtn: "visible",
       loading: true,
     })
     Meteor.call("balances.userId.all", this.state.balance.userId, function(err, rlt){
@@ -86,8 +88,9 @@ class UserBasicView extends Component {
         console.log(rlt);
         self.setState({
           loading: false,
-          totalIn: rlt.totalIn,
-          totalOut: rlt.totalOut,
+          moreDetailBtn: "hidden",
+          totalIn: rlt.totalIn/100,
+          totalOut: rlt.totalOut/100,
           balance: rlt,
         })
       }
@@ -97,20 +100,21 @@ class UserBasicView extends Component {
     console.log(this.state);
     let balanceExist = (balanceAmount) => {
       if (balanceAmount && this.props.loadState) {
+
         return (
           <div>
-          <div style={{textAlign: "center"}}>最近５笔收支:</div>
+          <div style={{textAlign: "center", visibility: this.state.moreDetailBtn}}>最近５笔收支:</div>
 
           <Tabs defaultActiveKey="1" onChange={this.handleTabChange.bind(this)}>
-             <TabPane tab={"收入"+this.state.totalIn/100} key="1">
+             <TabPane tab={"收入"+this.state.totalIn} key="1">
                   <IncomeList count={5} balanceId={this.state.balance._id} userId={this.state.balance.userId} data={this.state.balance.incomes} />
              </TabPane>
 
-             <TabPane tab={"支出"+this.state.totalOut/100} key="2">
+             <TabPane tab={"支出"+this.state.totalOut} key="2">
                   <ChargeList count={5} data={this.state.balance.charges} />
              </TabPane>
            </Tabs>
-           <div style={{textAlign: "center"}}>
+           <div  style={{textAlign: "center", visibility: this.state.moreDetailBtn}}>
              <Button onClick={this.handleCheckAllBtn.bind(this)}  type="dashed">查看更多明细</Button>
            </div>
 
