@@ -27,11 +27,16 @@ class ChargeList extends Component {
 
   render(){
     const chargeListItems = this.props.data.map((item, index)=>{
-      console.log(item.bank);
+      let firstContent = "";
+      let firstContentLabel = ""
+      if (item.bank!=undefined) {
+        firstContent = item.bank.bankAddress;
+        firstContentLabel="到银行卡";
+      }
       return (
         <div key={index}>
           <div style={{display: "flex", justifyContent: "space-around"}}>
-            <div style={{width: "40px", wordBreak: 'break-all'}}>到银行卡<br/>{item.bank.bankAddress}</div>
+            <div style={{width: "40px", wordBreak: 'break-all'}}>{firstContentLabel}<br/>{firstContent}</div>
             <div  style={{width: "40px", wordBreak: 'break-all'}}>{item.text}</div>
             <div  style={{width: "40px", wordBreak: 'break-all'}}>{item.money/100}元</div>
             <div style={{width: "40px", wordBreak: 'break-all'}}>{moment(item.createdAt).format("YYYY-MM-DD HH:mm:ss")}</div>
