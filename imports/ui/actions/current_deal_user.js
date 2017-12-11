@@ -11,7 +11,7 @@ export function getOneUser(userId, operaType){
 
 export function getOnePageIncomes(userId, operaType){
   return {
-    type: GET_ONE_USER,
+    type: GET_ONE_PAGE_INCOMES,
     userId,
     operaType,
   }

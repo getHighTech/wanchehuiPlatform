@@ -50,3 +50,35 @@ export function noteCharge(reason, amount, text, balanceId){
       return "NO CHARGE TYPE"
   }
 }
+
+export function getChargesRecords(page=1, pagesize=5, userId=null){
+  return BalanceCharges.find({userId},{
+    skip: (page-1)*pagesize, limit: pagesize,
+    sort: {"createdAt": -1},
+    fields:
+      {
+        'userId': 1,
+        'text': 1,
+        'money': 1,
+        'bankId': 1,
+        'status': 1,
+        'reasonType': 1,
+        'createdAt': 1
+      }
+    }).fetch();
+}
+export function getChargesRecordsAll(userId=null){
+  return BalanceCharges.find({userId},{
+    sort: {"createdAt": -1},
+    fields:
+      {
+        'userId': 1,
+        'text': 1,
+        'money': 1,
+        'bankId': 1,
+        'status': 1,
+        'reasonType': 1,
+        'createdAt': 1
+      }
+    }).fetch();
+}

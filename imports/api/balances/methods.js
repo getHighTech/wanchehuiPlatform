@@ -1,16 +1,18 @@
 import { Meteor } from 'meteor/meteor';
-import { findBalanceByUserId,　findBalanceByUsername } from './balances_actions.js'
+
 import {findBalanceChargeData} from './balance_charge_actions.js'
 import {BalanceCharges} from './balance_charges';
 import {allBalanceChargeCount} from './actions.js';
 import { Bankcards } from "/imports/api/bankcards/bankcards.js";
-
-
+import { findBalanceByUserId, findBalanceByUserIdAll, findBalanceByUsername } from './balances_actions.js'
 import { getIncomeRecords } from './balance_incomes_actions.js'
 
 Meteor.methods({
   "balances.userId"(userId){
     return findBalanceByUserId(userId);
+  },
+  "balances.userId.all"(userId){
+    return findBalanceByUserIdAll(userId);
   },
   "balance.username"(username){
     return findBalanceByUsername(username);

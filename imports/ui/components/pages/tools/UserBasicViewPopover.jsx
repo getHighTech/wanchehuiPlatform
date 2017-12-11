@@ -23,13 +23,7 @@ class UserBasicViewPopover extends Component {
   }
   handleVisibleChange(visible){
     const {dispatch, userId} = this.props;
-    if (visible) {
-      dispatch({type: "GET_ONE_PAGE_INCOMES", userId, operaType: "lookup"});
 
-    }else{
-      dispatch(getOnePageIncomes(null, "clear"));
-
-    }
     this.setState({ visible });
   }
   render() {
