@@ -81,8 +81,8 @@ class AddModal extends React.Component{
 
         </Tooltip>
         <Modal
-          title="添加新店铺"
-          visible={this.state.visible}
+          title={this.props.title}
+          visible={this.props.visible}
           onOk={this.handleOk.bind(this)}
           onCancel={this.handleCancel.bind(this)}
           maskClosable={false}

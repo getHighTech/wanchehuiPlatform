@@ -73,8 +73,6 @@ class CommonModal extends React.Component{
 
 
 
-
-
   handleModalOk = () => {
     let self = this
     let validated = true;
