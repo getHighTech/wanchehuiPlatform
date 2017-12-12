@@ -6,6 +6,7 @@ import {allBalanceChargeCount} from './actions.js';
 import { Bankcards } from "/imports/api/bankcards/bankcards.js";
 import { findBalanceByUserId, findBalanceByUserIdAll, findBalanceByUsername } from './balances_actions.js'
 import { getIncomeRecords } from './balance_incomes_actions.js'
+import { log } from 'util';
 
 Meteor.methods({
   "balances.userId"(userId){
@@ -18,7 +19,7 @@ Meteor.methods({
     return findBalanceByUsername(username);
   },
 
-  "balance.chargesdataUnpaid"(condition={},page=1, pageSize=20){
+  "balance.chargesdataUnpaid"(condition,page=1, pageSize=20){
     let chargesdata =  BalanceCharges.find(condition, {
       skip: (page-1)*pageSize, limit: pageSize,
       sort: {"createdAt": -1},
@@ -33,9 +34,31 @@ Meteor.methods({
       }
 
     })
+    console.log(chargesdata.fetch())
     return chargesdata.fetch();
   },
-  "balance.chargesdataPaid"(condition={},page=1, pageSize=20){
+  "balance.chargesdataPaid"(condition,page=1, pageSize=20){
+    let chargesdata =  BalanceCharges.find(condition,{
+      skip: (page-1)*pageSize, limit: pageSize,
+
+      sort: {"createdAt": -1},
+      fields:
+        {
+        'text':1,
+        "money":1,
+        'bankId':1,
+        'userId':1,
+        'status':1,
+        'createdAt': 1,
+      }
+
+    }
+  )
+    console.log(chargesdata.fetch())
+    return chargesdata.fetch();
+  },
+  "balance.chargesdataRevoke"(condition,page=1, pageSize=20){
+    console.log(condition);
     console.log(page,pageSize);
     let chargesdata =  BalanceCharges.find(condition, {
       skip: (page-1)*pageSize, limit: pageSize,
@@ -50,26 +73,8 @@ Meteor.methods({
         'createdAt': 1,
       }
 
-    })
-    console.log(chargesdata.fetch());
-    return chargesdata.fetch();
-  },
-  "balance.chargesdataRevoke"(condition={},page=1, pageSize=20){
-    console.log(page,pageSize);
-    let chargesdata =  BalanceCharges.find(condition, {
-      skip: (page-1)*pageSize, limit: pageSize,
-      sort: {"createdAt": -1},
-      fields:
-        {
-        'text':1,
-        "money":1,
-        'bankId':1,
-        'userId':1,
-        'status':1,
-        'createdAt': 1,
-      }
-
-    },{status:"revoke"});
+    });
+    console.log(chargesdata.fetch())
     return chargesdata.fetch();
   },
 

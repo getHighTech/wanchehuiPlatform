@@ -19,7 +19,9 @@ class Withdrawals extends React.Component{
 state= {
   balanceChargesData:[],
   loadingTip:"加载中...",
-  condition: {},
+  conditionUnpaid: {status:'unpaid'},
+  conditionPaid: {status:'paid'},
+  conditionRevoke: {status:'revoke'},
   currentPage:1,
   totalCount:500,
 }
@@ -27,7 +29,7 @@ state= {
 
 componentDidMount(){
   let self = this;
-  self.getBalanceChargeUnpaid(1,20,this.state.condition);
+  self.getBalanceChargeUnpaid(1,20,this.state.conditionUnpaid);
   console.log(self.state.balanceChargesData);
   console.log("componentDidMount",self.state.balanceChargesData[0]);
   countBalanceCharge(function(err,rlt){
@@ -40,34 +42,28 @@ componentDidMount(){
 }
 
 handlePageChangeUnpaid(page, pageSize){
-  this.setState = {
-    condition:{status:'unpaid'}
-  }
   $(document).scrollTop(0);
-  this.getBalanceChargeUnpaid(page, pageSize, this.state.condition);
+  this.getBalanceChargeUnpaid(page, pageSize, this.state.conditionUnpaid);
   console.log(page,pageSize,this.state.condition);
 }
 
 handlePageChangePaid(page, pageSize){
   $(document).scrollTop(0);
-  this.getBalanceChargePaid(page, pageSize, this.state.condition);
+  this.getBalanceChargePaid(page, pageSize, this.state.conditionPaid);
   console.log(page,pageSize,this.state.condition);
 }
 
 handlePageChangeRevoke(page, pageSize){
   $(document).scrollTop(0);
-  this.getBalanceChargeRevoke(page, pageSize, this.state.condition);
-  console.log(page,pageSize,this.state.condition);
+  this.getBalanceChargeRevoke(page, pageSize, this.state.conditionRevoke);
+  console.log(page,pageSize,this.state.conditionRevoke);
 }
 
 toggleBalanceCharges(key) {
   let self = this;
+  console.log(key);
   if(key=="unpaid"){
-      self.setState = {
-        condition:{status:'unpaid'}
-      }
-      console.log(self.state.condition);
-      self.getBalanceChargeUnpaid(1,20,self.state.condition);
+      self.getBalanceChargeUnpaid(1,20,this.state.conditionUnpaid);
       countBalanceCharge(function(err,rlt){
           if(!err){
             self.setState({
@@ -77,10 +73,7 @@ toggleBalanceCharges(key) {
       })
   }
   if(key=="paid"){
-    self.setState = {
-      condition:{status:'paid'}
-    }
-      self.getBalanceChargePaid(1,20,self.state.condition);
+      self.getBalanceChargePaid(1,20,this.state.conditionPaid);
       countBalanceCharge(function(err,rlt){
           if(!err){
             self.setState({
@@ -90,10 +83,7 @@ toggleBalanceCharges(key) {
       })
   }
   if(key=="revoke"){
-    self.setState = {
-      condition:{status:'revoke'}
-    }
-      self.getBalanceChargeRevoke(1,20,self.state.condition);
+      self.getBalanceChargeRevoke(1,20,this.state.conditionRevoke);
       countBalanceCharge(function(err,rlt){
           if(!err){
             self.setState({
@@ -113,10 +103,9 @@ toggleBalanceCharges(key) {
 
 
 
-getBalanceChargeUnpaid(page,pageSize,condition){
-    console.log("f");
+getBalanceChargeUnpaid(page,pageSize,conditionUnpaid){
   let self = this;
-  getMeteorBalanceChargeUnpaid(condition,page,pageSize,function(err,rlt){
+  getMeteorBalanceChargeUnpaid(conditionUnpaid,page,pageSize,function(err,rlt){
     if(!err){
       console.log(rlt)
       self.setState({
@@ -129,10 +118,9 @@ getBalanceChargeUnpaid(page,pageSize,condition){
   })
 }
 
-getBalanceChargePaid(page,pageSize,condition){
-    console.log("i");
+getBalanceChargePaid(page,pageSize,conditionPaid){
   let self = this;
-  getMeteorBalanceChargePaid(condition,page,pageSize,function(err,rlt){
+  getMeteorBalanceChargePaid(conditionPaid,page,pageSize,function(err,rlt){
     if(!err){
       console.log(rlt)
       self.setState({
@@ -145,10 +133,9 @@ getBalanceChargePaid(page,pageSize,condition){
   })
 }
 
-getBalanceChargeRevoke(page,pageSize,condition){
-    console.log("j");
+getBalanceChargeRevoke(page,pageSize,conditionRevoke){
   let self = this;
-  getMeteorBalanceChargeRevoke(condition,page,pageSize,function(err,rlt){
+  getMeteorBalanceChargeRevoke(conditionRevoke,page,pageSize,function(err,rlt){
     if(!err){
       console.log(rlt)
       self.setState({
