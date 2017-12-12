@@ -1,12 +1,12 @@
 'use strict';
 
 import React from "react";
-
-import { connect } from 'react-redux';
 import Table from 'antd/lib/table';
 import "antd/lib/table/style";
-import {getMeteorOrders,countOrders} from '../../services/orders.js'
-
+import { connect } from 'react-redux';
+import { createContainer } from 'meteor/react-meteor-data';
+import { showbalancedata } from '/imports/ui/actions/withdrawals.js';
+import {getMeteorBalanceCharge,countBalanceCharge} from '../../services/balancecharges.js'
 import { Input } from 'antd';
 import { DatePicker } from 'antd';
 import { Button } from 'antd';
@@ -18,134 +18,109 @@ import moment from 'moment';
 
 const dateFormat = 'YYYY/MM/DD';
 
-class Orders extends React.Component{
+
+class Withdrawals extends React.Component{
   constructor(props) {
     super(props);
 
   }
-  state= {
-    ordersData:[],
-    loadingTip:"加载中...",
-    condition: {},
-    currentPage:1,
-    totalCount:500,
-  }
 
-  componentDidMount(){
-    let self = this;
-    this.getOrders(1,20,this.state.condition);
-    countOrders(function(err,rlt){
-        if(!err){
-          self.setState({
-            totalCount:rlt,
-          })
-        }
-    })
 
-  }
+state= {
+  balanceChargesData:[],
+  loadingTip:"加载中...",
+  condition: {},
+  currentPage:1,
+  totalCount:500,
+}
 
-  handlePageChange(page, pageSize){
-    $(document).scrollTop(0);
-    this.getOrders(page, pageSize, this.state.condition);
-    console.log(page,pageSize,this.state.condition);
-  }
-
-  getOrders(page,pageSize,condition){
-    let self =this;
-    getMeteorOrders(condition,page,pageSize,function(err,rlt){
+componentDidMount(){
+  let self = this;
+  this.getBalanceCharge(1,20,this.state.condition);
+  countBalanceCharge(function(err,rlt){
       if(!err){
-        console.log(rlt)
         self.setState({
-          ordersData:rlt,
-          currentPage:page,
+          totalCount:rlt,
         })
-        console.log(rlt);
       }
-      console.log(self.state.balanceChargesData)
-    })
-  }
+  })
 
-  handleonChange(date, dateString) {
-    console.log(date, dateString);
-  }
+}
+
+handlePageChange(page, pageSize){
+  $(document).scrollTop(0);
+  this.getBalanceCharge(page, pageSize, this.state.condition);
+  console.log(page,pageSize,this.state.condition);
+}
 
 
+// handleChange(value, dateString) {
+//   console.log('Selected Time: ', value);
+//   console.log('Formatted Selected Time: ', dateString);
+// }
+//
+// handleOk(value) {
+//   console.log('onOk: ', value);
+// }
 
+getBalanceCharge(page,pageSize,condition){
+  let self =this;
+  getMeteorBalanceCharge(condition,page,pageSize,function(err,rlt){
+    if(!err){
+      console.log(rlt)
+      self.setState({
+        balanceChargesData:rlt,
+        currentPage:page,
+      })
+      console.log(rlt);
+    }
+    console.log(self.state.balanceChargesData)
+  })
+}
+
+handleonChange(date, dateString) {
+  console.log(date, dateString);
+}
 
 
   render() {
-    const OrdersColumns = [
+    const BalanceColumns = [
       {
-        title: '订单号',
+        title: '提现记录id',
         dataIndex: '_id',
         key: '_id',
         width: 150,
       },
       {
-      title: '内部交易单号',
-      dataIndex: '',
-      key: '',
+      title: '金额',
+      dataIndex: 'money',
+      key: 'money',
       width: 150,
     }, {
-      title: '渠道交易单号',
-      dataIndex: '',
-      key: '',
+      title: '银行卡号',
+      dataIndex: 'bankId',
+      key: 'bankId',
       width: 150,
     }, {
-      title: '支付方式',
-      dataIndex: 'type',
-      key: 'type',
+      title: '姓名',
+      dataIndex: 'userId',
+      key: 'name',
       width: 150,
     },
     {
-      title: '交易时间',
+      title: '时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 150,
     },
     {
-      title: '用户名',
-      dataIndex: 'username',
-      key: 'username',
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
       width: 150,
-    },{
-      title: '姓名',
-      dataIndex:'name',
-      key:'name',
-      width:150,
-    },{
-      title: '手机号',
-      dataIndex:'mobile',
-      key:'mobile',
-      width:150,
-    },{
-      title:'车牌号',
-      dataIndex:'carNubmer',
-      key:'carNubmer',
-      width:150
-    },{
-      title:'地区',
-      dataIndex:'location',
-      key:'location',
-      width:150
-    },{
-      title:'订单金额',
-      dataIndex:'price',
-      key:'price',
-      width:150
-    },{
-      title:'操作',
-      dataIndex:'edit',
-      key:'edit',
-      width:150
-    },{
-      title:'状态',
-      dataIndex:'status',
-      key:'status',
-      width:150
-    }
+    },
   ];
-    return (<div>
+    return (<div >
       <div style={{padding:'20px',background: 'rgb(236, 236, 236)'}}>
       <span>关键字：</span>
         <Search placeholder="input search text" style= {{width:250}}
@@ -174,16 +149,14 @@ class Orders extends React.Component{
         </div>
 
       </div>
+
         <Table  dataSource={this.state.balanceChargesData}  rowKey='_id'
           pagination={{defaultPageSize: 20, total: this.state.totalCount,
-            onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
-            showQuickJumper: true, current: this.state.currentPage}}
-            columns={OrdersColumns}
-      />
-
-      </div>
-
-      // <div><h1>订单管理</h1>开发中....</div>
+          onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
+          showQuickJumper: true, current: this.state.currentPage}}
+          columns={BalanceColumns}
+        />
+       </div>
     )
   }
 }
@@ -193,4 +166,4 @@ function mapStateToProps(state) {
    };
 }
 
-export default connect(mapStateToProps)(Orders);
+export default connect(mapStateToProps)(Withdrawals);

@@ -67,6 +67,9 @@ class MainLayout extends Component {
       case 'orders':
         dispatch(push('/orders'));
         break;
+      case 'withdrawals':
+        dispatch(push('/withdrawals'));
+        break;
       case 'shops':
         dispatch(push('/shops'));
         break;
@@ -116,6 +119,10 @@ class MainLayout extends Component {
               <Icon type="book" />
               <span className="nav-text">订单管理</span>
             </Menu.Item>
+            <Menu.Item key="withdrawals">
+              <Icon type="pay-circle-o" />
+              <span className="nav-text">提现管理</span>
+            </Menu.Item>
             <Menu.Item key="agency_relations">
               <Icon type="paper-clip" />
               <span className="nav-text">分销关系管理</span>
@@ -136,6 +143,7 @@ class MainLayout extends Component {
               <Icon type="paper-clip" />
               <span className="nav-text">组件测试页面</span>
             </Menu.Item>
+
           </Menu>
         </Sider>
         <Layout>

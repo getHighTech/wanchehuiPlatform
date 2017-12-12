@@ -25,7 +25,6 @@ export function chengduCardUsersMount(){
 }
 
 export function beijingCardUsersMount(){
-  console.log(Orders.find({"status":"paid","area":"BEIJING","type":"card"}).count());
   return Orders.find({"status":"paid","area":"BEIJING","type":"card"}).count();
 }
 

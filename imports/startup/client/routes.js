@@ -9,6 +9,7 @@ import LoginForgot from '/imports/ui/components/pages/LoginForgot';
 import Users from '/imports/ui/components/pages/Users';
 import Shops from '/imports/ui/components/pages/Shops';
 import Orders from '/imports/ui/components/pages/Orders';
+import Withdrawals from '/imports/ui/components/pages/Withdrawals';
 import Roles from '/imports/ui/components/pages/Roles';
 import Settings from '/imports/ui/components/pages/Settings';
 import DashBoard from '/imports/ui/components/pages/DashBoard';
@@ -44,6 +45,7 @@ const Routes = ({ location }) =>
       <Route path="option2" tableName="testSms" getComponent={DBTableContainer}/>
       <Route path="option3" tableName="testAction" getComponent={DBTableContainer}/>
       <Route path="/orders" component={Orders}/>
+      <Route path="/withdrawals" component={Withdrawals}/>
       <Route path="/roles" component={Roles}/>
       <Route path="/settings" component={Settings}/>
       <Route path="/give_card_to_users" component={GiveCardToUsers}/>

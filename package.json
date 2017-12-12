@@ -10,6 +10,9 @@
     "antd": "^2.12.0",
     "autoprefixer": "^7.1.4",
     "babel-runtime": "^6.26.0",
+
+    "draft-js": "^0.10.2",
+
     "bcrypt": "^0.8.7",
     "draft-js": "^0.10.1",
     "draftjs-to-html": "^0.7.5",

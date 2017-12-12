@@ -30,7 +30,9 @@ class DashBoard extends React.Component{
       SalesOnTodayInBeiJing:0,
       SalesOnTodayInChengDu:0,
       SalesInThisWeekInBeiJing:0,
-      SalesInThisWeekInChengDu:0
+      SalesInThisWeekInChengDu:0,
+      SalesInThisMonthInChengDu:0,
+      SalesInThisMonthInBeiJing:0
     }
   }
 
@@ -158,6 +160,30 @@ class DashBoard extends React.Component{
     });
   }
 
+  updateSalesInThisMonthInBeiJing(){
+    let self = this;
+    Meteor.call("get.orders.InThisMonthInBeiJing", function(error, result){
+      console.log(result);
+      if (!error) {
+        self.setState({
+          SalesInThisMonthInBeiJing: result
+        })
+      }
+    });
+  }
+
+  updateSalesInThisMonthInChengDu(){
+    let self = this;
+    Meteor.call("get.orders.InThisMonthInChengDu", function(error, result){
+      console.log(result);
+      if (!error) {
+        self.setState({
+          SalesInThisMonthInChengDu: result
+        })
+      }
+    });
+  }
+
   componentDidMount(){
 
     let self = this;
@@ -169,6 +195,8 @@ class DashBoard extends React.Component{
     this.updateSalesInThisWeek();
     this.updateSalesInThisWeekInBeiJing();
     this.updateSalesInThisWeekInChengDu();
+    this.updateSalesInThisMonthInBeiJing();
+    this.updateSalesInThisMonthInChengDu();
     this.updateUsersCardsCountInBeiJing();
     this.updateUsersCardsCountInChengDu();
     this.updateSalesOnTodayInBeiJing();
@@ -229,12 +257,34 @@ class DashBoard extends React.Component{
             }>
             <h1>{this.state.salesInThisWeek}</h1>
             </Card>
+            <div style={{width:'100%',height:'20px'}}></div>
+
             <Card title="成都地区交易量:"  extra={
               <CardExtra />
 
             }>
             <h1>{this.state.chengduCardUsersMount}</h1>
             </Card>
+            <Card title="今日成都地区售卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.SalesOnTodayInChengDu}</h1>
+            </Card>
+            <Card title="本周成都地区售卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.SalesInThisWeekInChengDu}</h1>
+            </Card>
+            <Card title="本月成都地区售卡量:"  extra={
+              <CardExtra />
+
+            }>
+            <h1>{this.state.SalesInThisMonthInChengDu}</h1>
+            </Card>
+            <div style={{width:'100%',height:'20px'}}></div>
+
             <Card title="北京地区交易量:"  extra={
               <CardExtra />
 
@@ -247,12 +297,7 @@ class DashBoard extends React.Component{
             }>
             <h1>{this.state.SalesOnTodayInBeiJing}</h1>
             </Card>
-            <Card title="今日成都地区售卡量:"  extra={
-              <CardExtra />
 
-            }>
-            <h1>{this.state.SalesOnTodayInChengDu}</h1>
-            </Card>
 
             <Card title="本周北京地区售卡量:"  extra={
               <CardExtra />
@@ -261,12 +306,14 @@ class DashBoard extends React.Component{
             <h1>{this.state.SalesInThisWeekInBeiJing}</h1>
             </Card>
 
-            <Card title="本周成都地区售卡量:"  extra={
+
+            <Card title="本月北京地区售卡量:"  extra={
               <CardExtra />
 
             }>
-            <h1>{this.state.SalesInThisWeekInChengDu}</h1>
+            <h1>{this.state.SalesInThisMonthInBeiJing}</h1>
             </Card>
+
       </div>
     )
   }
