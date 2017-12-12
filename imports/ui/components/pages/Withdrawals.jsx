@@ -6,10 +6,9 @@ import "antd/lib/table/style";
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import { showbalancedata } from '/imports/ui/actions/withdrawals.js';
-import {getMeteorBalanceCharge,countBalanceCharge} from '../../services/balancecharges.js'
-import { Menu, Icon } from 'antd';
-const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.ItemGroup;
+import {getMeteorBalanceChargeUnpaid,getMeteorBalanceChargePaid,getMeteorBalanceChargeRevoke,countBalanceCharge} from '../../services/balancecharges.js'
+import { Tabs } from 'antd';
+const TabPane = Tabs.TabPane;
 
 
 class Withdrawals extends React.Component{
@@ -23,26 +22,14 @@ state= {
   condition: {},
   currentPage:1,
   totalCount:500,
-  current: 'mail',
 }
-
-
-handleClick = (e) => {
-  console.log('click ', e.key);
-  this.setState({
-    current: e.key,
-  });
-}
-
 
 
 componentDidMount(){
   let self = this;
-
-  this.getBalanceCharge(1,20,this.state.condition);
-  // console.log(self.state.balanceChargesData);
-  // console.log("componentDidMount",self.state.balanceChargesData[0]);
-
+  self.getBalanceChargeUnpaid(1,20,this.state.condition);
+  console.log(self.state.balanceChargesData);
+  console.log("componentDidMount",self.state.balanceChargesData[0]);
   countBalanceCharge(function(err,rlt){
       if(!err){
         self.setState({
@@ -52,18 +39,108 @@ componentDidMount(){
   })
 }
 
-
-
-handlePageChange(page, pageSize){
+handlePageChangeUnpaid(page, pageSize){
+  console.log("b");
   $(document).scrollTop(0);
-  this.getBalanceCharge(page, pageSize, this.state.condition);
+  this.getBalanceChargeUnpaid(page, pageSize, this.state.condition);
   console.log(page,pageSize,this.state.condition);
 }
 
+handlePageChangePaid(page, pageSize){
+    console.log("c");
+  $(document).scrollTop(0);
+  this.getBalanceChargePaid(page, pageSize, this.state.condition);
+  console.log(page,pageSize,this.state.condition);
+}
 
-getBalanceCharge(page,pageSize,condition){
+handlePageChangeRevoke(page, pageSize){
+    console.log("d");
+  $(document).scrollTop(0);
+  this.getBalanceChargeRevoke(page, pageSize, this.state.condition);
+  console.log(page,pageSize,this.state.condition);
+}
+
+toggleBalanceCharges(key) {
+    console.log("e");
   let self = this;
-  getMeteorBalanceCharge(condition,page,pageSize,function(err,rlt){
+  console.log(key);
+  if(key=="unpaid"){
+      self.getBalanceChargeUnpaid(1,20,this.state.condition);
+      countBalanceCharge(function(err,rlt){
+          if(!err){
+            self.setState({
+              totalCount:rlt,
+            })
+          }
+      })
+  }
+  if(key=="paid"){
+      self.getBalanceChargePaid(1,20,this.state.condition);
+      countBalanceCharge(function(err,rlt){
+          if(!err){
+            self.setState({
+              totalCount:rlt,
+            })
+          }
+      })
+  }
+  if(key=="revoke"){
+      self.getBalanceChargeRevoke(1,20,this.state.condition);
+      countBalanceCharge(function(err,rlt){
+          if(!err){
+            self.setState({
+              totalCount:rlt,
+            })
+          }
+      })
+  }
+
+}
+
+
+
+
+
+
+
+
+
+getBalanceChargeUnpaid(page,pageSize,condition){
+    console.log("f");
+  let self = this;
+  getMeteorBalanceChargeUnpaid(condition,page,pageSize,function(err,rlt){
+    if(!err){
+      console.log(rlt)
+      self.setState({
+        balanceChargesData:rlt,
+        currentPage:page,
+      })
+      console.log(rlt);
+    }
+    console.log(self.state.balanceChargesData)
+  })
+}
+
+getBalanceChargePaid(page,pageSize,condition){
+    console.log("i");
+  let self = this;
+  getMeteorBalanceChargePaid(condition,page,pageSize,function(err,rlt){
+    if(!err){
+      console.log(rlt)
+      self.setState({
+        balanceChargesData:rlt,
+        currentPage:page,
+      })
+      console.log(rlt);
+    }
+    console.log(self.state.balanceChargesData)
+  })
+}
+
+getBalanceChargeRevoke(page,pageSize,condition){
+    console.log("j");
+  let self = this;
+  getMeteorBalanceChargeRevoke(condition,page,pageSize,function(err,rlt){
     if(!err){
       console.log(rlt)
       self.setState({
@@ -119,28 +196,44 @@ getBalanceCharge(page,pageSize,condition){
   ];
     return (
       <div>
-      <Menu
-        onClick={this.handleClick}
-        selectedKeys={[this.state.current]}
-        mode="horizontal"
-      >
-        <Menu.Item key="unpaid" >
-          <Icon type="mail" />未打款
-        </Menu.Item>
-        <Menu.Item key="paid">
-          <Icon type="mail" />已打款
-        </Menu.Item>
-        <Menu.Item key="revoke">
-          <Icon type="mail" />已撤销
-        </Menu.Item>
-      </Menu>
+      <Tabs defaultActiveKey="unpaid" onChange={this.toggleBalanceCharges.bind(this)} style={{marginLeft:"0"}}>
+    <TabPane tab="未打款" key="unpaid">
+    <Table  dataSource={this.state.balanceChargesData}
+            rowKey='_id'
+            pagination={{defaultPageSize: 20,
+                         total: this.state.totalCount,
+                         onChange: (page, pageSize)=> this.handlePageChangeUnpaid(page, pageSize),
+                         showQuickJumper: true,
+                         current: this.state.currentPage
+     }}
+     columns={BalanceColumns} />
+     </TabPane>
+    <TabPane tab="已打款" key="paid">
+    <Table  dataSource={this.state.balanceChargesData}
+            rowKey='_id'
+            pagination={{defaultPageSize: 20,
+                         total: this.state.totalCount,
+                         onChange: (page, pageSize)=> this.handlePageChangePaid(page, pageSize),
+                         showQuickJumper: true,
+                         current: this.state.currentPage
+     }}
+     columns={BalanceColumns} />
+    </TabPane>
+    <TabPane tab="已撤销" key="revoke">
+    <Table  dataSource={this.state.balanceChargesData}
+            rowKey='_id'
+            pagination={{defaultPageSize: 20,
+                         total: this.state.totalCount,
+                         onChange: (page, pageSize)=> this.handlePageChangeRevoke(page, pageSize),
+                         showQuickJumper: true,
+                         current: this.state.currentPage
+     }}
+     columns={BalanceColumns} />
+    </TabPane>
+  </Tabs>
 
-      <Table  dataSource={this.state.balanceChargesData}  rowKey='_id'
-      pagination={{defaultPageSize: 20, total: this.state.totalCount,
-         onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
-         showQuickJumper: true, current: this.state.currentPage
-       }}
-       columns={BalanceColumns} /></div>
+
+       </div>
     )
   }
 }
