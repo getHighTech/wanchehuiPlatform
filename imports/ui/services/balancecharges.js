@@ -2,8 +2,8 @@ import { Meteor } from 'meteor/meteor';
 
 
 
-export function getMeteorBalanceChargeUnpaid(condition,page,pageSize,callback){
-  Meteor.call("balance.chargesdataUnpaid",condition,page,pageSize,function(err,rlt){
+export function getMeteorBalanceChargeUnpaid(conditionUnpaid,page,pageSize,callback){
+  Meteor.call("balance.chargesdataUnpaid",conditionUnpaid,page,pageSize,function(err,rlt){
     var bankIds = [];
     var result = [];
     for(var charge  of rlt){
@@ -33,8 +33,8 @@ export function getMeteorBalanceChargeUnpaid(condition,page,pageSize,callback){
   });
 }
 
-export function getMeteorBalanceChargePaid(condition,page,pageSize,callback){
-  Meteor.call("balance.chargesdataPaid",condition,page,pageSize,function(err,rlt){
+export function getMeteorBalanceChargePaid(conditionPaid,page,pageSize,callback){
+  Meteor.call("balance.chargesdataPaid",conditionPaid,page,pageSize,function(err,rlt){
     console.log(rlt);
     var bankIds = [];
     var result = [];
@@ -44,7 +44,6 @@ export function getMeteorBalanceChargePaid(condition,page,pageSize,callback){
       let userId = charge.userId;
       bankIds.push(userId);
     }
-    console.log(bankId);
     Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
       if (!error) {
         accoutHash = {}
@@ -66,8 +65,8 @@ export function getMeteorBalanceChargePaid(condition,page,pageSize,callback){
   });
 }
 
-export function getMeteorBalanceChargeRevoke(condition,page,pageSize,callback){
-  Meteor.call("balance.chargesdataRevoke",condition,page,pageSize,function(err,rlt){
+export function getMeteorBalanceChargeRevoke(conditionRevoke,page,pageSize,callback){
+  Meteor.call("balance.chargesdataRevoke",conditionRevoke,page,pageSize,function(err,rlt){
     var bankIds = [];
     var result = [];
     for(var charge  of rlt){
@@ -98,8 +97,8 @@ export function getMeteorBalanceChargeRevoke(condition,page,pageSize,callback){
 }
 
 
-export function countBalanceCharge(callback){
-  return Meteor.call('balancecharge.count',function(err,rlt){
+export function countBalanceCharge(condition,callback){
+  return Meteor.call('balancecharge.count',condition,function(err,rlt){
     callback(err,rlt)
   })
 }

@@ -78,8 +78,8 @@ Meteor.methods({
     return chargesdata.fetch();
   },
 
-  "balancecharge.count"(){
-    return allBalanceChargeCount();
+  "balancecharge.count"(condition){
+    return allBalanceChargeCount(condition);
   },
   'bankcards.accountNumber'(_id){
     return Bankcards.findOne({userId:_id}).accountNumber;
