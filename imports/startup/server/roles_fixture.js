@@ -79,7 +79,7 @@ export function prebuildAdmin(){
     });
 
   }
-  
+
   let users = Meteor.users.find({username: "superAdmin"});
   let newUserId = null;
   if (users.count() === 0) {
