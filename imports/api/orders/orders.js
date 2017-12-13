@@ -1,7 +1,6 @@
 // Definition of the links collection
 
 import { Mongo } from 'meteor/mongo';
-
 const Orders = new Mongo.Collection('orders');
 
 if (Meteor.isServer) {

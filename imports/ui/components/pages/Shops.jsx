@@ -37,7 +37,8 @@ class Shops extends React.Component{
 
   }
   showChangeConfirm(state,shopId) {
-
+    console.log(state);
+    console.log(shopId);
     confirm({
       title: '确定关闭/开启店铺吗？！',
       content: '店铺关闭/开启后，将激活/禁用店铺一切功能！',
@@ -102,6 +103,7 @@ class Shops extends React.Component{
   }
 
   onClickUpdate = (shopId) => {
+    console.log(shopId);
     let self = this
     this.setState({
       modalVisible: true,
@@ -148,6 +150,8 @@ class Shops extends React.Component{
 
 
   getPageShops(page,pageSize,condition){
+    console.log(condition);
+    console.log("这里开始获取数据");
     let self = this;
     getMeteorShopsLimit(condition,page,pageSize,function(err, rlt){
       if(!err){
@@ -168,6 +172,7 @@ class Shops extends React.Component{
 
   componentDidMount(){
     console.log('加载店铺数据')
+    console.log(this.state.condition);
     this.getPageShops(1,20,this.state.condition);
     countShops(function(err, rlt){
       if (!err) {
