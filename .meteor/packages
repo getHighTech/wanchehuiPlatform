@@ -24,7 +24,6 @@ juliancwirko:postcss
 accounts-password@1.5.0
 session@1.1.7
 cfs:standard-packages
-cfs:gridfs
 markdown@1.0.12
 ostrio:uiblocker
 webdeb:app-loader
@@ -38,4 +37,4 @@ react-meteor-data
 nimble:restivus
 pfafman:filesaver
 ostrio:meteor-root
-grove:call-async
+deanius:promise

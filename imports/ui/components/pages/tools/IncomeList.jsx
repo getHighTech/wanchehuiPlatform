@@ -21,10 +21,28 @@ class IncomeList extends Component {
 
   }
 
+  componentWillReceiveProps(nextProps){
+
+  }
+
   render(){
+    const incomeListItems = this.props.data.map((item, index)=>{
+      return (
+        <div key={index} style={{textAlign: "center"}}>
+          <div style={{display: "flex", justifyContent: "space-around"}}>
+            <div style={{width: "40px", wordBreak: 'break-all'}}>来自<br/>{item.agencyUser.username}</div>
+            <div  style={{width: "40px", wordBreak: 'break-all'}}>{item.text}</div>
+            <div  style={{width: "40px", wordBreak: 'break-all'}}>{item.amount/100}元</div>
+            <div style={{width: "40px", wordBreak: 'break-all'}}>{moment(item.createdAt).format("YYYY-MM-DD HH:mm:ss")}</div>
+          </div>
+          <hr/>
+        </div>
+      )
+    })
     return(
       <div>
-        收入列表,可以有{this.props.count}行
+        {incomeListItems}
+
       </div>
     )
   }

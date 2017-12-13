@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 
 import UserBasicView from './UserBasicView.jsx';
 
-import {getOneUser} from '/imports/ui/actions/current_deal_user.js';
+import {getOnePageIncomes} from '/imports/ui/actions/current_deal_user.js';
 
 class UserBasicViewPopover extends Component {
   state = {
@@ -23,8 +23,7 @@ class UserBasicViewPopover extends Component {
   }
   handleVisibleChange(visible){
     const {dispatch, userId} = this.props;
-    console.log(userId);
-    dispatch(getOneUser(userId, "lookup"))
+
     this.setState({ visible });
   }
   render() {

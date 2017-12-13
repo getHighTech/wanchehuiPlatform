@@ -25,7 +25,6 @@ export function chengduCardUsersMount(){
 }
 
 export function beijingCardUsersMount(){
-  console.log(Orders.find({"status":"paid","area":"BEIJING","type":"card"}).count());
   return Orders.find({"status":"paid","area":"BEIJING","type":"card"}).count();
 }
 
@@ -206,7 +205,6 @@ export function removeUserById(userId){
   });
   let agency = giveCardByUserId(deletedUserId);
   //迁移所有下级代理
-  console.log("删除的用户生成的代理节点",agency);
   MoveAgenciesFromOneUserToAnother(deletedUserId, userId);
   //清理要删除的用户的所有相关
   Orders.remove({createdBy: userId});

@@ -17,20 +17,7 @@ export function requestPosts(type, withdraws){
   }
 }
 
-export function fetchLimitWithdraws(type, condition, page, pageSize){
-    return dispatch => {
-      dispatch(requestPosts(subreddit))
-      return fetch(`https://www.reddit.com/r/${subreddit}.json`)
-        .then(response => response.json())
-        .then(json => dispatch(receivePosts(subreddit, json)))
-    }
-    return {
-      type: FETCH_LIMIT_WITHDRAWS,
-      condition,
-      page,
-      pageSize,
-    }
-}
+
 
 export function addOneWithDraw(type, withDraw){
   return {

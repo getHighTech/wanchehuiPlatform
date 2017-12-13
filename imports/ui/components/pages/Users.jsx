@@ -271,7 +271,6 @@ class Users extends React.Component{
             }}
             columns={UserColumns} />
         </Spin>
-
       </div>
     )
   }
