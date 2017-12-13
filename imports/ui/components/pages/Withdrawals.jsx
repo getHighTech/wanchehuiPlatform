@@ -36,7 +36,7 @@ state= {
 
 componentDidMount(){
   let self = this;
-  this.getBalanceCharge(1,20,this.state.condition);
+  self.getBalanceCharge(1,20,this.state.condition);
   countBalanceCharge(function(err,rlt){
       if(!err){
         self.setState({

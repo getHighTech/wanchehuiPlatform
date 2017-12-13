@@ -1,4 +1,5 @@
 import {Orders } from './orders';
+import {OrdersCount} from '/actions.js';
 
 Meteor.methods({
   'orders.insert'(type,name, mobile,
@@ -29,10 +30,10 @@ Meteor.methods({
       }
 
     })
-    return chargesdata.fetch();
+    return orderdata.fetch();
   },
   }
   'orders.count'(){
-    return Orders.find().count();
+    return OrdersCount();
   }
 });
