@@ -34,14 +34,12 @@ class RoleModalWrap extends React.Component {
     
   }
   state = {
-      shopPermission:[],
-      orderPermission:[],
-      userPermission:[],
-      rolePermission:[],
-      distributionPermission:[]
+        shops:{},
+        orders:{},
+        users:{},
+        roles:{},
+        distributions:{}
   }
-
-
   handleModalOk = (e) => {
     let self = this
     e.preventDefault();
@@ -49,55 +47,86 @@ class RoleModalWrap extends React.Component {
     form.validateFieldsAndScroll((err, values) => {
     if (!err) {
         const oldFormData = form.getFieldsValue();
-        console.log(oldFormData.roleName)
+        console.log(oldFormData)
         //处理收到的表单的数据
         const newObj = {}
         newObj.roleName = oldFormData.roleName
         //先去数据库查询角色标识，如果数据库里有就返回错误，等待编码
+        
         newObj.tagName = oldFormData.tagName
         newObj.permission = self.state
         console.log(newObj)
+        Meteor.call('role.insert',newObj,function(err,rlt){
+          if(!err){
+            console.log("角色添加成功");
+            console.log(rlt)
+            self.hideModal();
+          }
+        })
+        
       }else{
         message.error('表格参数有误，提交失败');
       }
     });
   }
 
+  hideModal = () => {
+    this.props.onCancel();
+  };
 
 
   handleCancel = (e) => {
     this.props.onCancel()
   }
   shopOnChange(checkedValues) {
+    let shops = {}
+    for(let i in checkedValues){
+      shops[checkedValues[i]] = true
+    }
     this.setState({
-      shopPermission: checkedValues,
+      shops: shops,
     });
-    console.log(this.state.shopPermission );
-    
+    console.log(this.state.shops );
   }
   orderOnChange(checkedValues) {
+    let orders = {}
+    for(let i in checkedValues){
+      orders[checkedValues[i]] = true
+    }
     this.setState({
-      orderPermission: checkedValues,
+      orders: orders,
     });
-    console.log(this.state.orderPermission );
+    console.log(this.state.orders );
   }
   userOnChange(checkedValues) {
+    let users = {}
+    for(let i in checkedValues){
+      users[checkedValues[i]] = true
+    }
     this.setState({
-      userPermission: checkedValues,
+      users: users,
     });
-    console.log(this.state.userPermission );
+    console.log(this.state.users );
   }
   roleOnChange(checkedValues) {
+    let roles = {}
+    for(let i in checkedValues){
+      roles[checkedValues[i]] = true
+    }
     this.setState({
-      rolePermission: checkedValues,
+      roles: roles,
     });
-    console.log(this.state.rolePermission );
+    console.log(this.state.roles );
   }
   distributionOnChange(checkedValues) {
+    let distributions = {}
+    for(let i in checkedValues){
+      distributions[checkedValues[i]] = true
+    }
     this.setState({
-      distributionPermission: checkedValues,
+      distributions: distributions,
     });
-    console.log(this.state.distributionPermission );
+    console.log(this.state.distributions );
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -116,34 +145,34 @@ class RoleModalWrap extends React.Component {
     };
     const CheckboxGroup = Checkbox.Group;
     const shopOptions = [
-      { label: '新增', value: 'shopRead' },
-      { label: '修改', value: 'shopUpdate' },
-      { label: '查看', value: 'shopShow' },
-      { label: '删除', value: 'shopDelete',disabled: true },
+      { label: '新增', value: 'readable' },
+      { label: '修改', value: 'updatable' },
+      { label: '查看', value: 'showable' },
+      { label: '删除', value: 'deletable',disabled: true },
     ];
     const orderOptions = [
-      { label: '新增', value: 'orderRead' },
-      { label: '修改', value: 'orderUpdate' },
-      { label: '查看', value: 'orderShow' },
-      { label: '删除', value: 'orderDelete',disabled: true },
+      { label: '新增', value: 'readable' },
+      { label: '修改', value: 'updatable' },
+      { label: '查看', value: 'showable' },
+      { label: '删除', value: 'deletable',disabled: true },
     ];
     const userOptions = [
-      { label: '新增', value: 'userRead' },
-      { label: '修改', value: 'userUpdate' },
-      { label: '查看', value: 'userShow' },
-      { label: '删除', value: 'userDelete',disabled: true },
+      { label: '新增', value: 'readable' },
+      { label: '修改', value: 'updatable' },
+      { label: '查看', value: 'showable' },
+      { label: '删除', value: 'deletable',disabled: true },
     ];    
     const roleOptions = [
-      { label: '新增', value: 'roleRead' },
-      { label: '修改', value: 'roleUpdate' },
-      { label: '查看', value: 'roleShow' },
-      { label: '删除', value: 'roleDelete',disabled: true },
+      { label: '新增', value: 'readable' },
+      { label: '修改', value: 'updatable' },
+      { label: '查看', value: 'showable' },
+      { label: '删除', value: 'deletable',disabled: true },
     ];
     const distributionOptions = [
-      { label: '新增', value: 'distributionRead' },
-      { label: '修改', value: 'distributionUpdate' },
-      { label: '查看', value: 'distributionShow' },
-      { label: '删除', value: 'distributionDelete',disabled: true },
+      { label: '新增', value: 'readable' },
+      { label: '修改', value: 'updatable' },
+      { label: '查看', value: 'showable' },
+      { label: '删除', value: 'deletable',disabled: true },
     ];
 
     return (
@@ -199,7 +228,7 @@ class RoleModalWrap extends React.Component {
                   </span>
                 )}
               >
-                {getFieldDecorator('shopPermission', {
+                {getFieldDecorator('shops', {
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
@@ -216,7 +245,7 @@ class RoleModalWrap extends React.Component {
                   </span>
                 )}
               >
-                {getFieldDecorator('orderPermission', {
+                {getFieldDecorator('orders', {
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
@@ -233,7 +262,7 @@ class RoleModalWrap extends React.Component {
                   </span>
                 )}
               >
-                {getFieldDecorator('userPermission', {
+                {getFieldDecorator('users', {
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
@@ -250,7 +279,7 @@ class RoleModalWrap extends React.Component {
                   </span>
                 )}
               >
-                {getFieldDecorator('rolePermission', {
+                {getFieldDecorator('roles', {
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
@@ -267,7 +296,7 @@ class RoleModalWrap extends React.Component {
                   </span>
                 )}
               >
-                {getFieldDecorator('distributionPermission', {
+                {getFieldDecorator('distributions', {
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
