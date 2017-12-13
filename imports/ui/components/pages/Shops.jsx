@@ -47,22 +47,10 @@ class Shops extends React.Component{
       cancelText: '否',
       onOk() {
         console.log('OK');
-        Meteor.call('shops.changeShopState',shopId, function(error,result){
-          if(!error){
-              console.log(result)
-              if (result.shopState){
-                message.success('店铺关闭成功！')
-              }else{
-                message.success('店铺开启成功！')
-              }
-          }else{
-            console.log("店铺状态改变失败！")
-          }
-        })
+        已确认打款
       },
       onCancel() {
-        console.log('Cancel');
-        message.error('店铺开启失败');
+        取消打款
       },
     });
   }

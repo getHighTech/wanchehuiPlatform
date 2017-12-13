@@ -9,7 +9,18 @@ import { showbalancedata } from '/imports/ui/actions/withdrawals.js';
 import {getMeteorBalanceChargeUnpaid,getMeteorBalanceChargePaid,getMeteorBalanceChargeRevoke,countBalanceCharge} from '../../services/balancecharges.js'
 import { Tabs } from 'antd';
 const TabPane = Tabs.TabPane;
+import Tooltip from 'antd/lib/tooltip';
+import "antd/lib/tooltip/style";
+import Button from 'antd/lib/button';
+import "antd/lib/button/style";
+import Modal from 'antd/lib/modal';
+import 'antd/lib/modal/style';
+import message from 'antd/lib/message';
+import 'antd/lib/message/style';
 
+
+
+const confirm = Modal.confirm;
 
 class Withdrawals extends React.Component{
   constructor(props) {
@@ -30,8 +41,6 @@ state= {
 componentDidMount(){
   let self = this;
   self.getBalanceChargeUnpaid(1,20,this.state.conditionUnpaid);
-  console.log(self.state.balanceChargesData);
-  console.log("componentDidMount",self.state.balanceChargesData[0]);
   countBalanceCharge(this.state.conditionUnpaid,function(err,rlt){
       if(!err){
         self.setState({
@@ -44,24 +53,20 @@ componentDidMount(){
 handlePageChangeUnpaid(page, pageSize){
   $(document).scrollTop(0);
   this.getBalanceChargeUnpaid(page, pageSize, this.state.conditionUnpaid);
-  console.log(page,pageSize,this.state.condition);
 }
 
 handlePageChangePaid(page, pageSize){
   $(document).scrollTop(0);
   this.getBalanceChargePaid(page, pageSize, this.state.conditionPaid);
-  console.log(page,pageSize,this.state.condition);
 }
 
 handlePageChangeRevoke(page, pageSize){
   $(document).scrollTop(0);
   this.getBalanceChargeRevoke(page, pageSize, this.state.conditionRevoke);
-  console.log(page,pageSize,this.state.conditionRevoke);
 }
 
 toggleBalanceCharges(key) {
   let self = this;
-  console.log(key);
   if(key=="unpaid"){
       self.getBalanceChargeUnpaid(1,20,self.state.conditionUnpaid);
       countBalanceCharge(self.state.conditionUnpaid,function(err,rlt){
@@ -95,9 +100,40 @@ toggleBalanceCharges(key) {
 
 }
 
+onPayMoney = (_id) =>{
+  let self = this
+  confirm({
+    title: '是否打款？！',
+    content: '请确认打款金额，银行卡号，姓名！',
+    okText: '是',
+    okType: 'danger',
+    cancelText: '否',
+    onOk() {
+      Meteor.call("balancecharge.status.updatePaid",_id,function(error,result){
+        if(!error){
+          console.log(result);
+          self.getBalanceChargeUnpaid(1,20,self.state.conditionUnpaid);
 
+        }
+        else {
+          console.log(error);
+        }
+      })
+      console.log('OK');
+      message.success('已确认打款');
+    },
+    onCancel() {
+      console.log('Cancel');
+      message.error('已取消打款');
+    },
+  });
 
+}
 
+// reflashTable(){
+//   let self = this;
+//
+// }
 
 
 
@@ -107,14 +143,11 @@ getBalanceChargeUnpaid(page,pageSize,conditionUnpaid){
   let self = this;
   getMeteorBalanceChargeUnpaid(conditionUnpaid,page,pageSize,function(err,rlt){
     if(!err){
-      console.log(rlt)
       self.setState({
         balanceChargesData:rlt,
         currentPage:page,
       })
-      console.log(rlt);
     }
-    console.log(self.state.balanceChargesData)
   })
 }
 
@@ -122,14 +155,11 @@ getBalanceChargePaid(page,pageSize,conditionPaid){
   let self = this;
   getMeteorBalanceChargePaid(conditionPaid,page,pageSize,function(err,rlt){
     if(!err){
-      console.log(rlt)
       self.setState({
         balanceChargesData:rlt,
         currentPage:page,
       })
-      console.log(rlt);
     }
-    console.log(self.state.balanceChargesData)
   })
 }
 
@@ -137,19 +167,19 @@ getBalanceChargeRevoke(page,pageSize,conditionRevoke){
   let self = this;
   getMeteorBalanceChargeRevoke(conditionRevoke,page,pageSize,function(err,rlt){
     if(!err){
-      console.log(rlt)
       self.setState({
         balanceChargesData:rlt,
         currentPage:page,
       })
-      console.log(rlt);
     }
-    console.log(self.state.balanceChargesData)
   })
 }
 
 
   render() {
+    const actionStyle = {
+      fontSize: 16, color: '#08c'
+   };
     const BalanceColumns = [
       {
         title: '提现记录id',
@@ -198,7 +228,27 @@ getBalanceChargeRevoke(page,pageSize,conditionRevoke){
           return(<span>已撤销</span>)
         }
       }
+    },{
+      title: '操作',
+      dataIndex: 'action',
+      key: 'action',
+      width: 150,
+      render: (text, record) => {
+        if(record.status=='unpaid'){
+        return(
+          <span>
+          <Tooltip placement="topLeft" title="为用户打款" arrowPointAtCenter>
+            <Button  onClick={ () => this.onPayMoney(record._id)} style={actionStyle} ><span>打款</span></Button>
+          </Tooltip>
+          <span className="ant-divider" />
+          <Tooltip placement="topLeft" title="撤销此次提现" arrowPointAtCenter>
+            <Button  onClick={ () => this.onReturnMoney(record._id)} style={actionStyle} ><span>撤销</span></Button>
+          </Tooltip>
+          <span className="ant-divider" />
+        </span>)
+      }
     },
+    }
   ];
     return (
       <div>

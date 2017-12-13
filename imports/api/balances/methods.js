@@ -34,7 +34,6 @@ Meteor.methods({
       }
 
     })
-    console.log(chargesdata.fetch())
     return chargesdata.fetch();
   },
   "balance.chargesdataPaid"(condition,page=1, pageSize=20){
@@ -54,12 +53,9 @@ Meteor.methods({
 
     }
   )
-    console.log(chargesdata.fetch())
     return chargesdata.fetch();
   },
   "balance.chargesdataRevoke"(condition,page=1, pageSize=20){
-    console.log(condition);
-    console.log(page,pageSize);
     let chargesdata =  BalanceCharges.find(condition, {
       skip: (page-1)*pageSize, limit: pageSize,
       sort: {"createdAt": -1},
@@ -74,7 +70,6 @@ Meteor.methods({
       }
 
     });
-    console.log(chargesdata.fetch())
     return chargesdata.fetch();
   },
 
@@ -90,5 +85,13 @@ Meteor.methods({
   "get.limit.balance_incomes"(page, pagesize, balanceId, userId){
     return getIncomeRecords(page, pagesize, balanceId, userId);
   },
+  "balancecharge.status.updatePaid"(_id){
+    return BalanceCharges.update(_id,{
+      $set:{
+        status:"paid"
+      }
+    })
+
+  }
 
 });
