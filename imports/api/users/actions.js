@@ -207,6 +207,25 @@ export function removeUserById(userId){
   let agency = giveCardByUserId(deletedUserId);
   //迁移所有下级代理
   MoveAgenciesFromOneUserToAnother(deletedUserId, userId);
+  let deletedUserBalance = Balances.findOne({userId: deletedUserId});
+  let alreadyPaidMoney = 0;
+  BalanceCharges.find({userId}).forEach((item)=>{
+    if (item.status === 'paid') {
+        alreadyPaidMoney += item.money;
+    }
+  });
+  BalanceCharges.insert({
+    text: "用户迁移金额",
+    status: "paid",
+    money: alreadyPaidMoney,
+    userId: deletedUserId,
+    reasonType: "UserChange"
+  });
+  let deletedUserBalanceAmount = deletedUserBalance.amount;
+  deletedUserBalanceAmount = deletedUserBalanceAmount - alreadyPaidMoney;
+  Balances.update(deletedUserBalance._id, {
+    amount: deletedUserBalanceAmount,
+  });
   //清理要删除的用户的所有相关
   Orders.remove({createdBy: userId});
   let balance = Balances.find({userId});
