@@ -19,7 +19,7 @@ Meteor.methods({
     return findBalanceByUsername(username);
   },
 
-  "balance.chargesdataUnpaid"(condition,page=1, pageSize=20){
+  "balance.chargesdata"(condition,page=1, pageSize=20){
     let chargesdata =  BalanceCharges.find(condition, {
       skip: (page-1)*pageSize, limit: pageSize,
       sort: {"createdAt": -1},
@@ -34,42 +34,6 @@ Meteor.methods({
       }
 
     })
-    return chargesdata.fetch();
-  },
-  "balance.chargesdataPaid"(condition,page=1, pageSize=20){
-    let chargesdata =  BalanceCharges.find(condition,{
-      skip: (page-1)*pageSize, limit: pageSize,
-
-      sort: {"createdAt": -1},
-      fields:
-        {
-        'text':1,
-        "money":1,
-        'bankId':1,
-        'userId':1,
-        'status':1,
-        'createdAt': 1,
-      }
-
-    }
-  )
-    return chargesdata.fetch();
-  },
-  "balance.chargesdataRevoke"(condition,page=1, pageSize=20){
-    let chargesdata =  BalanceCharges.find(condition, {
-      skip: (page-1)*pageSize, limit: pageSize,
-      sort: {"createdAt": -1},
-      fields:
-        {
-        'text':1,
-        "money":1,
-        'bankId':1,
-        'userId':1,
-        'status':1,
-        'createdAt': 1,
-      }
-
-    });
     return chargesdata.fetch();
   },
 
