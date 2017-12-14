@@ -9,7 +9,7 @@ import {getMeteorOrders,countOrders} from '../../services/orders.js'
 
 import { Input } from 'antd';
 import { DatePicker } from 'antd';
-///import "antd/lib/datepicker/style";
+import "antd/lib/date-picker/style";
 import { Button } from 'antd';
 import "antd/lib/button/style";
 
@@ -37,13 +37,14 @@ class Orders extends React.Component{
   componentDidMount(){
     let self = this;
     this.getOrders(1,20,this.state.condition);
-    // countOrders(function(err,rlt){
-    //     if(!err){
-    //       self.setState({
-    //         totalCount:rlt,
-    //       })
-    //     }
-    // })
+    countOrders(function(err,rlt){
+        if(!err){
+          self.setState({
+            totalCount:rlt,
+          })
+          console.log(rtl);
+        }
+    })
 
   }
 
@@ -62,7 +63,7 @@ class Orders extends React.Component{
           ordersData:rlt,
           currentPage:page,
         })
-        console.log(rlt);
+      //  console.log(rlt);
       }
       console.log(self.state.ordersData)
     })
@@ -72,23 +73,24 @@ class Orders extends React.Component{
     console.log(date, dateString);
   }
 
-QuanguoLocation(){
-  this.setState({
-    value:'全国',
-  })
-}
+  QuanguoLocation(){
+    this.setState({
+      value:'全国',
+    })
+  }
 
-BeijingLocation(){
-  this.setState({
-    value:'北京',
-  })
-}
+  BeijingLocation(){
+    this.setState({
+      value:'北京',
+    })
+  }
 
-ChengduLocation(){
-  this.setState({
-    value:'成都',
-  })
-}
+  ChengduLocation(){
+    this.setState({
+      value:'成都',
+    })
+  }
+
 
 
 
@@ -166,10 +168,43 @@ ChengduLocation(){
     }
   ];
     return (<div>
-        <DatePicker  />
-      </div>
+      <div style={{padding:'20px',background: 'rgb(236, 236, 236)'}}>
+        <span>关键字：</span>
+        <Search placeholder="input search text" style= {{width:250}}
+        onSearch = {value =>console.log(value)}/>
 
-      // <div><h1>订单管理</h1>开发中....</div>
+        <span style={{margin:'0px 0px 0px 20px'}}>时间筛选：</span>
+        <DatePicker className="startdate" onChange = {this.handleonChange}/>
+        <span> - </span>
+        <DatePicker className="enddate" onChange = {this.handleonChange}/>
+
+        <Button type="primary" style={{margin:'0px 10px 0px 10px',background:'#434547'}}>搜索</Button>
+
+
+      <div style={{margin:'20px 10px 0px 0px'}}>
+        <span>区域筛选：</span>
+        <Button type="primary" onClick={this.QuanguoLocation.bind(this)}  style={{margin:'0px 10px 0px 10px'}} value="全国">全国</Button>
+        <Button type="primary" onClick={this.BeijingLocation.bind(this)} value='北京'>北京</Button>
+        <Button type="primary" onClick={this.ChengduLocation.bind(this)}  style={{margin:'0px 25px 0px 10px'}}　value='成都'>成都</Button>
+        <span>当前查询区域：{this.state.value}</span>
+      </div>
+      <div style={{margin:'20px 10px 0px 0px'}}>
+        <span>时段筛选：</span>
+        <Button type="primary" style={{margin:'0px 10px 0px 10px'}}>今日</Button>
+        <Button type="primary">昨日</Button>
+        <Button type="primary" style={{margin:'0px 10px 0px 10px'}}>最近７天</Button>
+        <Button type="primary" >最近３０天</Button>
+    </div>
+
+    </div>
+    <Table  dataSource={this.state.ordersData}  rowKey='_id'
+      pagination={{defaultPageSize: 20, total: this.state.totalCount,
+        onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
+        showQuickJumper: true, current: this.state.currentPage}}
+        columns={OrdersColumns}
+      />
+    </div>
+
     )
   }
 }

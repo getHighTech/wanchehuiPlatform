@@ -6,19 +6,7 @@ import "antd/lib/table/style";
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import { showbalancedata } from '/imports/ui/actions/withdrawals.js';
-<<<<<<< HEAD
-import {getMeteorBalanceCharge,countBalanceCharge} from '../../services/balancecharges.js'
-import { Input } from 'antd';
-import { DatePicker } from 'antd';
-import { Button } from 'antd';
 
-const Search = Input.Search;
-const { RangePicker } = DatePicker;
-import moment from 'moment';
-
-
-const dateFormat = 'YYYY/MM/DD';
-=======
 import {getMeteorBalanceChargeUnpaid,getMeteorBalanceChargePaid,getMeteorBalanceChargeRevoke,countBalanceCharge} from '../../services/balancecharges.js'
 import { Tabs } from 'antd';
 const TabPane = Tabs.TabPane;
@@ -30,9 +18,6 @@ import Modal from 'antd/lib/modal';
 import 'antd/lib/modal/style';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
->>>>>>> 433bd4413f775b7d335e5a05125e2f48602a5400
-
-
 
 const confirm = Modal.confirm;
 
@@ -53,18 +38,11 @@ state= {
   totalCount:500,
 }
 
-<<<<<<< HEAD
-componentDidMount(){
-  let self = this;
-  self.getBalanceCharge(1,20,this.state.condition);
-  countBalanceCharge(function(err,rlt){
-=======
-
 componentDidMount(){
   let self = this;
   self.getBalanceChargeUnpaid(1,20,this.state.conditionUnpaid);
   countBalanceCharge(this.state.conditionUnpaid,function(err,rlt){
->>>>>>> 433bd4413f775b7d335e5a05125e2f48602a5400
+
       if(!err){
         self.setState({
           totalCount:rlt,
@@ -73,9 +51,6 @@ componentDidMount(){
   })
 }
 
-<<<<<<< HEAD
-handlePageChange(page, pageSize){
-=======
 handlePageChangeUnpaid(page, pageSize){
   $(document).scrollTop(0);
   this.getBalanceChargeUnpaid(page, pageSize, this.state.conditionUnpaid);
@@ -87,7 +62,7 @@ handlePageChangePaid(page, pageSize){
 }
 
 handlePageChangeRevoke(page, pageSize){
->>>>>>> 433bd4413f775b7d335e5a05125e2f48602a5400
+
   $(document).scrollTop(0);
   this.getBalanceChargeRevoke(page, pageSize, this.state.conditionRevoke);
 }
@@ -157,28 +132,6 @@ onPayMoney = (_id) =>{
 
 }
 
-// reflashTable(){
-//   let self = this;
-//
-// }
-
-
-
-<<<<<<< HEAD
-// handleChange(value, dateString) {
-//   console.log('Selected Time: ', value);
-//   console.log('Formatted Selected Time: ', dateString);
-// }
-//
-// handleOk(value) {
-//   console.log('onOk: ', value);
-// }
-
-getBalanceCharge(page,pageSize,condition){
-  let self =this;
-  getMeteorBalanceCharge(condition,page,pageSize,function(err,rlt){
-=======
-
 
 getBalanceChargeUnpaid(page,pageSize,conditionUnpaid){
   let self = this;
@@ -189,6 +142,7 @@ getBalanceChargeUnpaid(page,pageSize,conditionUnpaid){
         currentPage:page,
       })
     }
+      console.log(self.state.balanceChargesData)
   })
 }
 
@@ -207,7 +161,7 @@ getBalanceChargePaid(page,pageSize,conditionPaid){
 getBalanceChargeRevoke(page,pageSize,conditionRevoke){
   let self = this;
   getMeteorBalanceChargeRevoke(conditionRevoke,page,pageSize,function(err,rlt){
->>>>>>> 433bd4413f775b7d335e5a05125e2f48602a5400
+
     if(!err){
       self.setState({
         balanceChargesData:rlt,
@@ -296,44 +250,7 @@ handleonChange(date, dateString) {
     },
     }
   ];
-<<<<<<< HEAD
-    return (<div >
-      <div style={{padding:'20px',background: 'rgb(236, 236, 236)'}}>
-      <span>关键字：</span>
-        <Search placeholder="input search text" style= {{width:250}}
-        onSearch = {value =>console.log(value)}/>
-        <span style={{margin:'0px 0px 0px 20px'}}>时间筛选：</span>
-        <DatePicker className="startdate" onChange = {this.handleonChange}
-        style={{width:'250px',display:'inline-block'}}/>
-        <span> - </span>
-        <DatePicker className="enddate" onChange = {this.handleonChange}
-        style={{width:'250px',display:'inline-block',}}/>
-         <Button type="primary" style={{margin:'0px 10px 0px 10px',background:'#434547'}}>搜索</Button>
 
-        <div style={{margin:'20px 10px 0px 0px'}}>
-          <span>区域筛选：</span>
-           <Button type="primary" style={{margin:'0px 10px 0px 10px'}}>全国</Button>
-           <Button type="primary" onClick={this.handleClick}>北京</Button>
-           <Button type="primary" style={{margin:'0px 25px 0px 10px'}}>成都</Button>
-          <span>当前查询区域：</span>
-        </div>
-        <div style={{margin:'20px 10px 0px 0px'}}>
-          <span>时段筛选：</span>
-          <Button type="primary" style={{margin:'0px 10px 0px 10px'}}>今日</Button>
-          <Button type="primary">昨日</Button>
-          <Button type="primary" style={{margin:'0px 10px 0px 10px'}}>最近７天</Button>
-          <Button type="primary" >最近３０天</Button>
-        </div>
-
-      </div>
-
-        <Table  dataSource={this.state.balanceChargesData}  rowKey='_id'
-          pagination={{defaultPageSize: 20, total: this.state.totalCount,
-          onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
-          showQuickJumper: true, current: this.state.currentPage}}
-          columns={BalanceColumns}
-        />
-=======
     return (
       <div>
       <Tabs defaultActiveKey="unpaid" onChange={this.toggleBalanceCharges.bind(this)} style={{marginLeft:"0"}}>
@@ -372,8 +289,6 @@ handleonChange(date, dateString) {
     </TabPane>
   </Tabs>
 
-
->>>>>>> 433bd4413f775b7d335e5a05125e2f48602a5400
        </div>
     )
   }
