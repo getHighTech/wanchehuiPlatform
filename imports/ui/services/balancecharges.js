@@ -31,7 +31,9 @@ export function getMeteorBalanceCharge(condition,page,pageSize,callback){
 
 
 export function countBalanceCharge(condition,callback){
+  console.log(condition);
   return Meteor.call('balancecharge.count',condition,function(err,rlt){
+    console.log(rlt);
     callback(err,rlt)
   })
 }

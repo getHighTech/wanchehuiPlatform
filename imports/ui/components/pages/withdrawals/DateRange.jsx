@@ -17,6 +17,8 @@ class DateRange extends React.Component {
     startValue: null,
     endValue: null,
     endOpen: false,
+    startDate:null,
+    endDate:null
   };
 
   disabledStartDate = (startValue) => {
@@ -43,12 +45,22 @@ class DateRange extends React.Component {
 
   onStartChange = (value) => {
     this.onChange('startValue', value);
-    console.log('startValue', value);
+    let newDate = new Date(value._d);
+    let startValue =newDate.getFullYear() + '/' + (newDate.getMonth() + 1) + '/' + newDate.getDate();
+    console.log(startValue);
+    this.setState({
+      startDate:startValue
+    })
   }
 
   onEndChange = (value) => {
     this.onChange('endValue', value);
-    console.log('endValue', value);
+    let newDate = new Date(value._d);
+    let endValue =newDate.getFullYear() + '/' + (newDate.getMonth() + 1) + '/' + newDate.getDate();
+    console.log(new Date(endValue));
+    this.setState({
+      endDate:endValue
+    })
   }
 
   handleStartOpenChange = (open) => {
@@ -60,6 +72,26 @@ class DateRange extends React.Component {
   handleEndOpenChange = (open) => {
     this.setState({ endOpen: open });
   }
+
+  DateFind(){
+    let self =this;
+    console.log(self.props.SearchCondition.status);
+    console.log(this.state.startDate,this.state.endDate);
+    let newcondition ={createdAt: {'$gt':new Date(this.state.startDate),'$lte':new Date(this.state.endDate)},status:self.props.SearchCondition.status}
+    Meteor.call('get.balance_charges.InThisTime',this.state.startDate,this.state.endDate,self.props.SearchCondition.status,function(error,result){
+      if(!error){
+        console.log(result);
+        self.props.getDateSearchData(result);
+        self.props.getChangeCondition(newcondition)
+      }
+      else{
+        console.log(error);
+      }
+    })
+  }
+
+
+
 
   render() {
     const { startValue, endValue, endOpen } = this.state;
@@ -97,7 +129,7 @@ class DateRange extends React.Component {
           onOpenChange={this.handleEndOpenChange}
         />
 
-        <Button type="primary" style={{margin:'0px 10px 0px 10px',background:'#434547'}}>搜索</Button>
+        <Button type="primary" onClick={() => this.DateFind()} style={{margin:'0px 10px 0px 10px',background:'#434547'}}>搜索</Button>
 
 
       <div style={{margin:'20px 10px 0px 0px'}}>

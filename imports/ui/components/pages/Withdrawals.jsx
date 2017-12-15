@@ -35,6 +35,17 @@ state= {
   totalCount:500,
 }
 
+getDateSearchData(rlt){
+  this.setState({
+    balanceChargesData:rlt
+  })
+}
+
+getChangeCondition(newcondition){
+  this.setState({
+    condition:newcondition
+  })
+}
 
 componentDidMount(){
   let self = this;
@@ -236,7 +247,11 @@ getBalanceCharge(page,pageSize,condition){
 
       <Tabs defaultActiveKey="unpaid" onChange={this.toggleBalanceCharges.bind(this)} style={{marginLeft:"0"}}>
     <TabPane tab="未打款" key="unpaid">
-    <DateRange />
+    <DateRange
+    getDateSearchData={this.getDateSearchData.bind(this)}
+    getChangeCondition={this.getChangeCondition.bind(this)}
+    SearchCondition = {this.state.condition}
+    />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
             pagination={{defaultPageSize: 20,
@@ -248,7 +263,11 @@ getBalanceCharge(page,pageSize,condition){
      columns={BalanceColumns} />
      </TabPane>
     <TabPane tab="已打款" key="paid">
-    <DateRange />
+    <DateRange
+    getDateSearchData={this.getDateSearchData.bind(this)}
+    getChangeCondition={this.getChangeCondition.bind(this)}
+    SearchCondition = {this.state.condition}
+    />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
             pagination={{defaultPageSize: 20,
@@ -260,7 +279,11 @@ getBalanceCharge(page,pageSize,condition){
      columns={BalanceColumns} />
     </TabPane>
     <TabPane tab="已撤销" key="revoke">
-    <DateRange />
+    <DateRange
+    getDateSearchData={this.getDateSearchData.bind(this)}
+    getChangeCondition={this.getChangeCondition.bind(this)}
+    SearchCondition = {this.state.condition}
+    />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
             pagination={{defaultPageSize: 20,

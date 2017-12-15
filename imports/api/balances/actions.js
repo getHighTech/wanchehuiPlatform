@@ -40,5 +40,7 @@ export function loseUserMoney(userId, amount, reason){
 
 
 export function allBalanceChargeCount(condition){
+  console.log(condition);
+  console.log(BalanceCharges.find(condition).count());
   return BalanceCharges.find(condition).count();
 }
