@@ -60,6 +60,9 @@ Meteor.methods({
   "get.balance_charges.InThisTime"(startTime,endTime,condition){
     console.log(condition);
     return BalanceCharges.find({createdAt: {'$gt':new Date(startTime),'$lte':new Date(endTime)},status:condition}).fetch();
+  },
+  "get.balance_charges.InThisTimeCount"(startTime,endTime,condition){
+    return BalanceCharges.find({createdAt: {'$gt':new Date(startTime),'$lte':new Date(endTime)},status:condition}).count();
   }
 
 });

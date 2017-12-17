@@ -18,7 +18,8 @@ class DateRange extends React.Component {
     endValue: null,
     endOpen: false,
     startDate:null,
-    endDate:null
+    endDate:null,
+    localarea:{area:"CHENGDU",area:"BEIJING"}
   };
 
   disabledStartDate = (startValue) => {
@@ -75,14 +76,45 @@ class DateRange extends React.Component {
 
   DateFind(){
     let self =this;
+    console.log(self.state.localarea);
     console.log(self.props.SearchCondition.status);
     console.log(this.state.startDate,this.state.endDate);
     let newcondition ={createdAt: {'$gt':new Date(this.state.startDate),'$lte':new Date(this.state.endDate)},status:self.props.SearchCondition.status}
-    Meteor.call('get.balance_charges.InThisTime',this.state.startDate,this.state.endDate,self.props.SearchCondition.status,function(error,result){
-      if(!error){
+    Meteor.call('get.balance_charges.InThisTime',this.state.startDate,this.state.endDate,self.props.SearchCondition.status,function(err,rlt){
+      if(!err){
+        var bankIds = [];
+        var result = [];
+        for(var charge  of rlt){
+          charge.money = charge.money/100.0;
+          result.push(charge);
+          let userId = charge.userId;
+          bankIds.push(userId);
+        }
+        Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
+          if (!error) {
+            accoutHash = {}
+            for(let accout of accouts) {
+              accoutHash[accout.userId] = accout;
+            }
+            for(var charge of result) {
+              charge.bankId = accoutHash[charge.userId].accountNumber;
+              charge.userId=  accoutHash[charge.userId].realName;
+            }
+            return(err, result);
+          }
+        });
         console.log(result);
         self.props.getDateSearchData(result);
         self.props.getChangeCondition(newcondition)
+      }
+      else{
+        console.log(error);
+      }
+    })
+    Meteor.call('get.balance_charges.InThisTimeCount',this.state.startDate,this.state.endDate,self.props.SearchCondition.status,function(err,rlt){
+      if(!err){
+        console.log(rlt);
+        self.props.getDateSearchtotalCount(rlt);
       }
       else{
         console.log(error);

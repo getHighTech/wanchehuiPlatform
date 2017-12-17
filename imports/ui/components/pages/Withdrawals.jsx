@@ -39,11 +39,20 @@ getDateSearchData(rlt){
   this.setState({
     balanceChargesData:rlt
   })
+  console.log(this.state.condition);
 }
 
 getChangeCondition(newcondition){
   this.setState({
     condition:newcondition
+  })
+    console.log(this.state.condition);
+}
+
+
+getDateSearchtotalCount(newtotalCount){
+  this.setState({
+    totalCount:newtotalCount
   })
 }
 
@@ -105,8 +114,8 @@ toggleBalanceCharges(key) {
   }
   if(key=="revoke"){
     let condition = {status:'revoke'}
-      self.getBalanceCharge(1,20,this.state.conditionRevoke);
-      countBalanceCharge(self.state.conditionRevoke,function(err,rlt){
+      self.getBalanceCharge(1,20,condition);
+      countBalanceCharge(condition,function(err,rlt){
           if(!err){
             self.setState({
               totalCount:rlt,
@@ -250,6 +259,7 @@ getBalanceCharge(page,pageSize,condition){
     <DateRange
     getDateSearchData={this.getDateSearchData.bind(this)}
     getChangeCondition={this.getChangeCondition.bind(this)}
+    getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
     SearchCondition = {this.state.condition}
     />
     <Table  dataSource={this.state.balanceChargesData}
@@ -266,6 +276,7 @@ getBalanceCharge(page,pageSize,condition){
     <DateRange
     getDateSearchData={this.getDateSearchData.bind(this)}
     getChangeCondition={this.getChangeCondition.bind(this)}
+    getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
     SearchCondition = {this.state.condition}
     />
     <Table  dataSource={this.state.balanceChargesData}
@@ -282,6 +293,7 @@ getBalanceCharge(page,pageSize,condition){
     <DateRange
     getDateSearchData={this.getDateSearchData.bind(this)}
     getChangeCondition={this.getChangeCondition.bind(this)}
+    getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
     SearchCondition = {this.state.condition}
     />
     <Table  dataSource={this.state.balanceChargesData}
