@@ -18,6 +18,12 @@ import 'antd/lib/modal/style';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 import RoleModal from './roles_components/RoleModal.jsx';
+import Divider from 'antd/lib/divider';
+import 'antd/lib/divider/style'
+import Icon from 'antd/lib/icon';
+import 'antd/lib/icon/style'
+import {countRoles,getMeteorRolesLimit} from '../../services/roles.js'
+
 
 
 
@@ -26,16 +32,26 @@ class Roles extends React.Component{
     super(props);
     this.state={
       modalVisible: false,
-      modalTitle:""
+      modalTitle:"",
+      rolesData:[],
+      condition:{},
+      totalCount:'',
+      singleRole:{},
+      modalInsert: true
     }
 
   }
 
   onClickInsert = () => {
     this.setState({
+      singleRole: {},
       modalVisible: true,
-      modalTitle:"新建一个角色"
+      modalTitle:"新建一个角色",
+      modalInsert: true
     });
+  }
+  refleshTable(){
+    this.getPageRoles(1,20,this.state.condition);
   }
   handleOk = (e) => {
     console.log(e);
@@ -43,37 +59,101 @@ class Roles extends React.Component{
       visible: false,
     });
   }
+  getPageRoles(page,pageSize,condition){
+    let self = this
+    Meteor.call('get.roles.limit',condition,page,pageSize, function(err,rlt){
+      if(!err){
+        console.log(rlt)
+        self.setState({
+          rolesData: rlt
+        })
+      }
+      console.log(self.state.rolesData)
+    })
+  }
+  countRoles(){
+
+  }
 
   hideModal = () => {
     this.setState({modalVisible: false});
   };
 
+  componentWillMount(){
+    console.log(this.state.condition);
+    this.getPageRoles(1,20,this.state.condition);
+    countRoles(function(err, rlt){
+      if (!err) {
+        self.setState({
+          totalCount: rlt,
+        });
+      }
+    })
+  }
+  onClickUpdate(roleId){
+    console.log(roleId)
+    let self = this
+    Meteor.call('role.findById', roleId, function(err,rlt){
+      if(!err){
+        self.setState({
+          singleRole: rlt,
+          modalVisible: true,
+          modalTitle:"编辑角色",
+          modalInsert: false
+        })
+        console.log(self.state.singleRole)
+      }
+    })
+  }
+  showRoleUsers(){
 
+  }
+  showChangeConfirm(){
+
+  }
   render() {
-    const dataSource = [{
-      key: '1',
-      name: '胡彦斌',
-      age: 32,
-      address: '西湖区湖底公园1号'
-    }, {
-      key: '2',
-      name: '胡彦祖',
-      age: 42,
-      address: '西湖区湖底公园1号'
-    }];
+    const dataSource = this.state.rolesData
     
     const columns = [{
-      title: '姓名',
+      title: '角色名字',
+      dataIndex: 'name_zh',
+      key: 'name_zh',
+    }, {
+      title: '角色标识',
       dataIndex: 'name',
       key: 'name',
     }, {
-      title: '年龄',
-      dataIndex: 'age',
-      key: 'age',
-    }, {
-      title: '住址',
-      dataIndex: 'address',
-      key: 'address',
+      title: '角色权限',
+      key: 'permissions',
+      render: (text, record) => (
+        <span>
+          <Tooltip placement="topLeft" title="修改角色权限" arrowPointAtCenter>
+            <Button shape="circle" icon="edit"  onClick={ () => this.onClickUpdate(record._id)}></Button>
+          </Tooltip>
+        </span>
+      ),
+    },
+    {
+      title: '查看角色用户',
+      key: 'show',
+      render: (text, record) => (
+        <span>
+          <Tooltip placement="topLeft" title="查看用户角色" arrowPointAtCenter>
+            <Button shape="circle" icon="eye"  onClick={() => this.showRoleUsers(record._id)}  ></Button>
+          </Tooltip>
+        </span>
+      ),
+    },
+    {
+      title: '操作',
+      key: 'action',
+      render: (text, record) => (
+        <span>
+          <Tooltip placement="topLeft" title="增加新角色" arrowPointAtCenter>
+              <Switch checkedChildren="已启用" unCheckedChildren="已禁用" defaultChecked={!record.state} onChange={() => this.showChangeConfirm(record.state,record._id)}  />
+          </Tooltip>
+        </span>
+      ),
     }];
     const headerMenuStyle ={
       display: 'flex',
@@ -91,31 +171,17 @@ class Roles extends React.Component{
           <Tooltip placement="topLeft" title="增加新角色" arrowPointAtCenter>
             <Button shape="circle" icon="plus"  onClick={this.onClickInsert}  style={{fontSize: "18px", color: "red"}} ></Button>
           </Tooltip>
-
-          {/* <CommonModal
-          modalVisible={this.state.modalVisible}
-          modalTitle={this.state.modalTitle}
-          onCancel = { this.hideModal}
-          getPageShops = {this.getPageShops.bind(this)}
-          ref = {(input) => { this.fromModal = input; }}
-          /> */}
           <RoleModal 
           modalVisible={this.state.modalVisible}
           modalTitle={this.state.modalTitle}
           onCancel = { this.hideModal}
+          refleshTable = {this.refleshTable.bind(this)}
           ref = {(input) => { this.fromModal = input; }}
+          singleRole = {this.state.singleRole}
+          modalInsert = {this.state.modalInsert}
           />
-          <div>
-          <Input.Search
-                placeholder="搜索店铺相关"
-                style={{ width: 200 }}
-                onSearch={value => console.log(value)}
-                onInput={input => this.handleSearchInput(input.target.value) }
-              />
-          </div>
         </div>
-
-        <Table dataSource={dataSource} columns={columns} />
+        <Table rowKey={record => record._id} dataSource={dataSource} columns={columns} />
       </div>
     )
   }

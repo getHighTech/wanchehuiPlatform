@@ -34,11 +34,13 @@ class RoleModalWrap extends React.Component {
     
   }
   state = {
-        shops:{},
-        orders:{},
-        users:{},
-        roles:{},
-        distributions:{}
+    permissions:{
+      shops:{},
+      orders:{},
+      users:{},
+      roles:{},
+      distributions:{}
+    }
   }
   handleModalOk = (e) => {
     let self = this
@@ -47,27 +49,54 @@ class RoleModalWrap extends React.Component {
     form.validateFieldsAndScroll((err, values) => {
     if (!err) {
         const oldFormData = form.getFieldsValue();
-        console.log(oldFormData)
         //处理收到的表单的数据
         const newObj = {}
-        newObj.roleName = oldFormData.roleName
+        newObj.name = oldFormData.name
+        newObj.name_zh = oldFormData.name_zh
+        newObj.permissions = self.state.permissions
         //先去数据库查询角色标识，如果数据库里有就返回错误，等待编码
-        
-        newObj.tagName = oldFormData.tagName
-        newObj.permission = self.state
-        console.log(newObj)
-        Meteor.call('role.insert',newObj,function(err,rlt){
-          if(!err){
-            console.log("角色添加成功");
+        if(self.props.modalInsert){
+          Meteor.call('role.findByTag',oldFormData.name,function(err,rlt){
             console.log(rlt)
-            self.hideModal();
-          }
-        })
-        
-      }else{
+            if(rlt == "ROLE NOT FOUND"){
+              Meteor.call('role.insert',newObj,function(err,rlt){
+                if(!err){
+                  self.hideModal();
+                  form.resetFields();
+                  message.success('角色添加成功');
+                  self.props.refleshTable();
+                  console.log(rlt)
+                  
+                }
+              })
+            }else{
+              message.error('角色名字已经存在，不允许重复添加');
+            }
+          })
+        }else{
+          console.log("执行修改操作")
+          Meteor.call('role.update', self.props.singleRole,newObj,function(err,rlt){
+            if(!err){
+              self.hideModal();
+              form.resetFields();
+              message.success('角色修改成功');
+              self.props.refleshTable();
+              console.log(rlt)
+            }
+          })
+        }
+
+      }
+      else{
         message.error('表格参数有误，提交失败');
       }
     });
+  }
+  componentDidMount(){
+    
+  }
+  componentWillMount(){
+    console.log("组件加载完成")
   }
 
   hideModal = () => {
@@ -76,17 +105,23 @@ class RoleModalWrap extends React.Component {
 
 
   handleCancel = (e) => {
+    let self = this
+    const form = self.props.form;
+    form.resetFields();
     this.props.onCancel()
   }
   shopOnChange(checkedValues) {
+    let self = this
     let shops = {}
+    console.log(checkedValues)
     for(let i in checkedValues){
       shops[checkedValues[i]] = true
     }
+    console.log(shops)
     this.setState({
-      shops: shops,
+      shops:shops
     });
-    console.log(this.state.shops );
+    console.log(shops)
   }
   orderOnChange(checkedValues) {
     let orders = {}
@@ -96,7 +131,6 @@ class RoleModalWrap extends React.Component {
     this.setState({
       orders: orders,
     });
-    console.log(this.state.orders );
   }
   userOnChange(checkedValues) {
     let users = {}
@@ -106,7 +140,6 @@ class RoleModalWrap extends React.Component {
     this.setState({
       users: users,
     });
-    console.log(this.state.users );
   }
   roleOnChange(checkedValues) {
     let roles = {}
@@ -116,7 +149,6 @@ class RoleModalWrap extends React.Component {
     this.setState({
       roles: roles,
     });
-    console.log(this.state.roles );
   }
   distributionOnChange(checkedValues) {
     let distributions = {}
@@ -126,8 +158,29 @@ class RoleModalWrap extends React.Component {
     this.setState({
       distributions: distributions,
     });
-    console.log(this.state.distributions );
   }
+  isEmptyObject(obj){
+    for (var key in obj) {
+      return false;
+      }
+      return true;
+  }
+
+  objToArry(obj,str){
+    console.log(obj)
+    let self = this
+    let arr = []
+    if(!self.isEmptyObject(obj)){
+      console.log(obj.permissions[str])
+      for(var i in obj.permissions[str]){
+        arr.push(i)
+      }
+      console.log(arr)
+      console.log('非空对象')
+      return arr
+    }
+  }
+
   render(){
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
@@ -168,12 +221,20 @@ class RoleModalWrap extends React.Component {
       { label: '查看', value: 'showable' },
       { label: '删除', value: 'deletable',disabled: true },
     ];
+    
     const distributionOptions = [
       { label: '新增', value: 'readable' },
       { label: '修改', value: 'updatable' },
       { label: '查看', value: 'showable' },
       { label: '删除', value: 'deletable',disabled: true },
     ];
+
+    // let defaultOperationValue1 = this.objToArry(this.props.singleRole,"shops")
+    // let defaultOperationValue2 = this.objToArry(this.props.singleRole,"orders")
+    // let defaultOperationValue3 = this.objToArry(this.props.singleRole,"users")
+    // let defaultOperationValue4 = this.objToArry(this.props.singleRole,"roles")
+    // let defaultOperationValue5 = this.objToArry(this.props.singleRole,"distributions")
+
 
     return (
       <div>
@@ -196,7 +257,8 @@ class RoleModalWrap extends React.Component {
                   </span>
                 )}
               >
-                {getFieldDecorator('roleName', {
+                {getFieldDecorator('name_zh', {
+                  initialValue: this.props.singleRole.name_zh,
                   rules: [{ required: true, message: '角色名称为必填项目', whitespace: true }],
                 })(
                   <Input />
@@ -213,10 +275,11 @@ class RoleModalWrap extends React.Component {
                   </span>
                 )}
               >
-                {getFieldDecorator('tagName', {
+                {getFieldDecorator('name', {
+                  initialValue: this.props.singleRole.name,
                   rules: [{ required: true, message: '角色标识为必填项目', whitespace: true }],
                 })(
-                  <Input />
+                  <Input disabled={!this.props.modalInsert}/>
                 )}
               </FormItem>
               <Divider>为该角色添加以下权限</Divider>
@@ -246,10 +309,9 @@ class RoleModalWrap extends React.Component {
                 )}
               >
                 {getFieldDecorator('orders', {
-                  rules: [],
                 })(
                   <div style={checkoutStyle}>
-                    <CheckboxGroup options={orderOptions}  onChange={this.orderOnChange.bind(this)} />
+                    <CheckboxGroup options={orderOptions} onChange={this.orderOnChange.bind(this)} />
                   </div>
                   
                 )}
@@ -266,7 +328,7 @@ class RoleModalWrap extends React.Component {
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
-                    <CheckboxGroup options={userOptions}  onChange={this.userOnChange.bind(this)} />
+                    <CheckboxGroup options={userOptions}   onChange={this.userOnChange.bind(this)} />
                   </div>
                   
                 )}
