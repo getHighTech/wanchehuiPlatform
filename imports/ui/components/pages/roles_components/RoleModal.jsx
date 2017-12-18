@@ -34,14 +34,14 @@ class RoleModalWrap extends React.Component {
     
   }
   state = {
-    permissions:{
       shops:{},
       orders:{},
       users:{},
       roles:{},
-      distributions:{}
-    }
+      distributions:{},
   }
+
+  
   handleModalOk = (e) => {
     let self = this
     e.preventDefault();
@@ -53,7 +53,18 @@ class RoleModalWrap extends React.Component {
         const newObj = {}
         newObj.name = oldFormData.name
         newObj.name_zh = oldFormData.name_zh
-        newObj.permissions = self.state.permissions
+        // let permissionObj = {shops:{}, orders:{},users:{},roles:{},distributions:{}}
+        newObj.permissions = {};
+        let permissionsProps = ['shops', 'orders','users','roles','distributions'];
+        for(var i = 0,l = permissionsProps.length; i < l; i++ ){
+          newObj.permissions[permissionsProps[i]] = self.state[permissionsProps[i]] 
+        }        
+        // newObj.permissions.shops = self.state.shops;
+        // newObj.permissions.orders = self.state.orders;
+        // newObj.permissions.users = self.state.users;
+        // newObj.permissions.roles = self.state.roles;
+        // newObj.permissions.distributions = self.state.distributions;
+        console.log(newObj)
         //先去数据库查询角色标识，如果数据库里有就返回错误，等待编码
         if(self.props.modalInsert){
           Meteor.call('role.findByTag',oldFormData.name,function(err,rlt){
@@ -159,29 +170,11 @@ class RoleModalWrap extends React.Component {
       distributions: distributions,
     });
   }
-  isEmptyObject(obj){
-    for (var key in obj) {
-      return false;
-      }
-      return true;
-  }
 
-  objToArry(obj,str){
-    console.log(obj)
-    let self = this
-    let arr = []
-    if(!self.isEmptyObject(obj)){
-      console.log(obj.permissions[str])
-      for(var i in obj.permissions[str]){
-        arr.push(i)
-      }
-      console.log(arr)
-      console.log('非空对象')
-      return arr
-    }
-  }
 
   render(){
+    console.log(this.state);
+    
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -292,6 +285,7 @@ class RoleModalWrap extends React.Component {
                 )}
               >
                 {getFieldDecorator('shops', {
+                  initialValue:this.props.defaultOperationValue1,
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
@@ -311,7 +305,7 @@ class RoleModalWrap extends React.Component {
                 {getFieldDecorator('orders', {
                 })(
                   <div style={checkoutStyle}>
-                    <CheckboxGroup options={orderOptions} onChange={this.orderOnChange.bind(this)} />
+                    <CheckboxGroup options={orderOptions}  onChange={this.orderOnChange.bind(this)} />
                   </div>
                   
                 )}
@@ -325,6 +319,7 @@ class RoleModalWrap extends React.Component {
                 )}
               >
                 {getFieldDecorator('users', {
+                  initialValue:this.props.defaultOperationValue3,
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
@@ -342,10 +337,11 @@ class RoleModalWrap extends React.Component {
                 )}
               >
                 {getFieldDecorator('roles', {
+                  initialValue:this.props.defaultOperationValue4,
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
-                    <CheckboxGroup options={roleOptions}  onChange={this.roleOnChange.bind(this)} />
+                    <CheckboxGroup options={roleOptions}    onChange={this.roleOnChange.bind(this)} />
                   </div>
                   
                 )}
@@ -359,10 +355,11 @@ class RoleModalWrap extends React.Component {
                 )}
               >
                 {getFieldDecorator('distributions', {
+                  initialValue:this.props.defaultOperationValue5,
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
-                    <CheckboxGroup options={distributionOptions}  onChange={this.distributionOnChange.bind(this)} />
+                    <CheckboxGroup options={distributionOptions}   onChange={this.distributionOnChange.bind(this)} />
                   </div>
                   
                 )}
