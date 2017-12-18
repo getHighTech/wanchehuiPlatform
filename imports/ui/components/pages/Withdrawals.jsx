@@ -159,6 +159,48 @@ onPayMoney = (_id) =>{
 
 }
 
+onReturnMoney = (_id) =>{
+  let self = this
+  confirm({
+    title: '是否打款？！',
+    content: '请确认打款金额，银行卡号，姓名！',
+    okText: '是',
+    okType: 'danger',
+    cancelText: '否',
+    onOk() {
+  let userId='';
+  let money=null;
+  let amount=null;
+  Meteor.call('balance.chargesOne',_id,function(err,alt){
+  userId=alt.userId;
+  money=alt.money
+    Meteor.call('balance.userId',userId,function(error,result){
+      amount=result.amount
+      console.log(userId,money,amount);
+      Meteor.call('balances.updaterevoke.amount',userId,money,amount,function(wrong,rlt){
+
+      })
+    })
+  })
+  Meteor.call("balancecharge.status.updateRevoke",_id,function(error,result){
+    if(!error){
+      console.log(result);
+      self.getBalanceCharge(1,20,self.state.condition);
+
+    }
+    else {
+      console.log(error);
+    }
+      })
+      console.log('OK');
+      message.success('已撤销');
+    },
+  onCancel() {
+    console.log('Cancel');
+    message.error('已取消撤销');
+  },
+  });
+}
 
 
 
@@ -172,6 +214,7 @@ getBalanceCharge(page,pageSize,condition){
         currentPage:page,
       })
     }
+    console.log(rlt);
   })
 }
 
@@ -242,10 +285,7 @@ getBalanceCharge(page,pageSize,condition){
             <Button  onClick={ () => this.onPayMoney(record._id)} style={actionStyle} ><span>打款</span></Button>
           </Tooltip>
           <span className="ant-divider" />
-          <Tooltip placement="topLeft" title="撤销此次提现" arrowPointAtCenter>
-            <Button  onClick={ () => this.onReturnMoney(record._id)} style={actionStyle} ><span>撤销</span></Button>
-          </Tooltip>
-          <span className="ant-divider" />
+          
         </span>)
       }
     },

@@ -19,7 +19,8 @@ class DateRange extends React.Component {
     endOpen: false,
     startDate:null,
     endDate:null,
-    localarea:{area:"CHENGDU",area:"BEIJING"}
+    area:'',
+    local:"无"
   };
 
   disabledStartDate = (startValue) => {
@@ -76,11 +77,25 @@ class DateRange extends React.Component {
 
   DateFind(){
     let self =this;
-    console.log(self.state.localarea);
     console.log(self.props.SearchCondition.status);
-    console.log(this.state.startDate,this.state.endDate);
-    let newcondition ={createdAt: {'$gt':new Date(this.state.startDate),'$lte':new Date(this.state.endDate)},status:self.props.SearchCondition.status}
-    Meteor.call('get.balance_charges.InThisTime',this.state.startDate,this.state.endDate,self.props.SearchCondition.status,function(err,rlt){
+    console.log(self.state.startDate,this.state.endDate);
+    console.log(self.state.area)
+    let newcondition={}
+    if (self.state.area !== ""){
+      console.log(self.state)
+      newcondition ={createdAt: {'$gt':new Date(this.state.startDate),'$lte':new Date(this.state.endDate)},status:self.props.SearchCondition.status,area:self.state.area};
+    }else {
+     newcondition ={createdAt: {'$gt':new Date(this.state.startDate),'$lte':new Date(this.state.endDate)},status:self.props.SearchCondition.status};
+
+    }
+    self.getData(newcondition);
+    self.setState({
+      local:"无"
+    })
+  }
+  getData(newcondition){
+    let self = this;
+    Meteor.call('get.balance_charges.InThisTime',newcondition,function(err,rlt){
       if(!err){
         var bankIds = [];
         var result = [];
@@ -100,18 +115,19 @@ class DateRange extends React.Component {
               charge.bankId = accoutHash[charge.userId].accountNumber;
               charge.userId=  accoutHash[charge.userId].realName;
             }
-            return(err, result);
+            self.props.getDateSearchData(result);
+            self.props.getChangeCondition(newcondition)
           }
         });
         console.log(result);
-        self.props.getDateSearchData(result);
-        self.props.getChangeCondition(newcondition)
+
       }
       else{
-        console.log(error);
+        console.log(err);
       }
     })
-    Meteor.call('get.balance_charges.InThisTimeCount',this.state.startDate,this.state.endDate,self.props.SearchCondition.status,function(err,rlt){
+
+    Meteor.call('get.balance_charges.InThisTimeCount',newcondition,function(err,rlt){
       if(!err){
         console.log(rlt);
         self.props.getDateSearchtotalCount(rlt);
@@ -121,7 +137,92 @@ class DateRange extends React.Component {
       }
     })
   }
+  getToday(){
+    let self =this;
+    let currentDate = new Date();
+    let newCurrentDate =currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
+    let nextdate = (new Date((currentDate/1000+86400)*1000))
+    let newNextDate =nextdate.getFullYear() + '/' + (nextdate.getMonth() + 1) + '/' + nextdate.getDate();
+    let newcondition ={createdAt: {'$gt':new Date(newCurrentDate),'$lte':new Date(newNextDate)},status:self.props.SearchCondition.status};
+    self.getData(newcondition);
+    self.setState({
+      local:"今日",
+      startDate:null,
+      endDate:null,
+      startValue: null,
+      endValue: null,
+    })
+  }
+  getYesterday(){
+    let self =this;
+    let currentDate = new Date();
+    let newCurrentDate =currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
+    let yesterdate = (new Date((currentDate/1000-86400)*1000))
+    let newyesterdate =yesterdate.getFullYear() + '/' + (yesterdate.getMonth() + 1) + '/' + yesterdate.getDate();
+    let newcondition ={createdAt: {'$gt':new Date(newyesterdate),'$lte':new Date(newCurrentDate)},status:self.props.SearchCondition.status};
+    self.getData(newcondition);
+    self.setState({
+      local:"昨日",
+      startDate:null,
+      endDate:null,
+      startValue: null,
+      endValue: null,
+    })
+  }
+  getInthisWeek(){
+    let self =this;
+    let currentDate = new Date();
+    let newCurrentDate =currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
+    let yesterdate = (new Date((currentDate/1000-86400*7)*1000))
+    let newyesterdate =yesterdate.getFullYear() + '/' + (yesterdate.getMonth() + 1) + '/' + yesterdate.getDate();
+    let newcondition ={createdAt: {'$gt':new Date(newyesterdate),'$lte':new Date(newCurrentDate)},status:self.props.SearchCondition.status};
+    self.getData(newcondition);
+    self.setState({
+      local:"最近7日",
+      startDate:null,
+      endDate:null,
+      startValue: null,
+      endValue: null,
+    })
+  }
+  getInthisMonth(){
+    let self =this;
+    let currentDate = new Date();
+    let newCurrentDate =currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
+    let yesterdate = (new Date((currentDate/1000-86400*30)*1000))
+    let newyesterdate =yesterdate.getFullYear() + '/' + (yesterdate.getMonth() + 1) + '/' + yesterdate.getDate();
+    let newcondition ={createdAt: {'$gt':new Date(newyesterdate),'$lte':new Date(newCurrentDate)},status:self.props.SearchCondition.status};
+    self.getData(newcondition);
+    self.setState({
+      local:"最近30日",
+      startDate:null,
+      endDate:null,
+      startValue: null,
+      endValue: null,
+    })
+  }
 
+  DateEmpty(){
+    let self =this;
+    console.log(self.props.SearchCondition.status);
+    let newcondition={status:self.props.SearchCondition.status};
+    self.getData(newcondition);
+    self.setState({
+      local:"无"
+    })
+  }
+  getChengdu(){
+    let self =this ;
+    self.setState({
+      area:"CHENGDU"
+    })
+    console.log(self.props.SearchCondition.status);
+    console.log(self.state.startDate,this.state.endDate);
+    console.log(self.state.area)
+
+
+
+  }
 
 
 
@@ -162,21 +263,16 @@ class DateRange extends React.Component {
         />
 
         <Button type="primary" onClick={() => this.DateFind()} style={{margin:'0px 10px 0px 10px',background:'#434547'}}>搜索</Button>
+        <Button type="primary" onClick={() => this.DateEmpty()} style={{margin:'0px 10px 0px 10px',background:'#434547'}}>清空</Button>
 
 
-      <div style={{margin:'20px 10px 0px 0px'}}>
-        <span>区域筛选：</span>
-        <Button type="primary"   style={{margin:'0px 10px 0px 10px'}} value="全国">全国</Button>
-        <Button type="primary"  value='北京'>北京</Button>
-        <Button type="primary"   style={{margin:'0px 25px 0px 10px'}}　value='成都'>成都</Button>
-        <span>当前查询区域：{this.state.value}</span>
-      </div>
       <div style={{margin:'20px 10px 0px 0px'}}>
         <span>时段筛选：</span>
-        <Button type="primary" style={{margin:'0px 10px 0px 10px'}}>今日</Button>
-        <Button type="primary">昨日</Button>
-        <Button type="primary" style={{margin:'0px 10px 0px 10px'}}>最近７天</Button>
-        <Button type="primary" >最近３０天</Button>
+        <Button type="primary" onClick={()=> this.getToday()} style={{margin:'0px 10px 0px 10px'}}>今日</Button>
+        <Button type="primary" onClick={()=> this.getYesterday()} >昨日</Button>
+        <Button type="primary" onClick={()=> this.getInthisWeek()} style={{margin:'0px 10px 0px 10px'}}>最近７天</Button>
+        <Button type="primary" onClick={()=> this.getInthisMonth()} >最近３０天</Button>
+        <span style={{margin:'0px 10px 0px 10px'}}>当前筛选时段:{this.state.local}</span>
     </div>
 
     </div>
