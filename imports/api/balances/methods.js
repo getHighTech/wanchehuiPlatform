@@ -9,7 +9,6 @@ import { findBalanceByUserId, findBalanceByUserIdAll, findBalanceByUsername } fr
 import { getIncomeRecords } from './balance_incomes_actions.js'
 import { log } from 'util';
 
-
 Meteor.methods({
   "balances.userId"(userId){
     return findBalanceByUserId(userId);
@@ -20,7 +19,6 @@ Meteor.methods({
   "balance.username"(username){
     return findBalanceByUsername(username);
   },
-
   "balance.chargesdataUnpaid"(condition,page=1, pageSize=20){
     let chargesdata =  BalanceCharges.find(condition, {
       skip: (page-1)*pageSize, limit: pageSize,
@@ -77,6 +75,7 @@ Meteor.methods({
 
   "balancecharge.count"(condition){
     return allBalanceChargeCount(condition);
+    //return BalanceCharges.find(condition).count();
   },
   'bankcards.accountNumber'(_id){
     return Bankcards.findOne({userId:_id}).accountNumber;

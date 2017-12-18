@@ -38,11 +38,11 @@ state= {
   totalCount:500,
 }
 
+//获取数据
 componentDidMount(){
   let self = this;
   self.getBalanceChargeUnpaid(1,20,this.state.conditionUnpaid);
   countBalanceCharge(this.state.conditionUnpaid,function(err,rlt){
-
       if(!err){
         self.setState({
           totalCount:rlt,

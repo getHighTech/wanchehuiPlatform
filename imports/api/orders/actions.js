@@ -3,6 +3,6 @@
 //
 import {Orders} from './orders.js';
 
-export function OrdersCount(){
-  return Orders.find().count();
+export function ordersCount(condition){
+  return Orders.find(condition).count();
 }
