@@ -38,11 +38,10 @@ Meteor.methods({
         'name':1,
         'realNote':1,
         'mobile':1,
-        'location':1,
+        'area':1,
         'price':1,
         'status':1,
         'createdAt':1,
-        // 'realNote':1,
       }
     }
   )
@@ -61,5 +60,12 @@ Meteor.methods({
       }
     })
 
+  },
+  "get.orders.InThisTime"(condition){
+    console.log(condition);
+    return Orders.find(condition,{sort: {"createdAt": -1}}).fetch();
+  },
+  "get.orders.InThisTimeCount"(condition){
+    return Orders.find(condition).count();
   }
 });

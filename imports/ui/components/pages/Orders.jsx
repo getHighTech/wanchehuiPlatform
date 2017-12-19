@@ -17,9 +17,7 @@ import { Tabs } from 'antd';
 const TabPane = Tabs.TabPane;
 import {Tooltip} from 'antd/lib/tooltip';
 import "antd/lib/tooltip/style";
-// import Button from 'antd/lib/button';
-// import "antd/lib/button/style";
-// import Modal from 'antd/lib/modal';
+import OrdersTime from './orders/OrdersTime.jsx';
 
 const Search = Input.Search;
 const { RangePicker } = DatePicker;
@@ -42,16 +40,42 @@ class Orders extends React.Component{
     value:'全国',
   }
 
+  getDateSearchData(rlt){
+    console.log(rlt);
+    this.setState({
+      ordersData:rlt
+    })
+    console.log(this.state.condition);
+  }
+
+  getChangeCondition(newcondition){
+    this.setState({
+      condition:newcondition
+    })
+      console.log(this.state.condition);
+  }
+
+
+  getDateSearchtotalCount(newtotalCount){
+    this.setState({
+      totalCount:newtotalCount
+    })
+  }
+
   componentDidMount(){
     let self = this;
-    this.getOrders(1,20,this.state.condition);
-    countOrders(this.state.condition,function(err,rlt){
+    let condition ={status:'paid'}
+    this.getOrders(1,20,condition);
+    countOrders(condition,function(err,rlt){
         if(!err){
           self.setState({
             totalCount:rlt,
           })
           console.log(rlt);
         }
+    })
+    self.setState({
+      condition
     })
   }
 
@@ -66,24 +90,30 @@ class Orders extends React.Component{
     let self = this;
     if(key=="paid"){
       let condition = {status:'paid'};
-        self.getOrders(1,20,this.state.conditionPaid);
-        countOrders(self.state.condition,function(err,rlt){
+        self.getOrders(1,20,condition);
+        countOrders(condition,function(err,rlt){
             if(!err){
               self.setState({
                 totalCount:rlt,
               })
             }
         })
+        self.setState({
+          condition
+        })
     }
     if(key=="unpaid"){
       let condition = {status:'unpaid'};
-        self.getOrders(1,20,self.state.conditionUnpaid);
-        countOrders(self.state.condition,function(err,rlt){
+        self.getOrders(1,20,condition);
+        countOrders(condition,function(err,rlt){
             if(!err){
               self.setState({
                 totalCount:rlt,
               })
             }
+        })
+        self.setState({
+          condition
         })
     }
 
@@ -93,16 +123,13 @@ class Orders extends React.Component{
   getOrders(page,pageSize,condition){
     let self =this;
     getMeteorOrders(condition,page,pageSize,function(err,rlt){
-      console.log(err);
       if(!err){
         console.log(rlt)
         self.setState({
           ordersData:rlt,
           currentPage:page,
         })
-      //  console.log(rlt);
       }
-    //  console.log(self.state.ordersData)
     })
   }
 
@@ -229,9 +256,17 @@ class Orders extends React.Component{
       width:150
     },{
       title:'地区',
-      dataIndex:'location',
-      key:'location',
-      width:150
+      dataIndex:'area',
+      key:'area',
+      width:150,
+      render:(text,record) => {
+        if(record.area=='BEIJING'){
+          return(<span>北京</span>)
+        }
+        if(record.area=='CHENGDU'){
+          return(<span>成都</span>)
+        }
+      }
     },{
       title:'订单金额',
       dataIndex:'price',
@@ -305,6 +340,19 @@ class Orders extends React.Component{
       key:'realNote.carNumber',
       width:150,
     },{
+      title:'地区',
+      dataIndex:'area',
+      key:'area',
+      width:150,
+      render:(text,record) => {
+        if(record.area=='BEIJING'){
+          return(<span>北京</span>)
+        }
+        if(record.area=='CHENGDU'){
+          return(<span>成都</span>)
+        }
+      }
+    },{
       title:'订单金额',
       dataIndex:'price',
       key:'price',
@@ -313,8 +361,14 @@ class Orders extends React.Component{
   ];
     return (<div>
 
-    <Tabs defaultActiveKey="unpaid" onChange={this.toggleOrders.bind(this)}>
+    <Tabs defaultActiveKey="paid" onChange={this.toggleOrders.bind(this)}>
       <TabPane tab="已支付"　key="paid">
+      <OrdersTime
+      getDateSearchData={this.getDateSearchData.bind(this)}
+      getChangeCondition={this.getChangeCondition.bind(this)}
+      getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
+      SearchCondition = {this.state.condition}
+      />
         <Table  dataSource={this.state.ordersData}  rowKey='_id'
           pagination={{defaultPageSize: 20, total: this.state.totalCount,
             onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
@@ -323,6 +377,12 @@ class Orders extends React.Component{
         />
       </TabPane>
       <TabPane tab="未支付" key="unpaid">
+      <OrdersTime
+      getDateSearchData={this.getDateSearchData.bind(this)}
+      getChangeCondition={this.getChangeCondition.bind(this)}
+      getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
+      SearchCondition = {this.state.condition}
+      />
         <Table  dataSource={this.state.ordersData}  rowKey='_id'
           pagination={{defaultPageSize: 20, total: this.state.totalCount,
           onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),

@@ -12,7 +12,7 @@ import moment from 'moment';
 
 
 
-class DateRange extends React.Component {
+class ordersTime extends React.Component {
   state = {
     startValue: null,
     endValue: null,
@@ -95,40 +95,16 @@ class DateRange extends React.Component {
   }
   getData(newcondition){
     let self = this;
-    Meteor.call('get.balance_charges.InThisTime',newcondition,function(err,rlt){
+    Meteor.call('get.orders.InThisTime',newcondition,function(err,rlt){
       if(!err){
-        var bankIds = [];
-        var result = [];
-        for(var charge  of rlt){
-          charge.money = charge.money/100.0;
-          result.push(charge);
-          let userId = charge.userId;
-          bankIds.push(userId);
-        }
-        Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
-          if (!error) {
-            accoutHash = {}
-            for(let accout of accouts) {
-              accoutHash[accout.userId] = accout;
-            }
-            for(var charge of result) {
-              charge.bankId = accoutHash[charge.userId].accountNumber;
-              charge.userId=  accoutHash[charge.userId].realName;
-              charge.bankAddress=  accoutHash[charge.userId].bankAddress;
-            }
-            self.props.getDateSearchData(result);
-            self.props.getChangeCondition(newcondition)
-          }
-        });
-        console.log(result);
-
-      }
-      else{
-        console.log(err);
+        console.log(rlt);
+        self.props.getDateSearchData(rlt);
+        console.log(rlt);
+        self.props.getChangeCondition(newcondition)
       }
     })
 
-    Meteor.call('get.balance_charges.InThisTimeCount',newcondition,function(err,rlt){
+    Meteor.call('get.orders.InThisTimeCount',newcondition,function(err,rlt){
       if(!err){
         console.log(rlt);
         self.props.getDateSearchtotalCount(rlt);
@@ -292,4 +268,4 @@ function mapStateToProps(state) {
    };
 }
 
-export default connect(mapStateToProps)(DateRange);
+export default connect(mapStateToProps)(ordersTime);

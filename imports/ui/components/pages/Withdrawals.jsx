@@ -187,7 +187,7 @@ onReturnMoney = (_id) =>{
       Meteor.call('balances.updaterevoke.amount',userId,money,amount,function(wrong,rlt){
       })
     })
-    
+
   })
   Meteor.call("balancecharge.status.updateRevoke",_id,function(error,result){
     if(!error){
@@ -247,6 +247,11 @@ handleonChange(date, dateString) {
         title: '银行卡号',
         dataIndex: 'bankId',
         key: 'bankId',
+        width: 150,
+      },{
+        title: '开户行',
+        dataIndex: 'address',
+        key: 'address',
         width: 150,
       },
       {

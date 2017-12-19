@@ -32,7 +32,8 @@ Meteor.methods({
         "money":1,
         'bankId':1,
         'userId':1,
-        'status':"unpaid",
+        'status':1,
+        'address':1,
         'createdAt': 1,
       }
 
