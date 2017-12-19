@@ -120,7 +120,7 @@ class MainLayout extends Component {
               <span className="nav-text">订单管理</span>
             </Menu.Item>
             <Menu.Item key="withdrawals">
-              <Icon type="paper-clip" />
+              <Icon type="pay-circle-o" />
               <span className="nav-text">提现管理</span>
             </Menu.Item>
             <Menu.Item key="agency_relations">

@@ -6,7 +6,9 @@ import "antd/lib/table/style";
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import { showbalancedata } from '/imports/ui/actions/withdrawals.js';
+
 import {getMeteorBalanceCharge,countBalanceCharge} from '../../services/balancecharges.js'
+
 import { Tabs } from 'antd';
 const TabPane = Tabs.TabPane;
 import Tooltip from 'antd/lib/tooltip';
@@ -27,6 +29,8 @@ class Withdrawals extends React.Component{
     super(props);
 
   }
+
+
 state= {
   balanceChargesData:[],
   loadingTip:"加载中...",
@@ -34,6 +38,7 @@ state= {
   currentPage:1,
   totalCount:500,
 }
+
 
 getDateSearchData(rlt){
   this.setState({
@@ -80,6 +85,7 @@ handlePageChange(page, pageSize){
   this.getBalanceCharge(page, pageSize, this.state.condition);
   console.log(this.state.condition);
 }
+
 
 
 toggleBalanceCharges(key) {
@@ -159,6 +165,7 @@ onPayMoney = (_id) =>{
 
 }
 
+
 onReturnMoney = (_id) =>{
   let self = this
   confirm({
@@ -178,9 +185,9 @@ onReturnMoney = (_id) =>{
       amount=result.amount
       console.log(userId,money,amount);
       Meteor.call('balances.updaterevoke.amount',userId,money,amount,function(wrong,rlt){
-
       })
     })
+    
   })
   Meteor.call("balancecharge.status.updateRevoke",_id,function(error,result){
     if(!error){
@@ -207,7 +214,9 @@ onReturnMoney = (_id) =>{
 
 getBalanceCharge(page,pageSize,condition){
   let self = this;
+
   getMeteorBalanceCharge(condition,page,pageSize,function(err,rlt){
+
     if(!err){
       self.setState({
         balanceChargesData:rlt,
@@ -216,6 +225,10 @@ getBalanceCharge(page,pageSize,condition){
     }
     console.log(rlt);
   })
+}
+
+handleonChange(date, dateString) {
+  console.log(date, dateString);
 }
 
 
@@ -295,6 +308,7 @@ getBalanceCharge(page,pageSize,condition){
     },
     }
   ];
+
     return (
       <div>
 
@@ -351,7 +365,6 @@ getBalanceCharge(page,pageSize,condition){
      columns={BalanceColumns} />
     </TabPane>
   </Tabs>
-
 
        </div>
     )
