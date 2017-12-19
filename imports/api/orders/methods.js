@@ -27,28 +27,7 @@ Meteor.methods({
           status: params.status,
         });
       },
-  'orders.ordersdataUnpaid'(condition,page=1,pageSize=20){
-    console.log(page,pageSize);
-    let ordersdata = Orders.find(condition, {
-      skip: (page-1)*pageSize, limit: pageSize,
-      sort: {"createdAt": -1},
-      fields:
-        {
-        'type':1,
-        'name':1,
-        'mobile':1,
-        'realNote':1,
-        'location':1,
-        'price':1,
-        'status':'unpaid',
-        'realNote': 1,
-      }
-    }
-  )
-  console.log(ordersdata.fetch());
-    return ordersdata.fetch();
-  },
-  'orders.ordersdataPaid'(condition,page=1,pageSize=20){
+  'orders.ordersdata'(condition,page=1,pageSize=20){
     console.log(page,pageSize);
     let ordersdata = Orders.find(condition, {
       skip: (page-1)*pageSize, limit: pageSize,
@@ -61,7 +40,7 @@ Meteor.methods({
         'mobile':1,
         'location':1,
         'price':1,
-        'status':'paid',
+        'status':1,
         'createdAt':1,
         // 'realNote':1,
       }

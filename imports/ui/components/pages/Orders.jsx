@@ -5,7 +5,7 @@ import React from "react";
 import { connect } from 'react-redux';
 import Table from 'antd/lib/table';
 import "antd/lib/table/style";
-import {getMeteorOrdersPaid,getMeteorOrdersUnpaid,countOrders} from '../../services/orders.js';
+import {getMeteorOrders,countOrders} from '../../services/orders.js';
 
 import { Input } from 'antd';
 import "antd/lib/input/style";
@@ -36,8 +36,7 @@ class Orders extends React.Component{
   state= {
     ordersData:[],
     loadingTip:"加载中...",
-    conditionUnpaid: {status:'unpaid'},
-    conditionPaid:{status:'paid'},
+    condition: {},
     currentPage:1,
     totalCount:500,
     value:'全国',
@@ -45,48 +44,30 @@ class Orders extends React.Component{
 
   componentDidMount(){
     let self = this;
-    this.getOrdersUnpaid(1,20,this.state.conditionUnpaid);
-    console.log(`condition: ${this.state.conditionUnpaid}`)
-    countOrders(this.state.conditionUnpaid,function(err,rlt){
-      console.log(err);
-      console.log(111);
-      console.log(rlt);
+    this.getOrders(1,20,this.state.condition);
+    countOrders(this.state.condition,function(err,rlt){
         if(!err){
           self.setState({
             totalCount:rlt,
           })
-          console.log(rtl);
+          console.log(rlt);
         }
     })
   }
 
-  handlePageChangeUnpaid(page, pageSize){
+  handlePageChange(page, pageSize){
     $(document).scrollTop(0);
-    this.getOrdersUnpaid(page, pageSize, this.state.conditionUnpaid);
-    console.log(page,pageSize,this.state.conditionUnpaid);
+    this.getOrders(page, pageSize, this.state.condition);
   }
 
-  handlePageChangePaid(page, pageSize){
-    $(document).scrollTop(0);
-    this.getOrdersPaid(page, pageSize, this.state.conditionPaid);
-    console.log(page,pageSize,this.state.conditionPaid);
-  }
+
 
   toggleOrders(key) {
     let self = this;
-    if(key=="unpaid"){
-        self.getOrdersUnpaid(1,20,self.state.conditionUnpaid);
-        countOrders(self.state.conditionUnpaid,function(err,rlt){
-            if(!err){
-              self.setState({
-                totalCount:rlt,
-              })
-            }
-        })
-    }
     if(key=="paid"){
-        self.getOrdersPaid(1,20,this.state.conditionPaid);
-        countOrders(self.state.conditionPaid,function(err,rlt){
+      let condition = {status:'paid'};
+        self.getOrders(1,20,this.state.conditionPaid);
+        countOrders(self.state.condition,function(err,rlt){
             if(!err){
               self.setState({
                 totalCount:rlt,
@@ -94,12 +75,24 @@ class Orders extends React.Component{
             }
         })
     }
+    if(key=="unpaid"){
+      let condition = {status:'unpaid'};
+        self.getOrders(1,20,self.state.conditionUnpaid);
+        countOrders(self.state.condition,function(err,rlt){
+            if(!err){
+              self.setState({
+                totalCount:rlt,
+              })
+            }
+        })
+    }
+
   }
 
 
-  getOrdersUnpaid(page,pageSize,conditionUnpaid){
+  getOrders(page,pageSize,condition){
     let self =this;
-    getMeteorOrdersUnpaid(conditionUnpaid,page,pageSize,function(err,rlt){
+    getMeteorOrders(condition,page,pageSize,function(err,rlt){
       console.log(err);
       if(!err){
         console.log(rlt)
@@ -113,21 +106,7 @@ class Orders extends React.Component{
     })
   }
 
-  getOrdersPaid(page,pageSize,conditionPaid){
-    let self =this;
-    getMeteorOrdersPaid(conditionPaid,page,pageSize,function(err,rlt){
-      console.log(err);
-      if(!err){
-        console.log(rlt)
-        self.setState({
-          ordersData:rlt,
-          currentPage:page,
-        })
-      //  console.log(rlt);
-      }
-    //  console.log(self.state.ordersData)
-    })
-  }
+
 
   onPayMoney = (_id) =>{
     let self = this
@@ -333,52 +312,25 @@ class Orders extends React.Component{
     },
   ];
     return (<div>
-      <div style={{padding:'20px',background: 'rgb(236, 236, 236)'}}>
-        <span>关键字：</span>
-        <Search placeholder="input search text" style= {{width:250}}
-        onSearch = {value =>console.log(value)}/>
 
-        <span style={{margin:'0px 0px 0px 20px'}}>时间筛选：</span>
-        <DatePicker className="startdate" onChange = {this.handleonChange}/>
-        <span> - </span>
-        <DatePicker className="enddate" onChange = {this.handleonChange}/>
-
-        <Button type="primary" style={{margin:'0px 10px 0px 10px',background:'#434547'}}>搜索</Button>
-
-
-      <div style={{margin:'20px 10px 0px 0px'}}>
-        <span>区域筛选：</span>
-        <Button type="primary" onClick={this.QuanguoLocation.bind(this)}  style={{margin:'0px 10px 0px 10px'}} value="全国">全国</Button>
-        <Button type="primary" onClick={this.BeijingLocation.bind(this)} value='北京'>北京</Button>
-        <Button type="primary" onClick={this.ChengduLocation.bind(this)}  style={{margin:'0px 25px 0px 10px'}}　value='成都'>成都</Button>
-        <span>当前查询区域：{this.state.value}</span>
-      </div>
-      <div style={{margin:'20px 10px 0px 0px'}}>
-        <span>时段筛选：</span>
-        <Button type="primary" style={{margin:'0px 10px 0px 10px'}}>今日</Button>
-        <Button type="primary">昨日</Button>
-        <Button type="primary" style={{margin:'0px 10px 0px 10px'}}>最近７天</Button>
-        <Button type="primary" >最近３０天</Button>
-    </div>
-
-    </div>
     <Tabs defaultActiveKey="unpaid" onChange={this.toggleOrders.bind(this)}>
-      <TabPane tab="未支付" key="unpaid">
-        <Table  dataSource={this.state.ordersData}  rowKey='_id'
-          pagination={{defaultPageSize: 20, total: this.state.totalCount,
-          onChange: (page, pageSize)=> this.handlePageChangeUnpaid(page, pageSize),
-          showQuickJumper: true, current: this.state.currentPage}}
-          columns={UnpaidOrdersColumns}
-        />
-      </TabPane>
       <TabPane tab="已支付"　key="paid">
         <Table  dataSource={this.state.ordersData}  rowKey='_id'
           pagination={{defaultPageSize: 20, total: this.state.totalCount,
-            onChange: (page, pageSize)=> this.handlePageChangePaid(page, pageSize),
+            onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
             showQuickJumper: true, current: this.state.currentPage}}
             columns={OrdersColumns}
         />
       </TabPane>
+      <TabPane tab="未支付" key="unpaid">
+        <Table  dataSource={this.state.ordersData}  rowKey='_id'
+          pagination={{defaultPageSize: 20, total: this.state.totalCount,
+          onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
+          showQuickJumper: true, current: this.state.currentPage}}
+          columns={UnpaidOrdersColumns}
+        />
+      </TabPane>
+
     </Tabs>
     </div>
 
