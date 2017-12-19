@@ -162,8 +162,8 @@ onPayMoney = (_id) =>{
 onReturnMoney = (_id) =>{
   let self = this
   confirm({
-    title: '是否打款？！',
-    content: '请确认打款金额，银行卡号，姓名！',
+    title: '是否撤销？！',
+    content: '请确认是否撤销此次提现！',
     okText: '是',
     okType: 'danger',
     cancelText: '否',
@@ -285,7 +285,11 @@ getBalanceCharge(page,pageSize,condition){
             <Button  onClick={ () => this.onPayMoney(record._id)} style={actionStyle} ><span>打款</span></Button>
           </Tooltip>
           <span className="ant-divider" />
-          
+          <Tooltip placement="topLeft" title="撤销此提现" arrowPointAtCenter>
+            <Button  onClick={ () => this.onReturnMoney(record._id)} style={actionStyle} ><span>撤销</span></Button>
+          </Tooltip>
+          <span className="ant-divider" />
+
         </span>)
       }
     },

@@ -49,7 +49,7 @@ Meteor.methods({
     console.log(money);
     console.log(amounted);
     console.log(balance.amount);
-    let amount=money+amounted
+    let amount=money/100+amounted
     console.log(amount);
     return Balances.update(balance._id, {
       $set: {
