@@ -257,7 +257,7 @@ class DashBoard extends React.Component{
             }>
             <h1>{this.state.salesInThisWeek}</h1>
             </Card>
-            <div style={{width:'100%',height:'20'}}></div>
+            <div style={{width:'100%',height:'20px'}}></div>
 
             <Card title="成都地区交易量:"  extra={
               <CardExtra />
@@ -283,7 +283,7 @@ class DashBoard extends React.Component{
             }>
             <h1>{this.state.SalesInThisMonthInChengDu}</h1>
             </Card>
-            <div style={{width:'100%',height:'20'}}></div>
+            <div style={{width:'100%',height:'20px'}}></div>
 
             <Card title="北京地区交易量:"  extra={
               <CardExtra />

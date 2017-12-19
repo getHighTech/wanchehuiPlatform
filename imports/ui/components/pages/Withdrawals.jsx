@@ -27,6 +27,8 @@ class Withdrawals extends React.Component{
     super(props);
 
   }
+
+
 state= {
   balanceChargesData:[],
   loadingTip:"加载中...",
@@ -218,6 +220,10 @@ getBalanceCharge(page,pageSize,condition){
   })
 }
 
+handleonChange(date, dateString) {
+  console.log(date, dateString);
+}
+
 
 
   render() {
@@ -291,6 +297,7 @@ getBalanceCharge(page,pageSize,condition){
     },
     }
   ];
+
     return (
       <div>
 
@@ -347,7 +354,6 @@ getBalanceCharge(page,pageSize,condition){
      columns={BalanceColumns} />
     </TabPane>
   </Tabs>
-
 
        </div>
     )

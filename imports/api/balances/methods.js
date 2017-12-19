@@ -5,6 +5,7 @@ import {BalanceCharges} from './balance_charges';
 import {Balances} from './balances';
 import {allBalanceChargeCount} from './actions.js';
 import { Bankcards } from "/imports/api/bankcards/bankcards.js";
+
 import { findBalanceByUserId, findBalanceByUserIdAll, findBalanceByUsername } from './balances_actions.js'
 import { getIncomeRecords } from './balance_incomes_actions.js'
 import { log } from 'util';
@@ -59,6 +60,7 @@ Meteor.methods({
   },
   "balancecharge.count"(condition){
     return allBalanceChargeCount(condition);
+    //return BalanceCharges.find(condition).count();
   },
   'bankcards.accountNumber'(_id){
     return Bankcards.findOne({userId:_id}).accountNumber;
