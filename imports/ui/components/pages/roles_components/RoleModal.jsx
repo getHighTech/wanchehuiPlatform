@@ -15,7 +15,10 @@ import Tooltip from 'antd/lib/tooltip';
 import "antd/lib/tooltip/style";
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style';
-
+import Row from 'antd/lib/row';
+import 'antd/lib/row/style';
+import Col from 'antd/lib/col';
+import 'antd/lib/col/style';
 import Form from 'antd/lib/form';
 import Checkbox from 'antd/lib/checkbox';
 import message from 'antd/lib/message';
@@ -171,9 +174,34 @@ class RoleModalWrap extends React.Component {
     });
   }
 
+  isEmptyObject(obj){
+    for (var key in obj) {
+      return false;
+      }
+      return true;
+  }
+
+  objToArry(obj,str){
+    console.log(obj)
+    let self = this
+    let arr = []
+    if(!self.isEmptyObject(obj)){
+      console.log(obj.permissions[str])
+      for(var i in obj.permissions[str]){
+        arr.push(i)
+      }
+      console.log(arr)
+      console.log('非空对象')
+      return arr
+    }
+  }
+
+  getInitialvalue = (str) => {
+    return this.objToArry(this.props.singleRole, str)
+  };
+
 
   render(){
-    console.log(this.state);
     
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
@@ -222,11 +250,6 @@ class RoleModalWrap extends React.Component {
       { label: '删除', value: 'deletable',disabled: true },
     ];
 
-    // let defaultOperationValue1 = this.objToArry(this.props.singleRole,"shops")
-    // let defaultOperationValue2 = this.objToArry(this.props.singleRole,"orders")
-    // let defaultOperationValue3 = this.objToArry(this.props.singleRole,"users")
-    // let defaultOperationValue4 = this.objToArry(this.props.singleRole,"roles")
-    // let defaultOperationValue5 = this.objToArry(this.props.singleRole,"distributions")
 
 
     return (
@@ -285,13 +308,11 @@ class RoleModalWrap extends React.Component {
                 )}
               >
                 {getFieldDecorator('shops', {
-                  initialValue:this.props.defaultOperationValue1,
-                  rules: [],
+                   normalize: this.getInitialvalue,
                 })(
                   <div style={checkoutStyle}>
-                    <CheckboxGroup options={shopOptions}  onChange={this.shopOnChange.bind(this)} />
+                    <CheckboxGroup options={shopOptions} onChange={this.shopOnChange.bind(this)} />
                   </div>
-                  
                 )}
               </FormItem>              
               <FormItem
@@ -305,7 +326,7 @@ class RoleModalWrap extends React.Component {
                 {getFieldDecorator('orders', {
                 })(
                   <div style={checkoutStyle}>
-                    <CheckboxGroup options={orderOptions}  onChange={this.orderOnChange.bind(this)} />
+                    <CheckboxGroup options={orderOptions} defaultValue={this.props.defaultOperationValue2}  onChange={this.orderOnChange.bind(this)} />
                   </div>
                   
                 )}
@@ -323,7 +344,7 @@ class RoleModalWrap extends React.Component {
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
-                    <CheckboxGroup options={userOptions}   onChange={this.userOnChange.bind(this)} />
+                    <CheckboxGroup options={userOptions}  defaultValue={this.props.defaultOperationValue3}  onChange={this.userOnChange.bind(this)} />
                   </div>
                   
                 )}
@@ -341,7 +362,7 @@ class RoleModalWrap extends React.Component {
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
-                    <CheckboxGroup options={roleOptions}    onChange={this.roleOnChange.bind(this)} />
+                    <CheckboxGroup options={roleOptions}   defaultValue={this.props.defaultOperationValue4}  onChange={this.roleOnChange.bind(this)} />
                   </div>
                   
                 )}
@@ -359,7 +380,7 @@ class RoleModalWrap extends React.Component {
                   rules: [],
                 })(
                   <div style={checkoutStyle}>
-                    <CheckboxGroup options={distributionOptions}   onChange={this.distributionOnChange.bind(this)} />
+                    <CheckboxGroup options={distributionOptions}   defaultValue={this.props.defaultOperationValue5} onChange={this.distributionOnChange.bind(this)} />
                   </div>
                   
                 )}

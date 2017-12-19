@@ -18,8 +18,8 @@ import 'antd/lib/modal/style';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 import RoleModal from './roles_components/RoleModal.jsx';
-import Divider from 'antd/lib/divider';
-import 'antd/lib/divider/style'
+// import Divider from 'antd/lib/divider';
+// import 'antd/lib/divider/style'
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style'
 import {countRoles,getMeteorRolesLimit} from '../../services/roles.js'
@@ -42,7 +42,7 @@ class Roles extends React.Component{
       defaultOperationValue2:[],
       defaultOperationValue3:[],
       defaultOperationValue4:[],
-      defaultOperationValue5:[]
+      defaultOperationValue5:[],
     }
 
   }
@@ -109,39 +109,14 @@ class Roles extends React.Component{
           singleRole: rlt,
           modalVisible: true,
           modalTitle:"编辑角色",
-          modalInsert: false,
-          defaultOperationValue1:self.objToArry(rlt,"shops"),
-          defaultOperationValue2:self.objToArry(rlt,"orders"),
-          defaultOperationValue3:self.objToArry(rlt,"users"),
-          defaultOperationValue4:self.objToArry(rlt,"roles"),
-          defaultOperationValue5:self.objToArry(rlt,"distributions"),
+          modalInsert: false
         })
         console.log(self.state)
       }
     })
   }
 
-  isEmptyObject(obj){
-    for (var key in obj) {
-      return false;
-      }
-      return true;
-  }
 
-  objToArry(obj,str){
-    console.log(obj)
-    let self = this
-    let arr = []
-    if(!self.isEmptyObject(obj)){
-      console.log(obj.permissions[str])
-      for(var i in obj.permissions[str]){
-        arr.push(i)
-      }
-      console.log(arr)
-      console.log('非空对象')
-      return arr
-    }
-  }
   showRoleUsers(){
 
   }
@@ -216,11 +191,6 @@ class Roles extends React.Component{
           ref = {(input) => { this.fromModal = input; }}
           singleRole = {this.state.singleRole}
           modalInsert = {this.state.modalInsert}
-          defaultOperationValue1 = {this.state.defaultOperationValue1}
-          defaultOperationValue2 = {this.state.defaultOperationValue2}
-          defaultOperationValue3 = {this.state.defaultOperationValue3}
-          defaultOperationValue4 = {this.state.defaultOperationValue4}
-          defaultOperationValue5 = {this.state.defaultOperationValue5}
           />
         </div>
         <Table rowKey={record => record._id} dataSource={dataSource} columns={columns} />
