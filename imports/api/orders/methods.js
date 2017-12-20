@@ -15,7 +15,6 @@ Meteor.methods({
   //   })
   // },
   'orders.insert'(params){
-    console.log(params)
       return Orders.insert({
           type: params.type,
           username:params.username,
@@ -28,7 +27,6 @@ Meteor.methods({
         });
       },
   'orders.ordersdata'(condition,page=1,pageSize=20){
-    console.log(page,pageSize);
     let ordersdata = Orders.find(condition, {
       skip: (page-1)*pageSize, limit: pageSize,
       sort: {"createdAt": -1},
@@ -48,8 +46,6 @@ Meteor.methods({
     return ordersdata.fetch();
   },
   'orders.count'(condition){
-    console.log("call orders.count")
-    console.log(condition)
     return ordersCount(condition);
     //return Orders.find(condition).count();
   },
@@ -62,7 +58,6 @@ Meteor.methods({
 
   },
   "get.orders.InThisTime"(condition){
-    console.log(condition);
     return Orders.find(condition,{sort: {"createdAt": -1}}).fetch();
   },
   "get.orders.InThisTimeCount"(condition){

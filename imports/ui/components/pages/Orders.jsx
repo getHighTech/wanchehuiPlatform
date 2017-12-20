@@ -45,14 +45,12 @@ class Orders extends React.Component{
     this.setState({
       ordersData:rlt
     })
-    console.log(this.state.condition);
   }
 
   getChangeCondition(newcondition){
     this.setState({
       condition:newcondition
     })
-      console.log(this.state.condition);
   }
 
 
@@ -71,7 +69,6 @@ class Orders extends React.Component{
           self.setState({
             totalCount:rlt,
           })
-          console.log(rlt);
         }
     })
     self.setState({
@@ -124,7 +121,6 @@ class Orders extends React.Component{
     let self =this;
     getMeteorOrders(condition,page,pageSize,function(err,rlt){
       if(!err){
-        console.log(rlt)
         self.setState({
           ordersData:rlt,
           currentPage:page,
@@ -146,7 +142,6 @@ class Orders extends React.Component{
       onOk() {
         Meteor.call("orders.status.updatePaid",_id,function(error,result){
           if(!error){
-            console.log(result);
             self.getOrdersUnpaid(1,20,self.state.conditionUnpaid);
 
           }
@@ -158,7 +153,6 @@ class Orders extends React.Component{
         message.success('已确认打款');
       },
       onCancel() {
-        console.log('Cancel');
         message.error('已取消打款');
       },
     });
@@ -166,7 +160,6 @@ class Orders extends React.Component{
   }
 
   handleonChange(date, dateString) {
-    console.log(date, dateString);
   }
 
   QuanguoLocation(){

@@ -44,16 +44,11 @@ Meteor.methods({
     return BalanceCharges.findOne(_id);
   },
   'balance.userId'(userId){
-    console.log(Balances.findOne({userId:userId}));
     return Balances.findOne({userId:userId});
   },
   'balances.updaterevoke.amount'(userId,money,amounted){
     let balance = Balances.findOne({userId: userId})
-    console.log(money);
-    console.log(amounted);
-    console.log(balance.amount);
     let amount=money/100+amounted
-    console.log(amount);
     return Balances.update(balance._id, {
       $set: {
         amount: amount
@@ -87,14 +82,8 @@ Meteor.methods({
         status:"revoke"
       }
     })
-
   },
-  // "get.balance_charges.InThisTime"(startTime,endTime,condition){
-  //   console.log(condition);
-  //   return BalanceCharges.find({createdAt: {'$gt':new Date(startTime),'$lte':new Date(endTime)},status:condition}).fetch();
-  // },
   "get.balance_charges.InThisTime"(condition){
-    console.log(condition);
     return BalanceCharges.find(condition,{sort: {"createdAt": -1}}).fetch();
   },
   "get.balance_charges.InThisTimeCount"(condition){
