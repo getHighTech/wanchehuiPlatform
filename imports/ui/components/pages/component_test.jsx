@@ -10,7 +10,7 @@ import 'antd/lib/icon/style';
 // import AMapSearcher from './tools/AMapSearcher.jsx';
 // import UserFinderModal from './tools/UserFinderModal.jsx';
 import UserBasicViewPopover from './tools/UserBasicViewPopover.jsx';
-
+import DateRange from './withdrawals/DateRange.jsx';
 class ComponentTest extends Component {
   constructor(props) {
     super(props);
