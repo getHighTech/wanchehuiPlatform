@@ -22,6 +22,7 @@ Meteor.methods({
   },
 
   "balance.chargesdata"(condition,page=1, pageSize=20){
+
     let chargesdata =  BalanceCharges.find(condition, {
       skip: (page-1)*pageSize, limit: pageSize,
       sort: {"createdAt": -1},
@@ -31,7 +32,8 @@ Meteor.methods({
         "money":1,
         'bankId':1,
         'userId':1,
-        'status':"unpaid",
+        'status':1,
+        'address':1,
         'createdAt': 1,
       }
 
@@ -50,7 +52,7 @@ Meteor.methods({
     console.log(money);
     console.log(amounted);
     console.log(balance.amount);
-    let amount=money+amounted
+    let amount=money/100+amounted
     console.log(amount);
     return Balances.update(balance._id, {
       $set: {

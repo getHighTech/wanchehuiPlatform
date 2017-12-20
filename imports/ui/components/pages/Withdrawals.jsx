@@ -6,6 +6,7 @@ import "antd/lib/table/style";
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import { showbalancedata } from '/imports/ui/actions/withdrawals.js';
+
 import {getMeteorBalanceCharge,countBalanceCharge} from '../../services/balancecharges.js'
 import { Tabs } from 'antd';
 const TabPane = Tabs.TabPane;
@@ -36,6 +37,7 @@ state= {
   currentPage:1,
   totalCount:500,
 }
+
 
 getDateSearchData(rlt){
   this.setState({
@@ -164,8 +166,8 @@ onPayMoney = (_id) =>{
 onReturnMoney = (_id) =>{
   let self = this
   confirm({
-    title: '是否打款？！',
-    content: '请确认打款金额，银行卡号，姓名！',
+    title: '是否撤销？！',
+    content: '请确认是否撤销此次提现！',
     okText: '是',
     okType: 'danger',
     cancelText: '否',
@@ -209,6 +211,7 @@ onReturnMoney = (_id) =>{
 
 getBalanceCharge(page,pageSize,condition){
   let self = this;
+
   getMeteorBalanceCharge(condition,page,pageSize,function(err,rlt){
     if(!err){
       self.setState({
@@ -240,6 +243,11 @@ handleonChange(date, dateString) {
         title: '银行卡号',
         dataIndex: 'bankId',
         key: 'bankId',
+        width: 150,
+      },{
+        title: '开户行',
+        dataIndex: 'address',
+        key: 'address',
         width: 150,
       },
       {
@@ -291,7 +299,11 @@ handleonChange(date, dateString) {
             <Button  onClick={ () => this.onPayMoney(record._id)} style={actionStyle} ><span>打款</span></Button>
           </Tooltip>
           <span className="ant-divider" />
-          
+          <Tooltip placement="topLeft" title="撤销此提现" arrowPointAtCenter>
+            <Button  onClick={ () => this.onReturnMoney(record._id)} style={actionStyle} ><span>撤销</span></Button>
+          </Tooltip>
+          <span className="ant-divider" />
+
         </span>)
       }
     },
