@@ -22,6 +22,7 @@ Meteor.methods({
   },
 
   "balance.chargesdata"(condition,page=1, pageSize=20){
+
     let chargesdata =  BalanceCharges.find(condition, {
       skip: (page-1)*pageSize, limit: pageSize,
       sort: {"createdAt": -1},
@@ -31,7 +32,8 @@ Meteor.methods({
         "money":1,
         'bankId':1,
         'userId':1,
-        'status':"unpaid",
+        'status':1,
+        'address':1,
         'createdAt': 1,
       }
 
@@ -42,16 +44,11 @@ Meteor.methods({
     return BalanceCharges.findOne(_id);
   },
   'balance.userId'(userId){
-    console.log(Balances.findOne({userId:userId}));
     return Balances.findOne({userId:userId});
   },
   'balances.updaterevoke.amount'(userId,money,amounted){
     let balance = Balances.findOne({userId: userId})
-    console.log(money);
-    console.log(amounted);
-    console.log(balance.amount);
-    let amount=money+amounted
-    console.log(amount);
+    let amount=money/100+amounted
     return Balances.update(balance._id, {
       $set: {
         amount: amount
@@ -85,14 +82,8 @@ Meteor.methods({
         status:"revoke"
       }
     })
-
   },
-  // "get.balance_charges.InThisTime"(startTime,endTime,condition){
-  //   console.log(condition);
-  //   return BalanceCharges.find({createdAt: {'$gt':new Date(startTime),'$lte':new Date(endTime)},status:condition}).fetch();
-  // },
   "get.balance_charges.InThisTime"(condition){
-    console.log(condition);
     return BalanceCharges.find(condition,{sort: {"createdAt": -1}}).fetch();
   },
   "get.balance_charges.InThisTimeCount"(condition){

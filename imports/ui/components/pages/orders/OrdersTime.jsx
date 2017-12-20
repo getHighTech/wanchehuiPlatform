@@ -12,7 +12,7 @@ import moment from 'moment';
 
 
 
-class DateRange extends React.Component {
+class ordersTime extends React.Component {
   state = {
     startValue: null,
     endValue: null,
@@ -20,8 +20,10 @@ class DateRange extends React.Component {
     startDate:null,
     endDate:null,
     area:'',
-    local:"无"
+    local:"无",
+    localarea:'全国'
   };
+
 
   disabledStartDate = (startValue) => {
     const endValue = this.state.endValue;
@@ -49,7 +51,6 @@ class DateRange extends React.Component {
     this.onChange('startValue', value);
     let newDate = new Date(value._d);
     let startValue =newDate.getFullYear() + '/' + (newDate.getMonth() + 1) + '/' + newDate.getDate();
-    console.log(startValue);
     this.setState({
       startDate:startValue
     })
@@ -59,7 +60,6 @@ class DateRange extends React.Component {
     this.onChange('endValue', value);
     let newDate = new Date(value._d);
     let endValue =newDate.getFullYear() + '/' + (newDate.getMonth() + 1) + '/' + newDate.getDate();
-    console.log(new Date(endValue));
     this.setState({
       endDate:endValue
     })
@@ -77,12 +77,8 @@ class DateRange extends React.Component {
 
   DateFind(){
     let self =this;
-    console.log(self.props.SearchCondition.status);
-    console.log(self.state.startDate,this.state.endDate);
-    console.log(self.state.area)
     let newcondition={}
     if (self.state.area !== ""){
-      console.log(self.state)
       newcondition ={createdAt: {'$gt':new Date(this.state.startDate),'$lte':new Date(this.state.endDate)},status:self.props.SearchCondition.status,area:self.state.area};
     }else {
      newcondition ={createdAt: {'$gt':new Date(this.state.startDate),'$lte':new Date(this.state.endDate)},status:self.props.SearchCondition.status};
@@ -90,47 +86,21 @@ class DateRange extends React.Component {
     }
     self.getData(newcondition);
     self.setState({
-      local:"无"
+      local:"无",
+      localarea:"全国"
     })
   }
   getData(newcondition){
     let self = this;
-    Meteor.call('get.balance_charges.InThisTime',newcondition,function(err,rlt){
+    Meteor.call('get.orders.InThisTime',newcondition,function(err,rlt){
       if(!err){
-        var bankIds = [];
-        var result = [];
-        for(var charge  of rlt){
-          charge.money = charge.money/100.0;
-          result.push(charge);
-          let userId = charge.userId;
-          bankIds.push(userId);
-        }
-        Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
-          if (!error) {
-            accoutHash = {}
-            for(let accout of accouts) {
-              accoutHash[accout.userId] = accout;
-            }
-            for(var charge of result) {
-              charge.bankId = accoutHash[charge.userId].accountNumber;
-              charge.userId=  accoutHash[charge.userId].realName;
-              charge.bankAddress=  accoutHash[charge.userId].bankAddress;
-            }
-            self.props.getDateSearchData(result);
-            self.props.getChangeCondition(newcondition)
-          }
-        });
-        console.log(result);
-
-      }
-      else{
-        console.log(err);
+        self.props.getDateSearchData(rlt);
+        self.props.getChangeCondition(newcondition)
       }
     })
 
-    Meteor.call('get.balance_charges.InThisTimeCount',newcondition,function(err,rlt){
+    Meteor.call('get.orders.InThisTimeCount',newcondition,function(err,rlt){
       if(!err){
-        console.log(rlt);
         self.props.getDateSearchtotalCount(rlt);
       }
       else{
@@ -152,6 +122,7 @@ class DateRange extends React.Component {
       endDate:null,
       startValue: null,
       endValue: null,
+      localarea:"全国"
     })
   }
   getYesterday(){
@@ -168,6 +139,7 @@ class DateRange extends React.Component {
       endDate:null,
       startValue: null,
       endValue: null,
+      localarea:"全国"
     })
   }
   getInthisWeek(){
@@ -184,6 +156,7 @@ class DateRange extends React.Component {
       endDate:null,
       startValue: null,
       endValue: null,
+      localarea:"全国"
     })
   }
   getInthisMonth(){
@@ -200,29 +173,79 @@ class DateRange extends React.Component {
       endDate:null,
       startValue: null,
       endValue: null,
+      localarea:"全国"
     })
   }
 
   DateEmpty(){
     let self =this;
-    console.log(self.props.SearchCondition.status);
     let newcondition={status:self.props.SearchCondition.status};
     self.getData(newcondition);
     self.setState({
-      local:"无"
+      local:"无",
+      startDate:null,
+      endDate:null,
+      startValue: null,
+      endValue: null,
+      localarea:"全国"
     })
   }
   getChengdu(){
     let self =this ;
+    let area="area";
+    let createdAt="createdAt";
+    let newcondition =self.props.SearchCondition;
+    newcondition[area]="CHENGDU";
+    self.getData(newcondition);
     self.setState({
-      area:"CHENGDU"
+      localarea:"成都"
     })
-    console.log(self.props.SearchCondition.status);
-    console.log(self.state.startDate,this.state.endDate);
-    console.log(self.state.area)
-
-
-
+    if(!newcondition[createdAt]){
+      self.setState({
+        startDate:null,
+        endDate:null,
+        startValue: null,
+        endValue: null,
+      })
+    }
+  }
+  getBeiJing(){
+    let self =this ;
+    let area="area";
+    let createdAt="createdAt";
+    let newcondition =self.props.SearchCondition;
+    newcondition[area]="BEIJING";
+    self.getData(newcondition);
+    self.setState({
+      localarea:"北京"
+    })
+    if(!newcondition[createdAt]){
+      self.setState({
+        startDate:null,
+        endDate:null,
+        startValue: null,
+        endValue: null,
+      })
+    }
+  }
+  getQuanGuo(){
+    let self =this ;
+    let area="area";
+    let createdAt="createdAt";
+    let newcondition =self.props.SearchCondition;
+    delete newcondition.area;
+    self.getData(newcondition);
+    self.setState({
+      localarea:"全国"
+    })
+    if(!newcondition[createdAt]){
+      self.setState({
+        startDate:null,
+        endDate:null,
+        startValue: null,
+        endValue: null,
+      })
+    }
   }
 
 
@@ -275,6 +298,13 @@ class DateRange extends React.Component {
         <Button type="primary" onClick={()=> this.getInthisMonth()} >最近３０天</Button>
         <span style={{margin:'0px 10px 0px 10px'}}>当前筛选时段:{this.state.local}</span>
     </div>
+    <div style={{margin:'20px 10px 0px 0px'}}>
+    <span>区域筛选：</span>
+    <Button type="primary"  onClick={()=> this.getQuanGuo()} style={{margin:'0px 10px 0px 10px'}} value="全国">全国</Button>
+    <Button type="primary"  onClick={()=> this.getBeiJing()} value='北京'>北京</Button>
+    <Button type="primary"  onClick={()=> this.getChengdu()} style={{margin:'0px 25px 0px 10px'}}　value='成都'>成都</Button>
+    <span>当前查询区域：{this.state.localarea}</span>
+  </div>
 
     </div>
 
@@ -292,4 +322,4 @@ function mapStateToProps(state) {
    };
 }
 
-export default connect(mapStateToProps)(DateRange);
+export default connect(mapStateToProps)(ordersTime);
