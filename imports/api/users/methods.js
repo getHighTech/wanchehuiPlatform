@@ -164,7 +164,8 @@ Meteor.methods({
   'users.remove'(userId){
     return removeUserById(userId);
   },
-
-
+  'user.findUsersbyUserIds'(userIds){
+    return Meteor.users.find({_id: $in(userIds)})
+  }
 
 });

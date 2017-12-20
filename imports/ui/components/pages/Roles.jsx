@@ -18,6 +18,7 @@ import 'antd/lib/modal/style';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 import RoleModal from './roles_components/RoleModal.jsx';
+import UserModal from './roles_components/UserModal.jsx';
 // import Divider from 'antd/lib/divider';
 // import 'antd/lib/divider/style'
 import Icon from 'antd/lib/icon';
@@ -38,11 +39,7 @@ class Roles extends React.Component{
       totalCount:'',
       singleRole:{},
       modalInsert: true,
-      defaultOperationValue1:[],
-      defaultOperationValue2:[],
-      defaultOperationValue3:[],
-      defaultOperationValue4:[],
-      defaultOperationValue5:[],
+      userModalVisible:false
     }
 
   }
@@ -52,14 +49,13 @@ class Roles extends React.Component{
       singleRole: {},
       modalVisible: true,
       modalTitle:"新建一个角色",
-      modalInsert: true,
-      defaultOperationValue1:[],
-      defaultOperationValue2:[],
-      defaultOperationValue3:[],
-      defaultOperationValue4:[],
-      defaultOperationValue5:[]
+      modalInsert: true
     });
+    console.log(this.fromModal)
+
+    this.fromModal.resetFields({});
   }
+
   refleshTable(){
     this.getPageRoles(1,20,this.state.condition);
   }
@@ -81,24 +77,28 @@ class Roles extends React.Component{
       console.log(self.state.rolesData)
     })
   }
-  countRoles(){
-
-  }
+ 
 
   hideModal = () => {
     this.setState({modalVisible: false});
   };
-
+  hideUserModal = () => {
+    this.setState({userModalVisible: false});
+  };
   componentWillMount(){
+    let self = this
     console.log(this.state.condition);
-    this.getPageRoles(1,20,this.state.condition);
+    this.getPageRoles(1,5,this.state.condition);
     countRoles(function(err, rlt){
+      console.log(rlt)
       if (!err) {
         self.setState({
           totalCount: rlt,
         });
       }
     })
+  }
+  componentDidMount(){
   }
   onClickUpdate(roleId){
     console.log(roleId)
@@ -111,21 +111,70 @@ class Roles extends React.Component{
           modalTitle:"编辑角色",
           modalInsert: false
         })
-        console.log(self.state)
+      }
+    })
+    console.log(self.state.singleRole)
+  }
+  //将角色单条数据处理成表单可以显示的数据
+  transformRawDataToForm(obj) {
+    const newObj = {};
+    for (const key in obj) {
+      // rawData中可能有些undefined或null的字段, 过滤掉
+      if (!obj[key])
+        continue;
+      console.log(key);
+      if(key=="permissions"){
+        //处理权限对象字段
+        for (const key in obj["permissions"]){
+          let arr = [];
+            for(const i in obj["permissions"][key]){
+                arr.push(i);
+            }
+          newObj[key] = arr
+        }
+        
+      }else{
+        newObj[key] = obj[key];
+      }
+      
+    }
+    return newObj;
+  }
+
+  setFormData(data) {
+    // 注意这里, 由于antd modal的特殊性, yhis.props.form可能是undefined, 要判断一下
+    if (this.formComponent) {
+      this.formComponent.resetFields();
+      if (data) {
+        this.formComponent.setFieldsValue(data);
+      }
+    }
+  }
+
+
+
+  showRoleUsers(roleId){
+    console.log(roleId)
+    let self = this
+    Meteor.call('role.findById', roleId, function(err,rlt){
+      if(!err){
+        self.setState({
+          singleRole: rlt,
+          userModalVisible: true
+        })
+      }
+    })
+    console.log(self.state.singleRole)
+  }
+  showChangeConfirm(roleState,roldId){
+    Meteor.call('role.toggleState',roleState,roldId,function(err,rlt){
+      if(!err){
+        console.log(rlt)
       }
     })
   }
-
-
-  showRoleUsers(){
-
-  }
-  showChangeConfirm(){
-
-  }
   render() {
     const dataSource = this.state.rolesData
-    
     const columns = [{
       title: '角色名字',
       dataIndex: 'name_zh',
@@ -162,7 +211,7 @@ class Roles extends React.Component{
       render: (text, record) => (
         <span>
           <Tooltip placement="topLeft" title="增加新角色" arrowPointAtCenter>
-              <Switch checkedChildren="已启用" unCheckedChildren="已禁用" defaultChecked={!record.state} onChange={() => this.showChangeConfirm(record.state,record._id)}  />
+              <Switch checkedChildren="已启用" unCheckedChildren="已禁用" defaultChecked={record.state} onChange={() => this.showChangeConfirm(record.state,record._id)}  />
           </Tooltip>
         </span>
       ),
@@ -191,6 +240,11 @@ class Roles extends React.Component{
           ref = {(input) => { this.fromModal = input; }}
           singleRole = {this.state.singleRole}
           modalInsert = {this.state.modalInsert}
+          />
+          <UserModal
+            userModalVisible = {this.state.userModalVisible}
+            onCancel = { this.hideUserModal }
+            singleRole = {this.state.singleRole}
           />
         </div>
         <Table rowKey={record => record._id} dataSource={dataSource} columns={columns} />

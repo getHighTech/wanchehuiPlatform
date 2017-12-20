@@ -24,7 +24,6 @@ import Checkbox from 'antd/lib/checkbox';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 
-
 import 'antd/lib/form/style';
 import 'antd/lib/checkbox/style'
 import Divider from 'antd/lib/divider';
@@ -62,11 +61,6 @@ class RoleModalWrap extends React.Component {
         for(var i = 0,l = permissionsProps.length; i < l; i++ ){
           newObj.permissions[permissionsProps[i]] = self.state[permissionsProps[i]] 
         }        
-        // newObj.permissions.shops = self.state.shops;
-        // newObj.permissions.orders = self.state.orders;
-        // newObj.permissions.users = self.state.users;
-        // newObj.permissions.roles = self.state.roles;
-        // newObj.permissions.distributions = self.state.distributions;
         console.log(newObj)
         //先去数据库查询角色标识，如果数据库里有就返回错误，等待编码
         if(self.props.modalInsert){
@@ -106,11 +100,33 @@ class RoleModalWrap extends React.Component {
       }
     });
   }
+
+  isEmptyObject(obj){
+    for (var key in obj) {
+      return false;
+      }
+      return true;
+  }
+
+  objToArry(obj,str){
+    console.log(obj)
+    let self = this
+    let arr = []
+    if(!self.isEmptyObject(obj)){
+      console.log(obj.permissions[str])
+      for(var i in obj.permissions[str]){
+        arr.push(i)
+      }
+      console.log(arr)
+      console.log('非空对象')
+      return arr
+    }
+  }
+
+
   componentDidMount(){
-    
   }
   componentWillMount(){
-    console.log("组件加载完成")
   }
 
   hideModal = () => {
@@ -182,16 +198,12 @@ class RoleModalWrap extends React.Component {
   }
 
   objToArry(obj,str){
-    console.log(obj)
     let self = this
     let arr = []
     if(!self.isEmptyObject(obj)){
-      console.log(obj.permissions[str])
       for(var i in obj.permissions[str]){
         arr.push(i)
       }
-      console.log(arr)
-      console.log('非空对象')
       return arr
     }
   }
@@ -199,6 +211,7 @@ class RoleModalWrap extends React.Component {
   getInitialvalue = (str) => {
     return this.objToArry(this.props.singleRole, str)
   };
+
 
 
   render(){
@@ -215,7 +228,7 @@ class RoleModalWrap extends React.Component {
       },
     };
     const checkoutStyle = {
-      paddingTop: 9
+      marginTop: 9
     };
     const CheckboxGroup = Checkbox.Group;
     const shopOptions = [
@@ -308,11 +321,10 @@ class RoleModalWrap extends React.Component {
                 )}
               >
                 {getFieldDecorator('shops', {
-                   normalize: this.getInitialvalue,
+                   initialValue: this.getInitialvalue('shops'),
+                   rules:[{type: 'array'}]
                 })(
-                  <div style={checkoutStyle}>
-                    <CheckboxGroup options={shopOptions} onChange={this.shopOnChange.bind(this)} />
-                  </div>
+                    <CheckboxGroup options={shopOptions} style={checkoutStyle} onChange={this.shopOnChange.bind(this)} />
                 )}
               </FormItem>              
               <FormItem
@@ -324,10 +336,10 @@ class RoleModalWrap extends React.Component {
                 )}
               >
                 {getFieldDecorator('orders', {
+                    initialValue: this.getInitialvalue('orders'),
+                    rules:[{type: 'array'}]
                 })(
-                  <div style={checkoutStyle}>
-                    <CheckboxGroup options={orderOptions} defaultValue={this.props.defaultOperationValue2}  onChange={this.orderOnChange.bind(this)} />
-                  </div>
+                    <CheckboxGroup style={{paddingTop: 10}} options={orderOptions}   onChange={this.orderOnChange.bind(this)} />
                   
                 )}
               </FormItem>
@@ -340,12 +352,10 @@ class RoleModalWrap extends React.Component {
                 )}
               >
                 {getFieldDecorator('users', {
-                  initialValue:this.props.defaultOperationValue3,
-                  rules: [],
+                    initialValue: this.getInitialvalue('users'),
+                    rules:[{type: 'array'}]
                 })(
-                  <div style={checkoutStyle}>
-                    <CheckboxGroup options={userOptions}  defaultValue={this.props.defaultOperationValue3}  onChange={this.userOnChange.bind(this)} />
-                  </div>
+                    <CheckboxGroup options={userOptions}    onChange={this.userOnChange.bind(this)} />
                   
                 )}
               </FormItem>
@@ -358,12 +368,10 @@ class RoleModalWrap extends React.Component {
                 )}
               >
                 {getFieldDecorator('roles', {
-                  initialValue:this.props.defaultOperationValue4,
-                  rules: [],
+                    initialValue: this.getInitialvalue('roles'),
+                    rules:[{type: 'array'}]
                 })(
-                  <div style={checkoutStyle}>
-                    <CheckboxGroup options={roleOptions}   defaultValue={this.props.defaultOperationValue4}  onChange={this.roleOnChange.bind(this)} />
-                  </div>
+                    <CheckboxGroup options={roleOptions}   onChange={this.roleOnChange.bind(this)} />
                   
                 )}
               </FormItem>
@@ -376,12 +384,10 @@ class RoleModalWrap extends React.Component {
                 )}
               >
                 {getFieldDecorator('distributions', {
-                  initialValue:this.props.defaultOperationValue5,
-                  rules: [],
+                    initialValue: this.getInitialvalue('distributions'),
+                    rules:[{type: 'array'}]
                 })(
-                  <div style={checkoutStyle}>
-                    <CheckboxGroup options={distributionOptions}   defaultValue={this.props.defaultOperationValue5} onChange={this.distributionOnChange.bind(this)} />
-                  </div>
+                    <CheckboxGroup options={distributionOptions}  onChange={this.distributionOnChange.bind(this)} />
                   
                 )}
               </FormItem>

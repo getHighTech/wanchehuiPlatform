@@ -43,7 +43,10 @@ Meteor.methods({
             'name_zh': 1,
             'permissions': 1,
             'createdAt': 1,
-            'isSuper':1
+            'isSuper':1,
+            'state':1,
+            'users':1,
+            'weight':1
           }
         }
       );
@@ -58,4 +61,14 @@ Meteor.methods({
         }
       });
     },
+    'role.toggleState'(roleState, roleId){
+      return Roles.update(roleId, {
+        $set: {
+          state: !roleState
+        }
+      });
+    },
+    'roels.count'(){
+      return Roles.find().count();
+    }
 });
