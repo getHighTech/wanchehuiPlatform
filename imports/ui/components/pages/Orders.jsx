@@ -379,7 +379,7 @@ class Orders extends React.Component{
         <Table  dataSource={this.state.ordersData}  rowKey='_id'
           pagination={{defaultPageSize: 20, total: this.state.totalCount,
           onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
-          showQuickJumper: true, current: this.state.currentPage}}
+          current: this.state.currentPage}}
           columns={UnpaidOrdersColumns}
         />
       </TabPane>

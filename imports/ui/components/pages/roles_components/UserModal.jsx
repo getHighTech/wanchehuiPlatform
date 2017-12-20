@@ -38,11 +38,11 @@ class UserModal extends React.Component {
       dataIndex: 'name',
       key: 'name',
     }, {
-      title: '年龄',
+      title: '电话',
       dataIndex: 'age',
       key: 'age',
     }, {
-      title: '住址',
+      title: '其他',
       dataIndex: 'address',
       key: 'address',
     }];

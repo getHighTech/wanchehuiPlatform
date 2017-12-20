@@ -35,11 +35,12 @@ class Roles extends React.Component{
       modalVisible: false,
       modalTitle:"",
       rolesData:[],
-      condition:{},
+      condition:{name: {$ne:"superAdmin"}},
       totalCount:'',
       singleRole:{},
       modalInsert: true,
-      userModalVisible:false
+      userModalVisible:false,
+      currentPage: 1
     }
 
   }
@@ -51,7 +52,6 @@ class Roles extends React.Component{
       modalTitle:"新建一个角色",
       modalInsert: true
     });
-    console.log(this.fromModal)
 
     this.fromModal.resetFields({});
   }
@@ -60,7 +60,6 @@ class Roles extends React.Component{
     this.getPageRoles(1,20,this.state.condition);
   }
   handleOk = (e) => {
-    console.log(e);
     this.setState({
       visible: false,
     });
@@ -69,12 +68,11 @@ class Roles extends React.Component{
     let self = this
     Meteor.call('get.roles.limit',condition,page,pageSize, function(err,rlt){
       if(!err){
-        console.log(rlt)
         self.setState({
-          rolesData: rlt
+          rolesData: rlt,
+          currentPage:page
         })
       }
-      console.log(self.state.rolesData)
     })
   }
  
@@ -87,10 +85,8 @@ class Roles extends React.Component{
   };
   componentWillMount(){
     let self = this
-    console.log(this.state.condition);
-    this.getPageRoles(1,5,this.state.condition);
+    this.getPageRoles(1,20,this.state.condition);
     countRoles(function(err, rlt){
-      console.log(rlt)
       if (!err) {
         self.setState({
           totalCount: rlt,
@@ -101,7 +97,6 @@ class Roles extends React.Component{
   componentDidMount(){
   }
   onClickUpdate(roleId){
-    console.log(roleId)
     let self = this
     Meteor.call('role.findById', roleId, function(err,rlt){
       if(!err){
@@ -113,7 +108,6 @@ class Roles extends React.Component{
         })
       }
     })
-    console.log(self.state.singleRole)
   }
   //将角色单条数据处理成表单可以显示的数据
   transformRawDataToForm(obj) {
@@ -122,7 +116,6 @@ class Roles extends React.Component{
       // rawData中可能有些undefined或null的字段, 过滤掉
       if (!obj[key])
         continue;
-      console.log(key);
       if(key=="permissions"){
         //处理权限对象字段
         for (const key in obj["permissions"]){
@@ -151,10 +144,12 @@ class Roles extends React.Component{
     }
   }
 
-
+  handlePageChange(page, pageSize){
+    $(document).scrollTop(0);
+    this.getPageRoles(page, pageSize, this.state.condition);
+  }
 
   showRoleUsers(roleId){
-    console.log(roleId)
     let self = this
     Meteor.call('role.findById', roleId, function(err,rlt){
       if(!err){
@@ -164,7 +159,6 @@ class Roles extends React.Component{
         })
       }
     })
-    console.log(self.state.singleRole)
   }
   showChangeConfirm(roleState,roldId){
     Meteor.call('role.toggleState',roleState,roldId,function(err,rlt){
@@ -247,7 +241,17 @@ class Roles extends React.Component{
             singleRole = {this.state.singleRole}
           />
         </div>
-        <Table rowKey={record => record._id} dataSource={dataSource} columns={columns} />
+        <Table 
+        rowKey={record => record._id} 
+        dataSource={dataSource} 
+        columns={columns} 
+        pagination={{
+          defaultPageSize: 20,
+          total: this.state.totalCount,
+          onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
+          current: this.state.currentPage
+        }}
+        />
       </div>
     )
   }
