@@ -6,7 +6,7 @@ import "antd/lib/table/style";
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import { showbalancedata } from '/imports/ui/actions/withdrawals.js';
-import {getMeteorBalanceChargeUnpaid,getMeteorBalanceChargePaid,getMeteorBalanceChargeRevoke,countBalanceCharge} from '../../services/balancecharges.js'
+import {getMeteorBalanceCharge,countBalanceCharge} from '../../services/balancecharges.js'
 import { Tabs } from 'antd';
 const TabPane = Tabs.TabPane;
 import Tooltip from 'antd/lib/tooltip';
@@ -18,7 +18,7 @@ import 'antd/lib/modal/style';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 
-
+import DateRange from './withdrawals/DateRange.jsx';
 
 const confirm = Modal.confirm;
 
@@ -27,74 +27,105 @@ class Withdrawals extends React.Component{
     super(props);
 
   }
+
+
 state= {
   balanceChargesData:[],
   loadingTip:"加载中...",
-  conditionUnpaid: {status:'unpaid'},
-  conditionPaid: {status:'paid'},
-  conditionRevoke: {status:'revoke'},
+  condition:{},
   currentPage:1,
   totalCount:500,
 }
 
+getDateSearchData(rlt){
+  this.setState({
+    balanceChargesData:rlt
+  })
+  console.log(this.state.condition);
+}
+
+getChangeCondition(newcondition){
+  this.setState({
+    condition:newcondition
+  })
+    console.log(this.state.condition);
+}
+
+
+getDateSearchtotalCount(newtotalCount){
+  this.setState({
+    totalCount:newtotalCount
+  })
+}
 
 componentDidMount(){
   let self = this;
-  self.getBalanceChargeUnpaid(1,20,this.state.conditionUnpaid);
-  countBalanceCharge(this.state.conditionUnpaid,function(err,rlt){
+  console.log(self.state.condition);
+  let condition = {status:'unpaid'};
+  self.getBalanceCharge(1,20,condition);
+  countBalanceCharge(condition,function(err,rlt){
       if(!err){
         self.setState({
           totalCount:rlt,
         })
       }
   })
+  console.log(self.state.condition);
+  self.setState({
+    condition
+  })
+  console.log(self.state.condition);
 }
 
-handlePageChangeUnpaid(page, pageSize){
+handlePageChange(page, pageSize){
   $(document).scrollTop(0);
-  this.getBalanceChargeUnpaid(page, pageSize, this.state.conditionUnpaid);
+  this.getBalanceCharge(page, pageSize, this.state.condition);
+  console.log(this.state.condition);
 }
 
-handlePageChangePaid(page, pageSize){
-  $(document).scrollTop(0);
-  this.getBalanceChargePaid(page, pageSize, this.state.conditionPaid);
-}
-
-handlePageChangeRevoke(page, pageSize){
-  $(document).scrollTop(0);
-  this.getBalanceChargeRevoke(page, pageSize, this.state.conditionRevoke);
-}
 
 toggleBalanceCharges(key) {
   let self = this;
   if(key=="unpaid"){
-      self.getBalanceChargeUnpaid(1,20,self.state.conditionUnpaid);
-      countBalanceCharge(self.state.conditionUnpaid,function(err,rlt){
+    let condition = {status:'unpaid'};
+      self.getBalanceCharge(1,20,condition);
+      countBalanceCharge(condition,function(err,rlt){
           if(!err){
             self.setState({
               totalCount:rlt,
             })
           }
+      })
+      self.setState({
+        condition
       })
   }
   if(key=="paid"){
-      self.getBalanceChargePaid(1,20,this.state.conditionPaid);
-      countBalanceCharge(self.state.conditionPaid,function(err,rlt){
+    let condition = {status:'paid'};
+      self.getBalanceCharge(1,20,condition);
+      countBalanceCharge(condition,function(err,rlt){
           if(!err){
             self.setState({
               totalCount:rlt,
             })
           }
       })
+      self.setState({
+        condition
+      })
   }
   if(key=="revoke"){
-      self.getBalanceChargeRevoke(1,20,this.state.conditionRevoke);
-      countBalanceCharge(self.state.conditionRevoke,function(err,rlt){
+    let condition = {status:'revoke'}
+      self.getBalanceCharge(1,20,condition);
+      countBalanceCharge(condition,function(err,rlt){
           if(!err){
             self.setState({
               totalCount:rlt,
             })
           }
+      })
+      self.setState({
+        condition
       })
   }
 
@@ -112,7 +143,7 @@ onPayMoney = (_id) =>{
       Meteor.call("balancecharge.status.updatePaid",_id,function(error,result){
         if(!error){
           console.log(result);
-          self.getBalanceChargeUnpaid(1,20,self.state.conditionUnpaid);
+          self.getBalanceCharge(1,20,self.state.condition);
 
         }
         else {
@@ -130,50 +161,69 @@ onPayMoney = (_id) =>{
 
 }
 
-// reflashTable(){
-//   let self = this;
-//
-// }
+onReturnMoney = (_id) =>{
+  let self = this
+  confirm({
+    title: '是否打款？！',
+    content: '请确认打款金额，银行卡号，姓名！',
+    okText: '是',
+    okType: 'danger',
+    cancelText: '否',
+    onOk() {
+  let userId='';
+  let money=null;
+  let amount=null;
+  Meteor.call('balance.chargesOne',_id,function(err,alt){
+  userId=alt.userId;
+  money=alt.money
+    Meteor.call('balance.userId',userId,function(error,result){
+      amount=result.amount
+      console.log(userId,money,amount);
+      Meteor.call('balances.updaterevoke.amount',userId,money,amount,function(wrong,rlt){
+
+      })
+    })
+  })
+  Meteor.call("balancecharge.status.updateRevoke",_id,function(error,result){
+    if(!error){
+      console.log(result);
+      self.getBalanceCharge(1,20,self.state.condition);
+
+    }
+    else {
+      console.log(error);
+    }
+      })
+      console.log('OK');
+      message.success('已撤销');
+    },
+  onCancel() {
+    console.log('Cancel');
+    message.error('已取消撤销');
+  },
+  });
+}
 
 
 
 
-
-getBalanceChargeUnpaid(page,pageSize,conditionUnpaid){
+getBalanceCharge(page,pageSize,condition){
   let self = this;
-  getMeteorBalanceChargeUnpaid(conditionUnpaid,page,pageSize,function(err,rlt){
+  getMeteorBalanceCharge(condition,page,pageSize,function(err,rlt){
     if(!err){
       self.setState({
         balanceChargesData:rlt,
         currentPage:page,
       })
     }
+    console.log(rlt);
   })
 }
 
-getBalanceChargePaid(page,pageSize,conditionPaid){
-  let self = this;
-  getMeteorBalanceChargePaid(conditionPaid,page,pageSize,function(err,rlt){
-    if(!err){
-      self.setState({
-        balanceChargesData:rlt,
-        currentPage:page,
-      })
-    }
-  })
+handleonChange(date, dateString) {
+  console.log(date, dateString);
 }
 
-getBalanceChargeRevoke(page,pageSize,conditionRevoke){
-  let self = this;
-  getMeteorBalanceChargeRevoke(conditionRevoke,page,pageSize,function(err,rlt){
-    if(!err){
-      self.setState({
-        balanceChargesData:rlt,
-        currentPage:page,
-      })
-    }
-  })
-}
 
 
   render() {
@@ -241,53 +291,69 @@ getBalanceChargeRevoke(page,pageSize,conditionRevoke){
             <Button  onClick={ () => this.onPayMoney(record._id)} style={actionStyle} ><span>打款</span></Button>
           </Tooltip>
           <span className="ant-divider" />
-          <Tooltip placement="topLeft" title="撤销此次提现" arrowPointAtCenter>
-            <Button  onClick={ () => this.onReturnMoney(record._id)} style={actionStyle} ><span>撤销</span></Button>
-          </Tooltip>
-          <span className="ant-divider" />
+          
         </span>)
       }
     },
     }
   ];
+
     return (
       <div>
+
       <Tabs defaultActiveKey="unpaid" onChange={this.toggleBalanceCharges.bind(this)} style={{marginLeft:"0"}}>
     <TabPane tab="未打款" key="unpaid">
+    <DateRange
+    getDateSearchData={this.getDateSearchData.bind(this)}
+    getChangeCondition={this.getChangeCondition.bind(this)}
+    getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
+    SearchCondition = {this.state.condition}
+    />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
             pagination={{defaultPageSize: 20,
                          total: this.state.totalCount,
-                         onChange: (page, pageSize)=> this.handlePageChangeUnpaid(page, pageSize),
+                         onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
                          showQuickJumper: true,
                          current: this.state.currentPage
      }}
      columns={BalanceColumns} />
      </TabPane>
     <TabPane tab="已打款" key="paid">
+    <DateRange
+    getDateSearchData={this.getDateSearchData.bind(this)}
+    getChangeCondition={this.getChangeCondition.bind(this)}
+    getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
+    SearchCondition = {this.state.condition}
+    />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
             pagination={{defaultPageSize: 20,
                          total: this.state.totalCount,
-                         onChange: (page, pageSize)=> this.handlePageChangePaid(page, pageSize),
+                         onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
                          showQuickJumper: true,
                          current: this.state.currentPage
      }}
      columns={BalanceColumns} />
     </TabPane>
     <TabPane tab="已撤销" key="revoke">
+    <DateRange
+    getDateSearchData={this.getDateSearchData.bind(this)}
+    getChangeCondition={this.getChangeCondition.bind(this)}
+    getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
+    SearchCondition = {this.state.condition}
+    />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
             pagination={{defaultPageSize: 20,
                          total: this.state.totalCount,
-                         onChange: (page, pageSize)=> this.handlePageChangeRevoke(page, pageSize),
+                         onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
                          showQuickJumper: true,
                          current: this.state.currentPage
      }}
      columns={BalanceColumns} />
     </TabPane>
   </Tabs>
-
 
        </div>
     )

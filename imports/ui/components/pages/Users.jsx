@@ -180,6 +180,7 @@ class Users extends React.Component{
   }
   componentDidMount(){
     let self = this;
+    console.log(self.state.condition);
     self.getPageUsers(1,20,this.state.condition);
     countMeteorUsers(function(err, rlt){
 
@@ -210,11 +211,13 @@ class Users extends React.Component{
         {nickname:eval("/"+str+"/")}
       ]
     };
+    // let condition ={status:"unpaid"}
     this.getPageUsers(1, 20, condition);
     this.setState({
       condition,
       currentPage: 1,
     });
+    console.log(this.state.condition);
 
 
   }
