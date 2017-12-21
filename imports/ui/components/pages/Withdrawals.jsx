@@ -366,7 +366,6 @@ handleonChange(date, dateString) {
             pagination={{defaultPageSize: 20,
                          total: this.state.totalCount,
                          onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
-                         showQuickJumper: true,
                          current: this.state.currentPage
      }}
      columns={BalanceColumns} />

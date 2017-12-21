@@ -10,15 +10,9 @@ export function prebuildAdmin(){
       name_zh: "超级管理员",
       createdAt: new Date(),
       weight: 0,
-      deletable: false,
-      editable: false,
-      recordAccess: {
-        read: [],
-        edit: [],
-        remove: [],
-      },
-      accesses: {
-        isSuper: true,
+      state:true,
+      isSuper: true,
+      permissions: {
         users: {
           read: true,
           edit: true,
@@ -61,11 +55,13 @@ export function prebuildAdmin(){
           remove: true,
           add: true,
         },
-        role_assign: {
-          admin: true,
-          superAdmin: false,
+        roles: {
+          read: true,
+          edit: true,
+          remove: true,
+          add: true,
+          shops:[] //判断是否为店内角色
         },
-        users: [],
       }
     });
     Roles.update(newAdminId, {

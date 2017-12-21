@@ -15,6 +15,8 @@ import CurrentDealUser from '/imports/ui/reducers/CurrentDealUser.js'
 import AgencyChange from '/imports/ui/reducers/AgencyChange.js'
 import {WithDraws, getWithDraw} from '/imports/ui/reducers/WithDraws.js'
 import ShopsList from '/imports/ui/reducers/ShopsList.js'
+import RolesList from '/imports/ui/reducers/RolesList.js'
+
 
 
 const rmiddleware = routerMiddleware(browserHistory)
@@ -30,12 +32,12 @@ export default function configureStore(initialState) {
       routing: routerReducer,
       NewMemberApply,
       CurrentDealAgency,
-
       CurrentDealUser,
       AgencyChange,
       WithDraws,
       getWithDraw,
       ShopsList,
+      RolesList
     }),
     initialState,
     enhancer

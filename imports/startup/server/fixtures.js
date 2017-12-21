@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import { prebuildAdmin } from './roles_fixture.js';
 import { BalanceIncomes } from '/imports/api/balances/balance_incomes.js';
 
+
 Meteor.startup(() => {
   prebuildAdmin();
-
 });
