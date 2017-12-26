@@ -33,7 +33,6 @@ Meteor.methods({
         'bankId':1,
         'userId':1,
         'status':1,
-        'address':1,
         'createdAt': 1,
       }
 
