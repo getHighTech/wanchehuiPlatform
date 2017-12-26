@@ -219,7 +219,6 @@ getBalanceCharge(page,pageSize,condition){
         currentPage:page,
       })
     }
-    console.log(rlt);
   })
 }
 
@@ -244,7 +243,7 @@ handleonChange(date, dateString) {
         title: '用户',
         dataIndex: 'name',
         key: 'name',
-        width: 150,
+        width: 100,
       },{
         title: '银行卡号',
         dataIndex: 'bankId',

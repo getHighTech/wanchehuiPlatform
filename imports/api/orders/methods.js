@@ -46,7 +46,7 @@ Meteor.methods({
     return ordersdata.fetch();
   },
   'orders.accouts'(ids) {
-    return Orders.find({createdBy: {$in: ids}});
+    return Orders.find({createdBy: {$in: ids}}).fetch();
   },
   'orders.count'(condition){
     return ordersCount(condition);
