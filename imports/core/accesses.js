@@ -10,10 +10,13 @@ export function canBeAccessed(roleCollection, moduleString, ACL, weight){
     return "ACCESS DENY"
   }
   if (roleCollection.weight < weight) {
-    return "ACCESS DENY";
+    return "WEIGHT ACCESS DENY";
   }
   if (!checkModulePressionByRoleCollection(roleCollection, moduleString)) {
-    return "ACCESS DENY";
+    return "ROLE ACCESS DENY";
+  }
+  if (!checkACLByRoleCollection(roleCollection, ACL)) {
+    return "ACL ACCESS DENY"
   }
 
 
