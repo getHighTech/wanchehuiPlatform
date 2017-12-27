@@ -64,6 +64,9 @@ Meteor.methods({
   'bankcards.accouts'(ids) {
     return Bankcards.find({userId: {$in: ids}}).fetch();
   },
+  'bankcards.address'(ids) {
+    return Bankcards.find({userId: {$in: ids}}).fetch();
+  },
   "get.limit.balance_incomes"(page, pagesize, balanceId, userId){
     return getIncomeRecords(page, pagesize, balanceId, userId);
   },
@@ -82,8 +85,22 @@ Meteor.methods({
       }
     })
   },
-  "get.balance_charges.InThisTime"(condition){
-    return BalanceCharges.find(condition,{sort: {"createdAt": -1}}).fetch();
+  "get.balance_charges.InThisTime"(condition,page=1, pageSize=20){
+    return BalanceCharges.find(condition, {
+      skip: (page-1)*pageSize, limit: pageSize,
+      sort: {"createdAt": -1},
+      fields:
+        {
+        'text':1,
+        "money":1,
+        'bankId':1,
+        'userId':1,
+        'status':1,
+        'address':1,
+        'createdAt': 1,
+      }
+
+    },{sort: {"createdAt": -1}}).fetch();
   },
   "get.balance_charges.InThisTimeCount"(condition){
     return BalanceCharges.find(condition).count();
