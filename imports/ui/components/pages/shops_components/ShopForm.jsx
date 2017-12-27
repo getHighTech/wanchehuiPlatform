@@ -40,12 +40,15 @@ class ShopFormWrap extends Component {
 
     }
     state = {
-      fileList: []
+      fileList: [],
+      shopAddress:''
     };
     componentWillReceiveProps(nextProps){
         this.setState(nextProps);
     }
-
+    setShopAdderss(value){
+      this.setState({shopAddress:value})
+    }
     handleChange(info) {
       console.log(info)
 
@@ -80,6 +83,16 @@ class ShopFormWrap extends Component {
 
     componentWillReceiveProps(nextProps){
 
+    }
+
+    getDecoratorValue = (v) => {
+      const setFieldsValue = this.props.form.setFieldsValue;
+      // const getFieldValue = this.props.form.getFieldValue;
+      // console.log(getFieldValue('shopAddress'))
+      // const fieldName = v.name
+      // const fieldValue = v.value
+      console.log(v.target.value)
+      setFieldsValue({shopAddress: v.target.value})
     }
 
     render() {
@@ -203,12 +216,11 @@ class ShopFormWrap extends Component {
         label='店铺地址'
         >
           {getFieldDecorator('shopAddress', {
-            initialValue: this.props.shopAddress,
-          rules: [{ required: true, message: '店铺简介不能为空' }],
+            getValueFromEvent: this.getDecoratorValue
           })(
             <AMapComplete
             editState={this.props.editState}
-            initialValue={this.props.shop.shopAddress}
+            fieldsName="shopAddress"
             />
           )}
 

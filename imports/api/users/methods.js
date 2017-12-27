@@ -53,6 +53,9 @@ Meteor.methods({
     );
     return users.fetch();
   },
+  'get.users.accouts'(userId){
+    return Meteor.users.find({_id: {$in: userId}}).fetch();
+  },
 
   'get.users.addOnToady'(){
     let date = new Date();
