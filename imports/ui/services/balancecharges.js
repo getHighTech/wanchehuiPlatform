@@ -17,38 +17,32 @@ export function getMeteorBalanceCharge(condition,page,pageSize,callback){
       bankIds.push(userId);
     }
 
-    Meteor.call("orders.accouts", bankIds, function(error, accouts) {
-      console.log(accouts);
+    Meteor.call("get.users.accouts", bankIds, function(error, accouts) {
       if (!error) {
         accoutHash = {}
         for(let accout of accouts) {
-          accoutHash[accout.createdBy] = accout;
+          accoutHash[accout._id] = accout;
         }
-        console.log(accoutHash);
         for(var charge of result) {
-          console.log(result);
-          console.log(accoutHash[charge.userId].name);
-          charge.name = accoutHash[charge.userId].name;
+          charge.name = accoutHash[charge.userId].username;
       }
+
       }
     });
 
+
     Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
-      console.log(accouts);
       if (!error) {
         accoutHash = {}
         for(let accout of accouts) {
           accoutHash[accout.userId] = accout;
         }
-        console.log(accoutHash)
         for(var charge of result) {
           charge.bankId = accoutHash[charge.userId].accountNumber;
           charge.address= accoutHash[charge.userId].bankAddress;
           charge.userId =  accoutHash[charge.userId].realName;
       }
-
         callback(err, result);
-        console.log(result);
       }
     });
 
@@ -58,9 +52,7 @@ export function getMeteorBalanceCharge(condition,page,pageSize,callback){
 
 
 export function countBalanceCharge(condition,callback){
-  console.log(condition);
   return Meteor.call('balancecharge.count',condition,function(err,rlt){
-    console.log(rlt);
     callback(err,rlt)
   })
 }

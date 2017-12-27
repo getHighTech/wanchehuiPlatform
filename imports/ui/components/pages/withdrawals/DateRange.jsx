@@ -49,7 +49,6 @@ class DateRange extends React.Component {
     this.onChange('startValue', value);
     let newDate = new Date(value._d);
     let startValue =newDate.getFullYear() + '/' + (newDate.getMonth() + 1) + '/' + newDate.getDate();
-    console.log(startValue);
     this.setState({
       startDate:startValue
     })
@@ -58,8 +57,7 @@ class DateRange extends React.Component {
   onEndChange = (value) => {
     this.onChange('endValue', value);
     let newDate = new Date(value._d);
-    let endValue =newDate.getFullYear() + '/' + (newDate.getMonth() + 1) + '/' + newDate.getDate();
-    console.log(new Date(endValue));
+    let endValue =newDate.getFullYear() + '/' + (newDate.getMonth() + 1) + '/' + (newDate.getDate() + 1 );
     this.setState({
       endDate:endValue
     })
@@ -77,16 +75,11 @@ class DateRange extends React.Component {
 
   DateFind(){
     let self =this;
-    console.log(self.props.SearchCondition.status);
-    console.log(self.state.startDate,this.state.endDate);
-    console.log(self.state.area)
     let newcondition={}
     if (self.state.area !== ""){
-      console.log(self.state)
       newcondition ={createdAt: {'$gt':new Date(this.state.startDate),'$lte':new Date(this.state.endDate)},status:self.props.SearchCondition.status,area:self.state.area};
     }else {
      newcondition ={createdAt: {'$gt':new Date(this.state.startDate),'$lte':new Date(this.state.endDate)},status:self.props.SearchCondition.status};
-
     }
     self.getData(newcondition);
     self.setState({
@@ -101,10 +94,26 @@ class DateRange extends React.Component {
         var result = [];
         for(var charge  of rlt){
           charge.money = charge.money/100.0;
+          let address='address';
+          charge[address]='1';
+          let name='name';
+          charge[name]='1';
           result.push(charge);
           let userId = charge.userId;
           bankIds.push(userId);
         }
+
+        Meteor.call("get.users.accouts", bankIds, function(error, accouts) {
+          if (!error) {
+            accoutHash = {}
+            for(let accout of accouts) {
+              accoutHash[accout._id] = accout;
+            }
+            for(var charge of result) {
+              charge.name = accoutHash[charge.userId].username;
+          }
+          }
+        });
         Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
           if (!error) {
             accoutHash = {}
@@ -113,14 +122,14 @@ class DateRange extends React.Component {
             }
             for(var charge of result) {
               charge.bankId = accoutHash[charge.userId].accountNumber;
+              charge.address=  accoutHash[charge.userId].bankAddress;
               charge.userId=  accoutHash[charge.userId].realName;
-              charge.bankAddress=  accoutHash[charge.userId].bankAddress;
+
             }
             self.props.getDateSearchData(result);
             self.props.getChangeCondition(newcondition)
           }
         });
-        console.log(result);
 
       }
       else{
@@ -130,7 +139,6 @@ class DateRange extends React.Component {
 
     Meteor.call('get.balance_charges.InThisTimeCount',newcondition,function(err,rlt){
       if(!err){
-        console.log(rlt);
         self.props.getDateSearchtotalCount(rlt);
       }
       else{
@@ -205,11 +213,14 @@ class DateRange extends React.Component {
 
   DateEmpty(){
     let self =this;
-    console.log(self.props.SearchCondition.status);
     let newcondition={status:self.props.SearchCondition.status};
     self.getData(newcondition);
     self.setState({
-      local:"无"
+      local:"无",
+      startDate:null,
+      endDate:null,
+      startValue: null,
+      endValue: null,
     })
   }
   getChengdu(){
@@ -217,12 +228,6 @@ class DateRange extends React.Component {
     self.setState({
       area:"CHENGDU"
     })
-    console.log(self.props.SearchCondition.status);
-    console.log(self.state.startDate,this.state.endDate);
-    console.log(self.state.area)
-
-
-
   }
 
 
