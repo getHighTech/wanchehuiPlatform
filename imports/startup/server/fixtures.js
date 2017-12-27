@@ -6,5 +6,7 @@ import { BalanceIncomes } from '/imports/api/balances/balance_incomes.js';
 
 
 Meteor.startup(() => {
+  //delete roles;
   prebuildAdmin();
+
 });
