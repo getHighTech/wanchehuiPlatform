@@ -19,6 +19,8 @@ import Modal from 'antd/lib/modal';
 import 'antd/lib/modal/style';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
+import Avatar from 'antd/lib/avatar';
+
 
 import { Roles } from '/imports/api/roles/roles.js';
 
@@ -168,12 +170,16 @@ class Shops extends React.Component{
       }
     })
   }
-
+  handlePageChange(page, pageSize){
+    $(document).scrollTop(0);
+    this.getPageShops(page, pageSize, this.state.condition);
+  }
 
   componentDidMount(){
+    let self = this
     console.log('加载店铺数据')
     console.log(this.state.condition);
-    this.getPageShops(1,20,this.state.condition);
+    this.getPageShops(1,5,this.state.condition);
     countShops(function(err, rlt){
       if (!err) {
         self.setState({
@@ -206,23 +212,32 @@ class Shops extends React.Component{
           title: '店铺ID',
           dataIndex: '_id',
           key: '_id',
-          width: 150,
+          width: 100,
         },
         {
         title: '店名',
         dataIndex: 'shopName',
         key: 'shopName',
-        width: 150,
+        width: 100,
+      },{
+        title: '店铺封面',
+        dataIndex: 'shopPicture',
+        key: 'shopPicture',
+        width: 100,
+        render:(text, record) =>(
+            <img src={record.shopPicture} style={{height:50,width:50}}/>
+        )
       }, {
         title: '地址',
         dataIndex: 'shopAddress',
         key: 'shopAddress',
-        width: 150,
+        width: 100,
+
       }, {
         title: '联系电话',
         dataIndex: 'shopPhone',
         key: 'shopPhone',
-        width: 150,
+        width: 100,
       },{
         title: '操作',
         dataIndex: 'action',
@@ -272,7 +287,14 @@ class Shops extends React.Component{
         </div>
       </div>
 
-      <Table rowKey={record => record._id} dataSource={this.state.shopsData} columns={ShopColumns} />
+      <Table rowKey={record => record._id} 
+      dataSource={this.state.shopsData} 
+      columns={ShopColumns}
+      pagination={{
+        defaultPageSize: 5,
+        total: this.state.totalCount,
+        onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
+        current: this.state.currentPage}} />
 
       </div>
     )

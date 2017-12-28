@@ -7,6 +7,7 @@ Meteor.methods({
         return Shops.insert({
             shopName: params.shopName,
             shopPhone: params.shopPhone,
+            shopPicture:params.shopPicture,
             shopAddress: params.shopAddress,
             shopDescrption:params.shopDescrption,
             shopTag:params.shopTag,
@@ -24,6 +25,7 @@ Meteor.methods({
                 'shopAddress': 1,
                 'shopPhone': 1,
                 'shopState':1 ,
+                'shopPicture':1,
                 'createdAt': 1,
               }
             }
@@ -54,7 +56,11 @@ Meteor.methods({
           shopPhone: params.shopPhone,
           shopDescrption:params.shopDescrption,
           shopTag:params.shopTag,
+          shopPicture:params.shopPicture,
         }
       });
     },
+    'shops.count'(){
+      return Shops.find().count();
+    }
 })
