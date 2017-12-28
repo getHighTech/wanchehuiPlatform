@@ -318,7 +318,7 @@ handleonChange(date, dateString) {
     return (
       <div>
 
-      <Tabs defaultActiveKey="unpaid" onChange={this.toggleBalanceCharges.bind(this)} style={{marginLeft:"0"}}>
+      <Tabs defaultActiveKey="unpaid" onChange={this.toggleBalanceCharges.bind(this)} >
     <TabPane tab="未打款" key="unpaid">
     <DateRange
     getDateSearchData={this.getDateSearchData.bind(this)}

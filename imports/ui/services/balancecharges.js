@@ -30,7 +30,6 @@ export function getMeteorBalanceCharge(condition,page,pageSize,callback){
     });
 
     Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
-      console.log(accouts);
       if (!error) {
         accoutHash = {}
         for(let accout of accouts) {
