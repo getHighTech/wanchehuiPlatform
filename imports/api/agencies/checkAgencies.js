@@ -2,10 +2,10 @@ import { Agencies } from "./agencies.js";
 import { BalanceIncomes } from '../balances/balance_incomes.js';
 export function checkAgencies(){
 
-  let undeal = 0;
-  let correted = 0;
-  let needToAnyalse = 0;
-  let thereIsNoSuper = 0;
+  // let undeal = 0;
+  // let correted = 0;
+  // let needToAnyalse = 0;
+  // let thereIsNoSuper = 0;
 
 //   Agencies.find({}).forEach((agency)=> {
 //     let income =BalanceIncomes.findOne({agency: agency._id});
