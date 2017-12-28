@@ -69,10 +69,10 @@ class AMapComplete extends Component {
 
 
     render(){
-        const {initialValue, editState,fieldsName, onChange, value} = this.props
+        const {initialValue, editState,fieldsName, onChange,inputValue} = this.props
         return (
             <div>
-                <Input type="text" id="input" defaultValue={value} disabled={this.props.editState}  style={{ width: '100%' }} onChange={v => onChange(v)}/>
+                <Input type="text" id="input" defaultValue={this.props.inputValue} disabled={this.props.editState}  style={{ width: '100%' }} onChange={v => onChange(v)}/>
                 {/* onChange={v => onChange({name:fieldsName,value:v.target.value})} */}
                 <div id="AMapContainer" style={{height: "90%",minHeight:"230px", width: "100%"}}></div>
             </div>
