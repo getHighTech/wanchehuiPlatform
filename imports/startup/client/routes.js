@@ -51,6 +51,7 @@ const Routes = ({ location }) =>
       <Route path="/give_card_to_users" component={GiveCardToUsers}/>
       <Route path="/agencies_relations" component={AgenciesRelations}/>
       <Route path="/component_test" component={ComponentTest}/>
+    
       <IndexRoute component={DashBoard} />
     </Route>
     <Route path="/login" component={Login}/>
