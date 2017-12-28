@@ -2,6 +2,10 @@ function checkModulePressionByRoleCollection(roleCollection, moduleString){
   return false;
 }
 function checkACLByRoleCollection(roleCollection, ACL){
+  
+  for (var i = 0; i < ACL.length; i++) {
+    ACL[i]
+  }
   return false;
 }
 export function canBeAccessed(roleCollection, moduleString, ACL, weight){
