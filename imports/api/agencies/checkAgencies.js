@@ -6,10 +6,9 @@ export function checkAgencies(){
   let undeal = 0;
   let correted = 0;
   let needToAnyalse = 0;
-  let thereIsNoSuper = 0;
+
   let dealingAgency = 0;
-  let illagency = 0;
-  let userNotFound = 0;
+
   Agencies.find({}).forEach((agency)=> {
     let income =BalanceIncomes.find({agency: agency._id});
     let superIncome = BalanceIncomes.findOne({agency: agency.superAgencyId});
@@ -57,7 +56,7 @@ export function checkAgencies(){
 
       undeal++;
       if (superAgency) {
-        console.log("上级存在");
+        console.log("上级存在", superAgency);
         let superUser = Meteor.users.findOne({_id: superAgency.userId});
         let superSuperAgency = Agencies.findOne({_id: superAgency.superAgencyId})
         console.log("上级代理用户是： ", superUser.username);
@@ -107,6 +106,15 @@ export function checkAgencies(){
             });
           }
 
+        }else{
+          console.log('将所有没有上级代理的用户给马哥');
+          let mage = Meteor.users.findOne({username: '小马过河'});
+          let mageAgency = Agencies.findOne({userId: mage._id});
+          Agencies.update(agency._id, {
+            $set: {
+              superAgencyId: mageAgency._id,
+            }
+          });
         }
       }
 
@@ -117,8 +125,5 @@ export function checkAgencies(){
   console.log("没有处理好的", undeal);
   console.log("处理好的", correted);
   console.log("需要进一步分析的", needToAnyalse);
-  console.log("没有上级的代理有", thereIsNoSuper);
-  console.log('非法的代理(没有买卡但是有代理权的人)', illagency);
-  console.log('用户不存在的代理有！', userNotFound);
     console.log(`========================================================`);
 }
