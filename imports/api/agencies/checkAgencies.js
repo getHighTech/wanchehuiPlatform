@@ -61,10 +61,40 @@ export function checkAgencies(){
         let superSuperAgency = Agencies.findOne({_id: superAgency.superAgencyId})
         console.log("上级代理用户是： ", superUser.username);
         let balance = Balances.findOne({userId: superAgency.userId});
-        console.log('应该入账的账户是', balance);
+        if (!balance) {
+          console.log("上级用户没有钱包，正在创建");
+          let bid = Balances.insert({
+            userId: superAgency.userId,
+            amount: 0,
+            createdAt: new Date()
+          })
+          balance = Balances.findOne({_id: bid});
+        }
+        if (balance) {
+          console.log('应该入账的账户是', balance);
+          let user_income = BalanceIncomes.findOne({agency: agency._id, userId: superUser._id, balanceId: balance._id});
+          if (!user_income) {
+            BalanceIncomes.insert({
+              reasonType: "agencyGive",
+              agency: agency._id, balanceId: balance._id, userId: superUser._id, amount: 3880,
+              text: "分享奖励",
+              createdAt: new Date()
+            });
+            Balances.update(balance._id, {
+              $set: {
+                amount: balance.amount+3880,
+              }
+            });
+            console.log('新的账户余额更新：', balance.amount);
+          }else{
+            console.log('用户的上级已经入账，开始检查其上上级别', BalanceIncomes.find({agency: agency._id}).count());
+          }
+
+        }
+
 
         if (!superSuperAgency) {
-          console.log('上上级代理不存在');
+          console.log('上上级代理不存在', superAgency);
         }else{
           let superSuperUser = Meteor.users.findOne({_id: superSuperAgency.userId});
           console.log("上上级代理用户是： ", superSuperUser.username);
