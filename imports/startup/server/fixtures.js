@@ -6,7 +6,7 @@ import { checkAgencies } from '/imports/api/agencies/checkAgencies.js'
 
 Meteor.startup(() => {
   //delete roles;
-  checkAgencies();
-  prebuildAdmin();
+  // checkAgencies();
+  // prebuildAdmin();
 
 });
