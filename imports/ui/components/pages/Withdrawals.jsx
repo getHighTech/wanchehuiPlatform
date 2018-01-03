@@ -20,6 +20,7 @@ import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 
 import DateRange from './withdrawals/DateRange.jsx';
+import Exportexcel from './withdrawals/Exportexcel.jsx';
 
 const confirm = Modal.confirm;
 
@@ -38,7 +39,9 @@ state= {
   totalCount:500,
 }
 
+getData(){
 
+}
 getDateSearchData(rlt){
   this.setState({
     balanceChargesData:rlt
@@ -326,6 +329,9 @@ handleonChange(date, dateString) {
     getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
     SearchCondition = {this.state.condition}
     />
+    <Exportexcel
+    getData={this.state.balanceChargesData}
+    />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
             pagination={{defaultPageSize: 20,
@@ -343,6 +349,9 @@ handleonChange(date, dateString) {
     getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
     SearchCondition = {this.state.condition}
     />
+    <Exportexcel
+    getData={this.state.balanceChargesData}
+    />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
             pagination={{defaultPageSize: 20,
@@ -359,6 +368,9 @@ handleonChange(date, dateString) {
     getChangeCondition={this.getChangeCondition.bind(this)}
     getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
     SearchCondition = {this.state.condition}
+    />
+    <Exportexcel
+    getData={this.state.balanceChargesData}
     />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
