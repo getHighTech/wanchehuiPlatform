@@ -6,7 +6,7 @@ export function checkAgencies(){
   let undeal = 0;
   let correted = 0;
   let needToAnyalse = 0;
-
+  let superSuperAgencyMissing = 0;
   let dealingAgency = 0;
 
   Agencies.find({}).forEach((agency)=> {
@@ -17,7 +17,7 @@ export function checkAgencies(){
     console.log(`========================================================`);
 
     console.log(`正检查第${dealingAgency}个代理,生成时间是${moment(agency.createdAt).format("YYYY-MM-DD HH:mm:ss")}`);
-    if (income.count()==2) {
+    if (income.count()>=2) {
       console.log('没有问题');
       correted++
     }else{
@@ -72,7 +72,7 @@ export function checkAgencies(){
         }
         if (balance) {
           console.log('应该入账的账户是', balance);
-          let user_income = BalanceIncomes.findOne({agency: agency._id, userId: superUser._id, balanceId: balance._id});
+          let user_income = BalanceIncomes.findOne({agency: agency._id, userId: superUser._id, balanceId: balance._id, amount: 3880});
           if (!user_income) {
             BalanceIncomes.insert({
               reasonType: "agencyGive",
@@ -87,7 +87,7 @@ export function checkAgencies(){
             });
             console.log('新的账户余额更新：', balance.amount);
           }else{
-            console.log('用户的上级已经入账，开始检查其上上级别', BalanceIncomes.find({agency: agency._id}).count());
+            console.log('用户的上级已经入账，开始检查其上上级别', BalanceIncomes.find({agency: agency._id, amount: 3880}).count());
           }
 
         }
@@ -95,9 +95,39 @@ export function checkAgencies(){
 
         if (!superSuperAgency) {
           console.log('上上级代理不存在', superAgency);
+          superSuperAgencyMissing++;
         }else{
+          let super_balance = Balances.findOne({userId: superSuperAgency.userId});
+          if (!super_balance) {
+            console.log("上上级用户没有钱包，正在创建");
+            let sbid = Balances.insert({
+              userId: superSuperAgency.userId,
+              amount: 0,
+              createdAt: new Date()
+            })
+            super_balance = Balances.findOne({_id: sbid});
+          }
           let superSuperUser = Meteor.users.findOne({_id: superSuperAgency.userId});
           console.log("上上级代理用户是： ", superSuperUser.username);
+          let superUserIncome = BalanceIncomes.findOne({agency: superSuperAgency._id, userId: superSuperUser._id, balanceId: super_balance._id, amount: 1280});
+          //==给上级钱
+          if (!superUserIncome) {
+            BalanceIncomes.insert({
+              reasonType: "agencyGive",
+              agency: agency._id, balanceId: super_balance._id, userId: superUser._id, amount: 1280,
+              text: "分享奖励",
+              createdAt: new Date()
+            });
+            Balances.update(super_balance._id, {
+              $set: {
+                amount: super_balance.amount+1280,
+              }
+            });
+            console.log('新的上上级别账户余额更新：', super_balance.amount);
+          }else{
+            console.log('用户的上上级已经入账，无需进一步操作', BalanceIncomes.find({agency: superSuperAgency._id, amount: 1280}).count());
+          }
+          //==end of 给上上级别钱
 
         }
 
@@ -154,6 +184,7 @@ export function checkAgencies(){
   });
   console.log("没有处理好的", undeal);
   console.log("处理好的", correted);
+  console.log("没有上上级别", superSuperAgencyMissing);
   console.log("需要进一步分析的", needToAnyalse);
     console.log(`========================================================`);
 }
