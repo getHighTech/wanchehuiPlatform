@@ -25,13 +25,12 @@ export function getMeteorBalanceCharge(condition,page,pageSize,callback){
         }
         for(var charge of result) {
           charge.name = accoutHash[charge.userId].username;
-      }
-
+        }
       }
     });
 
-
     Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
+      console.log(accouts);
       if (!error) {
         accoutHash = {}
         for(let accout of accouts) {

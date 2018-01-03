@@ -22,7 +22,6 @@ import Tooltip from 'antd/lib/tooltip';
 import "antd/lib/tooltip/style";
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style';
-
 import { Roles } from '/imports/api/roles/roles.js';
 import ShopForm from './ShopForm.jsx';
 import {Link} from 'react-router';
@@ -76,6 +75,7 @@ class CommonModal extends React.Component{
   handleModalOk = () => {
     let self = this
     let validated = true;
+    console.log(this.formComponent)
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated); // 不知道有没有更好的办法
     if (!validated) {
       console.log('参数错误');
@@ -83,17 +83,16 @@ class CommonModal extends React.Component{
     }
     //处理收到的表单的数据
     const newObj = {};
-
     
+    // const getFieldValue = this.props.form.getFieldValue;
+    // console.log(getFieldValue('shopAddress'))
+    const getFieldValue = this.formComponent.getFieldValue;
+    console.log(getFieldValue('shopAddress'))
     const oldObj = this.formComponent.getFieldsValue();
     console.log(oldObj);
     //把表单中跟时间有关系的参数进行时间格式化
     for (const key in oldObj) {
-      if (oldObj[key] instanceof Date){
-        newObj[key] = oldObj[key].format('yyyy-MM-dd HH:mm:ss');
-      }else {
         newObj[key] = oldObj[key];
-      }
     }
     console.log(newObj);
     // 至此表单中的数据格式转换完毕

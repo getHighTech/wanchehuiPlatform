@@ -40,27 +40,33 @@ class ShopFormWrap extends Component {
 
     }
     state = {
-      fileList: []
+      fileList: [],
+      image_url:''
     };
     componentWillReceiveProps(nextProps){
         this.setState(nextProps);
     }
-
+ 
     handleChange(info) {
       console.log(info)
-
-
-
+      let self = this
       if (info.file.status === 'uploading') {
           console.log("上传中。");
       }
       if (info.file.status === 'done') {
           console.log("上传成功。");
+          console.log(info.file.response.data.link)
+          self.setState({
+            image_url:info.file.response.data.link
+          })
+          const setFieldsValue = this.props.form.setFieldsValue;
+          setFieldsValue({shopPicture:self.state.image_url})
+          // const getFieldValue = this.props.form.getFieldValue;
+          // console.log(getFieldValue('shopPicture'))
       } else if (info.file.status === 'error') {
           console.log("上传失败。");
       }
 
-      console.log(info.event)
     }
     //初次挂载去获取数据
     componentWillMount(){
@@ -82,11 +88,19 @@ class ShopFormWrap extends Component {
 
     }
 
+    getDecoratorValue = (v) => {
+      const setFieldsValue = this.props.form.setFieldsValue;
+      console.log(v.target.value)
+      setFieldsValue({shopAddress: v.target.value})
+      const getFieldValue = this.props.form.getFieldValue;
+      console.log(getFieldValue('shopAddress'))
+    }
+
     render() {
 
       const uploadProps = {
         action: '/images/upload',
-        onChange: this.handleChange,
+        onChange: this.handleChange.bind(this),
         listType: 'picture',
       };
       
@@ -142,37 +156,21 @@ class ShopFormWrap extends Component {
             <Input  disabled={this.props.editState} style={{ width: '100%' }} />
         )}
         </FormItem>
-
-        {/* <FormItem
-      {...formItemLayout}
-              label="上传合同"
-              hasFeedback
-          >
-            {getFieldDecorator('shopContract', {
-                rules: [{ required: true, message: '合同不能为空' }],
-                })(
-                <Upload>
-                    <Button >
-                        <Icon type="upload" /> 点击上传文件
-                    </Button>
-                </Upload>
-                )}
-        </FormItem> */}
-        <FormItem
+      <FormItem
       {...formItemLayout}
       label="店铺封面"
       hasFeedback
       >
       {getFieldDecorator('shopPicture', {
-          rules: [{ required: true, message: '图片不能为空' }],
+           initialValue: this.props.shop.shopPicture,
           })(
+            <Input type="text"   style={{display:'none'}}   placeholder="图片地址" />
+          )}
           <Upload {...uploadProps}>
               <Button>
               <Icon type="upload" /> 上传图片
               </Button>
           </Upload>
-          )}
-
       </FormItem>
       <FormItem
           {...formItemLayout}
@@ -203,15 +201,16 @@ class ShopFormWrap extends Component {
         label='店铺地址'
         >
           {getFieldDecorator('shopAddress', {
-            initialValue: this.props.shopAddress,
-          rules: [{ required: true, message: '店铺简介不能为空' }],
+            initialValue: this.props.shop.shopAddress,
           })(
-            <AMapComplete
-            editState={this.props.editState}
-            initialValue={this.props.shop.shopAddress}
-            />
+            <Input type="text"   style={{display:'none'}}   placeholder="图片地址" />
           )}
-
+          <AMapComplete
+            editState={this.props.editState}
+            fieldsName="shopAddress"
+            onChange = {this.getDecoratorValue.bind(this)}
+            inputValue = {this.props.shop.shopAddress}
+            />
         </FormItem>
       </Form>
       );
