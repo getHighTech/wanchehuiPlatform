@@ -170,7 +170,6 @@ Meteor.methods({
     return Meteor.users.find({_id: $in(userIds)})
   },
   'user.UserBindingRoles'(userId,roleIds){
-    console.log(roleIds)
     Meteor.users.update(userId, {
       $set: {
         roles: roleIds,
@@ -178,12 +177,15 @@ Meteor.methods({
     });
     for(let i=0; i<roleIds.length;i++){
       rolesBindingUser(roleIds[i],userId)
-      
     }
   },
   'user.get.roleIds'(userId){
-    console.log(userId)
-    let user =   Meteor.users.find({_id: userId})
-    return user.roles.fetch();
+    let user =   Meteor.users.findOne({_id: userId})
+    if (user.roles === undefined){
+      return []
+    }else{
+      return user.roles
+    }
+
   }
 });

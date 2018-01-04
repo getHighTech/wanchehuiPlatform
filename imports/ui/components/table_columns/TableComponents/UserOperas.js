@@ -17,6 +17,9 @@ import Modal from 'antd/lib/modal';
 import "antd/lib/modal/style";
 import Select from 'antd/lib/select';
 import "antd/lib/select/style";
+import message from 'antd/lib/message';
+import "antd/lib/message/style";
+
 
 // ant-select-dropdown-hidden
 const actionStyle = {
@@ -35,14 +38,16 @@ class UserOreas extends React.Component {
   }
   showModal = () => {
     let self = this
-    // Meteor.call('user.get.roleIds',self.props.userId,function(err,rlt){
-    //   console.log(rlt)
-
-    // })
-      self.setState({
-        visible: true,
-        // roleList: rlt
-      });
+    Meteor.call('user.get.roleIds',self.props.userId,function(err,rlt){
+      console.log(rlt)
+      if(!err){
+        self.setState({
+          visible: true,
+          roleList: rlt
+        });
+      }
+    })
+     
   }
 
   handleOk = (e) => {
@@ -55,7 +60,7 @@ class UserOreas extends React.Component {
       console.log("用户存在")
       Meteor.call('user.UserBindingRoles',UserId, self.state.roleList,function(err,rlt){
         if(!err){
-          console.log("用户绑定角色成功")
+          message.success('用户绑定角色成功');
           self.setState({
             visible: false,
             roleList:[]
@@ -122,7 +127,7 @@ class UserOreas extends React.Component {
           <Select
           mode="multiple"
           style={{ width: '100%' }}
-          defaultValue={[]}
+          defaultValue={this.state.roleList}
           placeholder="Please select"
           dropdownStyle={{zIndex:'99999' }}
           onChange={this.handleChange.bind(this)}
