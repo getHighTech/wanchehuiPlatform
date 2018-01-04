@@ -68,7 +68,11 @@ Meteor.methods({
         }
       });
     },
-    'roels.count'(){
+    'roles.count'(){
       return Roles.find().count();
+    },
+    'roles.all'(){
+      let roles = Roles.find({name: {$ne:"superAdmin"}});
+      return roles.fetch();
     }
 });

@@ -24,23 +24,13 @@ export function getMeteorBalanceCharge(condition,page,pageSize,callback){
           accoutHash[accout._id] = accout;
         }
         for(var charge of result) {
-<<<<<<< HEAD
           charge.name = accoutHash[charge.userId].username;
-=======
-          charge.name = accoutHash[charge.userId].name;
->>>>>>> b0990c14c8cb2c8dcbaf1eb1c7be07d8a45902fa
       }
-      }
+        }
     });
 
-<<<<<<< HEAD
-
-    Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
-      console.log(accouts)
-=======
     Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
       console.log(accouts);
->>>>>>> b0990c14c8cb2c8dcbaf1eb1c7be07d8a45902fa
       if (!error) {
         accoutHash = {}
         for(let accout of accouts) {

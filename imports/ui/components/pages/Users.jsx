@@ -23,9 +23,12 @@ import message from 'antd/lib/message';
 import 'antd/lib/message/style'
 
 import { countMeteorUsers, getMeteorUsersLimit } from '../../services/users.js';
+import { getAllRoles } from '../../services/roles.js';
 
 
 import {getOneUser} from '/imports/ui/actions/current_deal_user.js';
+import {getRoles} from '/imports/ui/actions/roles.js';
+
 
 const confirm = Modal.confirm;
 
@@ -179,18 +182,24 @@ class Users extends React.Component{
     });
   }
   componentDidMount(){
+    const {dispatch }  = this.props;
     let self = this;
     console.log(self.state.condition);
     self.getPageUsers(1,20,this.state.condition);
     countMeteorUsers(function(err, rlt){
-
       if (!err) {
         self.setState({
           totalCount: rlt,
         });
       }
 
-    })
+    });
+    getAllRoles(function(err,rlt){
+      if(!err){
+        console.log(rlt)
+        dispatch(getRoles(rlt))
+      }
+    });
   }
 
   componentWillReceiveProps(nextProps){

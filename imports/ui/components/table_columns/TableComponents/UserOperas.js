@@ -18,7 +18,6 @@ import "antd/lib/modal/style";
 import Select from 'antd/lib/select';
 import "antd/lib/select/style";
 
-
 // ant-select-dropdown-hidden
 const actionStyle = {
    fontSize: 16, color: '#08c'
@@ -30,35 +29,67 @@ class UserOreas extends React.Component {
     super(props);
 
   }
-  state = { visible: false }
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
+  state = { 
+    visible: false,
+    roleList:[]
   }
+  showModal = () => {
+    let self = this
+    // Meteor.call('user.get.roleIds',self.props.userId,function(err,rlt){
+    //   console.log(rlt)
+
+    // })
+      self.setState({
+        visible: true,
+        // roleList: rlt
+      });
+  }
+
   handleOk = (e) => {
     console.log(e);
-    this.setState({
-      visible: false,
-    });
+    let self = this
+    let UserId = self.props.userId
+    console.log(UserId)
+    console.log(self.state.roleList)
+    if(UserId){
+      console.log("用户存在")
+      Meteor.call('user.UserBindingRoles',UserId, self.state.roleList,function(err,rlt){
+        if(!err){
+          console.log("用户绑定角色成功")
+          self.setState({
+            visible: false,
+            roleList:[]
+          });
+        }
+      })
+    }else(
+      console.log("用户不存在")
+    )
   }
+
   handleCancel = (e) => {
-    console.log(e);
     this.setState({
       visible: false,
+      roleList:[]
     });
+    console.log(this.state.roleList)
+
   }
 
 
   
    handleChange(value) {
     console.log(`selected ${value}`);
+    this.setState({
+      roleList:value
+    })
+    console.log(this.state.roleList)
   }
   render(){
-    const {dispatch, CurrentDealUser} = this.props;
+    const {dispatch, CurrentDealUser, allRoles} = this.props;
     const children = [];
-    for (let i = 10; i < 36; i++) {
-      children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
+    for(let i =0; i < this.props.allRoles.length; i++ ){
+      children.push(<Option key={allRoles[i]._id}>{allRoles[i].name_zh}</Option>)
     }
     return (
       <span>
@@ -82,28 +113,23 @@ class UserOreas extends React.Component {
           <Button  onClick={this.showModal}  shape="circle" icon="tool"  style={actionStyle} />
         </Tooltip>
         <Modal
-          title="为该用户添加角色"
+          title="设置角色"
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
-          footer={null} 
-          id='area'
-          style={{height:200}}
         >
-          <h3>所有角色列表</h3>
+        <h3>为该用户添加角色</h3>
           <Select
           mode="multiple"
-          style={{ width: '100%', zIndex:'1000' }}
+          style={{ width: '100%' }}
+          defaultValue={[]}
           placeholder="Please select"
-          defaultValue={['a10', 'c12']}
+          dropdownStyle={{zIndex:'99999' }}
           onChange={this.handleChange.bind(this)}
-          // getPopupContainer={() => document.getElementById('area')}
-          dropdownClassName="abc"
           >
           {children}
           </Select>
         </Modal>
-
       </span>
     )
 
@@ -112,7 +138,7 @@ class UserOreas extends React.Component {
 
 function mapStateToProps(state) {
   return {
-
+      allRoles:state.RolesList.allRoles,
       CurrentDealUser: state.CurrentDealUser,
    };
 }
