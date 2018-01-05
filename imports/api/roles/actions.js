@@ -25,3 +25,11 @@ export function permitRoleRule(role, moduleName, weight, curd){
  // }
 
 }
+
+export function rolesBindingUser(roleId,userId){
+  Roles.update(roleId,{
+    $push:{
+      users: { userId }
+    }
+  })
+}

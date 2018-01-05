@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 
 import {Orders} from "/imports/api/orders/orders.js"
+import { rolesBindingUser } from "/imports/api/roles/actions.js"
 
 import { allUsersMount,
         allCardUsersMount,
@@ -167,6 +168,22 @@ Meteor.methods({
   },
   'user.findUsersbyUserIds'(userIds){
     return Meteor.users.find({_id: $in(userIds)})
+  },
+  'user.UserBindingRoles'(userId,roleIds){
+    console.log(roleIds)
+    Meteor.users.update(userId, {
+      $set: {
+        roles: roleIds,
+      }
+    });
+    for(let i=0; i<roleIds.length;i++){
+      rolesBindingUser(roleIds[i],userId)
+      
+    }
+  },
+  'user.get.roleIds'(userId){
+    console.log(userId)
+    let user =   Meteor.users.find({_id: userId})
+    return user.roles.fetch();
   }
-
 });
