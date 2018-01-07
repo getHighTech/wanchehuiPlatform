@@ -21,6 +21,9 @@ const PageHeader = (path) => {
       case "/shops/singleshop":
         return "商家店铺"
         break;
+      case "/shops/singleshop/publishgoods":
+        return "商家店铺详情"
+        break;
       case "/shops/shop_item":
       return "新增店铺"
       break;

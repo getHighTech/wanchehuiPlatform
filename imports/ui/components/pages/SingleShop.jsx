@@ -2,6 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
+import { push, replace, goBack } from 'react-router-redux';
 import Button from 'antd/lib/button/';
 import 'antd/lib/button/style';
 import Icon from 'antd/lib/icon/';
@@ -38,6 +39,9 @@ class SingleShop extends React.Component {
   }
   in(){
     console.log("进入店铺");
+    const { dispatch } = this.props;
+    let self = this;
+    dispatch(push("/shops/singleshop/publishgoods"));
   }
   out(){
     console.log("关闭店铺");
@@ -46,7 +50,6 @@ class SingleShop extends React.Component {
     const array=this.state.shopData;
     console.log(array);
     const colors=['blue','red','green','lime'];
-
 
 
 
@@ -65,6 +68,7 @@ class SingleShop extends React.Component {
               {shopdata.tags.map((color,index)=>
                 <Tag key={index} color={colors[index]} style={{marginBottom:10}} >{color}</Tag>
               )}
+
 
                 <Meta
                   title="店铺介绍"
