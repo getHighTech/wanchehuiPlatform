@@ -62,7 +62,9 @@ class SingleShop extends React.Component {
                 hoverable={true}
                 actions={[ <span  onClick={ () => this.in()} >进入店铺</span>,<span onClick={ () => this.out()} >发布商品</span>]}
               >
-              
+              {shopdata.tags.map((color,index)=>
+                <Tag key={index} color={colors[index]} style={{marginBottom:10}} >{color}</Tag>
+              )}
 
                 <Meta
                   title="店铺介绍"
