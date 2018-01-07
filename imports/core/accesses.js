@@ -1,78 +1,51 @@
-import { Roles } from '/imports/api/roles.js';
+import { Roles } from '/imports/api/roles/roles.js';
 
-function checkModulePressionByRoleCollection(roleCollection, moduleString, weight, opera){
-  let isAccess = false
-  for (var i = 0; i < roleCollection.length; i++) {
-      let role = Roles.find({name: roleCollection[i]});
-      if (role.weight <= weight) {
-        isAccess = true;
-        if (role[moduleString]!=undefined) {
-          isAccess =  role.permissions[moduleString][opera];
-          continue;
-        }else{
-          continue;
-        }
-      }else{
-        isAccess = false;
-      }
-
+export function CheckRolesAccess(roles, moduleName, opera){
+  if (roles.lenght === 0) {
+    roles.push("nobody");
+    console.log('该用户没有任何角色')
+  }
+  let isAccess = false;
+  for (var i = 0; i < roles.length; i++) {
+    isAccess = Roles.findOne({name:roles[i]}).permissions[moduleName][opera]
+    console.log(Roles.findOne({name:roles[i]}))
+    console.log(Roles.findOne({name:roles[i]}).permissions);
+    if (isAccess === undefined ) {
+      isAccess = false;
+    }else if (isAccess === true) {
+      break;
+    }
   }
   return isAccess;
 }
-function checkACLByRoleCollection(roleCollection, ACL, weight){
-  let matchCount = 0;
-  let disMatchPoiners = [];
-  let disMatchRoles = [];
-  if (ACL.weight > weight) {
+
+export function CheckACLAccess(roles, userId, acl, opera){
+  let aclOpera = acl[opera];
+
+  if(!aclOpera.users.includes(userId)){
     return false;
   }
-  for (var i = 0; i < ACL.roles.length; i++) {
-    let isMatch = false
-    for (var j= 0; j < roleCollection.length; j++) {
-      if (roleCollection[j]==ACL[i]) {
-        matchCount++;
-        isMatch = true;
+  let isAccess = false;
+  if (roles.length === 0) {
+    roles.push("nobody");
+  }
+  for (var i = 0; i < roles.length; i++) {
+    for (var j = 0; j < aclOpera.roles.length; j++) {
+      if (aclOpera.roles[j] === roles[i]) {
+        isAccess = true;
         break;
       }
     }
-    if (!isMatch) {
-      disMatchPoiners.push(i);
-    }
-  }
-  if (matchCount != ACL.roles.length) {
-    for (var k = 0; k < disMatchPoiners.length; k++) {
-      disMatchRoles.push(ACL.roles[disMatchPoiners[i]]);
-    }
-    return disMatchPoiners;
-  }else{
-    return 1;
-  }
+  };
+  return isAccess;
+
 }
 
-export function moduleCanBeAccess(
-   roleCollection=["nobody"],//eg:["nobody", "login", "blackCardHolder"]
-   moduleString="shops",
-   acl,
-   weight,
-   opera //read edit buy delete
- )
- {
-   let failMessage = {};
-
-  if (checkModulePressionByRoleCollection(roleCollection, moduleString, opera)===1) {
-    return 1;
-  }else{
-    failMessage.moduleString = checkModulePressionByRoleCollection(roleCollection, moduleString, opera);
-    return failMessage;
-  }
-  if (acl!="NOACL") {
-    if (checkACLByRoleCollection(roleCollection, ACL, weight, opera)===1) {
-      return 1;
-    }else{
-      failMessage.aclMissing = checkACLByRoleCollection(roleCollection, ACL, weight, opera);
-      return failMessage;
+export function canAccess(CheckRolesAccess, CheckACLAccess){
+  if (CheckRolesAccess) {
+    if (CheckACLAccess) {
+      return true;
     }
   }
-  return 1;
-
+  return false;
 }
