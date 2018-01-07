@@ -87,7 +87,10 @@ class CommonModal extends React.Component{
     // const getFieldValue = this.props.form.getFieldValue;
     // console.log(getFieldValue('shopAddress'))
     const getFieldValue = this.formComponent.getFieldValue;
-    console.log(getFieldValue('shopAddress'))
+    const setFieldsValue = this.formComponent.setFieldsValue;
+    setFieldsValue({address: self.props.shopAddress})
+    setFieldsValue({lntAndLat: self.props.shopPoint})
+    console.log(getFieldValue(lntAndLat))
     const oldObj = this.formComponent.getFieldsValue();
     console.log(oldObj);
     //把表单中跟时间有关系的参数进行时间格式化
@@ -147,7 +150,7 @@ class CommonModal extends React.Component{
 
 
   render(){
-    const {singleShop, modalState, editState, shopAddress} = this.props
+    const {singleShop, modalState, editState, shopAddress,shopPoint} = this.props
     return(
       <div>
         <Modal
@@ -159,7 +162,7 @@ class CommonModal extends React.Component{
           style={{ top: 20 }}
         >
 
-          <ShopForm shopAddress= {this.props.shopAddress} shop= {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
+          <ShopForm shopPoint={this.props.shopPoint} shopAddress= {this.props.shopAddress} shop= {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
@@ -171,7 +174,8 @@ function mapStateToProps(state) {
     singleShop: state.ShopsList.singleShop,
     modalState: state.ShopsList.modalInsert,
     editState: !state.ShopsList.modalEditable,
-    shopAddress: state.ShopsList.shopAddress
+    shopAddress: state.ShopsList.shopAddress,
+    shopPoint: state.ShopsList.shopPoint
    };
 }
 

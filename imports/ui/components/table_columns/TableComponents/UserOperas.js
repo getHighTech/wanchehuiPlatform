@@ -38,7 +38,8 @@ class UserOreas extends React.Component {
   }
   showModal = () => {
     let self = this
-    Meteor.call('user.get.roleIds',self.props.userId,function(err,rlt){
+    console.log(self.props.userId)
+    Meteor.call('roles.find_by_user_id',self.props.userId,function(err,rlt){
       console.log(rlt)
       if(!err){
         self.setState({
@@ -58,7 +59,7 @@ class UserOreas extends React.Component {
     console.log(self.state.roleList)
     if(UserId){
       console.log("用户存在")
-      Meteor.call('user.UserBindingRoles',UserId, self.state.roleList,function(err,rlt){
+      Meteor.call('user.binding.roles',UserId, self.state.roleList,function(err,rlt){
         if(!err){
           message.success('用户绑定角色成功');
           self.setState({
