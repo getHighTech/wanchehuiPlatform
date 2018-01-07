@@ -40,7 +40,8 @@ class Roles extends React.Component{
       singleRole:{},
       modalInsert: true,
       userModalVisible:false,
-      currentPage: 1
+      currentPage: 1,
+      userDatas:[]
     }
 
   }
@@ -149,13 +150,26 @@ class Roles extends React.Component{
     this.getPageRoles(page, pageSize, this.state.condition);
   }
 
+  // showRoleUsers(roleId){
+  //   let self = this
+  //   Meteor.call('role.findById', roleId, function(err,rlt){
+  //     if(!err){
+  //       self.setState({
+  //         singleRole: rlt,
+  //         userModalVisible: true
+  //       })
+  //     }
+  //   })
+  // }
   showRoleUsers(roleId){
     let self = this
-    Meteor.call('role.findById', roleId, function(err,rlt){
+    console.log(roleId)
+    Meteor.call('users.find_by_role_id',roleId,function(err,rlt){
       if(!err){
+        console.log(rlt)
         self.setState({
-          singleRole: rlt,
-          userModalVisible: true
+          userModalVisible:true,
+          userDatas:rlt
         })
       }
     })
@@ -238,6 +252,7 @@ class Roles extends React.Component{
           <UserModal
             userModalVisible = {this.state.userModalVisible}
             onCancel = { this.hideUserModal }
+            userDatas = {this.state.userDatas}
             singleRole = {this.state.singleRole}
           />
         </div>
