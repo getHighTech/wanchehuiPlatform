@@ -14,6 +14,8 @@ export default function buildSelfShop(){
       description: '这是万人车汇平台官方店',
       tags: [],
       cover: 'url',
+      address:'成都滴滴车主俱乐部',
+      lntAndLat:[],
       status: true,
       createdAt: new Date(),
       acl: {

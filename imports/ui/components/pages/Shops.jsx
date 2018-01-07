@@ -28,7 +28,7 @@ import {countShops,getMeteorShopsLimit} from '../../services/shops.js'
 
 
 import CommonModal from './shops_components/CommonModal.jsx';
-import { showShop, editShop,addShop,shangShop } from '/imports/ui/actions/shops.js';
+import { showShop, editShop,addShop,shangShop,getShopAddress, getShopPoint  } from '/imports/ui/actions/shops.js';
 
 
 const confirm = Modal.confirm;
@@ -52,7 +52,7 @@ class Shops extends React.Component{
         Meteor.call('shops.changeShopState',shopId, function(error,result){
           if(!error){
               console.log(result)
-              if (result.shopState){
+              if (result.status){
                 message.success('店铺关闭成功！')
               }else{
                 message.success('店铺开启成功！')
@@ -113,6 +113,8 @@ class Shops extends React.Component{
     })
     Meteor.call('shops.findShopById',shopId, function(error,result){
       const {dispatch } = self.props;
+      dispatch(getShopAddress(result.address))
+      dispatch(getShopPoint(result.lntAndLat))
       console.log(result);
       if(!error){
         dispatch(editShop(result));
@@ -134,6 +136,8 @@ class Shops extends React.Component{
     })
     Meteor.call('shops.findShopById',shopId, function(error,result){
       const {dispatch } = self.props;
+      dispatch(getShopAddress(result.address))
+      dispatch(getShopPoint(result.lntAndLat))
       console.log(self.props);
       if(!error){
         dispatch(showShop(result));
@@ -216,27 +220,27 @@ class Shops extends React.Component{
         },
         {
         title: '店名',
-        dataIndex: 'shopName',
-        key: 'shopName',
+        dataIndex: 'name',
+        key: 'name',
         width: 100,
       },{
         title: '店铺封面',
-        dataIndex: 'shopPicture',
-        key: 'shopPicture',
+        dataIndex: 'cover',
+        key: 'cover',
         width: 100,
         render:(text, record) =>(
-            <img src={record.shopPicture} style={{height:50,width:50}}/>
+            <img src={record.cover} style={{height:50,width:50}}/>
         )
       }, {
         title: '地址',
-        dataIndex: 'shopAddress',
-        key: 'shopAddress',
+        dataIndex: 'address',
+        key: 'address',
         width: 100,
 
       }, {
         title: '联系电话',
-        dataIndex: 'shopPhone',
-        key: 'shopPhone',
+        dataIndex: 'phone',
+        key: 'phone',
         width: 100,
       },{
         title: '操作',
@@ -255,7 +259,7 @@ class Shops extends React.Component{
             <span className="ant-divider" />
 
             <Tooltip placement="topLeft" title="开关店铺" arrowPointAtCenter>
-              <Switch checkedChildren="营业" unCheckedChildren="关闭"  defaultChecked={record.shopState} onChange={() => this.showChangeConfirm(record.shopState,record._id)}  />
+              <Switch checkedChildren="营业" unCheckedChildren="关闭"  defaultChecked={record.status} onChange={() => this.showChangeConfirm(record.status,record._id)}  />
             </Tooltip>
           </span>
         ),

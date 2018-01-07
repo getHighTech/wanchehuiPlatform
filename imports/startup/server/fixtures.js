@@ -23,10 +23,10 @@ Meteor.startup(() => {
   // // let shop = Shops.findOne({_id: shopId});
   // let wanchehui = Meteor.users.findOne({username: 'wanchehui'});
   //
-  // let superAdmin = Meteor.users.findOne({username: 'superAdmin'});
+  // // let superAdmin = Meteor.users.findOne({username: 'superAdmin'});
   // let yangzhiqiang = Meteor.users.findOne({username: '13128980333'});
-  //
-  //
+
+
   // let switchRolesToName = function(roles){
   //   let roleNames = [];
   //   Roles.find({_id: {$in: roles}}, {

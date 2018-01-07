@@ -60,13 +60,16 @@ class ShopFormWrap extends Component {
             image_url:info.file.response.data.link
           })
           const setFieldsValue = this.props.form.setFieldsValue;
-          setFieldsValue({shopPicture:self.state.image_url})
+          setFieldsValue({cover:self.state.image_url})
           // const getFieldValue = this.props.form.getFieldValue;
           // console.log(getFieldValue('shopPicture'))
       } else if (info.file.status === 'error') {
           console.log("上传失败。");
       }
 
+    }
+    selectHandleChange(value){
+      console.log(`selected ${value}`);
     }
     //初次挂载去获取数据
     componentWillMount(){
@@ -88,13 +91,14 @@ class ShopFormWrap extends Component {
 
     }
 
-    getDecoratorValue = (v) => {
-      const setFieldsValue = this.props.form.setFieldsValue;
-      console.log(v.target.value)
-      setFieldsValue({shopAddress: v.target.value})
-      const getFieldValue = this.props.form.getFieldValue;
-      console.log(getFieldValue('shopAddress'))
-    }
+    // getDecoratorValue = (v) => {
+    //   console.log("地图组件绑定的方法")
+    //   let self = this
+    //   const setFieldsValue = this.props.form.setFieldsValue;
+    //   setFieldsValue({address: self.props.shop.shopAddress})
+    //   const getFieldValue = this.props.form.getFieldValue;
+    //   setFieldsValue({lntAndLat: self.props.shop.shopPoint})
+    // }
 
     render() {
 
@@ -136,8 +140,8 @@ class ShopFormWrap extends Component {
         label="店铺名称"
         hasFeedback
         >
-        {getFieldDecorator('shopName', {
-            initialValue: this.props.shop.shopName,
+        {getFieldDecorator('name', {
+            initialValue: this.props.shop.name,
             rules: [{ required: true, message: '店铺名称不能为空' }],
         })(
 
@@ -149,20 +153,21 @@ class ShopFormWrap extends Component {
         {...formItemLayout}
         label="店铺电话"
         >
-        {getFieldDecorator('shopPhone', {
-          initialValue: this.props.shop.shopPhone,
+        {getFieldDecorator('phone', {
+          initialValue: this.props.shop.phone,
             rules: [{ required: true, message: '填入手机号' }],
         })(
             <Input  disabled={this.props.editState} style={{ width: '100%' }} />
         )}
         </FormItem>
+
       <FormItem
       {...formItemLayout}
       label="店铺封面"
       hasFeedback
       >
-      {getFieldDecorator('shopPicture', {
-           initialValue: this.props.shop.shopPicture,
+      {getFieldDecorator('cover', {
+           initialValue: this.props.shop.cover,
           })(
             <Input type="text"   style={{display:'none'}}   placeholder="图片地址" />
           )}
@@ -177,11 +182,17 @@ class ShopFormWrap extends Component {
           label="店铺标签"
           hasFeedback
           >
-      {getFieldDecorator('shopTag', {
-        initialValue: this.props.shop.shopTag,
+      {getFieldDecorator('tags', {
+        initialValue: this.props.shop.tags,
           rules: [{ required: true, message: '店铺标签不能为空' }],
           })(
-          <Input  disabled={this.props.editState} placeholder="店铺标签" />
+            <Select
+            mode="tags"
+            style={{ width: '100%' }}
+            placeholder="输入完标签后按回车确认"
+            onChange={this.selectHandleChange.bind(this)}
+          >
+          </Select>
           )}
       </FormItem>
       <FormItem
@@ -189,8 +200,8 @@ class ShopFormWrap extends Component {
           label="店铺简介"
           hasFeedback
         >
-          {getFieldDecorator('shopDescrption', {
-            initialValue: this.props.shop.shopDescrption,
+          {getFieldDecorator('description', {
+            initialValue: this.props.shop.description,
           rules: [{ required: true, message: '店铺简介不能为空' }],
           })(
           <Input disabled={this.props.editState} placeholder="店铺简介" />
@@ -200,17 +211,27 @@ class ShopFormWrap extends Component {
         {...formItemLayout}
         label='店铺地址'
         >
-          {getFieldDecorator('shopAddress', {
-            initialValue: this.props.shop.shopAddress,
+          {getFieldDecorator('address', {
+            initialValue: this.props.shop.address,
           })(
-            <Input type="text"   style={{display:'none'}}   placeholder="图片地址" />
+            <Input type="text"  autoComplete="off"  style={{display:'none'}}   placeholder="图片地址" />
           )}
           <AMapComplete
             editState={this.props.editState}
-            fieldsName="shopAddress"
-            onChange = {this.getDecoratorValue.bind(this)}
-            inputValue = {this.props.shop.shopAddress}
+            // onChange = {this.getDecoratorValue.bind(this)}
+            // inputValue = {this.props.shop.address}
             />
+        </FormItem>
+        <FormItem style={{display:'none'}}
+          {...formItemLayout}
+          label="店铺经纬度"
+          hasFeedback
+        >
+          {getFieldDecorator('lntAndLat', {
+            initialValue: this.props.shop.lntAndLat,
+          })(
+          <Input style={{display:'none'}}   placeholder="店铺简介" />
+          )}
         </FormItem>
       </Form>
       );
