@@ -212,22 +212,24 @@ class Shops extends React.Component{
 
      }
       const ShopColumns = [
-        {
-          title: '店铺ID',
-          dataIndex: '_id',
-          key: '_id',
-          width: 100,
-        },
+        // {
+        //   title: '店铺ID',
+        //   dataIndex: '_id',
+        //   key: '_id',
+        //   width: 200,
+        //   fixed: 'left',
+        // },
         {
         title: '店名',
         dataIndex: 'name',
         key: 'name',
-        width: 100,
+        width: 150,
+        fixed: 'left',
       },{
-        title: '店铺封面',
+        title: '封面',
         dataIndex: 'cover',
         key: 'cover',
-        width: 100,
+        width: 50,
         render:(text, record) =>(
             <img src={record.cover} style={{height:50,width:50}}/>
         )
@@ -235,18 +237,56 @@ class Shops extends React.Component{
         title: '地址',
         dataIndex: 'address',
         key: 'address',
-        width: 100,
+        width: 200,
 
       }, {
         title: '联系电话',
         dataIndex: 'phone',
         key: 'phone',
         width: 100,
+      }, {
+        title: '店铺标签',
+        dataIndex: 'tags',
+        key: 'tags',
+        width: 100,
+      },
+      {
+        title: '店铺简介',
+        dataIndex: 'description',
+        key: 'description',
+        width: 150,
+      },
+      {
+        title: '指派店长',
+        dataIndex: 'other',
+        key: 'other',
+        width: 100,
+        render: (text, record) => (
+          <span>
+            <Tooltip placement="topLeft" title="指派店长" arrowPointAtCenter>
+              <Button shape="circle" onClick={ () => this.onClickShow(record._id)}  icon="eye"  style={actionStyle} />
+            </Tooltip>
+          </span>
+        ),
+      },
+      {
+        title: '指派店员',
+        dataIndex: 'other2',
+        key: 'other2',
+        width: 150,
+        render: (text, record) => (
+          <span>
+            <Tooltip placement="topLeft" title="指派店长" arrowPointAtCenter>
+              <Button shape="circle" onClick={ () => this.onClickShow(record._id)}  icon="eye"  style={actionStyle} />
+            </Tooltip>
+          </span>
+        ),
       },{
         title: '操作',
         dataIndex: 'action',
         key: 'action',
-        width: 150,
+        width: 200,
+        fixed: 'right',
         render: (text, record) => (
           <span>
             <Tooltip placement="topLeft" title="查看店铺" arrowPointAtCenter>
@@ -263,7 +303,8 @@ class Shops extends React.Component{
             </Tooltip>
           </span>
         ),
-      }
+      },
+
     ];
 
 
@@ -294,6 +335,7 @@ class Shops extends React.Component{
       <Table rowKey={record => record._id} 
       dataSource={this.state.shopsData} 
       columns={ShopColumns}
+      scroll={{ x: 1300 }}
       pagination={{
         defaultPageSize: 5,
         total: this.state.totalCount,
