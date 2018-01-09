@@ -52,6 +52,10 @@ Meteor.methods({
           );
           return shops.fetch();
         },
+        'get.shops.data'(condition={},page=1, pageSize=20){
+            let shops =  Shops.find();
+              return shops.fetch();
+            },
     'shops.findShopById'(shopId){
       let shop = Shops.findOne({_id:shopId})
       if (!shop) {
