@@ -1,10 +1,10 @@
 import { Roles } from '../../api/roles/roles.js';
 //这里预设好所有的用户及其角色
 export function prebuildAdmin(){
-  // Roles.remove({});
+  Roles.remove({});
   let roles = Roles.find({name: "superAdmin"});
   let newAdminId = null;
-  
+
   if (roles.count()===0) {
     newAdminId = Roles.insert({
       name: "superAdmin",
