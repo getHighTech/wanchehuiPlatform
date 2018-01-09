@@ -1,11 +1,12 @@
-import { SHOW_SHOP, EDIT_SHOP, ADD_SHOP, GET_SHOP_ADDRESS } from "../actions/shops.js";
+import { SHOW_SHOP, EDIT_SHOP, ADD_SHOP, GET_SHOP_ADDRESS, GET_SHOP_POINT } from "../actions/shops.js";
 
 
 const initialState = {
     singleShop: {},
     modalInsert: true, // 当前modal是用来insert还是update
     modalEditable: true,
-    shopAddress: ""
+    shopAddress: "",
+    shopPoint: []
   };
 
   function ShopsList(state = initialState,action){
@@ -33,6 +34,10 @@ const initialState = {
         case GET_SHOP_ADDRESS:
         return Object.assign({}, state,{
           shopAddress: action.AddressName
+        })
+        case GET_SHOP_POINT:
+        return Object.assign({}, state,{
+          shopPoint: action.point
         })
         default:
           return state

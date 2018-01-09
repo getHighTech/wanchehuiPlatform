@@ -14,7 +14,7 @@ Meteor.startup(() => {
   // checkAgencies();检查并且修复所有分销代理
   // buildSelfShop();
   //建立自营店铺， 并指认wanchehui为店铺管理员
-  checkBalances();
+  // checkBalances();
   // 测试用户模块权限
   // const test_roles1 = ['shop_owner'];
   // const test_roles2 = ['shop_owner', 'nobody', 'login_user'];
@@ -23,10 +23,10 @@ Meteor.startup(() => {
   // // let shop = Shops.findOne({_id: shopId});
   // let wanchehui = Meteor.users.findOne({username: 'wanchehui'});
   //
-  // let superAdmin = Meteor.users.findOne({username: 'superAdmin'});
+  // // let superAdmin = Meteor.users.findOne({username: 'superAdmin'});
   // let yangzhiqiang = Meteor.users.findOne({username: '13128980333'});
-  //
-  //
+
+
   // let switchRolesToName = function(roles){
   //   let roleNames = [];
   //   Roles.find({_id: {$in: roles}}, {

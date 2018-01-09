@@ -13,38 +13,22 @@ class UserModal extends React.Component {
   }
   state = {
     users:"oooo",
-    dataSource:[]
 
   }
   handleCancel = (e) => {
     this.props.onCancel();
   }
-  getRoleUsers(){
-    let self = this
-    let userIds = this.props.singleRole.users
-    Meteor.call('user.findUsersbyUserIds',userIds,function(err,rlt){
-      if(!err){
-        self.setState({
-          dateSource:rlt
-        })
-      }
-    })
-    console.log(self.state.dataSource)
-  }
+
   render(){
 
     const columns = [{
-      title: '姓名',
-      dataIndex: 'name',
-      key: 'name',
+      title: '用户名',
+      dataIndex: 'username',
+      key: 'username',
     }, {
       title: '电话',
-      dataIndex: 'age',
-      key: 'age',
-    }, {
-      title: '其他',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'profile[mobile]',
+      key: 'profile[mobile]',
     }];
     
     return(
@@ -54,7 +38,7 @@ class UserModal extends React.Component {
       onCancel={this.handleCancel.bind(this)}
       footer = {null}
     >
-      <Table dataSource={this.state.dataSource} columns={columns} />
+      <Table dataSource={this.props.userDatas} columns={columns} />
     </Modal>
     )
   }

@@ -5,13 +5,28 @@ Meteor.methods({
     'shops.insert'(params){
       console.log(params)
         return Shops.insert({
-            shopName: params.shopName,
-            shopPhone: params.shopPhone,
-            shopPicture:params.shopPicture,
-            shopAddress: params.shopAddress,
-            shopDescrption:params.shopDescrption,
-            shopTag:params.shopTag,
-            shopState: true, //true为营业，fasle为关闭
+            name: params.name,
+            phone: params.phone,
+            pictures:params.pictures,
+            description: params.description,
+            tags:params.tags,
+            cover:params.cover,
+            address: params.address,
+            lntAndLat:params.lntAndLat,
+            status: true, //true为营业，fasle为关闭
+            acl: {
+              own: {
+                roles: ["shop_owner"],
+                users: [],
+              },
+              read: {
+                roles: ['nobody', 'login_user']
+              },
+              write: {
+                roles: ["shop_owner","shop_manager"],
+                users: [],
+              }
+            },
             createdAt : new Date(),
           });
     },
@@ -21,17 +36,26 @@ Meteor.methods({
             sort: {"createdAt": -1},
             fields:
               {
-                'shopName': 1,
-                'shopAddress': 1,
-                'shopPhone': 1,
-                'shopState':1 ,
-                'shopPicture':1,
+                'name': 1,
+                'phone': 1,
+                'pictures': 1,
+                'description':1 ,
+                'tags':1,
                 'createdAt': 1,
+                'cover':1,
+                'address':1,
+                'lntAndLat':1,
+                'status':1,
+                'acl':1
               }
             }
           );
           return shops.fetch();
         },
+        'get.shops.data'(condition={},page=1, pageSize=20){
+            let shops =  Shops.find();
+              return shops.fetch();
+            },
     'shops.findShopById'(shopId){
       let shop = Shops.findOne({_id:shopId})
       if (!shop) {
@@ -43,7 +67,7 @@ Meteor.methods({
       let shop = Shops.findOne({_id:shopId})
        Shops.update(shopId, {
         $set: {
-          shopState: !shop.shopState,
+          status: !shop.status,
         }
       });
       return shop
@@ -51,12 +75,14 @@ Meteor.methods({
     'shops.update'(shop, params){
       Shops.update(shop, {
         $set: {
-          shopName: params.shopName,
-          shopAddress: params.shopAddress,
-          shopPhone: params.shopPhone,
-          shopDescrption:params.shopDescrption,
-          shopTag:params.shopTag,
-          shopPicture:params.shopPicture,
+          name: params.name,
+          phone: params.phone,
+          pictures:params.pictures,
+          description: params.description,
+          tags:params.tags,
+          cover:params.cover,
+          address: params.address,
+          lntAndLat:params.lntAndLat,
         }
       });
     },

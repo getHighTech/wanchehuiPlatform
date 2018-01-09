@@ -10,3 +10,4 @@ import '/imports/api/agencies/methods.js';
 import '/imports/api/cards/methods.js';
 import '/imports/api/user_cards/methods.js';
 import '/imports/api/orders/methods.js';
+import '/imports/api/user_roles/methods.js';
