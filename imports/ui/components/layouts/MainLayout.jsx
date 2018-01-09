@@ -39,7 +39,6 @@ class MainLayout extends Component {
       });
       break;
       default:
-
     }
     $(document).ready(function(){
       $(this).unbind("click").on('click',function(e){
