@@ -11,3 +11,11 @@ export function countShops(callback){
       callback(err, rlt);
     });
 }
+
+
+export function getOneShopData(callback){
+    return Meteor.call('get.shops.data', function(err,rlt){
+      callback(err, rlt);
+      console.log(rlt);
+    });
+}
