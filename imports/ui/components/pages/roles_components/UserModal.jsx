@@ -12,12 +12,15 @@ class UserModal extends React.Component {
     super(props);
   }
   state = {
-    users:"oooo",
-
+    userIds:[]
   }
   handleCancel = (e) => {
     this.props.onCancel();
   }
+  // getUserId(users){
+    
+  //   return user._id
+  // }
 
   render(){
 
@@ -38,7 +41,7 @@ class UserModal extends React.Component {
       onCancel={this.handleCancel.bind(this)}
       footer = {null}
     >
-      <Table dataSource={this.props.userDatas} columns={columns} />
+      <Table  rowKey={userDatas => userDatas._id} dataSource={this.props.userDatas} columns={columns} />
     </Modal>
     )
   }
