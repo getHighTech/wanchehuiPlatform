@@ -53,7 +53,6 @@ class Roles extends React.Component{
       modalTitle:"新建一个角色",
       modalInsert: true
     });
-
     this.fromModal.resetFields({});
   }
 
@@ -101,6 +100,7 @@ class Roles extends React.Component{
     let self = this
     Meteor.call('role.findById', roleId, function(err,rlt){
       if(!err){
+        console.log(rlt)
         self.setState({
           singleRole: rlt,
           modalVisible: true,

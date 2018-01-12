@@ -178,7 +178,9 @@ class Shops extends React.Component{
     $(document).scrollTop(0);
     this.getPageShops(page, pageSize, this.state.condition);
   }
-
+  setOwerToShop(shopId){
+    console.log(shopId)
+  }
   componentDidMount(){
     let self = this
     console.log('加载店铺数据')
@@ -243,12 +245,12 @@ class Shops extends React.Component{
         title: '联系电话',
         dataIndex: 'phone',
         key: 'phone',
-        width: 100,
+        width: 150,
       }, {
         title: '店铺标签',
         dataIndex: 'tags',
         key: 'tags',
-        width: 100,
+        width: 200,
       },
       {
         title: '店铺简介',
@@ -264,20 +266,7 @@ class Shops extends React.Component{
         render: (text, record) => (
           <span>
             <Tooltip placement="topLeft" title="指派店长" arrowPointAtCenter>
-              <Button shape="circle" onClick={ () => this.onClickShow(record._id)}  icon="eye"  style={actionStyle} />
-            </Tooltip>
-          </span>
-        ),
-      },
-      {
-        title: '指派店员',
-        dataIndex: 'other2',
-        key: 'other2',
-        width: 150,
-        render: (text, record) => (
-          <span>
-            <Tooltip placement="topLeft" title="指派店长" arrowPointAtCenter>
-              <Button shape="circle" onClick={ () => this.onClickShow(record._id)}  icon="eye"  style={actionStyle} />
+              <Button shape="circle" onClick={ () => this.setOwerToShop(record._id)}  icon="user"  style={actionStyle} />
             </Tooltip>
           </span>
         ),
@@ -311,26 +300,26 @@ class Shops extends React.Component{
     return (
       <div>
         <div style={headerMenuStyle}>
-        <Tooltip placement="topLeft" title="添加新店铺" arrowPointAtCenter>
-          <Button shape="circle" icon="plus"  onClick={this.onClickInsert}  style={{fontSize: "18px", color: "red"}} ></Button>
-        </Tooltip>
+          <Tooltip placement="topLeft" title="添加新店铺" arrowPointAtCenter>
+            <Button shape="circle" icon="plus"  onClick={this.onClickInsert}  style={{fontSize: "18px", color: "red"}} ></Button>
+          </Tooltip>
 
-        <CommonModal
-        modalVisible={this.state.modalVisible}
-        modalTitle={this.state.modalTitle}
-        onCancel = { this.hideModal}
-        getPageShops = {this.getPageShops.bind(this)}
-        ref = {(input) => { this.fromModal = input; }}
-        />
-        <div>
-        <Input.Search
-              placeholder="搜索店铺相关"
-              style={{ width: 200 }}
-              onSearch={value => console.log(value)}
-              onInput={input => this.handleSearchInput(input.target.value) }
-            />
+          <CommonModal
+          modalVisible={this.state.modalVisible}
+          modalTitle={this.state.modalTitle}
+          onCancel = { this.hideModal}
+          getPageShops = {this.getPageShops.bind(this)}
+          ref = {(input) => { this.fromModal = input; }}
+          />
+          <div>
+            <Input.Search
+                  placeholder="搜索店铺相关"
+                  style={{ width: 200 }}
+                  onSearch={value => console.log(value)}
+                  onInput={input => this.handleSearchInput(input.target.value) }
+                />
+          </div>
         </div>
-      </div>
 
       <Table rowKey={record => record._id} 
       dataSource={this.state.shopsData} 
