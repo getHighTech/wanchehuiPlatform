@@ -1,5 +1,5 @@
 import { Shops } from './shops.js';
-export default function buildSelfShop(){
+export function buildSelfShop(){
   let shopId = null
   console.log('============================');
   console.log("开始创建万人车汇自营店");
@@ -35,10 +35,31 @@ export default function buildSelfShop(){
   }
   // let shop = Shops.findOne({_id: shopId});
   let wanchehui = Meteor.users.findOne({username: 'wanchehui'});
+  let wanchehuiId = null;
 
   let superAdmin = Meteor.users.findOne({username: 'superAdmin'});
 
   let yangzhiqiang = Meteor.users.findOne({username: '13128980333'});
+  let yangzhiqiangId = null;
+  if (!yangzhiqiang) {
+    yangzhiqiangId = Accounts.createUser({
+          username: "shop_owner",
+          password: "shop_owner2017best",
+        });
+
+
+  }else{
+    yangzhiqiangId = yangzhiqiang._id;
+  }
+  if (!wanchehui) {
+    wanchehuiId = Accounts.createUser({
+          username: "wanchehui",
+          password: "wanchehui2017best",
+        });
+
+  }else{
+    wanchehuiId = wanchehui._id;
+  }
 
   //根据userId, 找出他运营或者拥有的店
   // let shops = Shops.find({$or: [{'acl.own.users': userId}, {'acl.write.users': userId}]});
@@ -49,21 +70,21 @@ export default function buildSelfShop(){
       acl: {
         own: {
           roles: ["shop_owner"],
-          users: [wanchehui._id, yangzhiqiang._id],
+          users: [wanchehuiId, yangzhiqiangId],
         },
         read: {
           roles: ['no_body', "login_user", "superAdmin"]
         },
         write: {
           roles: [ "shop_owner","shop_employee", "shop_runner", "superAdmin"],
-          users: [wanchehui._id, superAdmin._id],
+          users: [wanchehuiId, superAdmin._id],
         }
       }
     }
   })
 
   console.log("更新结果", rlt);
-  return rlt;
+  return shopId;
 
 
 }

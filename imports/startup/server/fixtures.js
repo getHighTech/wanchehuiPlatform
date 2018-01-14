@@ -3,7 +3,8 @@ import { Meteor } from 'meteor/meteor';
 import { prebuildAdmin } from './roles_fixture.js';
 import { BalanceIncomes } from '/imports/api/balances/balance_incomes.js';
 import { checkAgencies } from '/imports/api/agencies/checkAgencies.js'
-import buildSelfShop from '/imports/api/shops/buildSelfShop.js'
+import {buildSelfShop} from '/imports/api/shops/buildSelfShop.js'
+import {buildBlackCard} from '/imports/api/products/buildBlackCard.js'
 import {checkBalances} from '/imports/api/balances/checkBalances.js'
 import {CheckRolesAccess, CheckACLAccess} from '/imports/core/accesses.js'
 import { Roles } from '/imports/api/roles/roles.js';
@@ -46,6 +47,8 @@ Meteor.startup(() => {
   // // let rlt = CheckRolesAccess(test_roles1, 'users', 'readable');
   // console.log(rlt2);
   // console.log(rlt);
-  prebuildAdmin();
+  prebuildAdmin();//建立超级管理员
+  // buildBlackCard();//建立黑卡
+
 
 });
