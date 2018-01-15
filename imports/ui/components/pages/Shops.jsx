@@ -84,6 +84,7 @@ class Shops extends React.Component{
     modalTitle: '',  // modal标题
     confirmTitle: '',
     confirmContent: '',
+    shopOwnerModal: false   //指派店长弹框
 
   };
 
@@ -274,7 +275,7 @@ class Shops extends React.Component{
         title: '操作',
         dataIndex: 'action',
         key: 'action',
-        width: 200,
+        width: 250,
         fixed: 'right',
         render: (text, record) => (
           <span>
@@ -321,8 +322,8 @@ class Shops extends React.Component{
           </div>
         </div>
 
-      <Table rowKey={record => record._id} 
-      dataSource={this.state.shopsData} 
+      <Table rowKey={record => record._id}
+      dataSource={this.state.shopsData}
       columns={ShopColumns}
       scroll={{ x: 1300 }}
       pagination={{

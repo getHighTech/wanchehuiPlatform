@@ -12,7 +12,7 @@ import { Shops } from '/imports/api/shops/shops.js';
 Meteor.startup(() => {
   //delete roles;
   // checkAgencies();检查并且修复所有分销代理
-  // buildSelfShop();
+  buildSelfShop();
   //建立自营店铺， 并指认wanchehui为店铺管理员
   // checkBalances();
   // 测试用户模块权限
