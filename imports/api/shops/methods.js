@@ -63,6 +63,16 @@ Meteor.methods({
       }
       return shop;
     },
+    'shops.findOneShopById'(shopId){
+      let shop = Shops.find({_id:shopId}).fetch();
+      return shop;
+    },
+    'shops.editaddress'(id,address){
+      return Shops.update({_id:id},{$set:{address:address}});
+    },
+    'shops.editphone'(id,phone){
+      return Shops.update({_id:id},{$set:{phone:phone}});
+    },
     'shops.changeShopState'(shopId){
       let shop = Shops.findOne({_id:shopId})
        Shops.update(shopId, {

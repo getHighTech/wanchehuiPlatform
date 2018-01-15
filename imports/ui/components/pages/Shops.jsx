@@ -291,8 +291,8 @@ class Shops extends React.Component{
         </div>
       </div>
 
-      <Table rowKey={record => record._id} 
-      dataSource={this.state.shopsData} 
+      <Table rowKey={record => record._id}
+      dataSource={this.state.shopsData}
       columns={ShopColumns}
       pagination={{
         defaultPageSize: 5,
