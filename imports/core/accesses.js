@@ -8,8 +8,6 @@ export function CheckRolesAccess(roles, moduleName, opera){
   let isAccess = false;
   for (var i = 0; i < roles.length; i++) {
     isAccess = Roles.findOne({name:roles[i]}).permissions[moduleName][opera]
-    console.log(Roles.findOne({name:roles[i]}))
-    console.log(Roles.findOne({name:roles[i]}).permissions);
     if (isAccess === undefined ) {
       isAccess = false;
     }else if (isAccess === true) {

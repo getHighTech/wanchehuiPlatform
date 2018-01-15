@@ -39,7 +39,6 @@ class MainLayout extends Component {
       });
       break;
       default:
-
     }
     $(document).ready(function(){
       $(this).unbind("click").on('click',function(e){
@@ -122,10 +121,6 @@ class MainLayout extends Component {
             <Menu.Item key="withdrawals">
               <Icon type="pay-circle-o" />
               <span className="nav-text">提现管理</span>
-            </Menu.Item>
-            <Menu.Item key="agency_relations">
-              <Icon type="paper-clip" />
-              <span className="nav-text">分销关系管理</span>
             </Menu.Item>
             <Menu.Item key="roles">
               <Icon type="paper-clip" />
