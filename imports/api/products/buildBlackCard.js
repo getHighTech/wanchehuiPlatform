@@ -22,7 +22,7 @@ export function buildBlackCard(){
     description: '购买一年的优惠资格',
     brief: '购买一年的优惠资格',
     images:['http://wanchehui.oss-cn-qingdao.aliyuncs.com/cards/bbg2.png'],
-    cover:['http://wanchehui.oss-cn-qingdao.aliyuncs.com/cards/bbg2.png'],
+    cover: 'http://wanchehui.oss-cn-qingdao.aliyuncs.com/cards/bbg2.png',
     shopId: selfShop._id,
     createdByUserId: superAdmin._id,
     properties: [],

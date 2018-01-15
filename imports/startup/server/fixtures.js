@@ -9,6 +9,8 @@ import {checkBalances} from '/imports/api/balances/checkBalances.js'
 import {CheckRolesAccess, CheckACLAccess} from '/imports/core/accesses.js'
 import { Roles } from '/imports/api/roles/roles.js';
 import { Shops } from '/imports/api/shops/shops.js';
+import { Products } from '/imports/api/products/products.js';
+import { Tags } from '/imports/api/tags/tags.js';
 
 Meteor.startup(() => {
   // checkAgencies();检查并且修复所有分销代理
@@ -19,6 +21,10 @@ Meteor.startup(() => {
 
   prebuildAdmin();//建立超级管理员
   buildBlackCard();//建立黑卡
+  // Tags.remove({});
+  // Products.remove({});
+  // Roles.remove({});
+  // Shops.remove({});
 
 
 });
