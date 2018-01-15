@@ -42,11 +42,11 @@ class ShopDeailsWrap extends React.Component {
   }
   state={
     shopdeails:[],
-    shop:[{_id: "nq8RyPNxnMjiLx9Zd", name: "测试店铺1", phone: "13128990222", pictures: null, description: "大大大"},{_id: "qq8RyPNxnMjiLx9Zd", name: "测试店铺2", phone: "13128990222", pictures: null, description: "大大大"}],
+    product:[{_id: "nq8RyPNxnMjiLx9Zd", name: "测试店铺1", phone: "13128990222", pictures: null, description: "大大大"},{_id: "qq8RyPNxnMjiLx9Zd", name: "测试店铺2", phone: "13128990222", pictures: null, description: "大大大"}],
     visible: false,
     editaddressVisible:false,
     editphoneVisible:false,
-    editaddress:[],
+    editaddress:'',
     editphone:[]
   }
   componentDidMount(){
@@ -285,7 +285,7 @@ class ShopDeailsWrap extends React.Component {
         </Row>
       </div>
 
-      <Table rowSelection={rowSelection} rowKey={record => record._id} dataSource={this.state.shop} columns={Columns} style={{marginTop:10,background: '#ECECEC'}}/>
+      <Table rowSelection={rowSelection} rowKey={record => record._id} dataSource={this.state.product} columns={Columns} style={{marginTop:10,background: '#ECECEC'}}/>
 
       <div>
       <Modal
