@@ -103,10 +103,10 @@ export function newProuct
     Roles.insert({
         name_zh: roleName,
         name: roleName+"_holder",
+        time_limit: 525600000,
         permissions:{
           products: {
             read: true,
-            buy: true,
           }
         },
         state: true,
