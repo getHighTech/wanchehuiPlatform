@@ -20,7 +20,7 @@ Meteor.startup(() => {
   // 测试用户模块权限
 
   prebuildAdmin();//建立超级管理员
-  buildBlackCard();//建立黑卡
+  // buildBlackCard();//建立黑卡
   // Tags.remove({});
   // Products.remove({});
   // Roles.remove({});

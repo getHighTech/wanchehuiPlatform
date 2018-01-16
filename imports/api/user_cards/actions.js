@@ -9,12 +9,12 @@ function reduceSuperMoneyCardId(userId){
   let agency = Agencies.findOne({userId});
   let superAgency = Agencies.findOne({superAgencyId: agency.superAgencyId});
   let superUser = Meteor.users.findOne({_id: superAgency.userId});
-  let superBalance = Balances.findOne(superUser._id);
+  let superBalance = Balances.findOne({userId: superUser._id});
   BalanceCharges.insert({
     reasonType: 'refund',
     agency: agency._id,
     balanceId: superBalance._id,
-    userId,
+    superUser._id,
     money: 3880,
     text: "用户已经退卡",
     status: "paid",
@@ -24,6 +24,27 @@ function reduceSuperMoneyCardId(userId){
   Balances.update(superBalance._id, {
     $set: {
       amount: superBalance.amount - 3880
+    }
+  });
+
+  //====================================
+  let superSuperAgency = Agencies.findOne({superAgencyId: superAgency.superAgencyId});
+  let superSuperUser = Meteor.users.findOne({_id: superSuperAgency.userId});
+  let superSuperBalance = Balances.findOne({userId: superSuperAgency._id});
+  BalanceCharges.insert({
+    reasonType: 'refund',
+    agency: agency._id,
+    balanceId: superSuperBalance._id,
+    superSuperUser._id,
+    money: 1280,
+    text: "用户已经退卡",
+    status: "paid",
+    createdAt: new Date()
+
+  });
+  Balances.update(superSuperBalance._id, {
+    $set: {
+      amount: superBalance.amount - 1280
     }
   });
 
