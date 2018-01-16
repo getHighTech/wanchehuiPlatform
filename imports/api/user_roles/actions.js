@@ -1,4 +1,5 @@
 import {UserRoles} from './user_roles.js';
+import { getRoleById,getRoleByName} from '/imports/api/roles/actions.js'
 
 
 export function userBindingRoles(userId,roleIds){
@@ -6,7 +7,9 @@ export function userBindingRoles(userId,roleIds){
   if(user_roles.length == 0){
     //关系表中有没有userId，增加user和roles的对应关系
     for (let i = 0; i < roleIds.length; i++) {
+      let role = getRoleById(roleIds[i])
       UserRoles.insert({
+        roleName: role.name,
         userId: userId,
         roleId: roleIds[i],
         createdAt: new Date(),
@@ -27,7 +30,9 @@ export function userBindingRoles(userId,roleIds){
         UserRoles.remove({userId:userId,roleId:difference[i]})
       }else{
         //插入新的记录
+        let role = getRoleById(difference[i])
         UserRoles.insert({
+          roleName: role.name,
           userId: userId,
           roleId: difference[i],
           createdAt: new Date(),
@@ -56,5 +61,19 @@ export function rolesFindByUserId(userId){
     return roleIds
   } else{
     return []
+  }
+}
+export function userBindingShopOwner(userId,role_name){
+  let record = UserRoles.findOne({userId:userId,roleName:role_name})
+  if(record === undefined){
+    let role = getRoleByName(role_name)
+    UserRoles.insert({
+      roleName: role.name,
+      userId: userId,
+      roleId: role._id,
+      createdAt: new Date(),
+    })
+  }else{
+    return '之前用户绑定过该角色'
   }
 }

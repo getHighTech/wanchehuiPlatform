@@ -76,7 +76,9 @@ Meteor.methods({
     return getUserByAgencyId(agencyId);
   },
 
-
+  "get.user.byUserName"(username){
+    return  Meteor.users.findOne({"username": username});
+  },
   'users.cards.addOnToady'(){
     let date = new Date();
     let nextdate = (new Date((date/1000+86400)*1000))
