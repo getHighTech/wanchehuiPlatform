@@ -13,18 +13,19 @@ import { Products } from '/imports/api/products/products.js';
 import { Tags } from '/imports/api/tags/tags.js';
 
 Meteor.startup(() => {
-  // checkAgencies();检查并且修复所有分销代理
+  // checkAgencies();
   // buildSelfShop();
   //建立自营店铺， 并指认wanchehui为店铺管理员
-  checkBalances();
+  // checkBalances();
   // 测试用户模块权限
 
   prebuildAdmin();//建立超级管理员
-  // buildBlackCard();//建立黑卡
+
   // Tags.remove({});
   // Products.remove({});
   // Roles.remove({});
   // Shops.remove({});
+  // buildBlackCard();//建立黑卡
 
 
 });

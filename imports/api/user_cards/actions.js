@@ -3,6 +3,34 @@ import {UserCards} from './user_cards.js';
 import {SysLogs} from '../sys_logs/sys_logs';
 import {findOrCreateAgencyByUserId} from '../agencies/actions.js'
 
+
+function reduceSuperMoneyCardId(userId){
+  //扣除退卡用户上级以及上上级别的钱
+  let agency = Agencies.findOne({userId});
+  let superAgency = Agencies.findOne({superAgencyId: agency.superAgencyId});
+  let superUser = Meteor.users.findOne({_id: superAgency.userId});
+  let superBalance = Balances.findOne(superUser._id);
+  BalanceCharges.insert({
+    reasonType: 'refund',
+    agency: agency._id,
+    balanceId: superBalance._id,
+    userId,
+    money: 3880,
+    text: "用户已经退卡",
+    status: "paid",
+    createdAt: new Date()
+
+  });
+  Balances.update(superBalance._id, {
+    $set: {
+      amount: superBalance.amount - 3880
+    }
+  });
+
+
+
+}
+
 export function deleteCardByUserId(userId){
   let user = Meteor.users.findOne({_id: userId});
   let user_card = UserCards.findOne({userId});

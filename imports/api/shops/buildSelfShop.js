@@ -12,10 +12,10 @@ export function buildSelfShop(){
       phone: "18820965455",
       pictures: [],
       description: '这是万人车汇平台官方店',
-      tags: [],
-      cover: 'url',
+      tags: ["会员", "优惠", "权益", "自营"],
+      cover: 'http://wanchehui.oss-cn-qingdao.aliyuncs.com/cover.png',
       address:'成都滴滴车主俱乐部',
-      lntAndLat:[],
+      lntAndLat:[104.115038, 30.593608],
       status: true,
       createdAt: new Date(),
       acl: {
