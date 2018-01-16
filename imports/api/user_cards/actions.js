@@ -4,7 +4,7 @@ import {SysLogs} from '../sys_logs/sys_logs';
 import {findOrCreateAgencyByUserId} from '../agencies/actions.js'
 
 
-function reduceSuperMoneyCardId(userId){
+export function reduceSuperMoneyCardId(userId){
   //扣除退卡用户上级以及上上级别的钱
   let agency = Agencies.findOne({userId});
   let superAgency = Agencies.findOne({superAgencyId: agency.superAgencyId});
@@ -14,7 +14,7 @@ function reduceSuperMoneyCardId(userId){
     reasonType: 'refund',
     agency: agency._id,
     balanceId: superBalance._id,
-    superUser._id,
+    userId: superUser._id,
     money: 3880,
     text: "用户已经退卡",
     status: "paid",
@@ -35,7 +35,7 @@ function reduceSuperMoneyCardId(userId){
     reasonType: 'refund',
     agency: agency._id,
     balanceId: superSuperBalance._id,
-    superSuperUser._id,
+    userId: superSuperUser._id,
     money: 1280,
     text: "用户已经退卡",
     status: "paid",
@@ -74,6 +74,7 @@ export function deleteCardByUserId(userId){
         cards: null,
       }
     });
+    reduceSuperMoneyCardId(userId);
     return SysLogs.insert({
       type: "管理员日志",
       text: Meteor.user().username+"禁止了"+user.username+"的卡片",
