@@ -3,6 +3,55 @@ import {UserCards} from './user_cards.js';
 import {SysLogs} from '../sys_logs/sys_logs';
 import {findOrCreateAgencyByUserId} from '../agencies/actions.js'
 
+
+export function reduceSuperMoneyCardId(userId){
+  //扣除退卡用户上级以及上上级别的钱
+  let agency = Agencies.findOne({userId});
+  let superAgency = Agencies.findOne({superAgencyId: agency.superAgencyId});
+  let superUser = Meteor.users.findOne({_id: superAgency.userId});
+  let superBalance = Balances.findOne({userId: superUser._id});
+  BalanceCharges.insert({
+    reasonType: 'refund',
+    agency: agency._id,
+    balanceId: superBalance._id,
+    userId: superUser._id,
+    money: 3880,
+    text: "用户已经退卡",
+    status: "paid",
+    createdAt: new Date()
+
+  });
+  Balances.update(superBalance._id, {
+    $set: {
+      amount: superBalance.amount - 3880
+    }
+  });
+
+  //====================================
+  let superSuperAgency = Agencies.findOne({superAgencyId: superAgency.superAgencyId});
+  let superSuperUser = Meteor.users.findOne({_id: superSuperAgency.userId});
+  let superSuperBalance = Balances.findOne({userId: superSuperAgency._id});
+  BalanceCharges.insert({
+    reasonType: 'refund',
+    agency: agency._id,
+    balanceId: superSuperBalance._id,
+    userId: superSuperUser._id,
+    money: 1280,
+    text: "用户已经退卡",
+    status: "paid",
+    createdAt: new Date()
+
+  });
+  Balances.update(superSuperBalance._id, {
+    $set: {
+      amount: superBalance.amount - 1280
+    }
+  });
+
+
+
+}
+
 export function deleteCardByUserId(userId){
   let user = Meteor.users.findOne({_id: userId});
   let user_card = UserCards.findOne({userId});
@@ -25,6 +74,7 @@ export function deleteCardByUserId(userId){
         cards: null,
       }
     });
+    reduceSuperMoneyCardId(userId);
     return SysLogs.insert({
       type: "管理员日志",
       text: Meteor.user().username+"禁止了"+user.username+"的卡片",

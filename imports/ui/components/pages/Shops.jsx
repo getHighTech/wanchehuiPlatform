@@ -20,11 +20,20 @@ import 'antd/lib/modal/style';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 import Avatar from 'antd/lib/avatar';
+import Select from 'antd/lib/select';
+import 'antd/lib/select/style';
+import Spin from 'antd/lib/spin';
 
+
+//搜索用户节流控制
+import debounce from 'lodash.debounce'
 
 import { Roles } from '/imports/api/roles/roles.js';
 
 import {countShops,getMeteorShopsLimit} from '../../services/shops.js'
+import { getMeteorUsersLimit } from '../../services/users.js';
+import {findUserByUsername } from '/imports/api/users/actions.js';
+
 
 
 import CommonModal from './shops_components/CommonModal.jsx';
@@ -32,7 +41,7 @@ import { showShop, editShop,addShop,shangShop,getShopAddress, getShopPoint  } fr
 
 
 const confirm = Modal.confirm;
-
+const Option = Select.Option;
 class Shops extends React.Component{
   constructor(props) {
     super(props);
@@ -84,6 +93,14 @@ class Shops extends React.Component{
     modalTitle: '',  // modal标题
     confirmTitle: '',
     confirmContent: '',
+    shopOwnerModal: false,   //指派店长弹框
+    data: [],
+    value: '',
+    shop:{},
+    fetching: false,
+    confirmLoading: false, 
+    userOfOneShop: {},
+
 
   };
 
@@ -178,8 +195,91 @@ class Shops extends React.Component{
     $(document).scrollTop(0);
     this.getPageShops(page, pageSize, this.state.condition);
   }
+
   setOwerToShop(shopId){
-    console.log(shopId)
+    let self = this
+    Meteor.call('shops.findShopById',shopId, function(error,result){
+      console.log(result)
+      if(!error){
+        self.setState({
+          shopOwnerModal:true,
+          shop:result
+        })
+      }
+    })
+  
+  }
+
+  handleModalOk(){
+    let self = this
+    console.log(this.state.value)
+
+    this.setState({
+      confirmLoading: true,
+    })
+    Meteor.call("get.user.byUserName", self.state.value,function(err,rlt){
+      if(rlt == undefined ){
+        message.error('该用户不存在，请重新输入');
+        console.log(rlt)
+        self.setState({
+          confirmLoading: true,
+        })
+      }else{
+        //将用户id更新进shop的acl中的own
+        let userId = rlt._id
+        Meteor.call('shop.update.acl_own',self.state.shop,userId,function(error,result){
+          if(!error){
+            //更新成功后，给绑定店铺的这个User添加店长角色
+            Meteor.call('user.binding.shopOwner',userId,'shop_owner',function(wrong,object){
+              if(!wrong){
+                message.success('设置店长成功')
+              }else{
+                message.error('设置店长失败')
+              }
+            })
+
+          }else{
+            message.error('设置店长失败')
+          }
+        })
+        console.log(rlt)
+        self.setState({
+          shopOwnerModal:false,
+          confirmLoading: false,
+        })
+      }
+    })
+
+  }
+
+  hideShopOwnerModal = () => {
+    this.setState({shopOwnerModal: false});
+  };
+
+
+
+
+  // }
+  getPageUsers(page, pageSize, condition){
+    let self = this;
+    getMeteorUsersLimit(condition, page, pageSize, function(err, rlt){
+      if (!err) {
+        console.log(rlt)
+        self.setState({ data: rlt, fetching: false });
+
+      }
+    })
+  }
+  handleUserChange = (value) => {
+    this.setState({ data: [], fetching: true, confirmLoading:false});
+    let condition = {
+      $or: [
+        {username: eval("/"+value+"/")}
+      ]
+    };
+    this.getPageUsers(1, 20, condition);
+    this.setState({value:value})
+    console.log(`selected ${value}`);
   }
   componentDidMount(){
     let self = this
@@ -197,6 +297,7 @@ class Shops extends React.Component{
   }
 
   render() {
+    const { fetching, data, value} = this.state;
       const {singleShop, modalState, editState,allState} = this.props
       const headerMenuStyle ={
         display: 'flex',
@@ -274,7 +375,7 @@ class Shops extends React.Component{
         title: '操作',
         dataIndex: 'action',
         key: 'action',
-        width: 200,
+        width: 250,
         fixed: 'right',
         render: (text, record) => (
           <span>
@@ -321,8 +422,8 @@ class Shops extends React.Component{
           </div>
         </div>
 
-      <Table rowKey={record => record._id} 
-      dataSource={this.state.shopsData} 
+      <Table rowKey={record => record._id}
+      dataSource={this.state.shopsData}
       columns={ShopColumns}
       scroll={{ x: 1300 }}
       pagination={{
@@ -330,6 +431,27 @@ class Shops extends React.Component{
         total: this.state.totalCount,
         onChange: (page, pageSize)=> this.handlePageChange(page, pageSize),
         current: this.state.currentPage}} />
+
+      <Modal
+        title="选择店长"
+        visible={this.state.shopOwnerModal}
+        onOk={this.handleModalOk.bind(this)}
+        onCancel={this.hideShopOwnerModal}
+        confirmLoading={this.state.confirmLoading}
+      >
+        <Select
+          mode="combobox"
+          placeholder="Select users"
+          filterOption={false}
+          optionLabelProp={Option.value}
+          dropdownStyle={{zIndex:'99999' }}
+          notFoundContent={fetching ? <Spin size="small" /> : null}
+          onChange={this.handleUserChange}
+          style={{ width: '100%' }}
+        >
+         {data.map(d => <Option key={d.username}>{d.username}</Option>)}
+        </Select>
+      </Modal>
 
       </div>
     )

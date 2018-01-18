@@ -10,6 +10,7 @@ export function checkBalances(){
     let balanceId = balance._id;
     incomes = 0;
     charges = 0;
+    console.log("此用户的用户名为", Meteor.users.findOne({_id: userId}).username);
     BalanceIncomes.find({balanceId}).forEach((income)=>{
       incomes=incomes + income.amount;
     });

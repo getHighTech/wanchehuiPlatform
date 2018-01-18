@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { userBindingRoles,usersFindByRoleId,rolesFindByUserId } from './actions'
+import { userBindingRoles,usersFindByRoleId,rolesFindByUserId,userBindingShopOwner } from './actions'
 
 Meteor.methods({
   'user.binding.roles'(userId,roleIds){
@@ -10,5 +10,8 @@ Meteor.methods({
   },
   'roles.find_by_user_id'(userId){
     return rolesFindByUserId(userId)
+  },
+  'user.binding.shopOwner'(userId, role_name){
+    return userBindingShopOwner(userId,role_name)
   }
 });
