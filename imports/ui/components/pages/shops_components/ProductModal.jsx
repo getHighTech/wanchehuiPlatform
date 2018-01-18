@@ -23,12 +23,12 @@ import "antd/lib/tooltip/style";
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style';
 import { Roles } from '/imports/api/roles/roles.js';
-import ShopForm from './ShopForm.jsx';
+import ProductForm from './ProductForm.jsx';
 import {Link} from 'react-router';
 
 
 
-class CommonModal extends React.Component{
+class ProductModal extends React.Component{
   constructor(props){
     super(props);
   }
@@ -64,11 +64,13 @@ class CommonModal extends React.Component{
   }
 
   reflashTable(){
-    this.props.getPageShops(1,20,{});
+    this.props.getProducts();
   }
   componentWillMount(){
   }
-
+  componentDidMount(){
+    console.log(this.props.productmodalVisible);
+  }
 
 
 
@@ -88,9 +90,7 @@ class CommonModal extends React.Component{
     // console.log(getFieldValue('shopAddress'))
     const getFieldValue = this.formComponent.getFieldValue;
     const setFieldsValue = this.formComponent.setFieldsValue;
-    setFieldsValue({address: self.props.shopAddress})
-    setFieldsValue({lntAndLat: self.props.shopPoint})
-    console.log(getFieldValue(lntAndLat))
+
     const oldObj = this.formComponent.getFieldsValue();
     console.log(oldObj);
     //把表单中跟时间有关系的参数进行时间格式化
@@ -104,9 +104,10 @@ class CommonModal extends React.Component{
     //将转化好的数据传给后端
     if(self.props.modalState){
       //新增店铺到数据库
-      Meteor.call("shops.insert", newObj, function(error,result){
+      let shopId=this.props.id
+      Meteor.call("products.insert", newObj, shopId,function(error,result){
         if(!error){
-          console.log("新增店铺");
+          console.log("新增商品");
           console.log(result);
           //数据变化后，刷新表格
           self.reflashTable();
@@ -119,11 +120,8 @@ class CommonModal extends React.Component{
       })
 
     }else{
-      console.log('店铺升级')
-      Meteor.call('shops.update',this.props.singleShop, newObj, function(error,result){
+      Meteor.call('product.update',this.props.singleProduct, newObj, function(error,result){
         if(!error){
-          console.log('店铺升级成功')
-          console.log(result);
           self.reflashTable();
           self.setFormData({});
         }else{
@@ -150,19 +148,18 @@ class CommonModal extends React.Component{
 
 
   render(){
-    const {singleShop, modalState, editState, shopAddress,shopPoint} = this.props
+    const {singleProduct, modalState, editState} = this.props
     return(
       <div>
         <Modal
-          title={this.props.modalTitle}
-          visible={this.props.modalVisible}
+          title={this.props.productmodalTitle}
+          visible={this.props.productmodalVisible}
           onOk={this.handleModalOk}
           onCancel={this.handleCancel.bind(this)}
-          maskClosable={false}
           style={{ top: 20 }}
         >
 
-          <ShopForm shopPoint={this.props.shopPoint} shopAddress= {this.props.shopAddress} shop= {this.props.singleShop} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
+          <ProductForm  product= {this.props.singleProduct} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
@@ -171,11 +168,9 @@ class CommonModal extends React.Component{
 
 function mapStateToProps(state) {
   return {
-    singleShop: state.ShopsList.singleShop,
-    modalState: state.ShopsList.modalInsert,
-    editState: !state.ShopsList.modalEditable,
-    shopAddress: state.ShopsList.shopAddress,
-    shopPoint: state.ShopsList.shopPoint
+    singleProduct: state.ProductsList.singleProduct,
+    modalState: state.ProductsList.productmodalInsert,
+    editState: !state.ProductsList.productmodalEditable,
    };
 }
 
@@ -186,4 +181,4 @@ export default createContainer(() => {
   return {
     current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
   };
-}, connect(mapStateToProps)(CommonModal));
+}, connect(mapStateToProps)(ProductModal));

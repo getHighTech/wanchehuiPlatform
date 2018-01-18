@@ -5,7 +5,7 @@ import {getProductTypeById} from './actions.js';
 
 
 Meteor.methods({
-  "products.insert"(product){
+  "products.insert"(product,shopId){
     Products.insert({
       name: product.name,
       price: product.price,
@@ -13,7 +13,8 @@ Meteor.methods({
       descirption: product.descirption,
       image_des: product.image_des,
       images: product.images,
-      onLine: false
+      onLine: false,
+      shopId:shopId
     });
   },
   'product.online'(id){
@@ -52,5 +53,24 @@ Meteor.methods({
   },
   'get.product.id'(productId){
     return getProductTypeById(productId);
+  },
+  'get.product.byShopId'(id){
+    return Products.find({shopId:id}).fetch();
+  },
+  'get.oneproduct.id'(id){
+    return Products.findOne({_id:id});
+  },
+  'product.update'(old,product){
+    Products.update(old,{
+      $set:{
+        name: product.name,
+        price: product.price,
+        discount: product.discount,
+        descirption: product.descirption,
+        image_des: product.image_des,
+        images: product.images,
+        onLine: product.onLine,
+      }
+    })
   }
 });
