@@ -26,6 +26,11 @@ export function checkBalances(){
       console.log('这个用户多了钱的', user.username);
       needToGive = incomes-charges-balance.amount;
       console.log('用户多了多少钱？', 0-needToGive);
+      Balances.update(balanceId, {
+        $set: {
+          amount: balance.amount-(0-needToGive),
+        }
+      })
 
     }
     if (incomes - charges > balance.amount) {
