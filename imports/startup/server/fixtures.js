@@ -27,6 +27,17 @@ Meteor.startup(() => {
   // Shops.remove({});
   // buildBlackCard();//建立黑卡
   //生成首页的热门标签以及测试店面
+  let tags = ["4S保养", "喷漆", "油卡", "油卡充值", "机油超市", "新车"];
+  for (var i = 0; i < tags.length; i++) {
+    if (Tags.find({name: tags[i]}).count() === 0) {
+      Tags.insert({
+        name: tags[i],
+        isHome: true,
+      });
+      
+    }
+
+  }
   for (var i = 0; i < 5; i++) {
     Shops.insert({
       name: "测试店铺"+i,
@@ -54,5 +65,6 @@ Meteor.startup(() => {
       }
     });
   }
+
 
 });
