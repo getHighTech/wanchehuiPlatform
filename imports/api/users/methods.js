@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-
+import { Accounts } from 'meteor/accounts-base'
 import {Orders} from "/imports/api/orders/orders.js"
 import { rolesBindingUser } from "/imports/api/roles/actions.js"
 
@@ -76,7 +76,9 @@ Meteor.methods({
     return getUserByAgencyId(agencyId);
   },
 
-
+  "get.user.byUserName"(username){
+    return  Meteor.users.findOne({"username": username});
+  },
   'users.cards.addOnToady'(){
     let date = new Date();
     let nextdate = (new Date((date/1000+86400)*1000))
@@ -169,6 +171,50 @@ Meteor.methods({
   'user.findUsersbyUserIds'(userIds){
     return Meteor.users.find({_id: $in(userIds)})
   },
+  'users.update'(id,phone,address){
+   let user = Meteor.users.update(id,
+      {
+        $set: {
+          profile: {mobile: phone},
+          adderss: {location: address}
+        }
+      }
+    );
+     return user
+  },
+  'users.mobile.exist'(mobile){
+    let phone = Meteor.users.findOne(
+      {
+        'profile.mobile': mobile
+      }
+    )
+    if (!phone) {
+      return true
+    }else {
+      return false
+    }
+  },
+  'login.mobie'(mobile) {
+     let user = Meteor.users.findOne({'profile.mobile': mobile})
+     if(user == undefined){
+         user =  Accounts.createUser({username: mobile})
+         Meteor.users.update(user,{
+          $set: {
+            'profile.mobile': mobile
+          }
+         })
+     }
+     return user
+  },
+  'forgot.mobile'(mobile) {
+     let user = Meteor.users.findOne({'profile.mobile': mobile}) ||
+     Meteor.users.findOne({'username': mobile})
+     return  user._id
+  },
+  'set.password'(user,pwd) {
+      Accounts.setPassword(user,pwd,[])
+      return user
+  }
   // 'user.UserBindingRoles'(userId,roleIds){
   //   Meteor.users.update(userId, {
   //     $set: {

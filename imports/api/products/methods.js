@@ -8,13 +8,20 @@ Meteor.methods({
   "products.insert"(product,shopId){
     Products.insert({
       name: product.name,
+      name_zh:product.name_zh,
       price: product.price,
-      discount: product.discount,
-      descirption: product.descirption,
-      image_des: product.image_des,
+      description: product.description,
+      brief:product.brief,
+      cover:product.cover,
+      createdByUserId: product.createdByUserId,
+      endPrice:product.endPrice,
+      curency:product.curency,
+      isTool:product.isTool,
+      roleName:product.roleName,
+      categoryld:product.categoryld,
       images: product.images,
       onLine: false,
-      shopId:shopId
+      shopId:shopId,
     });
   },
   'product.online'(id){
@@ -64,9 +71,10 @@ Meteor.methods({
     Products.update(old,{
       $set:{
         name: product.name,
+        name_zh:product.name_zh,
         price: product.price,
-        discount: product.discount,
-        descirption: product.descirption,
+        description: product.description,
+        brief:product.brief,
         image_des: product.image_des,
         images: product.images,
         onLine: product.onLine,

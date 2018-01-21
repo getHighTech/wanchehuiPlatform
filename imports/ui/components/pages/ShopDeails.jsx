@@ -35,6 +35,7 @@ import 'antd/lib/modal/style';
 import { Roles } from '/imports/api/roles/roles.js';
 import { showProduct, editProduct,addProduct } from '/imports/ui/actions/products.js';
 import ProductModal from './shops_components/ProductModal.jsx';
+import Product from './shops_components/Product.jsx';
 
 
 const FormItem = Form.Item;
@@ -152,9 +153,15 @@ class ShopDeails extends React.Component {
         width: 150,
       },
       {
-        title: '价格',
+        title: '商品名',
         dataIndex: 'name',
         key: 'name',
+        width: 150,
+      },
+      {
+        title: '价格',
+        dataIndex: 'price',
+        key: 'price',
         width: 100,
       },
       {
@@ -164,9 +171,9 @@ class ShopDeails extends React.Component {
       width: 100,
       },
       {
-        title: '电话',
-        dataIndex: 'phone',
-        key: 'phone',
+        title: '简介',
+        dataIndex: 'brief',
+        key: 'brief',
         width: 150,
       },{
         title: '状态',
@@ -242,6 +249,8 @@ class ShopDeails extends React.Component {
     return (
 
       <div>
+      <Product id={this.props.params._id}/>
+
       <div style={headerMenuStyle}>
         <Tooltip placement="topLeft" title="添加新店铺" arrowPointAtCenter>
           <Button shape="circle" icon="plus"  onClick={this.onAddProduct.bind(this)}  style={{fontSize: "18px", color: "red"}} ></Button>

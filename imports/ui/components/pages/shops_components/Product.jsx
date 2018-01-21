@@ -8,7 +8,6 @@ import Icon from 'antd/lib/icon/';
 import 'antd/lib/icon/style';
 import Avatar from 'antd/lib/avatar';
 import 'antd/lib/avatar/style';
-import {getOneShopData} from '../../services/shops.js'
 import Tag from 'antd/lib/tag/';
 import 'antd/lib/tag/style';
 import { Card, Col, Row ,List} from 'antd';
@@ -38,25 +37,20 @@ import 'antd/lib/modal/style';
 const FormItem = Form.Item;
 const format = 'HH:mm';
 const { TextArea } = Input;
-class ShopDeailsWrap extends React.Component {
+class ProductWrap extends React.Component {
   constructor(props) {
     super(props);
-    console.log(this.props.params._id);
   }
   state={
     shopdeails:[],
-    product:[],
-    visible: false,
     editaddressVisible:false,
     editphoneVisible:false,
     editaddress:'',
     editphone:[],
-    modalVisible: false,  // modal是否可见
-    modalTitle: '',
   }
   componentDidMount(){
     let self = this;
-    let id= this.props.params._id;
+    let id= self.props.id;
     Meteor.call('shops.findShopById',id,function(err,alt){
       if(!err){
       console.log(alt);
@@ -66,12 +60,6 @@ class ShopDeailsWrap extends React.Component {
       // self.getFormdata();
     }
     console.log(self.state.shopdeails)
-    })
-    Meteor.call('get.product.byShopId',id,function(error,result){
-      console.log(result);
-      self.setState({
-        product:result
-      })
     })
   }
   editaddress(){
@@ -106,14 +94,7 @@ class ShopDeailsWrap extends React.Component {
       console.log(this.props.form.name);
     }
   }
-  showModal = () => {
-    let self = this;
 
-
-    this.setState({
-      visible: true,
-    });
-  }
   handleOk = (e) => {
     console.log(e);
     this.setState({
@@ -124,7 +105,7 @@ class ShopDeailsWrap extends React.Component {
   }
   handleOkphone= (e) =>{
     let self =this;
-    let id= this.props.params._id;
+    let id= self.props.id;
     let phone =this.state.editphone;
     console.log(id,phone);
     Meteor.call('shops.editphone',id,phone,function(err,rlt){
@@ -137,14 +118,13 @@ class ShopDeailsWrap extends React.Component {
       }
     })
     this.setState({
-      visible: false,
       editaddressVisible:false,
       editphoneVisible:false,
     });
   }
   handleOkaddress= (e) =>{
     let self =this;
-    let id= this.props.params._id;
+    let id= self.props.id;
     let address =this.state.editaddress;
     console.log(id,address);
     Meteor.call('shops.editaddress',id,address,function(err,rlt){
@@ -157,14 +137,13 @@ class ShopDeailsWrap extends React.Component {
       }
     })
     this.setState({
-      visible: false,
       editaddressVisible:false,
       editphoneVisible:false,
     });
   }
   reflash(){
     let self = this;
-    let id= this.props.params._id;
+    let id= self.props.id;
     Meteor.call('shops.findShopById',id,function(err,alt){
       if(!err){
       console.log(alt);
@@ -177,29 +156,13 @@ class ShopDeailsWrap extends React.Component {
   handleCancel = (e) => {
     console.log(e);
     this.setState({
-      visible: false,
       editaddressVisible:false,
       editphoneVisible:false,
     });
   }
 
 
-  onEditProduct = (id) => {
-    let self =this;
-    self.setState({
-      modalVisible:true,
-      modalEdit:false,
-      modalTitle:'修改商品'
-    })
-    Meteor.call('get.oneproduct.id',id,function(err,alt){
-      const {dispatch } = self.props;
-      if(!err){
-        dispatch(editProduct(alt))
-      }
-    })
 
-    console.log(self.state.oneProduct);
-  }
 
   render(){
 
@@ -209,89 +172,8 @@ class ShopDeailsWrap extends React.Component {
 
     const colors=['blue','red','green','lime'];
 
-    const Columns=[
-      {
-        title: '商品名',
-        dataIndex: 'name_zh',
-        key: 'name_zh',
-        width: 150,
-      },
-      {
-        title: '价格',
-        dataIndex: 'name',
-        key: 'name',
-        width: 100,
-      },
-      {
-      title: '描述',
-      dataIndex: 'description',
-      key: 'description',
-      width: 100,
-      },
-      {
-        title: '电话',
-        dataIndex: 'phone',
-        key: 'phone',
-        width: 150,
-      },{
-        title: '状态',
-        dataIndex: 'status',
-        key: 'status',
-        width: 50,
-      },
-       {
-      title: '操作',
-      dataIndex: 'action',
-      key: 'action',
-      width: 150,
-      render: (text, record) => {
-        return(
-          <span>
-          <Tooltip placement="topLeft" title="查看" arrowPointAtCenter>
-            <Button shape="circle" icon="eye"  onClick={ () => this.onShowProduct(record._id)}></Button>
-          </Tooltip>
-          <span className="ant-divider" />
-          <Tooltip placement="topLeft" title="修改" arrowPointAtCenter>
-            <Button shape="circle" icon="edit"  onClick={ () => this.onEditProduct(record._id)}></Button>
-          </Tooltip>
-          <span className="ant-divider" />
 
 
-        </span>)
-    },
-    }
-    ]
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-          console.log(selectedRows);
-        },
-        getCheckboxProps: record => ({
-          disabled: record.name === 'Disabled User', // Column configuration not to be checked
-        }),
-      };
-    const formItemLayout = {
-          labelCol: {
-            xs: { span: 24 },
-            sm: { span: 6 },
-          },
-          wrapperCol: {
-            xs: { span: 24 },
-            sm: { span: 14 },
-          },
-        };
-      const tailFormItemLayout = {
-          wrapperCol: {
-            xs: {
-              span: 24,
-              offset: 0,
-            },
-            sm: {
-              span: 14,
-              offset: 6,
-            },
-          },
-        };
 
 
 
@@ -336,7 +218,6 @@ class ShopDeailsWrap extends React.Component {
       </div>
 
 
-      <Table rowSelection={rowSelection} rowKey={record => record._id} dataSource={this.state.product} columns={Columns} style={{background: '#ECECEC'}}/>
 
       <div>
       <Modal
@@ -356,12 +237,7 @@ class ShopDeailsWrap extends React.Component {
       <Input  defaultValue={this.state.shopdeails.phone} onInput={input => this.phoneInput(input.target.value) }/>
       </Modal>
 
-      <ProductModal
-      modalVisible={this.state.modalVisible}
-      modalTitle={this.state.modalTitle}
-      onCancel = { this.hideModal}
-      ef = {(input) => { this.fromModal = input; }}
-      />
+
 
 
       </div>
@@ -374,5 +250,5 @@ class ShopDeailsWrap extends React.Component {
 
 
 
-const ShopDeails = Form.create()(ShopDeailsWrap);
-export default ShopDeails;
+const Product = Form.create()(ProductWrap);
+export default Product;

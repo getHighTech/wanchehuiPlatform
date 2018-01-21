@@ -16,5 +16,4 @@ export function createSelfShop(selfShopAdmin)
     return "access deny";
   }
 
-
 }

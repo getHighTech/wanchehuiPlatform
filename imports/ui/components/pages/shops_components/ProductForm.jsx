@@ -72,33 +72,7 @@ class ProductFormWrap extends Component {
       console.log(`selected ${value}`);
     }
     //初次挂载去获取数据
-    componentWillMount(){
-      //如果是新增店铺，清空表单
 
-      //如果是编辑店铺，把获取的数据填进输入框里
-
-
-    }
-
-
-    componentDidMount(){
-    }
-
-
-
-
-    componentWillReceiveProps(nextProps){
-
-    }
-
-    // getDecoratorValue = (v) => {
-    //   console.log("地图组件绑定的方法")
-    //   let self = this
-    //   const setFieldsValue = this.props.form.setFieldsValue;
-    //   setFieldsValue({address: self.props.shop.shopAddress})
-    //   const getFieldValue = this.props.form.getFieldValue;
-    //   setFieldsValue({lntAndLat: self.props.shop.shopPoint})
-    // }
 
     render() {
 
@@ -147,7 +121,58 @@ class ProductFormWrap extends Component {
             <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
         )}
         </FormItem>
+        <FormItem
+        {...formItemLayout}
+        label="商品中文名称"
+        hasFeedback
+        >
+        {getFieldDecorator('name_zh', {
+            initialValue: this.props.product.name_zh,
+            rules: [{ required: true, message: '商品名称不能为空' }],
+        })(
 
+            <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品中文名称" />
+        )}
+        </FormItem>
+        <FormItem
+        {...formItemLayout}
+        label="商品价格"
+        hasFeedback
+        >
+        {getFieldDecorator('price', {
+            initialValue: this.props.product.price,
+            rules: [{ required: true, message: '商品价格不能为空' }],
+        })(
+
+            <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品价格" />
+        )}
+        </FormItem>
+        <FormItem
+        {...formItemLayout}
+        label="商品描述"
+        hasFeedback
+        >
+        {getFieldDecorator('description', {
+            initialValue: this.props.product.description,
+            rules: [{ required: true, message: '商品描述' }],
+        })(
+
+            <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品描述" />
+        )}
+        </FormItem>
+        <FormItem
+        {...formItemLayout}
+        label="商品简介"
+        hasFeedback
+        >
+        {getFieldDecorator('brief', {
+            initialValue: this.props.product.brief,
+            rules: [{ required: true, message: '商品简介' }],
+        })(
+
+            <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品简介" />
+        )}
+        </FormItem>
 
       </Form>
       );

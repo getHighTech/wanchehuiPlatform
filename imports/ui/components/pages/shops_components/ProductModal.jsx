@@ -122,6 +122,7 @@ class ProductModal extends React.Component{
     }else{
       Meteor.call('product.update',this.props.singleProduct, newObj, function(error,result){
         if(!error){
+          console.log('更新商品');
           self.reflashTable();
           self.setFormData({});
         }else{

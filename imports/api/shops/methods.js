@@ -98,5 +98,13 @@ Meteor.methods({
     },
     'shops.count'(){
       return Shops.find().count();
+    },
+    'shop.update.acl_own'(shop,userId){
+      Shops.update(shop, {
+        $set:{
+          'acl.own.users': userId
+        }
+      })
     }
+    
 })
