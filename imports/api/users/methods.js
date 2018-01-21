@@ -214,23 +214,13 @@ Meteor.methods({
   'set.password'(user,pwd) {
       Accounts.setPassword(user,pwd,[])
       return user
+  },
+  'get.current.user'(){
+    let user = Meteor.user()
+    if(user == undefined){
+      return 
+    }else{
+      return user
+    }
   }
-  // 'user.UserBindingRoles'(userId,roleIds){
-  //   Meteor.users.update(userId, {
-  //     $set: {
-  //       roles: roleIds,
-  //     }
-  //   });
-  //   for(let i=0; i<roleIds.length;i++){
-  //     rolesBindingUser(roleIds[i],userId)
-  //   }
-  // },
-  // 'user.get.roleIds'(userId){
-  //   let user =   Meteor.users.findOne({_id: userId})
-  //   if (user.roles === undefined){
-  //     return []
-  //   }else{
-  //     return user.roles
-  //   }
-  // }
 });
