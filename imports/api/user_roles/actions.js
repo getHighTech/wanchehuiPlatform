@@ -77,3 +77,15 @@ export function userBindingShopOwner(userId,role_name){
     return '之前用户绑定过该角色'
   }
 }
+export function rolesNameFindByUserId(userId){
+  let user_role_record = UserRoles.find({userId:userId}).fetch();
+  if(user_role_record.length > 0){
+    let roleNames = []
+    for (let i = 0; i < user_role_record.length; i++) {
+      roleNames.push(user_role_record[i].roleName)
+    }
+    return roleNames
+  } else{
+    return []
+  }
+}
