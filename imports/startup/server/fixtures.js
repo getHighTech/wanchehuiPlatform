@@ -19,31 +19,32 @@ Meteor.startup(() => {
   // checkBalances();
   // 测试用户模块权限
 
-  prebuildAdmin();//建立超级管理员
+  // prebuildAdmin();//建立超级管理员
   // buildBlackCard();//建立黑卡
-  // Tags.remove({});
-  // Products.remove({});
-  // Roles.remove({});
-  // Shops.remove({});
-  // buildBlackCard();//建立黑卡
+  Tags.remove({});
+  Products.remove({});
+  Roles.remove({});
+  Shops.remove({});
+  buildBlackCard();//建立黑卡
   //生成首页的热门标签以及测试店面
-  let tags = ["4S保养", "喷漆", "油卡", "油卡充值", "机油超市", "新车"];
+  let tags = ["4s保养", "喷漆", "油卡", "机油超市", "新车"];
   for (var i = 0; i < tags.length; i++) {
     if (Tags.find({name: tags[i]}).count() === 0) {
       Tags.insert({
         name: tags[i],
         isHome: true,
+        createdAt: new Date()
       });
-      
+
     }
 
   }
   for (var i = 0; i < 5; i++) {
-    Shops.insert({
+    let shopId = Shops.insert({
       name: "测试店铺"+i,
       phone: "13012121212",
       pictures: [],
-      description: '这是万人车汇平台官方店',
+      description: '这是万人汇测试店',
       tags: ["4S保养", "测试"],
       cover: 'http://wanchehui.oss-cn-qingdao.aliyuncs.com/cover.png',
       address:'成都滴滴车主俱乐部',
@@ -64,6 +65,22 @@ Meteor.startup(() => {
         }
       }
     });
+    let tag = Tags.findOne({name: "4s保养"});
+    let shopIds = []
+    if (tag) {
+      shopIds = tag.shopIds;
+    }else{
+      shopIds.push(shopId);
+        
+    }
+
+    Tags.update(tag._id, {
+      $set: {
+        shopIds,
+        updatedAt: new Date()
+      }
+    })
+
   }
 
 
