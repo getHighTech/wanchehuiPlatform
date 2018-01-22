@@ -48,6 +48,7 @@ Meteor.startup(() => {
       tags: ["4S保养", "测试"],
       cover: 'http://wanchehui.oss-cn-qingdao.aliyuncs.com/cover.png',
       address:'成都滴滴车主俱乐部',
+      city: "成都市",
       lntAndLat:[104.115038, 30.593608],
       status: true,
       createdAt: new Date(),
@@ -71,7 +72,7 @@ Meteor.startup(() => {
       shopIds = tag.shopIds;
     }else{
       shopIds.push(shopId);
-        
+
     }
 
     Tags.update(tag._id, {
@@ -80,6 +81,7 @@ Meteor.startup(() => {
         updatedAt: new Date()
       }
     })
+    
 
   }
 
