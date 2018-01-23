@@ -20,11 +20,14 @@ Meteor.methods({
       roleName:product.roleName,
       categoryld:product.categoryld,
       images: product.images,
-      onLine: false,
+      onLine: true,
       shopId:shopId,
+      createdByUserId:"dadad",
       curency:'cny',
-      holder:product.holder,
-      status:product.status
+      recommend:product.recommend,
+      status:true,
+      agencyLevelCount: 2,//eg: 2
+      agencyLevelPrices: [3880, 1280]
     });
   },
   'product.online'(id){
@@ -84,7 +87,7 @@ Meteor.methods({
         cover:product.cover,
         endPrice:product.endPrice,
         isTool:product.isTool,
-        holder:product.holder,
+        recommend:product.recommend,
         status:product.status
       }
     })

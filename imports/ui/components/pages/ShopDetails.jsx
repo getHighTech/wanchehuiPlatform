@@ -41,13 +41,13 @@ import Product from './shops_components/Product.jsx';
 const FormItem = Form.Item;
 const format = 'HH:mm';
 const { TextArea } = Input;
-class ShopDeails extends React.Component {
+class ShopDetails extends React.Component {
   constructor(props) {
     super(props);
     console.log(this.props.params._id);
   }
   state={
-    shopdeails:[],
+    shopdetails:[],
     product:[],
     visible: false,
     editaddressVisible:false,
@@ -64,11 +64,11 @@ class ShopDeails extends React.Component {
       if(!err){
       console.log(alt);
       self.setState({
-        shopdeails:alt
+        shopdetails:alt
       })
       // self.getFormdata();
     }
-    console.log(self.state.shopdeails)
+    console.log(self.state.shopdetails)
     })
     Meteor.call('get.product.byShopId',id,function(error,result){
       console.log(result);
@@ -95,11 +95,13 @@ class ShopDeails extends React.Component {
   onAddProduct(){
     let self =this;
     const {dispatch } = self.props;
+
     self.setState({
       productmodalVisible:true,
       productmodalTitle:'增加商品'
     })
     dispatch(addProduct())
+
   }
   onShowProduct = (id) => {
     let self =this;
@@ -129,7 +131,7 @@ class ShopDeails extends React.Component {
       const {dispatch } = self.props;
       if(!err){
         dispatch(editProduct(alt))
-        console.log(self.props.singleProduct.isTool);
+
 
         console.log("当前不可编辑" + self.props.editState)
         console.log("当前是否为新增商品" + self.props.modalState)
@@ -307,4 +309,4 @@ export default createContainer(() => {
   return {
     current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
   };
-}, connect(mapStateToProps)(ShopDeails));
+}, connect(mapStateToProps)(ShopDetails));

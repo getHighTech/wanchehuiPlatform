@@ -42,7 +42,7 @@ class ProductWrap extends React.Component {
     super(props);
   }
   state={
-    shopdeails:[],
+    shopdetails:[],
     editaddressVisible:false,
     editphoneVisible:false,
     editaddress:'',
@@ -55,15 +55,15 @@ class ProductWrap extends React.Component {
       if(!err){
       console.log(alt);
       self.setState({
-        shopdeails:alt
+        shopdetails:alt
       })
       // self.getFormdata();
     }
-    console.log(self.state.shopdeails)
+    console.log(self.state.shopdetails)
     })
   }
   editaddress(){
-    console.log(this.state.shopdeails);
+    console.log(this.state.shopdetails);
     console.log(this.state.shop);
     this.setState({
       editaddressVisible:true
@@ -148,7 +148,7 @@ class ProductWrap extends React.Component {
       if(!err){
       console.log(alt);
       self.setState({
-        shopdeails:alt
+        shopdetails:alt
       })
     }
     })
@@ -185,8 +185,8 @@ class ProductWrap extends React.Component {
         <Card style={{width:'100%'}} bordered={false}>
           <Meta
               avatar={<Avatar  shape="square" size="large" style={{width:100,height:100}}  src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
-              title={this.state.shopdeails.name}
-              description={[<span key='1'>店铺描述:{this.state.shopdeails.description}</span>,
+              title={this.state.shopdetails.name}
+              description={[<span key='1'>店铺描述:{this.state.shopdetails.description}</span>,
                           <br key='2'/>,
                           <span key='3'>店主:字段还未完成</span>,
                           // <br key='4'/>,
@@ -211,8 +211,8 @@ class ProductWrap extends React.Component {
       <div style={{ background: '#ECECEC', padding: '30px' }}>
         <Row gutter={8}>
           <Col span={6}><Card title="店长" bordered={false}>张三</Card></Col>
-          <Col span={6}><Card title="店铺地址" onClick={this.editaddress.bind(this)} extra={<Icon type="edit" />} bordered={false}>{this.state.shopdeails.address}</Card></Col>
-          <Col span={6}><Card title="店铺电话" onClick={this.editphone.bind(this)} extra={<Icon type="edit" />} bordered={false}>{this.state.shopdeails.phone}</Card></Col>
+          <Col span={6}><Card title="店铺地址" onClick={this.editaddress.bind(this)} extra={<Icon type="edit" />} bordered={false}>{this.state.shopdetails.address}</Card></Col>
+          <Col span={6}><Card title="店铺电话" onClick={this.editphone.bind(this)} extra={<Icon type="edit" />} bordered={false}>{this.state.shopdetails.phone}</Card></Col>
           <Col span={6}><Card title="商品数量" bordered={false}>10000</Card></Col>
         </Row>
       </div>
@@ -226,7 +226,7 @@ class ProductWrap extends React.Component {
         onOk={this.handleOkaddress}
         onCancel={this.handleCancel}
       >
-      <TextArea rows={4} defaultValue={this.state.shopdeails.address} onInput={input => this.addressInput(input.target.value) }/>
+      <TextArea rows={4} defaultValue={this.state.shopdetails.address} onInput={input => this.addressInput(input.target.value) }/>
       </Modal>
       <Modal
         title="修改店铺电话"
@@ -234,7 +234,7 @@ class ProductWrap extends React.Component {
         onOk={this.handleOkphone}
         onCancel={this.handleCancel}
       >
-      <Input  defaultValue={this.state.shopdeails.phone} onInput={input => this.phoneInput(input.target.value) }/>
+      <Input  defaultValue={this.state.shopdetails.phone} onInput={input => this.phoneInput(input.target.value) }/>
       </Modal>
 
 

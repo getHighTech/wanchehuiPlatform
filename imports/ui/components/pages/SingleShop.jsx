@@ -43,7 +43,7 @@ class SingleShop extends React.Component {
     console.log("进入店铺");
     const { dispatch } = this.props;
     let self = this;
-    dispatch(push(`/shops/singleshop/shopdeails/${_id}`));
+    dispatch(push(`/shops/single_shop/shop_details/${_id}`));
   }
   out(){
     console.log("关闭店铺");

@@ -96,7 +96,7 @@ class ProductFormWrap extends Component {
     }
 
     render() {
-      console.log(this.props.product.holder);
+      console.log(this.props.product.status);
       console.log(this.props.product.isTool);
       const uploadProps = {
         action: '/images/upload',
@@ -211,9 +211,9 @@ class ProductFormWrap extends Component {
         {...formItemLayout}
         label="商品推荐"
         >
-        {getFieldDecorator('holder', {
+        {getFieldDecorator('recommend', {
           valuePropName:'checked',
-          initialValue: this.props.product.holder,
+          initialValue: this.props.product.recommend,
             })(
               <Checkbox disabled={this.props.editState}>上推荐</Checkbox>
             )}
