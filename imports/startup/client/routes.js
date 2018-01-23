@@ -37,8 +37,8 @@ const Routes = ({ location }) =>
     <Route path="/" component={MainLayout} >
       <Route path="/users" component={Users}/>
       <Route path="/shops" component={Shops}/>
-      <Route path="/shops/singleshop/" component={SingleShop}/>
-      <Route path="/shops/singleshop/:id/publishgoods" component={PublishGoods}/>
+      <Route path="/shops/single_shop/" component={SingleShop}/>
+      <Route path="/shops/single_shop/shop_details/:id" component={ShopDetails}/>
       <Route path="/shops/shop_item" component={ShopItem}/>
       <Route path="/orders" component={Orders}/>
       <Route path="/withdrawals" component={Withdrawals}/>
