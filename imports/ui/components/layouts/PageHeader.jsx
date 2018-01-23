@@ -51,6 +51,9 @@ const PageHeader = (path) => {
       case "/agencies_relations":
         return "分销关系管理";
         break;
+        case "/shops/singleshop/":
+        return "店铺管理";
+        break;
       default:
         return "未定义页面";
         break;
