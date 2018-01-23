@@ -9,7 +9,7 @@ import LoginForgot from '/imports/ui/components/pages/LoginForgot';
 import Users from '/imports/ui/components/pages/Users';
 import Shops from '/imports/ui/components/pages/Shops';
 import SingleShop from '/imports/ui/components/pages/SingleShop';
-import PublishGoods from '/imports/ui/components/pages/PublishGoods';
+import ShopDeails from '/imports/ui/components/pages/ShopDeails';
 import Orders from '/imports/ui/components/pages/Orders';
 import Withdrawals from '/imports/ui/components/pages/Withdrawals';
 import Roles from '/imports/ui/components/pages/Roles';
@@ -43,7 +43,7 @@ const Routes = ({ location }) =>
       <Route path="/users" component={Users}/>
       <Route path="/shops" component={Shops}/>
       <Route path="/shops/singleshop" component={SingleShop}/>
-      <Route path="/shops/singleshop/publishgoods" component={PublishGoods}/>
+      <Route path="/shops/singleshop/shopdeails/:_id" component={ShopDeails}/>
       <Route path="/shops/shop_item" component={ShopItem}/>
       <Route path="option1" tableName="test" getComponent={DBTableContainer}/>
       <Route path="option2" tableName="testSms" getComponent={DBTableContainer}/>
