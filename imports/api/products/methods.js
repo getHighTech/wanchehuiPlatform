@@ -5,15 +5,29 @@ import {getProductTypeById} from './actions.js';
 
 
 Meteor.methods({
-  "products.insert"(product){
+  "products.insert"(product,shopId){
     Products.insert({
       name: product.name,
+      name_zh:product.name_zh,
       price: product.price,
-      discount: product.discount,
-      descirption: product.descirption,
-      image_des: product.image_des,
+      description: product.description,
+      brief:product.brief,
+      cover:product.cover,
+      createdByUserId: product.createdByUserId,
+      endPrice:product.endPrice,
+      curency:product.curency,
+      isTool:product.isTool,
+      roleName:product.roleName,
+      categoryld:product.categoryld,
       images: product.images,
-      onLine: false
+      onLine: true,
+      shopId:shopId,
+      createdByUserId:"dadad",
+      curency:'cny',
+      recommend:product.recommend,
+      status:true,
+      agencyLevelCount: 2,//eg: 2
+      agencyLevelPrices: [3880, 1280]
     });
   },
   'product.online'(id){
@@ -52,5 +66,30 @@ Meteor.methods({
   },
   'get.product.id'(productId){
     return getProductTypeById(productId);
+  },
+  'get.product.byShopId'(id){
+    return Products.find({shopId:id}).fetch();
+  },
+  'get.oneproduct.id'(id){
+    return Products.findOne({_id:id});
+  },
+  'product.update'(old,product){
+    Products.update(old,{
+      $set:{
+        name: product.name,
+        name_zh:product.name_zh,
+        price: product.price,
+        description: product.description,
+        brief:product.brief,
+        image_des: product.image_des,
+        images: product.images,
+        onLine: product.onLine,
+        cover:product.cover,
+        endPrice:product.endPrice,
+        isTool:product.isTool,
+        recommend:product.recommend,
+        status:product.status
+      }
+    })
   }
 });

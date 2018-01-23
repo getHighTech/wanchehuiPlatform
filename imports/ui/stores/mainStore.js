@@ -15,7 +15,7 @@ import AgencyChange from '/imports/ui/reducers/AgencyChange.js'
 import {WithDraws, getWithDraw} from '/imports/ui/reducers/WithDraws.js'
 import ShopsList from '/imports/ui/reducers/ShopsList.js'
 import RolesList from '/imports/ui/reducers/RolesList.js'
-
+import ProductsList from '/imports/ui/reducers/ProductsList.js'
 
 
 const rmiddleware = routerMiddleware(browserHistory)
@@ -36,6 +36,7 @@ export default function configureStore(initialState) {
       WithDraws,
       getWithDraw,
       ShopsList,
+      ProductsList,
       RolesList
     }),
     initialState,

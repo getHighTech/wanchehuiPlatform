@@ -40,7 +40,7 @@ class MainLayout extends Component {
     ]
     let ShopOwnerMenu = [
       {"key": "dashboard", "name": "控制面板", "IconType": "bars"},
-      {"key": "singleshop", "name": "店铺管理", "IconType": "shop"},
+      {"key": "single_shop", "name": "店铺管理", "IconType": "shop"},
       {"key": "orders", "name": "订单管理", "IconType": "book"}
 
     ]
@@ -65,7 +65,7 @@ class MainLayout extends Component {
         // console.log('将角色存入REDUX')
 
         console.log(self.props)
-       
+
 
 
       })
@@ -111,8 +111,8 @@ class MainLayout extends Component {
       case 'shops':
         dispatch(push('/shops'));
         break;
-      case 'singleshop':
-      dispatch(push('/shops/singleshop/'));
+      case 'single_shop':
+      dispatch(push('/shops/single_shop/'));
       break;
       case 'settings':
         dispatch(push('/settings'));
@@ -147,7 +147,7 @@ class MainLayout extends Component {
           onClick={this.handleMenuItemClicked.bind(this)}
           >
           	{
-              this.props.LeftMenuList.map((e, index) => 
+              this.props.LeftMenuList.map((e, index) =>
               <Menu.Item key={e.key}>
                     <Icon type={e.IconType} />
                     <span className="nav-text">{e.name}</span>
@@ -158,7 +158,7 @@ class MainLayout extends Component {
               <Icon type="bars" />
               <span className="nav-text">控制面板</span>
             </Menu.Item>
-            <Menu.Item key="users"> 
+            <Menu.Item key="users">
               <Icon type="user" />
               <span className="nav-text">用户管理</span>
             </Menu.Item>
@@ -190,7 +190,7 @@ class MainLayout extends Component {
               <Icon type="paper-clip" />
               <span className="nav-text">组件测试页面</span>
             </Menu.Item> */}
-          </Menu>        
+          </Menu>
         </Sider>
         <Layout>
           <Header style={{ background: '#fff', padding: 0 }} >

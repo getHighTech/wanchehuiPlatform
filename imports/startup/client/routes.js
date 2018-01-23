@@ -9,7 +9,7 @@ import LoginForgot from '/imports/ui/components/pages/LoginForgot';
 import Users from '/imports/ui/components/pages/Users';
 import Shops from '/imports/ui/components/pages/Shops';
 import SingleShop from '/imports/ui/components/pages/SingleShop';
-import ShopDeails from '/imports/ui/components/pages/ShopDeails';
+import ShopDetails from '/imports/ui/components/pages/ShopDetails';
 import Orders from '/imports/ui/components/pages/Orders';
 import Withdrawals from '/imports/ui/components/pages/Withdrawals';
 import Roles from '/imports/ui/components/pages/Roles';
@@ -37,8 +37,8 @@ const Routes = ({ location }) =>
     <Route path="/" component={MainLayout} >
       <Route path="/users" component={Users}/>
       <Route path="/shops" component={Shops}/>
-      <Route path="/shops/single_shop/" component={SingleShop}/>
-      <Route path="/shops/single_shop/shop_details/:id" component={ShopDetails}/>
+      <Route path="/shops/single_shop" component={SingleShop}/>
+      <Route path="/shops/single_shop/shop_details/:_id" component={ShopDetails}/>
       <Route path="/shops/shop_item" component={ShopItem}/>
       <Route path="/orders" component={Orders}/>
       <Route path="/withdrawals" component={Withdrawals}/>
@@ -57,7 +57,8 @@ const Routes = ({ location }) =>
     <Route path="/*" component={Login}/>
   </Router>
   </Provider>;
-
+  // <Route path="/shops/singleshop/" component={SingleShop}/>
+  // <Route path="/shops/singleshop/:id/publishgoods" component={PublishGoods}/>
 
 
 export default Routes;

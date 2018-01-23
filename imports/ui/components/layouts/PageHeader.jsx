@@ -17,10 +17,7 @@ const PageHeader = (path) => {
       case "/shops":
         return "店铺管理"
         break;
-      case "/shops/singleshop":
-        return "商家店铺"
-        break;
-      case (path.match(/\/shops\/singleshop\/shopdeails\/\S{2,}/) || {}).input:
+      case (path.match(/\/shops\/single_shop\/shop_details\/\S{2,}/) || {}).input:
       // /\/shops\/singleshop\/publishgoods\/\S{2,}/.test(path):
         return "商家店铺详情"
         break;
@@ -51,7 +48,7 @@ const PageHeader = (path) => {
       case "/agencies_relations":
         return "分销关系管理";
         break;
-        case "/shops/singleshop/":
+        case "/shops/single_shop/":
         return "店铺管理";
         break;
       default:

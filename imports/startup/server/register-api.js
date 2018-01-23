@@ -1,6 +1,7 @@
 import '../../api/roles/methods.js';
 import '/imports/api/roles/server/publications.js';
 import '/imports/api/tags/server/publications.js';
+import '/imports/api/tags/methods.js';
 import '/imports/api/users/server/publications.js';
 import '/imports/api/partners/methods.js';
 import '/imports/api/products/methods.js';

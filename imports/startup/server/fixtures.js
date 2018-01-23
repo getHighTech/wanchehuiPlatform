@@ -11,6 +11,7 @@ import { Roles } from '/imports/api/roles/roles.js';
 import { Shops } from '/imports/api/shops/shops.js';
 import { Products } from '/imports/api/products/products.js';
 import { Tags } from '/imports/api/tags/tags.js';
+import { newProuct } from '../../core/new_product';
 
 Meteor.startup(() => {
   // checkAgencies();
@@ -20,7 +21,13 @@ Meteor.startup(() => {
   // 测试用户模块权限
 
   prebuildAdmin();//建立超级管理员
-  // // buildBlackCard();//建立黑卡
+  // buildBlackCard();//建立黑卡
+  // buildBlackCard();//建立黑卡
+  // Tags.remove({});
+  // Products.remove({});
+  // Roles.remove({});
+  // Shops.remove({});
+  // buildBlackCard();//建立黑卡
   // Tags.remove({});
   // Products.remove({});
   // Roles.remove({});
@@ -67,6 +74,37 @@ Meteor.startup(() => {
       }
     });
     let tag = Tags.findOne({name: "4s保养"});
+    for (var j = 0; j < 5; j++) {
+      let params = {
+
+        isSale: true,
+
+        name_zh: "测试商品"+j.toString()+i.toString(),
+        name: "test product"+j.toString()+i.toString(),
+        price: 1,
+        description: '测试商品',
+        brief: '测试商品',
+        images:['http://localhost:3000/static/media/one.933843c7.jpg'],
+        cover: 'http://localhost:3000/static/media/one.933843c7.jpg',
+        shopId: shopId,
+        createdByUserId: null,
+        properties: [],
+        recommendLevel: 0,
+        specifications: [],//eg:[{"red": 100000, "red & heavy": 1500000}]
+        endPrice: 1, //最终价格
+        curency: 'cny', //cny
+        agencyLevelCount: 2,//eg: 2
+        agencyLevelPrices: [3880, 1280]
+      }
+      newProuct
+      (
+        false,
+        "nobody"+i,
+        params,
+        "测试",
+        ["4s保养", "喷漆", "油卡", "机油超市", "新车"],
+      )
+    }
     let shopIds = []
     if (tag) {
       shopIds = tag.shopIds;
@@ -81,9 +119,10 @@ Meteor.startup(() => {
         updatedAt: new Date()
       }
     })
-    
+
 
   }
+
 
 
 });
