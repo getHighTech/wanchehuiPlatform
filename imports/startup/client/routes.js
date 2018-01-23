@@ -9,7 +9,7 @@ import LoginForgot from '/imports/ui/components/pages/LoginForgot';
 import Users from '/imports/ui/components/pages/Users';
 import Shops from '/imports/ui/components/pages/Shops';
 import SingleShop from '/imports/ui/components/pages/SingleShop';
-import PublishGoods from '/imports/ui/components/pages/PublishGoods';
+import ShopDeails from '/imports/ui/components/pages/ShopDeails';
 import Orders from '/imports/ui/components/pages/Orders';
 import Withdrawals from '/imports/ui/components/pages/Withdrawals';
 import Roles from '/imports/ui/components/pages/Roles';

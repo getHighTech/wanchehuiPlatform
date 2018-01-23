@@ -46,7 +46,7 @@ class ShopFormWrap extends Component {
     componentWillReceiveProps(nextProps){
         this.setState(nextProps);
     }
- 
+
     handleChange(info) {
       console.log(info)
       let self = this
@@ -79,7 +79,7 @@ class ShopFormWrap extends Component {
 
 
     }
-  
+
 
     componentDidMount(){
     }
@@ -107,9 +107,8 @@ class ShopFormWrap extends Component {
         onChange: this.handleChange.bind(this),
         listType: 'picture',
       };
-      
-      const { getFieldDecorator } = this.props.form;
 
+      const { getFieldDecorator } = this.props.form;
 
           const formItemLayout = {
               labelCol: {
