@@ -27,12 +27,7 @@ const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
 
 
-//将有表单操作的对象管理设置成动态路由
-const DBTableContainer = (location, cb) => {
-  require.ensure([], require => {
-    cb(null, require('/imports/ui/components/DBTable').default)
-  }, 'DBTable');
-};
+
 
 
 
@@ -44,10 +39,8 @@ const Routes = ({ location }) =>
       <Route path="/shops" component={Shops}/>
       <Route path="/shops/singleshop" component={SingleShop}/>
       <Route path="/shops/singleshop/shopdeails/:_id" component={ShopDeails}/>
+
       <Route path="/shops/shop_item" component={ShopItem}/>
-      <Route path="option1" tableName="test" getComponent={DBTableContainer}/>
-      <Route path="option2" tableName="testSms" getComponent={DBTableContainer}/>
-      <Route path="option3" tableName="testAction" getComponent={DBTableContainer}/>
       <Route path="/orders" component={Orders}/>
       <Route path="/withdrawals" component={Withdrawals}/>
       <Route path="/roles" component={Roles}/>
@@ -65,7 +58,8 @@ const Routes = ({ location }) =>
     <Route path="/*" component={Login}/>
   </Router>
   </Provider>;
-
+  // <Route path="/shops/singleshop/" component={SingleShop}/>
+  // <Route path="/shops/singleshop/:id/publishgoods" component={PublishGoods}/>
 
 
 export default Routes;

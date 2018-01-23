@@ -129,6 +129,8 @@ class ShopDeails extends React.Component {
       const {dispatch } = self.props;
       if(!err){
         dispatch(editProduct(alt))
+        console.log(self.props.singleProduct.isTool);
+
         console.log("当前不可编辑" + self.props.editState)
         console.log("当前是否为新增商品" + self.props.modalState)
 
@@ -175,11 +177,6 @@ class ShopDeails extends React.Component {
         dataIndex: 'brief',
         key: 'brief',
         width: 150,
-      },{
-        title: '状态',
-        dataIndex: 'status',
-        key: 'status',
-        width: 50,
       },
        {
       title: '操作',
@@ -295,7 +292,6 @@ class ShopDeails extends React.Component {
 
 
 function mapStateToProps(state) {
-  console.log(state);
   return {
     allState: state.ProductsList,
     singleProduct: state.ProductsList.singleProduct,

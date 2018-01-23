@@ -22,6 +22,9 @@ Meteor.methods({
       images: product.images,
       onLine: false,
       shopId:shopId,
+      curency:'cny',
+      holder:product.holder,
+      status:product.status
     });
   },
   'product.online'(id){
@@ -78,6 +81,11 @@ Meteor.methods({
         image_des: product.image_des,
         images: product.images,
         onLine: product.onLine,
+        cover:product.cover,
+        endPrice:product.endPrice,
+        isTool:product.isTool,
+        holder:product.holder,
+        status:product.status
       }
     })
   }

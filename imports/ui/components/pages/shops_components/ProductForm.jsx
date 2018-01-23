@@ -13,6 +13,7 @@ import Form from 'antd/lib/form';
 import Select from 'antd/lib/select';
 import Upload from 'antd/lib/upload';
 import message from 'antd/lib/upload';
+import { Switch} from 'antd';
 import "antd/lib/form/style";
 import "antd/lib/icon/style";
 import "antd/lib/input/style";
@@ -27,10 +28,11 @@ import AMapSearcher from '../tools/AMapSearcher.jsx';
 import AMapComplete from '../tools/AMapComplete.jsx';
 import { Roles } from '/imports/api/roles/roles.js';
 import moment from 'moment';
-
+import { Radio } from 'antd';
 const FormItem = Form.Item;
 const format = 'HH:mm';
-
+const RadioGroup = Radio.Group;
+const CheckboxGroup = Checkbox.Group;
 
 class ProductFormWrap extends Component {
 
@@ -41,11 +43,27 @@ class ProductFormWrap extends Component {
     }
     state = {
       fileList: [],
-      image_url:''
+      image_url:'',
+      value: false,
+      status:false
     };
     componentWillReceiveProps(nextProps){
         this.setState(nextProps);
     }
+
+    changeisTool = (e) => {
+    console.log('radio checked', e.target.value);
+    this.setState({
+      value: e.target.value,
+    });
+
+  }
+  componentDidMount(){
+    console.log(this.props.product.holder);
+  }
+  getInitialvalue=()=>{
+    return this.props.product.holder
+  }
 
     handleChange(info) {
       console.log(info)
@@ -72,10 +90,14 @@ class ProductFormWrap extends Component {
       console.log(`selected ${value}`);
     }
     //初次挂载去获取数据
-
+    changeholeder(){
+      console.log(this.props.product._id);
+      console.log(this.props.product.holder);
+    }
 
     render() {
-
+      console.log(this.props.product.holder);
+      console.log(this.props.product.isTool);
       const uploadProps = {
         action: '/images/upload',
         onChange: this.handleChange.bind(this),
@@ -174,6 +196,36 @@ class ProductFormWrap extends Component {
         )}
         </FormItem>
 
+        <FormItem
+        {...formItemLayout}
+        label="商品类型"
+        >
+        {getFieldDecorator('isTool', {
+          valuePropName:'checked',
+          initialValue: this.props.product.isTool,
+            })(
+              <Checkbox disabled={this.props.editState}>工具类型</Checkbox>
+            )}
+        </FormItem>
+        <FormItem
+        {...formItemLayout}
+        label="商品推荐"
+        >
+        {getFieldDecorator('holder', {
+          valuePropName:'checked',
+          initialValue: this.props.product.holder,
+            })(
+              <Checkbox disabled={this.props.editState}>上推荐</Checkbox>
+            )}
+        </FormItem>
+        <FormItem
+        {...formItemLayout}
+        label="商品状态"
+        >
+        {getFieldDecorator('status', { valuePropName: 'checked',initialValue: this.props.product.status, })(
+            <Switch  disabled={this.props.editState} checkedChildren="上架" unCheckedChildren="下架"/>
+          )}
+        </FormItem>
       </Form>
       );
     }

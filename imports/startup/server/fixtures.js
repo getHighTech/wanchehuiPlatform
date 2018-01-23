@@ -27,6 +27,45 @@ Meteor.startup(() => {
   // Roles.remove({});
   // Shops.remove({});
   // buildBlackCard();//建立黑卡
+  //生成首页的热门标签以及测试店面
+  let tags = ["4S保养", "喷漆", "油卡", "油卡充值", "机油超市", "新车"];
+  for (var i = 0; i < tags.length; i++) {
+    if (Tags.find({name: tags[i]}).count() === 0) {
+      Tags.insert({
+        name: tags[i],
+        isHome: true,
+      });
+      
+    }
+
+  }
+  for (var i = 0; i < 5; i++) {
+    Shops.insert({
+      name: "测试店铺"+i,
+      phone: "13012121212",
+      pictures: [],
+      description: '这是万人车汇平台官方店',
+      tags: ["4S保养", "测试"],
+      cover: 'http://wanchehui.oss-cn-qingdao.aliyuncs.com/cover.png',
+      address:'成都滴滴车主俱乐部',
+      lntAndLat:[104.115038, 30.593608],
+      status: true,
+      createdAt: new Date(),
+      acl: {
+        own: {
+          roles: ["shop_owner"],
+          users: [],
+        },
+        read: {
+          roles: ['nobody', 'login_user']
+        },
+        write: {
+          roles: ["shop_owner","shop_manager"],
+          users: [],
+        }
+      }
+    });
+  }
 
 
 
