@@ -15,24 +15,14 @@ import { newProuct } from '../../core/new_product';
 
 Meteor.startup(() => {
   // checkAgencies();
-  buildSelfShop();
-  //建立自营店铺， 并指认wanchehui为店铺管理员
+
+  
   // checkBalances();
   // 测试用户模块权限
 
   prebuildAdmin();//建立超级管理员
-  // buildBlackCard();//建立黑卡
-  // buildBlackCard();//建立黑卡
-  // Tags.remove({});
-  // Products.remove({});
-  // Roles.remove({});
-  // Shops.remove({});
-  // buildBlackCard();//建立黑卡
-  // Tags.remove({});
-  // Products.remove({});
-  // Roles.remove({});
-  // Shops.remove({});
-  buildBlackCard();//建立黑卡
+  // buildSelfShop();//建立自营店铺， 并指认wanchehui为店铺管理员,需要在超级管理员生产之后才能执行
+  // buildBlackCard();//建立黑卡，需要在建立好自营店铺之后才能执行
   //生成首页的热门标签以及测试店面
   let tags = ["4s保养", "喷漆", "油卡", "机油超市", "新车"];
   for (var i = 0; i < tags.length; i++) {

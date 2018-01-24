@@ -52,10 +52,6 @@ Meteor.methods({
           );
           return shops.fetch();
         },
-        'get.shops.data'(condition={},page=1, pageSize=20){
-            let shops =  Shops.find();
-              return shops.fetch();
-            },
     'shops.findShopById'(shopId){
       let shop = Shops.findOne({_id:shopId})
       if (!shop) {
@@ -105,6 +101,13 @@ Meteor.methods({
           'acl.own.users': userId
         }
       })
+    },
+    'shops.getByCurrentUser'(currentUserId){
+      let shops = Shops.find({'acl.own.users': currentUserId}).fetch()
+      if(shops.length ===0){
+        return []
+      }else{
+        return shops
+      }
     }
-    
 })

@@ -66,15 +66,6 @@ export function prebuildAdmin(){
         },
       }
     });
-    Roles.update(newAdminId, {
-      $set: {
-        recordAccess: {
-          read: [newAdminId],
-          edit: [newAdminId],
-          remove: [],
-        },
-      }
-    });
 
   }
 
