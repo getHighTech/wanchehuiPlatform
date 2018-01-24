@@ -12,5 +12,12 @@ Meteor.publish('products.user_id', function(user_id, page, pagesize
 ){
   return Products.find({userId: user_id},
   {skip: page*pagesize, limit: pagesize, sort: {createdAt: -1}});
-  
+
 });
+
+Meteor.publish('home.top.products', function(page, pagesize){
+  return Products.find(
+    {recommendLevel: {$lgt: 0}},
+    {skip: page*pagesize, limit: pagesize, sort: {createdAt: -1}}
+  );
+})
