@@ -39,6 +39,7 @@ export function newProuct
 (
   isTool,
   roleName,
+  roleName_zh,
   params,
   categoryName,
   tagNames,
@@ -87,34 +88,56 @@ export function newProuct
     roleName,//当且仅仅当isTool为true的时候设置,会生成roleName+Holder的角色, roleName需要判重, //"shopName.owner""shopName.custService"
     categoryId: category._id,
   }));
-
   for (var i = 0; i < tagNames.length; i++) {
     if (Tags.find({name: tagNames[i]}).count() < 1) {
       Tags.insert({
        name: tagNames[i],
-       shopId: params.shopId,
-       productId,
+       shopIds: [params.shopId],
+       productIds: [productId],
        createdAt: new Date(),
      })
-    }
+   }else{
+     let tag = Tags.findOne({name: tagNames[i]});
+     let shopIds = tag.shopIds;
+     let productIds = tag.productIds;
+     if (shopIds) {
+       shopIds.push(params.shopId);
+     }else{
+       shopIds = [params.shopId];
+     }
+     if (productIds) {
+       productIds.push(productId);
+     }else{
+       productIds = [productId];
+     }
+     Tags.update(tag._id, {
+       $set: {
+         shopIds,
+         productIds,
+       }
+     })
+   }
 
   };
   if (isTool) {
-    Roles.insert({
-        name_zh: roleName,
-        name: roleName+"_holder",
-        time_limit: 525600000,
-        permissions:{
-          products: {
-            read: true,
-          }
-        },
-        state: true,
-        weight: 0,  //0权重权限最大
-        createdAt : new Date(),
-        isSuper: false,
-        users:[]
-      });
+    if (!Roles.findOne({  name: roleName+"_holder"})) {
+      Roles.insert({
+          name_zh: roleName_zh,
+          name: roleName+"_holder",
+          time_limit: 525600000,
+          permissions:{
+            products: {
+              read: true,
+            }
+          },
+          state: true,
+          weight: 0,  //0权重权限最大
+          createdAt : new Date(),
+          isSuper: false,
+          users:[]
+        });
+    }
+
   }
 
 
