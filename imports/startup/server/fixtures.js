@@ -17,19 +17,32 @@ import { newProuct } from '../../core/new_product';
 
 Meteor.startup(() => {
   // checkAgencies();
-  // buildSelfShop();
+  buildSelfShop();
   //建立自营店铺， 并指认wanchehui为店铺管理员
   // checkBalances();
   // 测试用户模块权限
 
-  // prebuildAdmin();//建立超级管理员
+  prebuildAdmin();//建立超级管理员
   // buildBlackCard();//建立黑卡
+<<<<<<< HEAD
   Tags.remove({});
   Products.remove({});
   Roles.remove({});
   UserRoles.remove({});
   ProductOwners.remove({});
   Shops.remove({});
+=======
+  // buildBlackCard();//建立黑卡
+  // Tags.remove({});
+  // Products.remove({});
+  // Roles.remove({});
+  // Shops.remove({});
+  // buildBlackCard();//建立黑卡
+  // Tags.remove({});
+  // Products.remove({});
+  // Roles.remove({});
+  // Shops.remove({});
+>>>>>>> 6a5d9b8d3ee378419432af689f32f233ef9bbaf0
   buildBlackCard();//建立黑卡
   //生成首页的热门标签以及测试店面
   let tags = ["4s保养", "喷漆", "油卡", "机油超市", "新车"];
@@ -185,6 +198,7 @@ Meteor.startup(() => {
 
     }
   });
+
 
 
 });
