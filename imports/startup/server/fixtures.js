@@ -155,8 +155,7 @@ Meteor.startup(() => {
   //   })
   //
   //
-  // };//循环加入测试店铺结束
-  // // 开始绑定黑卡和用户
+  // };//循环加入测试店铺结束// 开始绑定黑卡和用户
   // let product = Products.findOne({name_zh: "万人车汇黑卡"});
   // let roleName = product.roleName;
   // console.log(roleName);
