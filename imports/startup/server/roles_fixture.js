@@ -66,15 +66,6 @@ export function prebuildAdmin(){
         },
       }
     });
-    Roles.update(newAdminId, {
-      $set: {
-        recordAccess: {
-          read: [newAdminId],
-          edit: [newAdminId],
-          remove: [],
-        },
-      }
-    });
 
   }
 
@@ -92,6 +83,7 @@ export function prebuildAdmin(){
       userId: newUserId,
       roleId: newAdminId,
       createdAt: new Date(),
+      status:true
     })
     // Meteor.users.update(newUserId,{
     //   $set: {

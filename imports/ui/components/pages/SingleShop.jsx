@@ -25,19 +25,33 @@ class SingleShop extends React.Component {
   }
   componentDidMount(){
     let self = this;
-    self.getShopData();
+    self.getCurrentUserShops();
   }
-  getShopData(){
+  // getShopData(){
 
-    let self = this;
-    getOneShopData(function(err,rlt){
+  //   let self = this;
+  //   getOneShopData(function(err,rlt){
+  //     if(!err){
+  //       self.setState({
+  //         shopData:rlt
+  //       })
+  //     }
+  //     console.log(self.state.shopData);
+  //   })
+  // }
+
+  getCurrentUserShops(){
+    let currentUserId = Meteor.userId();
+    console.log(currentUserId)
+    let self = this
+    Meteor.call('shops.getByCurrentUser', currentUserId,function(err,rlt){
       if(!err){
         self.setState({
           shopData:rlt
         })
       }
-      console.log(self.state.shopData);
     })
+    
   }
   in(_id){
     console.log("进入店铺");
