@@ -83,6 +83,7 @@ export function prebuildAdmin(){
       userId: newUserId,
       roleId: newAdminId,
       createdAt: new Date(),
+      status:true
     })
     // Meteor.users.update(newUserId,{
     //   $set: {
