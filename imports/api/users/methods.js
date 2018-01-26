@@ -212,7 +212,7 @@ Meteor.methods({
   'set.password'(user,pwd) {
       Accounts.setPassword(user,pwd,[])
       return user
-  }
+  },
   // 'user.UserBindingRoles'(userId,roleIds){
   //   Meteor.users.update(userId, {
   //     $set: {
