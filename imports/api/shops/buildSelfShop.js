@@ -39,18 +39,19 @@ export function buildSelfShop(){
 
   let superAdmin = Meteor.users.findOne({username: 'superAdmin'});
 
-  let yangzhiqiang = Meteor.users.findOne({username: '13128980333'});
-  let yangzhiqiangId = null;
-  if (!yangzhiqiang) {
-    yangzhiqiangId = Accounts.createUser({
-          username: "shop_owner",
-          password: "shop_owner2017best",
-        });
+  // let yangzhiqiang = Meteor.users.findOne({username: '13128980333'});
+  // let yangzhiqiangId = null;
+  // if (!yangzhiqiang) {
+  //   yangzhiqiangId = Accounts.createUser({
+  //         username: "shop_owner",
+  //         password: "shop_owner2017best",
+  //       });
 
 
-  }else{
-    yangzhiqiangId = yangzhiqiang._id;
-  }
+  // }else{
+  //   yangzhiqiangId = yangzhiqiang._id;
+  // }
+  
   if (!wanchehui) {
     wanchehuiId = Accounts.createUser({
           username: "wanchehui",
@@ -70,7 +71,7 @@ export function buildSelfShop(){
       acl: {
         own: {
           roles: ["shop_owner"],
-          users: [wanchehuiId, yangzhiqiangId],
+          users: [wanchehuiId],
         },
         read: {
           roles: ['no_body', "login_user", "superAdmin"]
