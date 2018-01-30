@@ -1,0 +1,83 @@
+db.shop_carts.aggregate([
+{ 
+    $group: {_
+      id: { price: "$price"},
+      books: { $push: "$$ROOT"}
+     }
+}
+
+
+
+
+db.shop_carts.aggregate(
+   [
+     {
+       $group:
+         {
+           itemsSold: { $push:  { item: "$price", quantity: "$name" } }
+         }
+     }
+   ]
+).pretty()
+
+
+db.shop_carts.aggregate(
+   [
+     {
+       $group:
+         {
+           _id: "aaa",
+           itemsSold: { $push:  { 
+            item: "$name",
+            quantity: "$price" ,
+            shop_id: {
+              $push: { item: "$name"}
+            }
+
+           } }
+         }
+     }
+   ]
+) 
+
+db.shop_carts.find({
+  "shopsData": {
+    $elemMatch: {"shop_name": "卡哇伊2"}
+  }
+})
+
+db.shop_carts.find({
+  "shopsData": {"shop_name": "卡哇伊2"}
+})
+
+db.shop_carts.find({
+  "shopsData": {
+    $elemMatch: {
+      "shop_id": 2,
+      "shop_name": "卡哇伊2",
+      "productsData.$.product_id": 4
+    }
+  }
+})
+
+
+db.shop_carts.find({
+  "shopsData": {
+    $elemMatch: {
+      "shop_name": "卡哇伊2"
+      "productsData": {
+        $elemMatch: {
+          product_id: 4
+        }
+      }
+    }
+  }
+})
+
+
+ db.shop_carts.update({"shop_name": "开挖一"},{$push: {"source": {"shop_id": 1,"good": "hello"}}})
+
+
+
+
+
