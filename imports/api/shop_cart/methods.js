@@ -4,14 +4,17 @@ import { ShopCarts } from './shop_cart.js';
 
 Meteor.methods({
   'shop_carts.add_cart'(params){
+    console.log(params);
     let shop_cart = ShopCarts.update(
       {'user_id': 2},
       { $set:
         {"shopsData": params}
       }
     )
-    console.log(`add_cart`)
-    console.log(shop_cart)
+
+    return ShopCarts.findOne({id: shop_cart._id})
+    // console.log(`add_cart`)
+    // console.log(shop_cart)
     // console.log(params)
     // let product = ShopCarts.findOne({'product_id': params.id, 'user_id': params.id,'spec': params.selected})
     // let count = product !== undefined ? parseInt(params.count)+parseInt(product.count) : params.count
@@ -60,6 +63,34 @@ Meteor.methods({
          //            product_id: 6
          //          },
          //        ]
+         //    }],
+         //    shopMap: {
+         //      2: {
+         //        shop_name: '卡哇伊2',
+         //        checked: false,
+         //        shop_id: 2,
+         //        productsMap: {
+         //          5: {
+         //            shop_id: 2,
+         //            checked: false, 
+         //            name: "测试1",
+         //            status: 1,
+         //            count: 10,
+         //            cover: '图片地址',
+         //            prodductSpec: {name: '蓝色'},
+         //            product_id: 5
+         //          },
+         //          6: {
+         //            shop_id: 2,
+         //            checked: false, 
+         //            name: "测试2",
+         //            status: 1,
+         //            count: 9,
+         //            cover: '图片地址',
+         //            prodductSpec: {name: '蓝色'},
+         //            product_id: 6
+         //          },
+         //      }
          //    }]
          // })
     // } 
@@ -74,6 +105,7 @@ Meteor.methods({
     // return shop_carts
   },
   'shop_carts.get_cart'(id) {
+    console.log(id)
     return ShopCarts.findOne({user_id: id});
   },
   'shop_carts.insert_cart'(params) {

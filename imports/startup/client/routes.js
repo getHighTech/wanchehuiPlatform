@@ -9,7 +9,7 @@ import LoginForgot from '/imports/ui/components/pages/LoginForgot';
 import Users from '/imports/ui/components/pages/Users';
 import Shops from '/imports/ui/components/pages/Shops';
 import SingleShop from '/imports/ui/components/pages/SingleShop';
-import PublishGoods from '/imports/ui/components/pages/PublishGoods';
+import ShopDetails from '/imports/ui/components/pages/ShopDetails';
 import Orders from '/imports/ui/components/pages/Orders';
 import Withdrawals from '/imports/ui/components/pages/Withdrawals';
 import Roles from '/imports/ui/components/pages/Roles';
@@ -27,12 +27,7 @@ const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
 
 
-//将有表单操作的对象管理设置成动态路由
-const DBTableContainer = (location, cb) => {
-  require.ensure([], require => {
-    cb(null, require('/imports/ui/components/DBTable').default)
-  }, 'DBTable');
-};
+
 
 
 
@@ -42,12 +37,10 @@ const Routes = ({ location }) =>
     <Route path="/" component={MainLayout} >
       <Route path="/users" component={Users}/>
       <Route path="/shops" component={Shops}/>
-      <Route path="/shops/singleshop" component={SingleShop}/>
-      <Route path="/shops/singleshop/publishgoods" component={PublishGoods}/>
+      <Route path="/shops/single_shop" component={SingleShop}/>
+      <Route path="/shops/single_shop/shop_details/:_id" component={ShopDetails}/>
+
       <Route path="/shops/shop_item" component={ShopItem}/>
-      <Route path="option1" tableName="test" getComponent={DBTableContainer}/>
-      <Route path="option2" tableName="testSms" getComponent={DBTableContainer}/>
-      <Route path="option3" tableName="testAction" getComponent={DBTableContainer}/>
       <Route path="/orders" component={Orders}/>
       <Route path="/withdrawals" component={Withdrawals}/>
       <Route path="/roles" component={Roles}/>
@@ -65,7 +58,8 @@ const Routes = ({ location }) =>
     <Route path="/*" component={Login}/>
   </Router>
   </Provider>;
-
+  // <Route path="/shops/singleshop/" component={SingleShop}/>
+  // <Route path="/shops/singleshop/:id/publishgoods" component={PublishGoods}/>
 
 
 export default Routes;

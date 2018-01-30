@@ -14,6 +14,16 @@ Meteor.methods({
   //     createdAt: new Date
   //   })
   // },
+  'app.orders.insert'(params){
+    return Orders.insert({
+      type: params.type,
+      createdBy: params.id,
+      status: params.status,
+      product: [
+        params.prodductSpec
+      ],
+    })
+  },
   'orders.insert'(params){
       return Orders.insert({
           type: params.type,

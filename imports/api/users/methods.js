@@ -76,7 +76,9 @@ Meteor.methods({
     return getUserByAgencyId(agencyId);
   },
 
-
+  "get.user.byUserName"(username){
+    return  Meteor.users.findOne({"username": username});
+  },
   'users.cards.addOnToady'(){
     let date = new Date();
     let nextdate = (new Date((date/1000+86400)*1000))
@@ -205,7 +207,7 @@ Meteor.methods({
      return user
   },
   'forgot.mobile'(mobile) {
-     let user = Meteor.users.findOne({'profile.mobile': mobile}) ||
+     let user = Meteor.users.findOne({'profile.mobile': mobile}) 
      Meteor.users.findOne({'username': mobile})
      return  user._id
   },
@@ -213,22 +215,13 @@ Meteor.methods({
       Accounts.setPassword(user,pwd,[])
       return user
   },
-  // 'user.UserBindingRoles'(userId,roleIds){
-  //   Meteor.users.update(userId, {
-  //     $set: {
-  //       roles: roleIds,
-  //     }
-  //   });
-  //   for(let i=0; i<roleIds.length;i++){
-  //     rolesBindingUser(roleIds[i],userId)
-  //   }
-  // },
-  // 'user.get.roleIds'(userId){
-  //   let user =   Meteor.users.findOne({_id: userId})
-  //   if (user.roles === undefined){
-  //     return []
-  //   }else{
-  //     return user.roles
-  //   }
-  // }
+
+  'get.current.user'(){
+    let user = Meteor.user()
+    if(user == undefined){
+      return 
+    }else{
+      return user
+    }
+  }
 });

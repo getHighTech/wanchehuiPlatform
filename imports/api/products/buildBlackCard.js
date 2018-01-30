@@ -30,7 +30,8 @@ export function buildBlackCard(){
     endPrice: 36500, //最终价格
     curency: 'cny', //cny
     agencyLevelCount: 2,//eg: 2
-    agencyLevelPrices: [3880, 1280]
+    agencyLevelPrices: [3880, 1280],
+    hasSoldCount: 0,
   }
 
 
@@ -38,6 +39,7 @@ export function buildBlackCard(){
   (
     true,
     'blackcard',
+    '万人车汇黑卡会员',
     params,
     '会员权益',
     ["会员", "优惠", "权益", "优惠", "自营"],
