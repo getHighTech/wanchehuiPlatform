@@ -11,8 +11,8 @@ Meteor.methods({
   'roles.find_by_user_id'(userId){
     return rolesFindByUserId(userId)
   },
-  'user.binding.shopOwner'(userId, role_name){
-    return userBindingShopOwner(userId,role_name)
+  'user.binding.shopOwner'(userId,OldOwner,role_name){
+    return userBindingShopOwner(userId,OldOwner,role_name)
   },
   'roleNames.find_by_user_id'(userId){
     return rolesNameFindByUserId(userId)

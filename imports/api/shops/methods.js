@@ -52,10 +52,6 @@ Meteor.methods({
           );
           return shops.fetch();
         },
-        'get.shops.data'(condition={},page=1, pageSize=20){
-            let shops =  Shops.find();
-              return shops.fetch();
-            },
     'shops.findShopById'(shopId){
       let shop = Shops.findOne({_id:shopId})
       if (!shop) {
@@ -100,11 +96,35 @@ Meteor.methods({
       return Shops.find().count();
     },
     'shop.update.acl_own'(shop,userId){
-      Shops.update(shop, {
-        $set:{
-          'acl.own.users': userId
-        }
-      })
+      if(shop.acl.own.users.length > 0){
+        console.log('=============')
+        console.log('以前有店长')
+        let OldOwner = shop.acl.own.users
+        Shops.update(shop, {
+          $set:{
+            'acl.own.users': userId
+          }
+        });
+      console.log('=============')
+      console.log('旧店长ID:'+ OldOwner)
+      return OldOwner;
+      }else{
+        console.log('=============')
+        console.log('以前无店长')
+        Shops.update(shop, {
+          $set:{
+            'acl.own.users': userId
+          }
+        })
+      }
+
+    },
+    'shops.getByCurrentUser'(currentUserId){
+      let shops = Shops.find({'acl.own.users': currentUserId}).fetch()
+      if(shops.length ===0){
+        return []
+      }else{
+        return shops
+      }
     }
-    
 })
