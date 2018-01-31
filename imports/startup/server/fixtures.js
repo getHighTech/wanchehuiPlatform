@@ -187,7 +187,6 @@ Meteor.startup(() => {
   //
   //   }
   // });
-<<<<<<< HEAD
 
   //创造各个门店的主打商品
   Shops.find({}).forEach((shop)=>{
@@ -224,6 +223,4 @@ Meteor.startup(() => {
   })
 
 
-=======
->>>>>>> 4c481651b3735808eca51ed997b611170d27c5dd
 });
