@@ -23,16 +23,16 @@ Meteor.startup(() => {
   // 测试用户模块权限
 
 
-  // // buildBlackCard();//建立黑卡
+  // buildBlackCard();//建立黑卡
   // Meteor.users.remove({username: "superAdmin"});
   // Tags.remove({});
   // Products.remove({});
   // Roles.remove({});
   // UserRoles.remove({});
   // ProductOwners.remove({});
-  // // Shops.remove({});
+  // Shops.remove({});
   // prebuildAdmin();//建立超级管理员
-  buildSelfShop();
+  // buildSelfShop();
   // buildBlackCard();//建立黑卡
   // //生成首页的热门标签以及测试店面
   // let tags = ["4s保养", "喷漆", "油卡", "机油超市", "新车"];
