@@ -188,6 +188,39 @@ Meteor.startup(() => {
   //   }
   // });
 
+  //创造各个门店的主打商品
+  Shops.find({}).forEach((shop)=>{
+    let params = {
+
+          isSale: true,
+
+          name_zh: shop.name+"测试主打商品",
+          name: shop.name+"test product",
+          price: 1,
+          description: '测试商品',
+          brief: '测试商品',
+          images:['http://localhost:3000/static/media/one.933843c7.jpg'],
+          cover: 'http://localhost:3000/static/media/one.933843c7.jpg',
+          shopId: shop._id,
+          createdByUserId: null,
+          properties: [],
+          recommendLevel: 1,
+          specifications: [],//eg:[{"red": 100000, "red & heavy": 1500000}]
+          endPrice: 1, //最终价格
+          curency: 'cny', //cny
+          agencyLevelCount: 2,//eg: 2
+          agencyLevelPrices: [3880, 1280]
+        }
+        let productId = newProuct
+        (
+          false,
+          "nobody",
+          "测试主打产品角色"+shop._id,
+          params,
+          "测试",
+          ["4s保养", "喷漆", "油卡", "机油超市", "新车"],
+        );
+  })
 
 
 });
