@@ -225,6 +225,7 @@ class RoleModalWrap extends React.Component {
   }
 
   getInitialvalue = (str) => {
+    console.log("执行初始值转化")
     return this.objToArry(this.props.singleRole, str)
   };
 
