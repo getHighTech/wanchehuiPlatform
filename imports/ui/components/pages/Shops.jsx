@@ -229,8 +229,9 @@ class Shops extends React.Component{
         let userId = rlt._id
         Meteor.call('shop.update.acl_own',self.state.shop,userId,function(error,result){
           if(!error){
-            //更新成功后，给绑定店铺的这个User添加店长角色
-            Meteor.call('user.binding.shopOwner',userId,'shop_owner',function(wrong,object){
+            console.log(result)
+            //更新成功后，给绑定店铺的这个User添加店长角色,以及判断是否收回以前店长的角色(根据是否还持有店铺来判断)
+            Meteor.call('user.binding.shopOwner',userId,result,'shop_owner',function(wrong,object){
               if(!wrong){
                 message.success('设置店长成功')
               }else{

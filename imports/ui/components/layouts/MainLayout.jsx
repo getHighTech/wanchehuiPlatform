@@ -40,7 +40,7 @@ class MainLayout extends Component {
     ]
     let ShopOwnerMenu = [
       {"key": "dashboard", "name": "控制面板", "IconType": "bars"},
-      {"key": "single_shop", "name": "店铺管理", "IconType": "shop"},
+      {"key": "shops", "name": "店铺管理", "IconType": "shop"},
       {"key": "orders", "name": "订单管理", "IconType": "book"}
 
     ]
@@ -111,9 +111,6 @@ class MainLayout extends Component {
       case 'shops':
         dispatch(push('/shops'));
         break;
-      case 'single_shop':
-      dispatch(push('/shops/single_shop/'));
-      break;
       case 'settings':
         dispatch(push('/settings'));
         break;

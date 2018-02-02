@@ -13,9 +13,9 @@ export function countShops(callback){
 }
 
 
-export function getOneShopData(callback){
-    return Meteor.call('get.shops.data', function(err,rlt){
-      callback(err, rlt);
-      console.log(rlt);
-    });
-}
+// export function getOneShopData(callback){
+//     return Meteor.call('get.shops.data', function(err,rlt){
+//       callback(err, rlt);
+//       console.log(rlt);
+//     });
+// }

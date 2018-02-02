@@ -22,6 +22,13 @@ import AgenciesRelations from '/imports/ui/components/pages/AgenciesRelations';
 import ComponentTest from '/imports/ui/components/pages/component_test';
 import ShopItem from '/imports/ui/components/pages/ShopItem';
 import configureStore from "/imports/ui/stores/mainStore";
+import PermissionAuth from "/imports/ui/components/pages/tools/PermissionAuth";
+import NotFoundPage from '/imports/ui/components/pages/NotFoundPage';
+import PermissonDenied from '/imports/ui/components/pages/PermissonDenied';
+import CheckRoles from "/imports/ui/components/pages/tools/CheckRoles";
+import ShopDashBoard from '/imports/ui/components/pages/ShopDashBoard';
+import OrdersForShop from '/imports/ui/components/pages/OrdersForShop';
+
 
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
@@ -30,36 +37,41 @@ const history = syncHistoryWithStore(browserHistory, store);
 
 
 
-
 const Routes = ({ location }) =>
 <Provider store={store}>
-  <Router history={history}>
+  <Router history={history}  >
     <Route path="/" component={MainLayout} >
-      <Route path="/users" component={Users}/>
-      <Route path="/shops" component={Shops}/>
-      <Route path="/shops/single_shop" component={SingleShop}/>
+      <Route path="/not_found" component={NotFoundPage}/>
+      <Route path="/permission_denied" component={PermissonDenied}/>
+      {/* <IndexRoute component={DashBoard} /> */}
+      {/* 以下一组路由不同的角色访问不同的组件 */}
+      <Route component={CheckRoles}>
+        <Route path="/shops" component={{superAdmin:Shops,commonUser:SingleShop}}/>
+        <Route path="/orders" component={{superAdmin:Orders,commonUser:OrdersForShop}} />
+        <IndexRoute component={{superAdmin:DashBoard,commonUser:ShopDashBoard}} />
+      </Route>
+      {/* 以下一组路由为需要验证超级管理员之后才能访问 */}
+      <Route component={PermissionAuth}> 
+        <Route path="/users" component={Users}/>
+        <Route path="/withdrawals" component={Withdrawals}/>
+        <Route path="/roles" component={Roles}/>
+        <Route path="/give_card_to_users" component={GiveCardToUsers}/>
+        <Route path="/agencies_relations" component={AgenciesRelations}/>
+      </Route>
       <Route path="/shops/single_shop/shop_details/:_id" component={ShopDetails}/>
-
       <Route path="/shops/shop_item" component={ShopItem}/>
-      <Route path="/orders" component={Orders}/>
-      <Route path="/withdrawals" component={Withdrawals}/>
-      <Route path="/roles" component={Roles}/>
       <Route path="/settings" component={Settings}/>
-      <Route path="/give_card_to_users" component={GiveCardToUsers}/>
-      <Route path="/agencies_relations" component={AgenciesRelations}/>
       <Route path="/component_test" component={ComponentTest}/>
-
-      <IndexRoute component={DashBoard} />
     </Route>
     <Route path="/login" component={Login}/>
     <Route path="/login/forgot" component={LoginForgot}/>
     <Route path="/new_member/apply" component={NewMemberApply}/>
     <Route path="/new_member/apply/confirm" component={NewMemberApplyConfirm}/>
-    <Route path="/*" component={Login}/>
+    {/* <Route path="/*" component={Login}/> */}
+    {/* <Route path="/*" component={NotFoundPage}/> */}
+
   </Router>
   </Provider>;
-  // <Route path="/shops/singleshop/" component={SingleShop}/>
-  // <Route path="/shops/singleshop/:id/publishgoods" component={PublishGoods}/>
 
 
 export default Routes;
