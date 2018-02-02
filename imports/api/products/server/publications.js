@@ -22,3 +22,12 @@ Meteor.publish('home.top.products', function(page, pagesize){
     {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
   );
 })
+
+
+Meteor.publish('shop.products', function(shop_id,page, pagesize){
+  console.log(page);
+  return Products.find(
+    {shopId: shop_id},
+    {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
+  );
+})
