@@ -14,6 +14,7 @@ import 'antd/lib/tag/style';
 import { Card, Col, Row ,List} from 'antd';
 import Table from 'antd/lib/table';
 const { Meta } = Card;
+import { Switch} from 'antd';
 import Modal from 'antd/lib/modal';
 import TimePicker from 'antd/lib/time-picker';
 import Tooltip from 'antd/lib/tooltip';
@@ -23,7 +24,7 @@ import Input from 'antd/lib/input';
 import Form from 'antd/lib/form';
 import Select from 'antd/lib/select';
 import Upload from 'antd/lib/upload';
-import message from 'antd/lib/upload';
+import message from 'antd/lib/message';
 import "antd/lib/form/style";
 import "antd/lib/input/style";
 import "antd/lib/checkbox/style";
@@ -32,6 +33,7 @@ import "antd/lib/time-picker/style";
 import "antd/lib/select/style";
 import "antd/lib/upload/style";
 import 'antd/lib/modal/style';
+import 'antd/lib/message/style';
 import { Roles } from '/imports/api/roles/roles.js';
 import { showProduct, editProduct,addProduct } from '/imports/ui/actions/products.js';
 import ProductModal from './shops_components/ProductModal.jsx';
@@ -39,6 +41,7 @@ import Product from './shops_components/Product.jsx';
 
 
 const FormItem = Form.Item;
+const confirm = Modal.confirm;
 const format = 'HH:mm';
 const { TextArea } = Input;
 class ShopDetails extends React.Component {
@@ -56,8 +59,10 @@ class ShopDetails extends React.Component {
     editphone:[],
     productmodalVisible: false,  // modal是否可见
     productmodalTitle: '',
+    spec_length:0
   }
   componentDidMount(){
+    console.log('1');
     let self = this;
     let id= this.props.params._id;
     Meteor.call('shops.findShopById',id,function(err,alt){
@@ -77,7 +82,21 @@ class ShopDetails extends React.Component {
       })
     })
   }
+  changeOnline(state,id) {
 
+        Meteor.call('product.isSale',id, function(error,result){
+          if(!error){
+              if (!result.isSale){
+                message.success('商品上架成功！')
+              }else{
+                message.success('商品下架成功！')
+              }
+          }else{
+            console.log("商品状态改变失败！")
+          }
+        })
+
+  }
   getProducts(){
     let self = this;
     let id= this.props.params._id;
@@ -94,6 +113,9 @@ class ShopDetails extends React.Component {
   };
   onAddProduct(){
     let self =this;
+    self.setState({
+      spec_length:0
+    })
     const {dispatch } = self.props;
 
     self.setState({
@@ -110,7 +132,6 @@ class ShopDetails extends React.Component {
       productmodalTitle:'查看商品'
     })
     Meteor.call('get.oneproduct.id',id,function(err,alt){
-      console.log(alt);
       const {dispatch } = self.props;
       if(!err){
         dispatch(showProduct(alt))
@@ -122,15 +143,27 @@ class ShopDetails extends React.Component {
   }
   onEditProduct = (id) => {
     let self =this;
+
     self.setState({
       productmodalVisible:true,
-      productmodalTitle:'修改商品'
+      productmodalTitle:'修改商品',
     })
+
     Meteor.call('get.oneproduct.id',id,function(err,alt){
       console.log(alt);
+      self.setState({
+        spec_length:alt.specifications.length
+      })
+      let spec_length =alt.specifications.length;
+      console.log(alt.specifications.length);
+      var arr =new Array(spec_length);
+      for(var i=0;i<arr.length;i++){
+          arr[i] = i;
+      }
+      console.log(arr);
       const {dispatch } = self.props;
       if(!err){
-        dispatch(editProduct(alt))
+        dispatch(editProduct(alt,spec_length,arr))
 
 
         console.log("当前不可编辑" + self.props.editState)
@@ -142,25 +175,32 @@ class ShopDetails extends React.Component {
   }
 
   render(){
-      const {singleProduct, modalState, editState,allState} = this.props
+      const {singleProduct, modalState, editState,allState,length,key_arr} = this.props
     const actionStyle = {
       fontSize: 16, color: '#08c'
     };
-
     const colors=['blue','red','green','lime'];
 
     const Columns=[
-      {
-        title: '商品名',
-        dataIndex: 'name_zh',
-        key: 'name_zh',
-        width: 150,
-      },
+
       {
         title: '商品名',
         dataIndex: 'name',
         key: 'name',
         width: 150,
+      },{
+        title: '商品中文名',
+        dataIndex: 'name_zh',
+        key: 'name_zh',
+        width: 150,
+      },{
+        title: '封面',
+        dataIndex: 'cover',
+        key: 'cover',
+        width: 50,
+        render:(text, record) =>(
+            <img src={record.cover} style={{height:50,width:50}}/>
+        )
       },
       {
         title: '价格',
@@ -196,7 +236,9 @@ class ShopDetails extends React.Component {
             <Button shape="circle" icon="edit"  onClick={ () => this.onEditProduct(record._id)}></Button>
           </Tooltip>
           <span className="ant-divider" />
-
+          <Tooltip placement="topLeft" title="商品上下架" arrowPointAtCenter>
+            <Switch checkedChildren="上架" unCheckedChildren="下架"  defaultChecked={record.isSale} onChange={() => this.changeOnline(record.isSale,record._id)}  />
+          </Tooltip>
 
         </span>)
     },
@@ -251,7 +293,7 @@ class ShopDetails extends React.Component {
       <Product id={this.props.params._id}/>
 
       <div style={headerMenuStyle}>
-        <Tooltip placement="topLeft" title="添加新店铺" arrowPointAtCenter>
+        <Tooltip placement="topLeft" title="发布商品" arrowPointAtCenter>
           <Button shape="circle" icon="plus"  onClick={this.onAddProduct.bind(this)}  style={{fontSize: "18px", color: "red"}} ></Button>
         </Tooltip>
 
@@ -268,6 +310,7 @@ class ShopDetails extends React.Component {
       <ProductModal
      productmodalVisible={this.state.productmodalVisible}
      productmodalTitle={this.state.productmodalTitle}
+     getproduct={this.state.spec_length}
      onCancel = { this.hideModal}
      getProducts={this.getProducts.bind(this)}
      ref = {(input) => { this.fromModal = input; }}
@@ -275,7 +318,7 @@ class ShopDetails extends React.Component {
      />
 
 
-      <Table rowSelection={rowSelection} rowKey={record => record._id} dataSource={this.state.product} columns={Columns} style={{background: '#ECECEC'}}/>
+      <Table rowSelection={rowSelection} rowKey={record => record._id} dataSource={this.state.product} columns={Columns} />
 
       <div>
 
@@ -299,6 +342,8 @@ function mapStateToProps(state) {
     singleProduct: state.ProductsList.singleProduct,
     modalState: state.ProductsList.productmodalInsert,
     editState: !state.ProductsList.productmodalEditable,
+    length:state.ProductsList.key_length,
+    key_arr:state.ProductsList.key_arr
   };
 }
 

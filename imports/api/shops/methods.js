@@ -67,10 +67,10 @@ Meteor.methods({
       let shop = Shops.find({_id:shopId}).fetch();
       return shop;
     },
-    'shops.editaddress'(id,address){
+    'shops.editAddress'(id,address){
       return Shops.update({_id:id},{$set:{address:address}});
     },
-    'shops.editphone'(id,phone){
+    'shops.editPhone'(id,phone){
       return Shops.update({_id:id},{$set:{phone:phone}});
     },
     'shops.changeShopState'(shopId){
@@ -106,5 +106,5 @@ Meteor.methods({
         }
       })
     }
-    
+
 })

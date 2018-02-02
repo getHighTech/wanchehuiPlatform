@@ -108,7 +108,7 @@ class ProductWrap extends React.Component {
     let id= self.props.id;
     let phone =this.state.editphone;
     console.log(id,phone);
-    Meteor.call('shops.editphone',id,phone,function(err,rlt){
+    Meteor.call('shops.editPhone',id,phone,function(err,rlt){
       if(!err){
         console.log(rlt);
         self.reflash();
@@ -127,7 +127,7 @@ class ProductWrap extends React.Component {
     let id= self.props.id;
     let address =this.state.editaddress;
     console.log(id,address);
-    Meteor.call('shops.editaddress',id,address,function(err,rlt){
+    Meteor.call('shops.editAddress',id,address,function(err,rlt){
       if(!err){
         console.log(rlt);
         self.reflash();
