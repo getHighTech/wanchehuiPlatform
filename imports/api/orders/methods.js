@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import {Orders} from './orders.js';
+import {Shops} from '../shops/shops.js';
 import {ordersCount} from './actions.js';
 
 
@@ -14,8 +15,38 @@ Meteor.methods({
   //     createdAt: new Date
   //   })
   // },
+  'app.orders.insert'(params){
+    return Orders.insert({
+      type: params.type,
+      userId: params.userId,
+      status: params.status,
+      shopId: params.shopId,
+      products: params.products,
+      username: params.username,
+      address: params.adderss,
+      
+    })
+  },
+  'app.order.getone'(id) {
+    let order =  Orders.findOne({
+      _id: id
+    })
+    let shop = Shops.findOne({_id: order.shopId})
+    return {
+     order,
+     shop
+   }
+  },
+  'app.order.update'(params) {
+    console.log(params)
+      return Orders.update(
+      { _id: params.id},
+      {$set:{remark:params.remark, address: params.address, shop_name: params.shop_name}}
+     )
+  },
+
   'orders.insert'(params){
-      return Orders.insert({
+      return  Orders.insert({
           type: params.type,
           username:params.username,
           name: params.name,

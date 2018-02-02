@@ -207,7 +207,7 @@ Meteor.methods({
      return user
   },
   'forgot.mobile'(mobile) {
-     let user = Meteor.users.findOne({'profile.mobile': mobile}) ||
+     let user = Meteor.users.findOne({'profile.mobile': mobile}) 
      Meteor.users.findOne({'username': mobile})
      return  user._id
   },
@@ -215,6 +215,7 @@ Meteor.methods({
       Accounts.setPassword(user,pwd,[])
       return user
   },
+
   'get.current.user'(){
     let user = Meteor.user()
     if(user == undefined){
