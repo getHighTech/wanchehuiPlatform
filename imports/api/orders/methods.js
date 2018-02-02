@@ -75,5 +75,32 @@ Meteor.methods({
   },
   "get.orders.InThisTimeCount"(condition){
     return Orders.find(condition).count();
+  },
+  "get.allOrders"(userId){
+    let orders =  Orders.find({'createdBy':userId}).fetch();
+    console.log('++++++++++++++++++')
+    console.log(orders)
+    if(orders.length > 0){
+      return orders
+    }else{
+      return []
+    }
+  },
+  "get.paidOrders"(userId){
+    let orders =  Orders.find({'createdBy':userId,'status':'paid'}).fetch();
+    console.log(orders)
+    if(orders.length > 0){
+      return orders
+    }else{
+      return []
+    }
+  },
+  "get.unpaidOrders"(userId){
+    let orders =  Orders.find({'createdBy':userId,'status':'unpaid'}).fetch();
+    if(orders.length > 0){
+      return orders
+    }else{
+      return []
+    }
   }
 });
