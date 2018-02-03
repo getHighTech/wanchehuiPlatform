@@ -207,7 +207,7 @@ Meteor.methods({
      return user
   },
   'forgot.mobile'(mobile) {
-     let user = Meteor.users.findOne({'profile.mobile': mobile}) ||
+     let user = Meteor.users.findOne({'profile.mobile': mobile}) 
      Meteor.users.findOne({'username': mobile})
      return  user._id
   },
@@ -215,6 +215,7 @@ Meteor.methods({
       Accounts.setPassword(user,pwd,[])
       return user
   },
+
   'get.current.user'(){
     let user = Meteor.user()
     if(user == undefined){
@@ -222,5 +223,79 @@ Meteor.methods({
     }else{
       return user
     }
-  }
+  },
+  'user.findUserById'(userId){
+    return Meteor.users.findOne({"_id": userId});
+  },
+  'user.changeNickname'(user,nickname){
+    if(user==undefined){
+      return "未获取到当前用户"
+    }else{
+      return Meteor.users.update(user,{
+        $set: {
+          'nickname': nickname
+        }
+       })
+    }
+  },
+  'user.changeSex'(user,sex){
+    if(user==undefined){
+      return "未获取到当前用户"
+    }else{
+      return Meteor.users.update(user,{
+        $set: {
+          'sex': sex
+        }
+       })
+    }
+    
+  },
+  'user.changeDataAutograph'(user,dataAutograph){
+    if(user==undefined){
+      return "未获取到当前用户"
+    }else{
+      return  Meteor.users.update(user,{
+        $set: {
+          'dataAutograph': dataAutograph
+        }
+       })
+    }
+    
+  },
+  'user.changeCarnumber'(user,carnumber){
+    if(user==undefined){
+      return "未获取到当前用户"
+    }else{
+      return Meteor.users.update(user,{
+        $set: {
+          'carnumber': carnumber
+        }
+       })
+    }
+    
+  },
+  'user.changeBirthday'(user,birthday){
+    if(user==undefined){
+      return "未获取到当前用户"
+    }else{
+      return Meteor.users.update(user,{
+        $set: {
+          'birthday': birthday
+        }
+       })
+    }
+    
+  },
+  'user.changeArea'(user,area){
+    if(user==undefined){
+      return "未获取到当前用户"
+    }else{
+      return Meteor.users.update(user,{
+        $set: {
+          'area': area
+        }
+       })
+    }
+    
+  },
 });

@@ -11,3 +11,12 @@ Meteor.publish('shops.tag.name', function(tagName, page, pagesize){
     }
   );
 });
+
+
+
+// Meteor.publish('home.top.products', function(page, pagesize){
+//   console.log(page);
+//   return Shops.find(
+//     {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
+//   );
+// })
