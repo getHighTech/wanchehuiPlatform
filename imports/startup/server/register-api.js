@@ -16,3 +16,6 @@ import '/imports/api/orders/methods.js';
 import '/imports/api/user_roles/methods.js';
 import '/imports/api/shop_cart/methods.js';
 import '/imports/api/reg/methods.js';
+import '/imports/api/balances/server/publications';
+import '/imports/api/shops/server/publications';
+
