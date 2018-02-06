@@ -12,11 +12,13 @@ export function showProduct(product){
   }
 }
 
-export function editProduct(product){
-  console.log(product);
+export function editProduct(product,spec_length,arr){
+  console.log(product,spec_length,arr);
   return{
     type:EDIT_PRODUCT,
-    product
+    product,
+    spec_length,
+    arr
   }
 }
 

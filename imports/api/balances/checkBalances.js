@@ -4,8 +4,8 @@ import { BalanceCharges } from './balance_charges';
 export function checkBalances(){
   console.log('开始检查每一个账户信息');
   console.log('删除所有没有真实体现的记录');
-  let count = BalanceCharges.remove({'status': {$nin: ["paid"]}})
-  console.log("删除了"+count+"条");
+  // let count = BalanceCharges.remove({'status': {$nin: ["paid"]}})
+  // console.log("删除了"+count+"条");
 
   Balances.find({}).forEach((balance, index)=>{
     console.log('===============================================');
@@ -18,7 +18,7 @@ export function checkBalances(){
     BalanceIncomes.find({balanceId}).forEach((income)=>{
       incomes=incomes + income.amount;
     });
-    BalanceCharges.find({userId, status: "paid"}).forEach((charge)=>{
+    BalanceCharges.find({userId}).forEach((charge)=>{
       charges=charges + charge.money;
     });
     console.log('这个账户的余额为', balance.amount);

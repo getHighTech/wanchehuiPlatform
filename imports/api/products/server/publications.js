@@ -25,7 +25,7 @@ Meteor.publish('home.top.products', function(page, pagesize){
 Meteor.publish('get.product.id', function(id){
   return Products.find(
     {recommendLevel: {$lte: 0}},
-    {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
+    // {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
   );
 })
 

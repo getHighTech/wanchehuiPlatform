@@ -121,7 +121,6 @@ Meteor.startup(() => {
   //       if (product.acl.buy.roles[i]=="blackcard_holder") {
   //         isThereMemberPermission = true;
   //       }
-
   //     }
   //     console.log('是否有黑卡权限', isThereMemberPermission);
   //     if (!isThereMemberPermission) {
@@ -132,7 +131,6 @@ Meteor.startup(() => {
   //           acl
   //         }
   //       })
-
   //     }
   //   }
   //   let shopIds = [];
@@ -165,7 +163,6 @@ Meteor.startup(() => {
   //   if(user.cards === null){
   //     console.log('此用户已经退卡了');
   //   }else{
-
   //     if(!ProductOwners.findOne({userId: user._id})){
   //       ProductOwners.insert({
   //         productId: product._id,
@@ -184,7 +181,6 @@ Meteor.startup(() => {
   //     }else{
   //       console.log('此用户已经有角色了');
   //     }
-
   //   }
   // });
 });
