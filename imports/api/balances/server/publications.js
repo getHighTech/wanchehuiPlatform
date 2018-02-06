@@ -11,15 +11,17 @@ Meteor.publish('get.current.balance', function(){
 })
 
 Meteor.publish('app.get.current.balance', function(userId){
-  let currentDate = new Date();
-  let startDate = new Date(currentDate.getFullYear().toString(),currentDate.getMonth().toString(),'1')
-  let endDate = new Date(currentDate.getFullYear().toString(),currentDate.getMonth().toString(),'30')
-  console.log(startDate);
-  console.log(endDate);
-  let balanceIncomes = BalanceIncomes.find({userId: userId,createdAt: {$gte: startDate,$lte: endDate}}).fetch()
-  console.log(balanceIncomes);
-  let balaces =  Balances.find({userId: userId});
-  return balaces
+  // console.log(userId);
+  // let currentDate = new Date();
+  // let startDate = new Date(currentDate.getFullYear().toString(),currentDate.getMonth().toString(),'1')
+  // let endDate = new Date(currentDate.getFullYear().toString(),currentDate.getMonth().toString(),'30')
+  // console.log(startDate);
+  // console.log(endDate);
+  // let balanceIncomes = BalanceIncomes.find({userId: userId,createdAt: {$gte: startDate,$lte: endDate}}).fetch()
+  // console.log(balanceIncomes);
+  let balances =  Balances.find({userId: userId});
+  // console.log(balances)
+  return balances
 })
 
 
