@@ -31,6 +31,7 @@ Meteor.methods({
       recommend:product.recommend,
       agencyLevelCount: 2,//eg: 2
       agencyLevelPrices: [3880, 1280],
+      createdAt : new Date(),
       acl: {
         own: {
           roles: ["shop_owner"],
