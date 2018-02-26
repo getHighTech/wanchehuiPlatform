@@ -207,7 +207,7 @@ Meteor.methods({
      return user
   },
   'forgot.mobile'(mobile) {
-     let user = Meteor.users.findOne({'profile.mobile': mobile}) 
+     let user = Meteor.users.findOne({'profile.mobile': mobile})
      Meteor.users.findOne({'username': mobile})
      return  user._id
   },
@@ -219,12 +219,21 @@ Meteor.methods({
   'get.current.user'(){
     let user = Meteor.user()
     if(user == undefined){
-      return 
+      return
     }else{
       return user
     }
   },
   'user.findUserById'(userId){
+    var stampedToken = Accounts._generateStampedLoginToken();
+    console.log(stampedToken);
+    var hashStampedToken = Accounts._hashStampedToken(stampedToken);
+    console.log(hashStampedToken);
+    Meteor.users.update(userId,
+      {$push: {'services.resume.loginTokens': hashStampedToken}}
+    );
+    let token = Accounts._hashLoginToken(stampedToken.token);
+    console.log(token);
     return Meteor.users.findOne({"_id": userId});
   },
   'user.changeNickname'(user,nickname){
@@ -248,7 +257,7 @@ Meteor.methods({
         }
        })
     }
-    
+
   },
   'user.changeDataAutograph'(user,dataAutograph){
     if(user==undefined){
@@ -260,7 +269,7 @@ Meteor.methods({
         }
        })
     }
-    
+
   },
   'user.changeCarnumber'(user,carnumber){
     if(user==undefined){
@@ -272,7 +281,7 @@ Meteor.methods({
         }
        })
     }
-    
+
   },
   'user.changeBirthday'(user,birthday){
     if(user==undefined){
@@ -284,7 +293,7 @@ Meteor.methods({
         }
        })
     }
-    
+
   },
   'user.changeArea'(user,area){
     if(user==undefined){
@@ -296,6 +305,6 @@ Meteor.methods({
         }
        })
     }
-    
+
   },
 });
