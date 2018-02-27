@@ -16,6 +16,7 @@ Meteor.publish('products.user_id', function(user_id, page, pagesize
 });
 
 Meteor.publish('home.top.products', function(page, pagesize){
+  console.log(page, pagesize)
   return Products.find(
     {recommendLevel: {$lte: 0}},
     {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
