@@ -232,10 +232,29 @@ Meteor.methods({
     Meteor.users.update(userId,
       {$push: {'services.resume.loginTokens': hashStampedToken}}
     );
+    //valid
     let token = Accounts._hashLoginToken(stampedToken.token);
     console.log(token);
     return Meteor.users.findOne({"_id": userId});
   },
+  
+  'user.login.from.fancyshop'(type, loginParams){
+    switch (type) {
+      case 'mobileSMS':
+        console.log("mobileMSMlogin");
+        return "loginToken";
+      case 'passwordLogin':
+        console.log('passWordLogin');
+        return "loginToken";
+      default:
+        return "error";
+    }
+  },
+
+  'user.check.online'(userId, stampedToken){
+    return  Accounts._hashLoginToken(stampedToken.token);
+  },
+  
   'user.changeNickname'(user,nickname){
     if(user==undefined){
       return "未获取到当前用户"
