@@ -33,7 +33,7 @@ Meteor.startup(() => {
   // prebuildAdmin();//建立超级管理员
   // buildSelfShop();
   // buildBlackCard();//建立黑卡
-  // //生成首页的热门标签以及测试店面
+  // 生成首页的热门标签以及测试店面
   // let tags = ["4s保养", "喷漆", "油卡", "机油超市", "新车"];
   // for (var i = 0; i < tags.length; i++) {
   //   if (Tags.find({name: tags[i]}).count() === 0) {

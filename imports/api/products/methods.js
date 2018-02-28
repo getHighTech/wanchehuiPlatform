@@ -135,5 +135,34 @@ Meteor.methods({
         specifications:product.specifications
       }
     })
-  }
+  },
+  'app.get.recommend.products'(page,pagesize){
+    console.log(page);
+    console.log(pagesize);
+    console.log(123);
+
+    let products =  Products.find(
+      {recommend: true},
+      { 
+        skip: (page-1)*pagesize, 
+        limit: pagesize, 
+        sort: {createdAt: -1},
+        fields:
+              {
+                name: 1,
+                name_zh: 1,
+                price: 1,
+                createdAt: 1,
+                isTool: 1,
+                endPrice: 1,
+                images: 1,
+                cover: 1
+              }
+      },
+
+    ).fetch()
+    console.log(products);
+    return products
+
+  },
 });
