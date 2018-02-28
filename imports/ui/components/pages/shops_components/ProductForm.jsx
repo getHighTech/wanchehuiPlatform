@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import Modal from 'antd/lib/modal';
+import { Divider } from 'antd';
 import Tooltip from 'antd/lib/tooltip';
 import TimePicker from 'antd/lib/time-picker';
 import Checkbox from 'antd/lib/checkbox';
@@ -13,7 +14,6 @@ import Form from 'antd/lib/form';
 import Select from 'antd/lib/select';
 import Upload from 'antd/lib/upload';
 import message from 'antd/lib/upload';
-import { Editor } from 'react-draft-wysiwyg';
 import { Row, Col } from 'antd';
 import { Switch} from 'antd';
 import "antd/lib/form/style";
@@ -31,11 +31,18 @@ import AMapComplete from '../tools/AMapComplete.jsx';
 import { Roles } from '/imports/api/roles/roles.js';
 import moment from 'moment';
 import { Radio } from 'antd';
+import {Menu} from 'antd'
 const FormItem = Form.Item;
 const format = 'HH:mm';
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import draftToHtml from 'draftjs-to-html';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
+import htmlToDraft from 'html-to-draftjs';
+
+const SubMenu = Menu.SubMenu;
 function uploadImageCallBack(file) {
 
   return new Promise(
@@ -66,18 +73,88 @@ class ProductFormWrap extends Component {
       super(props);
       console.log(this.props);
       console.log(this.props.key_length);
-
+      console.log(this.props.descriptionKey);
+      console.log(this.props.productId);
+      // const contentBlock = htmlToDraft(html);
+      // const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+      // const editorState = EditorState.createWithContent(contentState);
+      // this.state = {
+      //     contentState: editorState,
+      //
+      //   };
     }
+    rootSubmenuKeys = [];
     state = {
-      fileList: [],
-      image_url:'',
-      value: false,
-      status:false,
-      images:[],
-      key_arr:[],
-      key_length:0
-    };
+        fileList: [],
+        image_url:'',
+        value: false,
+        status:false,
+        images:[],
+        key_arr:[],
+        key_length:0,
+        openKeys:this.props.descriptionKey,
+      };
 
+      onOpenChange = (openKeys) => {
+        let self =this;
+          let description= this.props.product.description
+          if(typeof(description)=='undefined'){
+            console.log('走了这里');
+            let description='<p>开始编辑</p>'
+            const setFieldsValue = this.props.form.setFieldsValue;
+            setFieldsValue({description:description})
+            console.log(description);
+            const html =description;
+            console.log(html);
+            const contentBlock = htmlToDraft(html);
+            console.log(contentBlock);
+            const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+            console.log(contentState);
+            const editorState = EditorState.createWithContent(contentState);
+            console.log(editorState);
+            // self.state={
+            //   contentState: editorState,
+            // }
+            self.changel(editorState);
+          }
+          else {
+            console.log(description);
+            const html =description;
+            console.log(html);
+            const contentBlock = htmlToDraft(html);
+            console.log(contentBlock);
+            const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+            console.log(contentState);
+            const editorState = EditorState.createWithContent(contentState);
+            console.log(editorState);
+            // self.state={
+            //   contentState: editorState,
+            // }
+            self.changel(editorState);
+          }
+
+
+
+      const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1);
+      console.log(latestOpenKey);
+      if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+        this.setState({ openKeys });
+        console.log('1');
+      } else {
+        console.log('2');
+        this.setState({
+          openKeys: latestOpenKey ? [latestOpenKey] : [],
+        });
+      }
+    }
+      changel(editorState){
+        let self =this;
+        console.log(editorState);
+        console.log(self.state.contentState);
+        self.setState({
+          contentState:editorState
+        })
+      }
     remove = (k) => {
     const { form } = this.props;
     // can use data-binding to get
@@ -131,7 +208,6 @@ class ProductFormWrap extends Component {
     const { form } = this.props;
     e.preventDefault();
     const getFieldValue = this.props.form.getFieldValue;
-    console.log(getFieldValue('keys'))
     let end_spec=[];
     for(var i =0;i<getFieldValue('keys').length;i++){
       var spec_index=getFieldValue('keys')[i]
@@ -146,11 +222,10 @@ class ProductFormWrap extends Component {
     console.log(end_spec);
         // const setFieldsValue = this.props.form.setFieldsValue;
         // setFieldsValue({specifications:end_spec})
-    self.props.cc(end_spec);
+    self.props.getSpec(end_spec);
   }
     componentWillReceiveProps(nextProps){
         this.setState(nextProps);
-
 
     }
 
@@ -162,27 +237,41 @@ class ProductFormWrap extends Component {
 
   }
   componentDidMount(){
-    console.log(this.props.product);
-    // const { form } = this.props;
-    // console.log(this.props.spec_length);
-    // this.setState({
-    //   uuid: this.props.spec_length
+    console.log(this.props.productId);
+    let self =this;
+    console.log(self.state.openKeys);
+
+    self.setState({
+      openKeys: this.props.descriptionKey,
+    })
+    // Meteor.call('get.oneproduct.id',this.props.productId,function(err,alt){
+    //   let description= alt.description
+    //   const html =description;
+    //   console.log(html);
+    //   const contentBlock = htmlToDraft(html);
+    //   console.log(contentBlock);
+    //   const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+    //   console.log(contentState);
+    //   const editorState = EditorState.createWithContent(contentState);
+    //   console.log(editorState);
+    //   // self.state={
+    //   //   contentState: editorState,
+    //   // }
+    //   self.changel(editorState);
     // })
-    //
-    // console.log(this.props.spec_length);
-    // const keys = form.getFieldValue('keys');
-    // console.log(keys);
-    //
-    // let uuid = this.props.spec_length
-    // const nextKeys = keys.concat(uuid);
-    // form.setFieldsValue({
-    //   keys: nextKeys,
-    // });
+
+
   }
   onEditorStateChange(editorState) {
+    console.log(editorState);
+    console.log(this.state.contentState);
     this.setState({
       contentState: editorState,
     });
+    let htmlcontent=draftToHtml(convertToRaw(this.state.contentState.getCurrentContent()));
+    console.log(htmlcontent);
+    const setFieldsValue = this.props.form.setFieldsValue;
+    setFieldsValue({description:htmlcontent})
   }
 
 
@@ -207,7 +296,11 @@ class ProductFormWrap extends Component {
       }
 
     }
-
+    changeOpenState(){
+      this.setState({
+        openKeys:[]
+      })
+    }
     handleChangeMore(info) {
       console.log(info)
       let self = this
@@ -246,8 +339,12 @@ class ProductFormWrap extends Component {
       }
 
     }
+    getdesValue(){
+
+
+    }
+
     getCoverValue(){
-      console.log(this.props.product.cover);
       let cover = this.props.product.cover;
       return cover
     }
@@ -270,7 +367,6 @@ class ProductFormWrap extends Component {
     }
     }
     getSpecValue(k){
-      console.log(this.props.key_arr);
       let aaa =this.props.key_arr.length;
       let spec=this.props.product.specifications;
       if(typeof(spec)!='undefined'){
@@ -294,7 +390,16 @@ class ProductFormWrap extends Component {
         uuid:a
       })
     }
-
+    getDescription(){
+      const setFieldsValue = this.props.form.setFieldsValue;
+      let description=this.props.product.description;
+      if(typeof(description)!='undefined'){
+        return description
+      }
+      else{
+        return '<p>开始编辑<p>'
+      }
+    }
 
     selectHandleChange(value){
       console.log(`selected ${value}`);
@@ -305,7 +410,7 @@ class ProductFormWrap extends Component {
     }
 
     render() {
-
+      console.log(this.state.openKeys);
       const { contentState } = this.state;
       const uploadProps = {
         action: '/images/upload',
@@ -319,7 +424,7 @@ class ProductFormWrap extends Component {
       };
 
       const { getFieldDecorator, getFieldValue } = this.props.form;
-
+      console.log(getFieldValue('description'));
           const formItemLayout = {
               labelCol: {
                 xs: { span: 24 },
@@ -363,7 +468,7 @@ class ProductFormWrap extends Component {
                   })(
                     <Input placeholder="产品规格" style={{ width: '100%'}} />
                   )}
-
+                  <Divider dashed style={{marginTop:5 ,marginBottom:5}}/>
                 </FormItem>
               );
             });
@@ -384,13 +489,14 @@ class ProductFormWrap extends Component {
                   )}
                   {keys.length > 1 ? (
                     <Icon
-                      style={{marginLeft:'10'}}
+                      style={{marginLeft:10}}
                       className="dynamic-delete-button"
                       type="minus-circle-o"
                       disabled={keys.length === 1}
                       onClick={() => this.remove(k)}
                     />
                   ) : null}
+                  <Divider dashed style={{marginTop:5 ,marginBottom:5}}/>
                 </FormItem>
               );
             });
@@ -451,33 +557,20 @@ class ProductFormWrap extends Component {
           <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品价格" />
       )}
       </FormItem>
-      <FormItem label='商品描述'>
-        {getFieldDecorator('description',{
-          initialValue: this.props.product.price,
-        })(
-        <Editor
-        onEditorStateChange={this.onEditorStateChange.bind(this)}
-         initialEditorState={contentState}
-           editorState={contentState}
-        localization={{
-          locale: 'zh',
-        }}
-        toolbarClassName="rdw-storybook-toolbar"
-         wrapperClassName="rdw-storybook-wrapper"
-         editorClassName="rdw-storybook-editor"
-        toolbar={{
-            inline: { inDropdown: true },
-            list: { inDropdown: true },
-            textAlign: { inDropdown: true },
-            link: { inDropdown: true },
-            history: { inDropdown: true },
-            image: {
-              uploadCallback: uploadImageCallBack, alt: { present: true, mandatory: false },
-            },
-          }}
-          />
-        )}
-        </FormItem>
+      <FormItem
+      {...formItemLayout}
+      label="商品最终价格"
+      hasFeedback
+      >
+      {getFieldDecorator('endPrice', {
+          initialValue: this.props.product.endPrice,
+          rules: [{ required: true, message: '商品价格不能为空' }],
+      })(
+
+          <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品价格" />
+      )}
+      </FormItem>
+
         <FormItem
         {...formItemLayout}
         label="商品图片"
@@ -532,6 +625,7 @@ class ProductFormWrap extends Component {
             <Checkbox disabled={this.props.editState}>上推荐</Checkbox>
           )}
       </FormItem>
+      <Divider dashed />
       <Row>
         <Col span={2}></Col>
         <Col span={10}>{formItems}</Col>
@@ -546,10 +640,50 @@ class ProductFormWrap extends Component {
              添加规格
           </Button>
         </FormItem>
-        {getFieldDecorator('specifications', { initialValue:this.getInitialvalue()})};
+        <Divider dashed style={{marginTop:5 ,marginBottom:5}}/>
+        <FormItem label='商品描述'>
+          {getFieldDecorator('description',{initialValue:this.getDescription()})(
+
+            <Menu
+        mode="inline"
+        openKeys={this.state.openKeys}
+        onOpenChange={this.onOpenChange}
+        style={{ width: '100%' }}
+        onBlur={() => {console.log('blur')}}
+      >
+      <SubMenu key="sub1" title={<span><Icon type="mail" /><span>点击开始编辑</span></span>}>
+
+          <Editor
+          onEditorStateChange={this.onEditorStateChange.bind(this)}
+           initialEditorState={contentState}
+             editorState={contentState}
+          localization={{
+            locale: 'zh',
+          }}
+          toolbarClassName="rdw-storybook-toolbar"
+           wrapperClassName="rdw-storybook-wrapper"
+           editorClassName="rdw-storybook-editor"
+          toolbar={{
+              inline: { inDropdown: true },
+              list: { inDropdown: true },
+              textAlign: { inDropdown: true },
+              link: { inDropdown: true },
+              history: { inDropdown: true },
+              image: {
+                uploadCallback: uploadImageCallBack, alt: { present: true, mandatory: false },
+              },
+            }}
+            onBlur={this.changeOpenState.bind(this)}
+            />
+
+            </SubMenu>
+            </Menu>
+          )}
+          </FormItem>
+        {getFieldDecorator('specifications', { initialValue:this.getInitialvalue()})}
 
       </Form>
-      );
+      )
     }
   }
 

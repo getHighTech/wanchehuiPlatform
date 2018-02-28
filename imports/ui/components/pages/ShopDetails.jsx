@@ -59,7 +59,8 @@ class ShopDetails extends React.Component {
     editphone:[],
     productmodalVisible: false,  // modal是否可见
     productmodalTitle: '',
-    spec_length:0
+    spec_length:0,
+    product_id:''
   }
   componentDidMount(){
     console.log('1');
@@ -67,16 +68,13 @@ class ShopDetails extends React.Component {
     let id= this.props.params._id;
     Meteor.call('shops.findShopById',id,function(err,alt){
       if(!err){
-      console.log(alt);
       self.setState({
         shopdetails:alt
       })
       // self.getFormdata();
     }
-    console.log(self.state.shopdetails)
     })
     Meteor.call('get.product.byShopId',id,function(error,result){
-      console.log(result);
       self.setState({
         product:result
       })
@@ -147,6 +145,7 @@ class ShopDetails extends React.Component {
     self.setState({
       productmodalVisible:true,
       productmodalTitle:'修改商品',
+      product_id:id
     })
 
     Meteor.call('get.oneproduct.id',id,function(err,alt){
@@ -155,15 +154,13 @@ class ShopDetails extends React.Component {
         spec_length:alt.specifications.length
       })
       let spec_length =alt.specifications.length;
-      console.log(alt.specifications.length);
       var arr =new Array(spec_length);
       for(var i=0;i<arr.length;i++){
           arr[i] = i;
       }
-      console.log(arr);
       const {dispatch } = self.props;
       if(!err){
-        dispatch(editProduct(alt,spec_length,arr))
+        dispatch(editProduct(alt,spec_length,arr,id))
 
 
         console.log("当前不可编辑" + self.props.editState)
@@ -175,7 +172,7 @@ class ShopDetails extends React.Component {
   }
 
   render(){
-      const {singleProduct, modalState, editState,allState,length,key_arr} = this.props
+      const {singleProduct, modalState, editState,allState,length,key_arr,productId} = this.props
     const actionStyle = {
       fontSize: 16, color: '#08c'
     };
@@ -209,9 +206,9 @@ class ShopDetails extends React.Component {
         width: 100,
       },
       {
-      title: '描述',
-      dataIndex: 'description',
-      key: 'description',
+      title: '最终价格',
+      dataIndex: 'endPrice',
+      key: 'endPrice',
       width: 100,
       },
       {
@@ -343,7 +340,8 @@ function mapStateToProps(state) {
     modalState: state.ProductsList.productmodalInsert,
     editState: !state.ProductsList.productmodalEditable,
     length:state.ProductsList.key_length,
-    key_arr:state.ProductsList.key_arr
+    key_arr:state.ProductsList.key_arr,
+    productId:state.ProductsList.productId
   };
 }
 

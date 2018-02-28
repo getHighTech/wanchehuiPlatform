@@ -31,11 +31,12 @@ import {Link} from 'react-router';
 class ProductModal extends React.Component{
   constructor(props){
     super(props);
+    console.log(props);
   }
   state={
-    aa : '',
-    spec_length:0
-
+    spec : '',
+    spec_length:0,
+    descriptionKey:[]
   }
 
   initAmap(){
@@ -51,9 +52,9 @@ class ProductModal extends React.Component{
   test(str){
       console.log(str);
   }
-  cc (end_spec){
+  getSpec (end_spec){
     this.setState({
-      aa: end_spec
+      spec: end_spec
     })
   }
    /**
@@ -82,14 +83,14 @@ class ProductModal extends React.Component{
     console.log('2');
     console.log(this.props)
     console.log(this.props.productmodalVisible);
-    console.log(this.props.key_arr);
+    console.log(this.props.productId);
   }
 
 
 
   handleModalOk = () => {
-    let self = this
-    console.log(self.state.aa);
+    let self = this;
+    console.log(self.state.spec);
     let validated = true;
     console.log(this.formComponent)
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated); // 不知道有没有更好的办法
@@ -104,7 +105,7 @@ class ProductModal extends React.Component{
     // console.log(getFieldValue('shopAddress'))
     const getFieldValue = this.formComponent.getFieldValue;
     const setFieldsValue = this.formComponent.setFieldsValue;
-    setFieldsValue({specifications: self.state.aa})
+    setFieldsValue({specifications: self.state.spec})
     const oldObj = this.formComponent.getFieldsValue();
     console.log(oldObj);
     //把表单中跟时间有关系的参数进行时间格式化
@@ -154,7 +155,9 @@ class ProductModal extends React.Component{
   handleCancel = (e) => {
     this.props.onCancel();
     this.setFormData({});
-
+    this.setState({
+      descriptionKey:[]
+    })
 
 
   }
@@ -166,18 +169,21 @@ class ProductModal extends React.Component{
 
 
   render(){
-    const {singleProduct, modalState, editState,length,key_arr} = this.props
+    console.log(this.props.productId);
+    const {singleProduct, modalState, editState,length,key_arr,productId} = this.props
     return(
       <div>
         <Modal
+        maskClosable={false}
           title={this.props.productmodalTitle}
           visible={this.props.productmodalVisible}
           onOk={this.handleModalOk}
           onCancel={this.handleCancel.bind(this)}
+          width={1000}
           style={{ top: 20 }}
         >
+          <ProductForm spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)} product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
 
-          <ProductForm bb={this.state.aa}   cc={this.cc.bind(this)} product= {this.props.singleProduct} key_arr={this.props.key_arr} kay_length={this.props.length} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
@@ -190,7 +196,8 @@ function mapStateToProps(state) {
     modalState: state.ProductsList.productmodalInsert,
     editState: !state.ProductsList.productmodalEditable,
     length:state.ProductsList.key_length,
-    key_arr:state.ProductsList.key_arr
+    key_arr:state.ProductsList.key_arr,
+    productId:state.ProductsList.productId
    };
 }
 
