@@ -1,11 +1,14 @@
 import { Meteor } from 'meteor/meteor';
-
+import {Roles} from '../roles/roles.js'
 import { Products } from './products.js';
 import {getProductTypeById} from './actions.js';
 
 
 Meteor.methods({
   "products.insert"(product,shopId){
+    if(product.isTool){
+
+    }
     Products.insert({
       name: product.name,
       name_zh:product.name_zh,
@@ -20,22 +23,62 @@ Meteor.methods({
       roleName:product.roleName,
       categoryld:product.categoryld,
       images: product.images,
-      onLine: true,
+      isSale: true,
       shopId:shopId,
+      specifications:product.specifications,
       createdByUserId:"dadad",
       curency:'cny',
       recommend:product.recommend,
-      status:true,
       agencyLevelCount: 2,//eg: 2
-      agencyLevelPrices: [3880, 1280]
+      agencyLevelPrices: [3880, 1280],
+      acl: {
+        own: {
+          roles: ["shop_owner"],
+          users: [],
+        },
+        read: {
+          roles: ['nobody', 'login_user']
+        },
+        write: {
+          roles: ["shop_owner","shop_manager"],
+          users: [],
+        }
+      },
+    },function (err,alt) {
+      if(!err){
+        if(product.isTool){
+          console.log('yesyes');
+          let roles_name_count =Roles.find({name:product.name+'_holder'}).count();
+          if(roles_name_count===0){
+            Roles.insert({
+              name:product.name+'_holder',
+              name_zh:product.name_zh,
+              time_limit:-1,
+              permissions:{},
+              state:true,
+              weight:0,
+              createdAt : new Date(),
+              isSuper: false,
+              users:[]
+            })
+          }
+        }
+        else {
+          console.log('nono');
+        }
+
+      }
+
     });
   },
-  'product.online'(id){
-    Products.update(id, {
+  'product.isSale'(_id){
+    let Product = Products.findOne({_id:_id})
+    Products.update(_id, {
       $set: {
-        onLine: true,
+        isSale: !Product.isSale,
       }
     });
+    return Product
   },
   'product.offline'(id){
     Products.update(id, {
@@ -83,13 +126,43 @@ Meteor.methods({
         brief:product.brief,
         image_des: product.image_des,
         images: product.images,
-        onLine: product.onLine,
+        isSale: product.isSale,
         cover:product.cover,
         endPrice:product.endPrice,
         isTool:product.isTool,
         recommend:product.recommend,
-        status:product.status
+        status:product.status,
+        specifications:product.specifications
       }
     })
-  }
+  },
+  'app.get.recommend.products'(page,pagesize){
+    console.log(page);
+    console.log(pagesize);
+    console.log(123);
+
+    let products =  Products.find(
+      {recommend: true},
+      { 
+        skip: (page-1)*pagesize, 
+        limit: pagesize, 
+        sort: {createdAt: -1},
+        fields:
+              {
+                name: 1,
+                name_zh: 1,
+                price: 1,
+                createdAt: 1,
+                isTool: 1,
+                endPrice: 1,
+                images: 1,
+                cover: 1
+              }
+      },
+
+    ).fetch()
+    console.log(products);
+    return products
+
+  },
 });

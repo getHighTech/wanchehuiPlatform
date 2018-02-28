@@ -32,8 +32,11 @@ class ProductModal extends React.Component{
   constructor(props){
     super(props);
   }
+  state={
+    aa : '',
+    spec_length:0
 
-
+  }
 
   initAmap(){
     var map = new AMap.Map('container', {
@@ -48,12 +51,19 @@ class ProductModal extends React.Component{
   test(str){
       console.log(str);
   }
+  cc (end_spec){
+    this.setState({
+      aa: end_spec
+    })
+  }
    /**
    * 设置表单要显示的数据
    */
   setFormData(data) {
+    console.log(data);
     // 注意这里, 由于antd modal的特殊性, this.formComponent可能是undefined, 要判断一下
     if (this.formComponent) {
+      console.log(this.formComponent);
       this.formComponent.resetFields();
       if (data) {
         this.formComponent.setFieldsValue(data);
@@ -69,13 +79,17 @@ class ProductModal extends React.Component{
   componentWillMount(){
   }
   componentDidMount(){
+    console.log('2');
+    console.log(this.props)
     console.log(this.props.productmodalVisible);
+    console.log(this.props.key_arr);
   }
 
 
 
   handleModalOk = () => {
     let self = this
+    console.log(self.state.aa);
     let validated = true;
     console.log(this.formComponent)
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated); // 不知道有没有更好的办法
@@ -90,7 +104,7 @@ class ProductModal extends React.Component{
     // console.log(getFieldValue('shopAddress'))
     const getFieldValue = this.formComponent.getFieldValue;
     const setFieldsValue = this.formComponent.setFieldsValue;
-
+    setFieldsValue({specifications: self.state.aa})
     const oldObj = this.formComponent.getFieldsValue();
     console.log(oldObj);
     //把表单中跟时间有关系的参数进行时间格式化
@@ -140,6 +154,9 @@ class ProductModal extends React.Component{
   handleCancel = (e) => {
     this.props.onCancel();
     this.setFormData({});
+
+
+
   }
 
   hideModal = () => {
@@ -149,7 +166,7 @@ class ProductModal extends React.Component{
 
 
   render(){
-    const {singleProduct, modalState, editState} = this.props
+    const {singleProduct, modalState, editState,length,key_arr} = this.props
     return(
       <div>
         <Modal
@@ -160,7 +177,7 @@ class ProductModal extends React.Component{
           style={{ top: 20 }}
         >
 
-          <ProductForm  product= {this.props.singleProduct} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
+          <ProductForm bb={this.state.aa}   cc={this.cc.bind(this)} product= {this.props.singleProduct} key_arr={this.props.key_arr} kay_length={this.props.length} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       </div>
     );
@@ -172,6 +189,8 @@ function mapStateToProps(state) {
     singleProduct: state.ProductsList.singleProduct,
     modalState: state.ProductsList.productmodalInsert,
     editState: !state.ProductsList.productmodalEditable,
+    length:state.ProductsList.key_length,
+    key_arr:state.ProductsList.key_arr
    };
 }
 

@@ -46,3 +46,36 @@ Meteor.publish('app.get.shop.products', function(shop_id,page, pagesize){
     {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
   );
 })
+
+
+// Meteor.publish('app.get.recommend.products', function(page, pagesize){
+//   console.log(page);
+//   console.log(pagesize);
+//   console.log(`走这里`)
+//   return Products.find(
+//       {recommend: true},
+//       { 
+//         skip: (page-1)*pagesize, 
+//         limit: pagesize, 
+//         sort: {createdAt: -1},
+//         fields:
+//               {
+//                 name: 1,
+//                 name_zh: 1,
+//                 price: 1,
+//                 createdAt: 1,
+//                 isTool: 1,
+//                 endPrice: 1,
+//                 images: 1,
+//                 cover: 1
+//               }
+//       },
+//     )
+  // return Products.find(
+  //   {recommend: true },
+  //   {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
+  // )
+// })
+
+
+
