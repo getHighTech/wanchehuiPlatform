@@ -241,18 +241,58 @@ Meteor.methods({
   'user.login.from.fancyshop'(type, loginParams){
     switch (type) {
       case 'mobileSMS':
-        console.log("mobileMSMlogin");
-        return "loginToken";
-      case 'passwordLogin':
-        console.log('passWordLogin');
-        return "loginToken";
+      let mobileUser = Meteor.users.findOne({username: loginParams.mobile});
+      if(mobileUser === undefined){
+        mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.username});
+        if(mobileUser===undefined){
+          return "USER NOT FOUND";
+        }
+      }
+      if(mobileUser){
+        let stampedTokenMobile = Accounts._generateStampedLoginToken();
+        let hashStampedTokenMobile = Accounts._hashStampedToken(stampedTokenMobile);
+        Meteor.users.update(mobileUser._id,
+          {$push: {'services.resume.loginTokens': hashStampedTokenMobile}}
+        );
+        return {stampedToken: stampedTokenMobile, userId: mobileUser._id};
+      }else{
+        return mobileUser;
+      }
+      case 'password':
+        let user = Meteor.users.findOne({username: loginParams.username});
+        if(user === undefined){
+          user = Meteor.users.findOne({'profile.mobile': loginParams.username});
+          if(user===undefined){
+            return "USER NOT FOUND";
+          }
+        }
+        let rlt = Accounts._checkPassword(user, loginParams.password);
+        if(rlt.userId === user._id && !rlt.error){
+          let stampedToken = Accounts._generateStampedLoginToken();
+          let hashStampedToken = Accounts._hashStampedToken(stampedToken);
+          Meteor.users.update(user._id,
+            {$push: {'services.resume.loginTokens': hashStampedToken}}
+          );
+          return {stampedToken, userId: user._id};
+        }else{
+          return rlt;
+        }
+        
       default:
         return "error";
     }
   },
 
-  'user.check.online'(userId, stampedToken){
-    return  Accounts._hashLoginToken(stampedToken.token);
+  'user.logined'(userId, stampedToken){
+    let hashStampedToken = Accounts._hashStampedToken(stampedToken);
+    let hashedToken = hashStampedToken.hashedToken;
+    let validToken = Accounts._hashLoginToken(stampedToken.token);
+    if(hashedToken===validToken){
+      let user = Meteor.users.findOne({_id: userId});
+      return user;
+    }else{
+      return null;
+    }
   },
   
   'user.changeNickname'(user,nickname){
