@@ -23,14 +23,13 @@ Meteor.startup(() => {
   // // 测试用户模块权限
   //
   //
-  // // buildBlackCard();//建立黑卡
   // Meteor.users.remove({username: "superAdmin"});
   // Tags.remove({});
   // Products.remove({});
   // Roles.remove({});
   // UserRoles.remove({});
   // ProductOwners.remove({});
-  // // Shops.remove({});
+  // Shops.remove({});
   // prebuildAdmin();//建立超级管理员
   // buildSelfShop();
   // buildBlackCard();//建立黑卡
@@ -43,9 +42,9 @@ Meteor.startup(() => {
   //       isHome: true,
   //       createdAt: new Date()
   //     });
-  //
+
   //   }
-  //
+
   // }
   // for (var i = 0; i < 5; i++) {
   //   if (Shops.findOne({name: "测试店铺"+i})) {
@@ -80,15 +79,15 @@ Meteor.startup(() => {
   //   let tag = Tags.findOne({name: "4s保养"});
   //   for (var j = 0; j < 5; j++) {
   //     let product = Products.findOne({name_zh: "测试商品"+j.toString()+i.toString() });
-  //
-  //
+
+
   //     if (product) {
   //       continue;
   //     }
   //     let params = {
-  //
+
   //       isSale: true,
-  //
+
   //       name_zh: "测试商品"+j.toString()+i.toString(),
   //       name: "test product"+j.toString()+i.toString(),
   //       price: 1,
@@ -121,7 +120,7 @@ Meteor.startup(() => {
   //       if (product.acl.buy.roles[i]=="blackcard_holder") {
   //         isThereMemberPermission = true;
   //       }
-  //
+
   //     }
   //     console.log('是否有黑卡权限', isThereMemberPermission);
   //     if (!isThereMemberPermission) {
@@ -132,7 +131,7 @@ Meteor.startup(() => {
   //           acl
   //         }
   //       })
-  //
+
   //     }
   //   }
   //   let shopIds = [];
@@ -143,9 +142,9 @@ Meteor.startup(() => {
   //   }else{
   //     shopIds.push(shopId);
   //     productIds.push(product._id)
-  //
+
   //   }
-  //
+
   //   Tags.update(tag._id, {
   //     $set: {
   //       shopIds,
@@ -153,8 +152,8 @@ Meteor.startup(() => {
   //       updatedAt: new Date()
   //     }
   //   })
-  //
-  //
+
+
   // };//循环加入测试店铺结束// 开始绑定黑卡和用户
   // let product = Products.findOne({name_zh: "万人车汇黑卡"});
   // let roleName = product.roleName;
@@ -165,7 +164,7 @@ Meteor.startup(() => {
   //   if(user.cards === null){
   //     console.log('此用户已经退卡了');
   //   }else{
-  //
+
   //     if(!ProductOwners.findOne({userId: user._id})){
   //       ProductOwners.insert({
   //         productId: product._id,
@@ -184,7 +183,7 @@ Meteor.startup(() => {
   //     }else{
   //       console.log('此用户已经有角色了');
   //     }
-  //
+
   //   }
   // });
 });
