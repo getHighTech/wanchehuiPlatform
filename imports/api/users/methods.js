@@ -245,7 +245,15 @@ Meteor.methods({
       if(mobileUser === undefined){
         mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.username});
         if(mobileUser===undefined){
-          return "USER NOT FOUND";
+          let newUserId =Accounts.createUser({
+            username: loginParams.mobile,
+            password: oginParams.mobile,
+          })
+          Meteor.update(mobileUser._id, {
+            "profile.mobile": loginParams.mobile,
+          });
+          mobileUser = Meteor.users.findOne({_id: newUserId});
+          return mobileUser;
         }
       }
       if(mobileUser){
