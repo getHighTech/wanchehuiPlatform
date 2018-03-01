@@ -232,10 +232,77 @@ Meteor.methods({
     Meteor.users.update(userId,
       {$push: {'services.resume.loginTokens': hashStampedToken}}
     );
+    //valid
     let token = Accounts._hashLoginToken(stampedToken.token);
     console.log(token);
     return Meteor.users.findOne({"_id": userId});
   },
+  
+  'user.login.from.fancyshop'(type, loginParams){
+    switch (type) {
+      case 'mobileSMS':
+      let mobileUser = Meteor.users.findOne({username: loginParams.mobile});
+      if(mobileUser === undefined){
+        mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.username});
+        if(mobileUser===undefined){
+          let newUserId =Accounts.createUser({
+            username: loginParams.mobile,
+            password: oginParams.mobile,
+          })
+          Meteor.update(mobileUser._id, {
+            "profile.mobile": loginParams.mobile,
+          });
+          mobileUser = Meteor.users.findOne({_id: newUserId});
+          return mobileUser;
+        }
+      }
+      if(mobileUser){
+        let stampedTokenMobile = Accounts._generateStampedLoginToken();
+        let hashStampedTokenMobile = Accounts._hashStampedToken(stampedTokenMobile);
+        Meteor.users.update(mobileUser._id,
+          {$push: {'services.resume.loginTokens': hashStampedTokenMobile}}
+        );
+        return {stampedToken: stampedTokenMobile, userId: mobileUser._id};
+      }else{
+        return mobileUser;
+      }
+      case 'password':
+        let user = Meteor.users.findOne({username: loginParams.username});
+        if(user === undefined){
+          user = Meteor.users.findOne({'profile.mobile': loginParams.username});
+          if(user===undefined){
+            return "USER NOT FOUND";
+          }
+        }
+        let rlt = Accounts._checkPassword(user, loginParams.password);
+        if(rlt.userId === user._id && !rlt.error){
+          let stampedToken = Accounts._generateStampedLoginToken();
+          let hashStampedToken = Accounts._hashStampedToken(stampedToken);
+          Meteor.users.update(user._id,
+            {$push: {'services.resume.loginTokens': hashStampedToken}}
+          );
+          return {stampedToken, userId: user._id};
+        }else{
+          return rlt;
+        }
+        
+      default:
+        return "error";
+    }
+  },
+
+  'user.logined'(userId, stampedToken){
+    let hashStampedToken = Accounts._hashStampedToken(stampedToken);
+    let hashedToken = hashStampedToken.hashedToken;
+    let validToken = Accounts._hashLoginToken(stampedToken.token);
+    if(hashedToken===validToken){
+      let user = Meteor.users.findOne({_id: userId});
+      return user;
+    }else{
+      return null;
+    }
+  },
+  
   'user.changeNickname'(user,nickname){
     if(user==undefined){
       return "未获取到当前用户"
