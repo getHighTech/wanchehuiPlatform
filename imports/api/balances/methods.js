@@ -62,7 +62,7 @@ Meteor.methods({
     return Bankcards.findOne({userId:_id}).accountNumber;
   },
   'bankcards.accouts'(ids) {
-    return Bankcards.find({userId: {$in: ids}}).fetch();
+    return Bankcards.find({_id: {$in: ids}}).fetch();
   },
   'bankcards.address'(ids) {
     return Bankcards.find({userId: {$in: ids}}).fetch();
