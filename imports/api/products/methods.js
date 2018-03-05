@@ -137,10 +137,6 @@ Meteor.methods({
     })
   },
   'app.get.recommend.products'(page,pagesize){
-    console.log(page);
-    console.log(pagesize);
-    console.log(123);
-
     let products =  Products.find(
       {recommend: true},
       { 
