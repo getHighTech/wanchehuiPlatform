@@ -253,7 +253,7 @@ Meteor.methods({
             "profile.mobile": loginParams.mobile,
           });
           mobileUser = Meteor.users.findOne({_id: newUserId});
-          return mobileUser;
+          return {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: true};
         }
       }
       if(mobileUser){
@@ -262,7 +262,7 @@ Meteor.methods({
         Meteor.users.update(mobileUser._id,
           {$push: {'services.resume.loginTokens': hashStampedTokenMobile}}
         );
-        return {stampedToken: stampedTokenMobile, userId: mobileUser._id};
+        return {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false};
       }else{
         return mobileUser;
       }
