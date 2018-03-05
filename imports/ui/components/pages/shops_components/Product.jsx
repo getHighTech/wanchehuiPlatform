@@ -53,13 +53,11 @@ class ProductWrap extends React.Component {
     let id= self.props.id;
     Meteor.call('shops.findShopById',id,function(err,alt){
       if(!err){
-      console.log(alt);
       self.setState({
         shopdetails:alt
       })
       // self.getFormdata();
     }
-    console.log(self.state.shopdetails)
     })
   }
   editaddress(){
