@@ -42,7 +42,6 @@ Meteor.startup(() => {
   //       isHome: true,
   //       createdAt: new Date()
   //     });
-
   //   }
 
   // }
@@ -54,7 +53,7 @@ Meteor.startup(() => {
   //     name: "测试店铺"+i,
   //     phone: "13012121212",
   //     pictures: [],
-  //     description: '这是万人汇测试店',
+  //     description: '这是万人汇测试店',p
   //     tags: ["4S保养", "测试"],
   //     cover: 'http://wanchehui.oss-cn-qingdao.aliyuncs.com/cover.png',
   //     address:'成都滴滴车主俱乐部',
