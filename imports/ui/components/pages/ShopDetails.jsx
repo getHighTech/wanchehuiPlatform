@@ -204,12 +204,18 @@ class ShopDetails extends React.Component {
         dataIndex: 'price',
         key: 'price',
         width: 100,
+        render:(text,record)=>{
+          return(record.price/100)
+        }
       },
       {
       title: '最终价格',
       dataIndex: 'endPrice',
       key: 'endPrice',
       width: 100,
+      render:(text,record)=>{
+        return(record.endPrice/100)
+      }
       },
       {
         title: '简介',

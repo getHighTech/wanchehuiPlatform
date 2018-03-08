@@ -112,8 +112,13 @@ class ProductModal extends React.Component{
     for (const key in oldObj) {
         newObj[key] = oldObj[key];
     }
-    console.log(newObj);
+    console.log(newObj.endPrice);
     // 至此表单中的数据格式转换完毕
+    let newPrice=newObj.price;
+    newObj.price=newPrice*100;
+    let newEndPrice =newObj.endPrice;
+    newObj.endPrice=newEndPrice*100;
+    console.log(newObj);
     self.hideModal();
 
     //将转化好的数据传给后端

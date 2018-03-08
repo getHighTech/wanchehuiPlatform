@@ -550,7 +550,7 @@ class ProductFormWrap extends Component {
       hasFeedback
       >
       {getFieldDecorator('price', {
-          initialValue: this.props.product.price,
+          initialValue: this.props.product.price/100,
           rules: [{ required: true, message: '商品价格不能为空' }],
       })(
 
@@ -563,7 +563,7 @@ class ProductFormWrap extends Component {
       hasFeedback
       >
       {getFieldDecorator('endPrice', {
-          initialValue: this.props.product.endPrice,
+          initialValue: this.props.product.endPrice/100,
           rules: [{ required: true, message: '商品价格不能为空' }],
       })(
 
