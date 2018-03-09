@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import {Roles} from '../roles/roles.js'
 import { Products } from './products.js';
+import { Shops } from '../shops/shops.js';
 import {getProductTypeById} from './actions.js';
 
 
@@ -115,7 +116,11 @@ Meteor.methods({
     return Products.find({shopId:id}).fetch();
   },
   'get.oneproduct.id'(id){
-    return Products.findOne({_id:id});
+    let product =  Products.findOne({_id:id});
+    console.log(product._id)
+    let shop = Shops.findOne({_id: product.shopId});
+    console.log(shop.name)
+    return Object.assign(product,{shop_name: shop.name})
   },
   'product.update'(old,product){
     Products.update(old,{
@@ -158,7 +163,6 @@ Meteor.methods({
       },
 
     ).fetch()
-    console.log(products);
     return products
 
   },
