@@ -6,6 +6,7 @@ export function getMeteorBalanceCharge(condition,page,pageSize,callback){
   Meteor.call("balance.chargesdata",condition,page,pageSize,function(err,rlt){
     var bankIds = [];
     var result = [];
+    var selectbank = [];
     for(var charge  of rlt){
       charge.money = charge.money/100.0;
       let address='address';
@@ -15,6 +16,8 @@ export function getMeteorBalanceCharge(condition,page,pageSize,callback){
       result.push(charge);
       let userId = charge.userId;
       bankIds.push(userId);
+      let bankId = charge.bankId;
+      selectbank.push(bankId)
     }
 
     Meteor.call("get.users.accouts", bankIds, function(error, accouts) {
@@ -29,17 +32,17 @@ export function getMeteorBalanceCharge(condition,page,pageSize,callback){
         }
     });
 
-    Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
-      console.log(accouts);
+    Meteor.call("bankcards.accouts", selectbank, function(error, accouts) {
+
       if (!error) {
         accoutHash = {}
         for(let accout of accouts) {
-          accoutHash[accout.userId] = accout;
+          accoutHash[accout._id] = accout;
         }
         for(var charge of result) {
-          charge.bankId = accoutHash[charge.userId].accountNumber;
-          charge.address= accoutHash[charge.userId].bankAddress;
-          charge.userId =  accoutHash[charge.userId].realName;
+          charge.address= accoutHash[charge.bankId].bankAddress;
+          charge.userId =  accoutHash[charge.bankId].realName;
+          charge.bankId = accoutHash[charge.bankId].accountNumber;
       }
         callback(err, result);
       }
