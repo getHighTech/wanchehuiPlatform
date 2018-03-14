@@ -187,5 +187,17 @@ Meteor.methods({
       list: [...products],
       formMethod: 'app.get.shop.products'
     }
-  }
+  },
+  'home.top.products'(page, pagesize) {
+   let  products = Products.find(
+      {recommendLevel: {$lte: 0}},
+      {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
+    ).fetch()
+    return {
+        list: [...products],
+        formMethod: 'home.top.products'
+      }
+  },
+   
+
 });
