@@ -253,7 +253,11 @@ Meteor.methods({
     //valid
     let token = Accounts._hashLoginToken(stampedToken.token);
     console.log(token);
-    return Meteor.users.findOne({"_id": userId});
+    let user =  Meteor.users.findOne({"_id": userId});
+    return {
+      ...user,
+      formMethod: 'user.findUserById'
+    }
   },
   'user.findUserByName'(username){
     return Meteor.users.findOne({"username": username});

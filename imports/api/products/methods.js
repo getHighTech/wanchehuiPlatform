@@ -117,7 +117,8 @@ Meteor.methods({
     return Products.find({shopId:id}).fetch();
   },
   'get.oneproduct.id'(id,token){
-    if(validLoginToken(token)){
+    console.log(`打印token`)
+    console.log(token)
       let product =  Products.findOne({_id:id});
       console.log(`产品`)
       console.log(product)
@@ -128,9 +129,6 @@ Meteor.methods({
         shop_name: shop.name,
         formMethod: 'get.oneproduct.id'
       }
-    }else{
-      
-    }
    
     // Object.assign(product,{shop_name: shop.name})
   },
@@ -189,5 +187,17 @@ Meteor.methods({
       list: [...products],
       formMethod: 'app.get.shop.products'
     }
-  }
+  },
+  'home.top.products'(page, pagesize) {
+   let  products = Products.find(
+      {recommendLevel: {$lte: 0}},
+      {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
+    ).fetch()
+    return {
+        list: [...products],
+        formMethod: 'home.top.products'
+      }
+  },
+   
+
 });
