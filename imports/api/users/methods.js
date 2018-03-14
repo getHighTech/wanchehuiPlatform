@@ -255,7 +255,9 @@ Meteor.methods({
     console.log(token);
     return Meteor.users.findOne({"_id": userId});
   },
-  
+  'user.findUserByName'(username){
+    return Meteor.users.findOne({"username": username});
+  },
   'user.login.from.fancyshop'(type, loginParams){
     switch (type) {
       case 'mobileSMS':
@@ -325,38 +327,41 @@ Meteor.methods({
     }
   },
   
-  'user.changeNickname'(user,nickname){
-    if(user==undefined){
+  'user.changeNickname'(userId,nickname){
+    if(userId==undefined){
       return "未获取到当前用户"
     }else{
-      return Meteor.users.update(user,{
+      Meteor.users.update(userId,{
         $set: {
           'nickname': nickname
         }
        })
+       return  Meteor.users.findOne({_id:userId})
     }
   },
-  'user.changeSex'(user,sex){
-    if(user==undefined){
+  'user.changeSex'(userId,sex){
+    if(userId==undefined){
       return "未获取到当前用户"
     }else{
-      return Meteor.users.update(user,{
+       Meteor.users.update(userId,{
         $set: {
           'sex': sex
         }
        })
+       return Meteor.users.findOne({_id:userId})
     }
 
   },
-  'user.changeDataAutograph'(user,dataAutograph){
-    if(user==undefined){
+  'user.changeDataAutograph'(userId,dataAutograph){
+    if(userId==undefined){
       return "未获取到当前用户"
     }else{
-      return  Meteor.users.update(user,{
+      Meteor.users.update(userId,{
         $set: {
           'dataAutograph': dataAutograph
         }
        })
+       return Meteor.users.findOne({_id:userId});
     }
 
   },
@@ -372,27 +377,29 @@ Meteor.methods({
     }
 
   },
-  'user.changeBirthday'(user,birthday){
-    if(user==undefined){
+  'user.changeBirthday'(userId,birthday){
+    if(userId==undefined){
       return "未获取到当前用户"
     }else{
-      return Meteor.users.update(user,{
+       Meteor.users.update(userId,{
         $set: {
           'birthday': birthday
         }
        })
+       return Meteor.users.findOne({_id:userId});
     }
 
   },
-  'user.changeArea'(user,area){
-    if(user==undefined){
+  'user.changeArea'(userId,area){
+    if(userId==undefined){
       return "未获取到当前用户"
     }else{
-      return Meteor.users.update(user,{
+      Meteor.users.update(userId,{
         $set: {
           'area': area
         }
        })
+       return Meteor.users.findOne({_id:userId});
     }
 
   },
