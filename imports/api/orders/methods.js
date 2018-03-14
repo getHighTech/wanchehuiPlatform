@@ -16,7 +16,7 @@ Meteor.methods({
   //   })
   // },
   'app.orders.insert'(params){
-    return Orders.insert({
+    return  Orders.insert({
       type: params.type,
       userId: params.userId,
       status: params.status,
@@ -26,6 +26,10 @@ Meteor.methods({
       address: params.adderss,
       
     })
+    // return {
+    //   ...orders,
+    //   formMethod: 'app.orders.insert'
+    // }
   },
   'app.order.getone'(id) {
     let order =  Orders.findOne({

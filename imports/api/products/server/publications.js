@@ -26,7 +26,6 @@ Meteor.publish('home.top.products', function(page, pagesize){
 Meteor.publish('get.product.id', function(shop_id){
   return Products.find(
     {shopId: shop_id }
-    // {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
   );
 })
 
