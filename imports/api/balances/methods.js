@@ -10,6 +10,7 @@ import { BalanceIncomes } from './balance_incomes.js';
 import { findBalanceByUserId, findBalanceByUserIdAll, findBalanceByUsername } from './balances_actions.js'
 import { getIncomeRecords } from './balance_incomes_actions.js'
 import { log } from 'util';
+import { validLoginToken } from '../actions/validLoginToken.js';
 
 Meteor.methods({
   "balances.userId"(userId){
@@ -63,7 +64,7 @@ Meteor.methods({
     return Bankcards.findOne({userId:_id}).accountNumber;
   },
   'bankcards.accouts'(ids) {
-    return Bankcards.find({userId: {$in: ids}}).fetch();
+    return Bankcards.find({_id: {$in: ids}}).fetch();
   },
   'bankcards.address'(ids) {
     return Bankcards.find({userId: {$in: ids}}).fetch();
@@ -106,7 +107,10 @@ Meteor.methods({
   "get.balance_charges.InThisTimeCount"(condition){
     return BalanceCharges.find(condition).count();
   },
-   'app.get.balance_incomes.toady.total'(userId){
+   'app.get.balance_incomes.toady.total'(userId,token){
+    if(validLoginToken(token)){
+      console.log(`获取佣金`)
+    console.log(userId)
     let date = new Date();
     let nextdate = (new Date((date/1000+86400)*1000))
     var currentDate = date.Format("yyyy/MM/dd");
@@ -148,7 +152,26 @@ Meteor.methods({
     }else{
       month_balance_incomes = month_balance_incomes[0].total
     }
-    return { total: {todayTotal: today_balance_incomes, weekTotal:  week_balance_incomes,monthTotal: month_balance_incomes }}
+    let total = {todayTotal: today_balance_incomes, weekTotal:  week_balance_incomes,monthTotal: month_balance_incomes, }
+    console.log(total);
+    return { total,formMethod: 'app.get.balance_incomes.toady.total' }
+  }else{
+    return { formMethod: 'app.get.balance_incomes.toady.total', err: "ACCESS DENY"}
+  }
+    
+  },
+  "app.get.current.balance" (userId,token) {
+    console.log(`userId`);
+    console.log(userId)
+    if(validLoginToken(token)){
+      let balance = Balances.findOne({userId: userId})
+      if(balance==null){
+        balance = {amount: 0}
+      }
+      return Object.assign({},balance,{ formMethod: 'app.get.current.balance'})
+    }else{
+      return {formMethod: 'app.get.current.balance', err: "ACCESS DENY"}
+    }
   },
 
 });

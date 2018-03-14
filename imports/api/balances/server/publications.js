@@ -10,19 +10,14 @@ Meteor.publish('get.current.balance', function(){
   return Balances.find({userId: this.userId});
 })
 
-Meteor.publish('app.get.current.balance', function(userId){
-  // console.log(userId);
-  // let currentDate = new Date();
-  // let startDate = new Date(currentDate.getFullYear().toString(),currentDate.getMonth().toString(),'1')
-  // let endDate = new Date(currentDate.getFullYear().toString(),currentDate.getMonth().toString(),'30')
-  // console.log(startDate);
-  // console.log(endDate);
-  // let balanceIncomes = BalanceIncomes.find({userId: userId,createdAt: {$gte: startDate,$lte: endDate}}).fetch()
-  // console.log(balanceIncomes);
-  let balances =  Balances.find({userId: userId});
-  // console.log(balances)
-  return balances
-})
+// Meteor.publish('app.get.current.balance', function(userId){
+//   console.log(userId)
+//   console.log(`idididid`)
+//   return  Balances.find({userId: userId});
+//   // console.log(balances);
+//   // return balances
+// })
+
 
 
 function getCountDays() {

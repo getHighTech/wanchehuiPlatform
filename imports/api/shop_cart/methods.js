@@ -4,15 +4,19 @@ import { ShopCarts } from './shop_cart.js';
 
 Meteor.methods({
   'shop_carts.add_cart'(params){
+    console.log(`参数`)
     console.log(params);
-    let shop_cart = ShopCarts.update(
-      {'user_id': 2},
-      { $set:
+    console.log(`参数`)
+    let shop_cart = ShopCarts.findAndModify({
+      query:{'user_id': 2},
+      update:{ $set:
         {"shopsData": params}
       }
-    )
-
-    return ShopCarts.findOne({id: shop_cart._id})
+    })
+    console.log(`返回数据`)
+    let text =ShopCarts.findOne({_id: shop_cart._id})
+    console.log(text)
+    return ShopCarts.findOne({_id: shop_cart._id})
     // console.log(`add_cart`)
     // console.log(shop_cart)
     // console.log(params)
@@ -105,8 +109,10 @@ Meteor.methods({
     // return shop_carts
   },
   'shop_carts.get_cart'(id) {
-    console.log(id)
-    return ShopCarts.findOne({user_id: id});
+    console.log(`获取g`)
+    let shop_cart = ShopCarts.findOne({user_id: id});
+    console.log(shop_cart);
+    return shop_cart
   },
   'shop_carts.insert_cart'(params) {
     console.log(`insertcart`)
