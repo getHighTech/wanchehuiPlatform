@@ -315,6 +315,10 @@ Meteor.methods({
     let validToken = Accounts._hashLoginToken(stampedToken.token);
     if(hashedToken===validToken){
       let user = Meteor.users.findOne({_id: userId});
+      user = {
+        ...user,
+        formMethod: 'user.logined'
+      }
       return user;
     }else{
       return null;

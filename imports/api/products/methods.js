@@ -3,6 +3,7 @@ import {Roles} from '../roles/roles.js'
 import { Products } from './products.js';
 import { Shops } from '../shops/shops.js';
 import {getProductTypeById} from './actions.js';
+import { validLoginToken } from '../actions/validLoginToken.js'
 
 
 Meteor.methods({
@@ -115,12 +116,23 @@ Meteor.methods({
   'get.product.byShopId'(id){
     return Products.find({shopId:id}).fetch();
   },
-  'get.oneproduct.id'(id){
-    let product =  Products.findOne({_id:id});
-    console.log(product._id)
-    let shop = Shops.findOne({_id: product.shopId});
-    console.log(shop.name)
-    return Object.assign(product,{shop_name: shop.name})
+  'get.oneproduct.id'(id,token){
+    if(validLoginToken(token)){
+      let product =  Products.findOne({_id:id});
+      console.log(`产品`)
+      console.log(product)
+      let shop = Shops.findOne({_id: product.shopId});
+      console.log(shop.name)
+      return {
+        ...product,
+        shop_name: shop.name,
+        formMethod: 'get.oneproduct.id'
+      }
+    }else{
+      
+    }
+   
+    // Object.assign(product,{shop_name: shop.name})
   },
   'product.update'(old,product){
     Products.update(old,{
@@ -163,7 +175,19 @@ Meteor.methods({
       },
 
     ).fetch()
-    return products
+    return {
+      list: [...products],
+      formMethod: 'app.get.recommend.products'
+    }
 
   },
+  'app.get.shop.products'(shopId) {
+    console.log(shopId)
+    let products = Products.find({shopId: shopId}).fetch()
+    console.log(products);
+    return {
+      list: [...products],
+      formMethod: 'app.get.shop.products'
+    }
+  }
 });

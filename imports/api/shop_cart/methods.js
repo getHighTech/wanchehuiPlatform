@@ -13,10 +13,10 @@ Meteor.methods({
         {"shopsData": params}
       }
     })
-    console.log(shop_cart)
-    console.log('id123'+shop_cart._id)
-
-    return ShopCarts.findOne({id: shop_cart._id})
+    console.log(`返回数据`)
+    let text =ShopCarts.findOne({_id: shop_cart._id})
+    console.log(text)
+    return ShopCarts.findOne({_id: shop_cart._id})
     // console.log(`add_cart`)
     // console.log(shop_cart)
     // console.log(params)
@@ -109,7 +109,7 @@ Meteor.methods({
     // return shop_carts
   },
   'shop_carts.get_cart'(id) {
-    console.log(id)
+    console.log(`获取g`)
     let shop_cart = ShopCarts.findOne({user_id: id});
     console.log(shop_cart);
     return shop_cart
