@@ -130,7 +130,6 @@ Meteor.startup(() => {
   //           acl
   //         }
   //       })
-
   //     }
   //   }
   //   let shopIds = [];
@@ -141,7 +140,6 @@ Meteor.startup(() => {
   //   }else{
   //     shopIds.push(shopId);
   //     productIds.push(product._id)
-
   //   }
 
   //   Tags.update(tag._id, {
@@ -182,7 +180,6 @@ Meteor.startup(() => {
   //     }else{
   //       console.log('此用户已经有角色了');
   //     }
-
   //   }
   // });
 });
