@@ -14,9 +14,12 @@ Meteor.methods({
       }
     })
     console.log(`返回数据`)
-    let text =ShopCarts.findOne({_id: shop_cart._id})
-    console.log(text)
-    return ShopCarts.findOne({_id: shop_cart._id})
+    let shop_cats = ShopCarts.findOne({_id: shop_cart._id})
+   
+    return {
+        ...shop_carts,
+        formMethod: 'shop_carts.add_cart'
+    }
     // console.log(`add_cart`)
     // console.log(shop_cart)
     // console.log(params)
@@ -108,11 +111,14 @@ Meteor.methods({
     // ]);
     // return shop_carts
   },
-  'shop_carts.get_cart'(id) {
+  'shop_carts.get_cart'(userId) {
     console.log(`获取g`)
-    let shop_cart = ShopCarts.findOne({user_id: id});
+    let shop_cart = ShopCarts.findOne({userId: userId});
     console.log(shop_cart);
-    return shop_cart
+    return {
+        ...shop_cart,
+        formMethod: 'shop_carts.get_cart'
+    }
   },
   'shop_carts.insert_cart'(params) {
     console.log(`insertcart`)
