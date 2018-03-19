@@ -154,7 +154,10 @@ Meteor.methods({
   },
   'app.get.recommend.products'(page,pagesize){
     let products =  Products.find(
-      {recommend: true},
+      {
+        recommend: true,
+        isSale: true
+      },
       { 
         skip: (page-1)*pagesize, 
         limit: pagesize, 
@@ -180,8 +183,12 @@ Meteor.methods({
 
   },
   'app.get.shop.products'(shopId) {
-    console.log(shopId)
-    let products = Products.find({shopId: shopId}).fetch()
+    let products = Products.find(
+      {
+        shopId: shopId,
+        isSale: true,
+      }
+      ).fetch()
     console.log(products);
     return {
       list: [...products],

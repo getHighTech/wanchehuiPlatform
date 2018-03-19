@@ -2,20 +2,12 @@ import { Meteor } from 'meteor/meteor';
 import {Orders} from './orders.js';
 import {Shops} from '../shops/shops.js';
 import {ordersCount} from './actions.js';
+import { generateRondom } from './helper.js'
 
 
 Meteor.methods({
-  // 'orders.insert'(type,name, mobile,
-  //   carNubmer,productId, count,
-  //   price, realNote){
-  //   return Orders.insert({
-  //     type,name, mobile, carNubmer,productId, count, price,realNote,
-  //     createdBy: Meteor.userId(),
-  //     status: 'unpaid',
-  //     createdAt: new Date
-  //   })
-  // },
   'app.orders.insert'(params){
+     let  orderCode = new Date().getTime().toString()+generateRondom(10).toString();
     return  Orders.insert({
       type: params.type,
       userId: params.userId,
@@ -24,12 +16,19 @@ Meteor.methods({
       products: params.products,
       username: params.username,
       address: params.adderss,
-      
+      mobile: params.mobile,
+      orderCode 
     })
     // return {
     //   ...orders,
     //   formMethod: 'app.orders.insert'
     // }
+  },
+  'app.shop_carts.orders'(product,filter,userId) {
+    console.log(product[0].productsData)
+    for(var i =0; i< product[0].productsData.length; i++){
+      console.log(111);
+    }
   },
   'app.order.getone'(id) {
     let order =  Orders.findOne({
@@ -45,7 +44,7 @@ Meteor.methods({
     console.log(params)
       return Orders.update(
       { _id: params.id},
-      {$set:{remark:params.remark, address: params.address, shop_name: params.shop_name}}
+      {$set:{remark:params.remark, address: params.address, shopName: params.shopName}}
      )
   },
 
@@ -85,7 +84,6 @@ Meteor.methods({
   },
   'orders.count'(condition){
     return ordersCount(condition);
-    //return Orders.find(condition).count();
   },
   "orders.status.updatePaid"(_id){
     return Orders.update(_id,{
@@ -127,5 +125,5 @@ Meteor.methods({
     }else{
       return []
     }
-  }
+  },
 });
