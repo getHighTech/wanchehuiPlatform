@@ -1,7 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import {Roles} from '../roles/roles.js'
 import { Products } from './products.js';
+import { Shops } from '../shops/shops.js';
 import {getProductTypeById} from './actions.js';
+import { validLoginToken } from '../actions/validLoginToken.js'
 
 
 Meteor.methods({
@@ -114,8 +116,21 @@ Meteor.methods({
   'get.product.byShopId'(id){
     return Products.find({shopId:id}).fetch();
   },
-  'get.oneproduct.id'(id){
-    return Products.findOne({_id:id});
+  'get.oneproduct.id'(id,token){
+    console.log(`打印token`)
+    console.log(token)
+      let product =  Products.findOne({_id:id});
+      console.log(`产品`)
+      console.log(product)
+      let shop = Shops.findOne({_id: product.shopId});
+      console.log(shop.name)
+      return {
+        ...product,
+        shop_name: shop.name,
+        formMethod: 'get.oneproduct.id'
+      }
+   
+    // Object.assign(product,{shop_name: shop.name})
   },
   'product.update'(old,product){
     Products.update(old,{
@@ -138,12 +153,11 @@ Meteor.methods({
     })
   },
   'app.get.recommend.products'(page,pagesize){
-    console.log(page);
-    console.log(pagesize);
-    console.log(123);
-
     let products =  Products.find(
-      {recommend: true},
+      {
+        recommend: true,
+        isSale: true
+      },
       { 
         skip: (page-1)*pagesize, 
         limit: pagesize, 
@@ -162,8 +176,35 @@ Meteor.methods({
       },
 
     ).fetch()
-    console.log(products);
-    return products
+    return {
+      list: [...products],
+      formMethod: 'app.get.recommend.products'
+    }
 
   },
+  'app.get.shop.products'(shopId) {
+    let products = Products.find(
+      {
+        shopId: shopId,
+        isSale: true,
+      }
+      ).fetch()
+    console.log(products);
+    return {
+      list: [...products],
+      formMethod: 'app.get.shop.products'
+    }
+  },
+  'home.top.products'(page, pagesize) {
+   let  products = Products.find(
+      {recommendLevel: {$lte: 0}},
+      {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
+    ).fetch()
+    return {
+        list: [...products],
+        formMethod: 'home.top.products'
+      }
+  },
+   
+
 });
