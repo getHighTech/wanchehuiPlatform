@@ -71,10 +71,7 @@ class ProductFormWrap extends Component {
 
     constructor(props){
       super(props);
-      console.log(this.props);
-      console.log(this.props.key_length);
-      console.log(this.props.descriptionKey);
-      console.log(this.props.productId);
+
       // const contentBlock = htmlToDraft(html);
       // const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
       // const editorState = EditorState.createWithContent(contentState);
@@ -99,34 +96,23 @@ class ProductFormWrap extends Component {
         let self =this;
           let description= this.props.product.description
           if(typeof(description)=='undefined'){
-            console.log('走了这里');
             let description='<p>开始编辑</p>'
             const setFieldsValue = this.props.form.setFieldsValue;
             setFieldsValue({description:description})
-            console.log(description);
             const html =description;
-            console.log(html);
             const contentBlock = htmlToDraft(html);
-            console.log(contentBlock);
             const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-            console.log(contentState);
             const editorState = EditorState.createWithContent(contentState);
-            console.log(editorState);
             // self.state={
             //   contentState: editorState,
             // }
             self.changel(editorState);
           }
           else {
-            console.log(description);
             const html =description;
-            console.log(html);
             const contentBlock = htmlToDraft(html);
-            console.log(contentBlock);
             const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-            console.log(contentState);
             const editorState = EditorState.createWithContent(contentState);
-            console.log(editorState);
             // self.state={
             //   contentState: editorState,
             // }
@@ -136,12 +122,9 @@ class ProductFormWrap extends Component {
 
 
       const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1);
-      console.log(latestOpenKey);
       if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
         this.setState({ openKeys });
-        console.log('1');
       } else {
-        console.log('2');
         this.setState({
           openKeys: latestOpenKey ? [latestOpenKey] : [],
         });
@@ -149,8 +132,7 @@ class ProductFormWrap extends Component {
     }
       changel(editorState){
         let self =this;
-        console.log(editorState);
-        console.log(self.state.contentState);
+
         self.setState({
           contentState:editorState
         })
@@ -171,24 +153,18 @@ class ProductFormWrap extends Component {
   }
 
   add = () => {
-    console.log('add操作');
     const { form } = this.props;
     // can use data-binding to get
-    console.log(this.props.product.specifications);
 
     const keys = form.getFieldValue('keys');
-    console.log(keys);
     this.setState({
       key_arr:keys
     })
-    console.log('keys的长度:'+keys.length);
     let uuid = keys.length;
-    console.log('当前uuid:'+uuid);
     this.setState({
       key_length:uuid
     })
     const nextKeys = keys.concat(uuid);
-    console.log(nextKeys);
     uuid++;
     // console.log(uuid);
     //
@@ -203,27 +179,27 @@ class ProductFormWrap extends Component {
       uuid:uuid
     })
   }
-  addover = (e) =>{
-    let self =this;
-    const { form } = this.props;
-    e.preventDefault();
-    const getFieldValue = this.props.form.getFieldValue;
-    let end_spec=[];
-    for(var i =0;i<getFieldValue('keys').length;i++){
-      var spec_index=getFieldValue('keys')[i]
-      var spec_name =getFieldValue('spec_name')[spec_index];
-      var spec_value= getFieldValue('spec_value')[spec_index];
-      var o1={spec_name:spec_name};
-      var o2={spec_value:spec_value};
-      var o3={isThis:false}
-      var obj =Object.assign(o1,o2,o3)
-      end_spec.push(obj);
-    }
-    console.log(end_spec);
-        // const setFieldsValue = this.props.form.setFieldsValue;
-        // setFieldsValue({specifications:end_spec})
-    self.props.getSpec(end_spec);
-  }
+  // addover = (e) =>{
+  //   let self =this;
+  //   const { form } = this.props;
+  //   e.preventDefault();
+  //   const getFieldValue = this.props.form.getFieldValue;
+  //   let end_spec=[];
+  //   for(var i =0;i<getFieldValue('keys').length;i++){
+  //     var spec_index=getFieldValue('keys')[i]
+  //     var spec_name =getFieldValue('spec_name')[spec_index];
+  //     var spec_value= getFieldValue('spec_value')[spec_index];
+  //     var o1={spec_name:spec_name};
+  //     var o2={spec_value:spec_value};
+  //     var o3={isThis:false}
+  //     var obj =Object.assign(o1,o2,o3)
+  //     end_spec.push(obj);
+  //   }
+  //   console.log(end_spec);
+  //       // const setFieldsValue = this.props.form.setFieldsValue;
+  //       // setFieldsValue({specifications:end_spec})
+  //   self.props.getSpec(end_spec);
+  // }
     componentWillReceiveProps(nextProps){
         this.setState(nextProps);
 
@@ -237,9 +213,7 @@ class ProductFormWrap extends Component {
 
   }
   componentDidMount(){
-    console.log(this.props.productId);
     let self =this;
-    console.log(self.state.openKeys);
 
     self.setState({
       openKeys: this.props.descriptionKey,
@@ -263,13 +237,10 @@ class ProductFormWrap extends Component {
 
   }
   onEditorStateChange(editorState) {
-    console.log(editorState);
-    console.log(this.state.contentState);
     this.setState({
       contentState: editorState,
     });
     let htmlcontent=draftToHtml(convertToRaw(this.state.contentState.getCurrentContent()));
-    console.log(htmlcontent);
     const setFieldsValue = this.props.form.setFieldsValue;
     setFieldsValue({description:htmlcontent})
   }
@@ -343,13 +314,29 @@ class ProductFormWrap extends Component {
 
 
     }
-
+    getProductPrice(){
+      let price=this.props.product.price
+      if(typeof(price)!='undefined'){
+        return price/100
+      }
+      else {
+        return ''
+      }
+    }
+    getProductEndprice(){
+      let price=this.props.product.endPrice
+      if(typeof(price)!='undefined'){
+        return price/100
+      }
+      else {
+        return ''
+      }
+    }
     getCoverValue(){
       let cover = this.props.product.cover;
       return cover
     }
     getSpecName(k){
-      console.log('赋值操作');
       const { form } = this.props;
       let spec=this.props.product.specifications;
       if(typeof(spec)!='undefined'){
@@ -410,7 +397,6 @@ class ProductFormWrap extends Component {
     }
 
     render() {
-      console.log(this.state.openKeys);
       const { contentState } = this.state;
       const uploadProps = {
         action: '/images/upload',
@@ -424,7 +410,6 @@ class ProductFormWrap extends Component {
       };
 
       const { getFieldDecorator, getFieldValue } = this.props.form;
-      console.log(getFieldValue('description'));
           const formItemLayout = {
               labelCol: {
                 xs: { span: 24 },
@@ -550,7 +535,7 @@ class ProductFormWrap extends Component {
       hasFeedback
       >
       {getFieldDecorator('price', {
-          initialValue: this.props.product.price/100,
+          initialValue: this.getProductPrice(),
           rules: [{ required: true, message: '商品价格不能为空' }],
       })(
 
@@ -563,7 +548,7 @@ class ProductFormWrap extends Component {
       hasFeedback
       >
       {getFieldDecorator('endPrice', {
-          initialValue: this.props.product.endPrice/100,
+          initialValue: this.getProductEndprice(),
           rules: [{ required: true, message: '商品价格不能为空' }],
       })(
 
@@ -636,9 +621,7 @@ class ProductFormWrap extends Component {
           <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
             <Icon type="plus" /> Add field
           </Button>
-          <Button type="dashed" onClick={this.addover} style={{ width: '60%' }}>
-             添加规格
-          </Button>
+
         </FormItem>
         <Divider dashed style={{marginTop:5 ,marginBottom:5}}/>
         <FormItem label='商品描述'>

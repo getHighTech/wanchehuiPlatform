@@ -90,9 +90,8 @@ class ProductModal extends React.Component{
 
   handleModalOk = () => {
     let self = this;
-    console.log(self.state.spec);
     let validated = true;
-    console.log(this.formComponent)
+    console.log(this.formComponent);
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated); // 不知道有没有更好的办法
     if (!validated) {
       console.log('参数错误');
@@ -105,20 +104,36 @@ class ProductModal extends React.Component{
     // console.log(getFieldValue('shopAddress'))
     const getFieldValue = this.formComponent.getFieldValue;
     const setFieldsValue = this.formComponent.setFieldsValue;
-    setFieldsValue({specifications: self.state.spec})
+    // setFieldsValue({specifications: self.state.spec})
     const oldObj = this.formComponent.getFieldsValue();
-    console.log(oldObj);
+    let speckeys = oldObj.keys;
+    console.log(speckeys);
+    let specname=oldObj.spec_name;
+    let specvalue=oldObj.spec_value;
+    let end_spec=[];
+    for(var i = 0; i<speckeys.length;i++){
+      var spec_index=speckeys[i];
+      var spec_name=specname[spec_index];
+      var spec_value=specvalue[spec_index];
+      var o1={spec_name:spec_name};
+      var o2={spec_value:spec_value};
+      var o3={isThis:false};
+      var obj = Object.assign(o1,o2,o3);
+      end_spec.push(obj);
+    }
+    setFieldsValue({specifications: end_spec})
     //把表单中跟时间有关系的参数进行时间格式化
     for (const key in oldObj) {
         newObj[key] = oldObj[key];
     }
-    console.log(newObj.endPrice);
     // 至此表单中的数据格式转换完毕
     let newPrice=newObj.price;
     newObj.price=newPrice*100;
     let newEndPrice =newObj.endPrice;
     newObj.endPrice=newEndPrice*100;
+    newObj.specifications=end_spec;
     console.log(newObj);
+
     self.hideModal();
 
     //将转化好的数据传给后端
@@ -187,7 +202,7 @@ class ProductModal extends React.Component{
           width={1000}
           style={{ top: 20 }}
         >
-          <ProductForm spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)} product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length} editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }} />
+          <ProductForm spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)} product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
 
         </Modal>
       </div>
