@@ -15,12 +15,12 @@ Meteor.publish('products.user_id', function(user_id, page, pagesize
 
 });
 
-Meteor.publish('home.top.products', function(page, pagesize){
-  return Products.find(
-    {recommendLevel: {$lte: 0}},
-    {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
-  );
-})
+// Meteor.publish('home.top.products', function(page, pagesize){
+//   return Products.find(
+//     {recommendLevel: {$lte: 0}},
+//     {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
+//   );
+// })
 
 
 Meteor.publish('get.product.id', function(shop_id){
@@ -37,14 +37,14 @@ Meteor.publish('get.shop.products', function(id,page, pagesize){
 })
 
 
-Meteor.publish('app.get.shop.products', function(shop_id,page, pagesize){
-  console.log(shop_id)
-  console.log(page)
-  return Products.find(
-    {shopId: shop_id},
-    {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
-  );
-})
+// Meteor.publish('app.get.shop.products', function(shop_id,page, pagesize){
+//   console.log(shop_id)
+//   console.log(page)
+//   return Products.find(
+//     {shopId: shop_id},
+//     {skip: (page-1)*pagesize, limit: pagesize, sort: {createdAt: -1}}
+//   );
+// })
 
 
 // Meteor.publish('app.get.recommend.products', function(page, pagesize){
