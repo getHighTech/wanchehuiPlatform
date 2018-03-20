@@ -103,12 +103,11 @@ Meteor.methods({
   },
   "get.allOrders"(userId){
     let orders =  Orders.find({'createdBy':userId}).fetch();
-    console.log('++++++++++++++++++')
     console.log(orders)
     if(orders.length > 0){
       return orders
     }else{
-      return []
+      return Orders.find({'userId':userId}).fetch();
     }
   },
   "get.paidOrders"(userId){
@@ -117,7 +116,7 @@ Meteor.methods({
     if(orders.length > 0){
       return orders
     }else{
-      return []
+      return Orders.find({'userId':userId}).fetch();
     }
   },
   "get.unpaidOrders"(userId){
@@ -125,7 +124,7 @@ Meteor.methods({
     if(orders.length > 0){
       return orders
     }else{
-      return []
+      return Orders.find({'userId':userId}).fetch();
     }
   }
 });
