@@ -4,6 +4,7 @@ import {Shops} from '../shops/shops.js';
 import {ShopCarts} from '../shop_cart/shop_cart.js';
 import {ordersCount} from './actions.js';
 import { generateRondom } from './helper.js'
+import { validLoginToken } from '../actions/validLoginToken.js';
 
 
 Meteor.methods({
@@ -81,6 +82,15 @@ Meteor.methods({
     formMethod: 'app.order.getone'
    }
   },
+  'app.getOrderByCode'(code) {
+    let order =  Orders.findOne({
+      orderCode: code
+    })
+   return {
+    order,
+    formMethod: 'app.getOrderByCode'
+   }
+  },
   'app.order.update'(params) {
     console.log(params)
       return Orders.update(
@@ -141,29 +151,47 @@ Meteor.methods({
     return Orders.find(condition).count();
   },
   "get.allOrders"(userId){
-    let orders =  Orders.find({'createdBy':userId}).fetch();
+    let orders =  Orders.find({'userId':userId}).fetch();
     console.log(orders)
     if(orders.length > 0){
       return orders
     }else{
-      return Orders.find({'userId':userId}).fetch();
+      return []
     }
   },
   "get.paidOrders"(userId){
-    let orders =  Orders.find({'createdBy':userId,'status':'paid'}).fetch();
+    let orders =  Orders.find({'userId':userId,'status':'paid'}).fetch();
     console.log(orders)
     if(orders.length > 0){
       return orders
     }else{
-      return Orders.find({'userId':userId}).fetch();
+      return []
     }
   },
   "get.unpaidOrders"(userId){
-    let orders =  Orders.find({'createdBy':userId,'status':'unpaid'}).fetch();
+    let orders =  Orders.find({'userId':userId,'status':'unpaid'}).fetch();
     if(orders.length > 0){
       return orders
     }else{
-      return Orders.find({'userId':userId}).fetch();
+      return []
     }
   },
+  "get.cancelOrders"(userId){
+    let orders =  Orders.find({'userId':userId,'status':'canceled'}).fetch();
+    if(orders.length > 0){
+      return orders
+    }else{
+      return []
+    }
+  },
+  'app.cancel.order'(code,token){
+    if(validLoginToken(token)){
+      let order = Orders.findOne({orderCode:code})
+      Orders.update(order,{
+        $set:{
+          status: "canceled"
+        }
+      })
+    }
+  }
 });
