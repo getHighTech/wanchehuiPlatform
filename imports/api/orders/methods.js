@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import {Orders} from './orders.js';
 import {Shops} from '../shops/shops.js';
+import {ShopCarts} from '../shop_cart/shop_cart.js';
 import {ordersCount} from './actions.js';
 import { generateRondom } from './helper.js'
 
@@ -8,36 +9,76 @@ import { generateRondom } from './helper.js'
 Meteor.methods({
   'app.orders.insert'(params){
      let  orderCode = new Date().getTime().toString()+generateRondom(10).toString();
-    return  Orders.insert({
+     let order = Orders.insert({
       type: params.type,
       userId: params.userId,
       status: params.status,
-      shopId: params.shopId,
+      shopId: params.shop_id,
+      shopCover: params.shopCover,
+      shopName: params.shopName,
+      shopAddress: params.shopAddress,
       products: params.products,
       username: params.username,
-      address: params.adderss,
       mobile: params.mobile,
       orderCode 
     })
+    return {
+      orderCode,
+      formMethod: 'app.orders.insert'
+    }
     // return {
     //   ...orders,
     //   formMethod: 'app.orders.insert'
     // }
   },
   'app.shop_carts.orders'(product,filter,userId) {
-    console.log(product[0].productsData)
-    for(var i =0; i< product[0].productsData.length; i++){
-      console.log(111);
+    let  orderCode = new Date().getTime().toString()+generateRondom(10).toString();
+    for(var i=0;i<product.length;i++){
+      if(product[i].productsData.length !== 0 )
+         var order = Orders.insert({
+             userId,
+             status: 'unpaid',
+             address: "user.address.id",
+             username: product[i].username,
+             nickname: product[i].nickname,
+             mobile: product[i].mobile,
+             shopId: product[i].shop_id,
+             products: product[i].productsData,
+             orderCode 
+          })
+         if(order){
+           ShopCarts.update(
+             { userId },
+              { $set:
+                {"shopsData": filter}
+              }
+            ) 
+         }
+      // }
+    }
+    console.log(orderCode)
+    return {
+      formMethod: 'app.shop_carts.orders',
     }
   },
   'app.order.getone'(id) {
-    let order =  Orders.findOne({
-      _id: id
-    })
-    let shop = Shops.findOne({_id: order.shopId})
-    return {
-     order,
-     shop
+    console.log(id);
+   //  console.log(`orderCode`)
+   //  console.log(id);
+    let orders =  Orders.find({
+      orderCode: id
+    }).fetch()
+    console.log(orders[0])
+    let shop = Shops.findOne({_id: orders[0].shopId})
+   //  return {
+   //   order,
+   //   shop,
+   //   formMethod: 'app.order.getone'
+   // }
+   return {
+    orders,
+    shop,
+    formMethod: 'app.order.getone'
    }
   },
   'app.order.update'(params) {
