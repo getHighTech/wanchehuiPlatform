@@ -127,6 +127,8 @@ Meteor.methods({
       return {
         ...product,
         shop_name: shop.name,
+        shop_address: shop.address,
+        shop_cover: shop.cover,
         formMethod: 'get.oneproduct.id'
       }
    
@@ -189,7 +191,6 @@ Meteor.methods({
         isSale: true,
       }
       ).fetch()
-    console.log(products);
     return {
       list: [...products],
       formMethod: 'app.get.shop.products'
