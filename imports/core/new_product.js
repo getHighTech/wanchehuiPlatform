@@ -43,6 +43,7 @@ export function newProuct
   params,
   categoryName,
   tagNames,
+  acl,
 )
 {
   let category = Categories.findOne({name: categoryName})
@@ -66,6 +67,12 @@ export function newProuct
     console.log(roleName+"已经存在");
     return "roleName exist";
   }
+  let buyAcl = {
+    roles: ['login_user']
+  };
+  if(acl && acl.buy){
+    buyAcl = acl.buy
+  }
   let productId = Products.insert(Object.assign({}, params, {
     acl: {
       own: {
@@ -79,9 +86,7 @@ export function newProuct
         roles: ["shop_owner","shop_manager"],
         users: [],
       },
-      buy: {
-        roles: ['login_user',]
-      }
+      buy: buyAcl,
     },
     createdAt: new Date(),
     isTool,//是否是工具类商品

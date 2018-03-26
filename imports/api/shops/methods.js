@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Shops } from './shops.js'
-
+import { validLoginToken } from '../actions/validLoginToken.js';
 Meteor.methods({
     'shops.insert'(params){
       console.log(params)
@@ -58,6 +58,19 @@ Meteor.methods({
         return "SHOP NOT FOUND";
       }
       return shop;
+    },
+    'shops.findShopName'(shopId,token){
+      if(validLoginToken(token)){
+        let shop = Shops.findOne({_id:shopId})
+        if (!shop) {
+          return "SHOP NOT FOUND";
+        }
+        return {
+          shopName:shop.name,
+          formMethod: "shops.findShopName"
+        };
+      }
+
     },
     'shops.findOneShopById'(shopId){
       let shop = Shops.find({_id:shopId}).fetch();
