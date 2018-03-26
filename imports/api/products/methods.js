@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import {Roles} from '../roles/roles.js'
 import { Products } from './products.js';
 import { Shops } from '../shops/shops.js';
-import {getProductTypeById} from './actions.js';
+import {getProductTypeById, getProductByZhName} from './actions.js';
 import { validLoginToken } from '../actions/validLoginToken.js'
 
 
@@ -206,6 +206,13 @@ Meteor.methods({
         formMethod: 'home.top.products'
       }
   },
+  'fancyshop.getProductByZhName'(zhName){
+    let product = getProductByZhName(zhName);
+    return {
+      product,
+      fromMethod: 'fancyshop.getProductByZhName',
+    }
+  }
    
 
 });
