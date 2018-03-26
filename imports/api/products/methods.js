@@ -206,6 +206,16 @@ Meteor.methods({
         formMethod: 'home.top.products'
       }
   },
+
+  'app.product.search'(data) {
+    console.log(data);
+    let products = Products.find({name_zh: {$regex:data}}).fetch()
+    console.log(products);
+    return {
+      products,
+      formMethod: 'app.product.search'
+    }
+  },
    
 
 });

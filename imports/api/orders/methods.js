@@ -26,10 +26,6 @@ Meteor.methods({
       orderCode,
       formMethod: 'app.orders.insert'
     }
-    // return {
-    //   ...orders,
-    //   formMethod: 'app.orders.insert'
-    // }
   },
   'app.shop_carts.orders'(product,filter,userId) {
     let  orderCode = new Date().getTime().toString()+generateRondom(10).toString();
@@ -54,27 +50,18 @@ Meteor.methods({
               }
             ) 
          }
-      // }
     }
-    console.log(orderCode)
     return {
+      orderCode,
       formMethod: 'app.shop_carts.orders',
     }
   },
   'app.order.getone'(id) {
-    console.log(id);
-   //  console.log(`orderCode`)
-   //  console.log(id);
     let orders =  Orders.find({
       orderCode: id
     }).fetch()
     console.log(orders[0])
     let shop = Shops.findOne({_id: orders[0].shopId})
-   //  return {
-   //   order,
-   //   shop,
-   //   formMethod: 'app.order.getone'
-   // }
    return {
     orders,
     shop,
@@ -142,8 +129,6 @@ Meteor.methods({
   },
   "get.allOrders"(userId){
     let orders =  Orders.find({'createdBy':userId}).fetch();
-    console.log('++++++++++++++++++')
-    console.log(orders)
     if(orders.length > 0){
       return orders
     }else{
