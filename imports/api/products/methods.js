@@ -208,8 +208,16 @@ Meteor.methods({
   },
 
   'app.product.search'(data) {
-    console.log(data);
-    let products = Products.find({name_zh: {$regex:data}}).fetch()
+    let products = Products.aggregate([
+        { $match: { name_zh: {$regex:data}}},
+        { 
+          $lookup: {
+            from: "Shops",
+            localField: "shopId",
+            foreignField: "_id"
+          }
+        }
+      ])
     console.log(products);
     return {
       products,

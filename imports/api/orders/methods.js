@@ -21,7 +21,9 @@ Meteor.methods({
       products: params.products,
       username: params.username,
       mobile: params.mobile,
-      orderCode 
+      orderCode,
+      remark: '',
+      createdAt : new Date(),
     })
     return {
       orderCode,
@@ -45,7 +47,9 @@ Meteor.methods({
              mobile: product[i].mobile,
              shopId: product[i].shop_id,
              products: product[i].productsData,
-             orderCode 
+             orderCode,
+             remark: '',
+             createdAt : new Date(),
           })
          if(order){
            ShopCarts.update(
@@ -62,14 +66,20 @@ Meteor.methods({
     }
   },
   'app.order.getone'(id) {
+    let total = 0;
     let orders =  Orders.find({
       orderCode: id
     }).fetch()
-    console.log(orders[0])
-    let shop = Shops.findOne({_id: orders[0].shopId})
+    console.log('order: ' + orders.length            );
+    for(var i=0;i<orders.length;i++){
+
+      for(var j =0;j<orders[i].products.length; j++) {
+        total += orders[i].products[j].count*orders[i].products[j].productSpec.spec_value/100
+      }
+    }
    return {
-    orders,
-    shop,
+    orders, 
+    total,
     formMethod: 'app.order.getone'
    }
   },
