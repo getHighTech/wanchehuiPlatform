@@ -29,6 +29,10 @@ Meteor.methods({
     }
   },
   'app.shop_carts.orders'(product,filter,userId) {
+    console.log(product);
+    console.log(filter);
+    console.log(userId);
+    
     let  orderCode = new Date().getTime().toString()+generateRondom(10).toString();
     for(var i=0;i<product.length;i++){
       if(product[i].productsData.length !== 0 )
