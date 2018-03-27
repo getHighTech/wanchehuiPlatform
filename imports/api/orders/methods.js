@@ -22,6 +22,7 @@ Meteor.methods({
       username: params.username,
       mobile: params.mobile,
       orderCode,
+      remark: '',
       createdAt : new Date(),
     })
     return {
@@ -42,7 +43,9 @@ Meteor.methods({
              mobile: product[i].mobile,
              shopId: product[i].shop_id,
              products: product[i].productsData,
-             orderCode 
+             orderCode,
+             remark: '',
+             createdAt : new Date(),
           })
          if(order){
            ShopCarts.update(
