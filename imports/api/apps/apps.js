@@ -4,6 +4,7 @@ import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import {Orders} from "/imports/api/orders/orders.js";
+import { Products } from '../products/products';
 
 function validUserLogin(token, appName){
    
@@ -264,5 +265,26 @@ export function getUserCharges(userId, token, appName, pagesize, page, condition
             type: "error",
             reason: "NEED TO LOGIN"
         }
+    }
+}
+
+
+export function getOneProduct(token, appName, condition){
+    if(!findOneAppByName(appName)){
+        return {
+            type: "error",
+            reason: "invalid app"
+        }
+    }
+    let product = Products.findOne(condition);
+    if (!product) {
+        return {
+            type: "error",
+            reason: "PRODUCT NOT FOUND"
+        }
+    }
+    return {
+        type: "products",
+        msg: product
     }
 }
