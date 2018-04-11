@@ -6,7 +6,6 @@ import {ordersCount} from './actions.js';
 import { generateRondom } from './helper.js'
 import { validLoginToken } from '../actions/validLoginToken.js';
 
-
 Meteor.methods({
   'app.orders.insert'(params){
      let  orderCode = new Date().getTime().toString()+generateRondom(10).toString();
