@@ -129,11 +129,11 @@ Meteor.methods({
         shop_name: shop.name,
         formMethod: 'get.oneproduct.id'
       }
-   
+
     // Object.assign(product,{shop_name: shop.name})
   },
   'product.update'(old,product){
-    Products.update(old,{
+    Products.update({_id:old._id},{
       $set:{
         name: product.name,
         name_zh:product.name_zh,
@@ -142,7 +142,6 @@ Meteor.methods({
         brief:product.brief,
         image_des: product.image_des,
         images: product.images,
-        isSale: product.isSale,
         cover:product.cover,
         endPrice:product.endPrice,
         isTool:product.isTool,
@@ -158,9 +157,9 @@ Meteor.methods({
         recommend: true,
         isSale: true
       },
-      { 
-        skip: (page-1)*pagesize, 
-        limit: pagesize, 
+      {
+        skip: (page-1)*pagesize,
+        limit: pagesize,
         sort: {createdAt: -1},
         fields:
               {
@@ -205,6 +204,6 @@ Meteor.methods({
         formMethod: 'home.top.products'
       }
   },
-   
+
 
 });

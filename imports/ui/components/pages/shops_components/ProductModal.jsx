@@ -34,6 +34,9 @@ class ProductModal extends React.Component{
     console.log(props);
   }
   state={
+    xx:[],
+    fileState:'',
+    coverState:'',
     spec : '',
     spec_length:0,
     descriptionKey:[]
@@ -133,7 +136,7 @@ class ProductModal extends React.Component{
     newObj.endPrice=newEndPrice*100;
     newObj.specifications=end_spec;
     console.log(newObj);
-
+    console.log(this.props.singleProduct);
     self.hideModal();
 
     //将转化好的数据传给后端
@@ -148,7 +151,12 @@ class ProductModal extends React.Component{
           self.reflashTable();
           self.setFormData({});
           console.log("刷新表格成功");
-
+          self.setState({
+            xx:[],
+            fileState:'',
+            coverState:''
+          })
+          console.log(self.state.xx);
         }else{
           console.log(error);
         }
@@ -160,12 +168,19 @@ class ProductModal extends React.Component{
           console.log('更新商品');
           self.reflashTable();
           self.setFormData({});
+          self.setState({
+            xx:[],
+            fileState:'',
+            coverState:''
+          })
+          console.log(self.state.xx);
         }else{
           console.log(error);
         }
       })
 
     }
+
   }
 
 
@@ -173,10 +188,14 @@ class ProductModal extends React.Component{
 
 
   handleCancel = (e) => {
+    console.log('走了这');
     this.props.onCancel();
     this.setFormData({});
     this.setState({
-      descriptionKey:[]
+      descriptionKey:[],
+      xx:[],
+      fileState:'',
+      coverState:''
     })
 
 
@@ -185,7 +204,22 @@ class ProductModal extends React.Component{
   hideModal = () => {
     this.props.onCancel();
   };
-
+  changeXX(v){
+    console.log(v);
+    this.setState({
+      xx:v
+    })
+  }
+  changefileState(state){
+    this.setState({
+      fileState:state
+    })
+  }
+  changecoverState(state){
+    this.setState({
+      coverState:state
+    })
+  }
 
 
   render(){
@@ -202,7 +236,7 @@ class ProductModal extends React.Component{
           width={1000}
           style={{ top: 20 }}
         >
-          <ProductForm spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)} product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
+          <ProductForm xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
 
         </Modal>
       </div>

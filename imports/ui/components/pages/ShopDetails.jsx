@@ -142,11 +142,7 @@ class ShopDetails extends React.Component {
   onEditProduct = (id) => {
     let self =this;
 
-    self.setState({
-      productmodalVisible:true,
-      productmodalTitle:'修改商品',
-      product_id:id
-    })
+
 
     Meteor.call('get.oneproduct.id',id,function(err,alt){
       console.log(alt);
@@ -160,14 +156,19 @@ class ShopDetails extends React.Component {
       }
       const {dispatch } = self.props;
       if(!err){
+        console.log(alt);
         dispatch(editProduct(alt,spec_length,arr,id))
-
-
+        self.setState({
+          productmodalVisible:true,
+          productmodalTitle:'修改商品',
+          product_id:id
+        })
         console.log("当前不可编辑" + self.props.editState)
         console.log("当前是否为新增商品" + self.props.modalState)
 
       }
     })
+
 
   }
 
