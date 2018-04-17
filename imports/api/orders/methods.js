@@ -1,43 +1,94 @@
 import { Meteor } from 'meteor/meteor';
 import {Orders} from './orders.js';
 import {Shops} from '../shops/shops.js';
+import {ShopCarts} from '../shop_cart/shop_cart.js';
 import {ordersCount} from './actions.js';
 import { generateRondom } from './helper.js'
-
+import { validLoginToken } from '../actions/validLoginToken.js';
 
 Meteor.methods({
   'app.orders.insert'(params){
      let  orderCode = new Date().getTime().toString()+generateRondom(10).toString();
-    return  Orders.insert({
+     let order = Orders.insert({
       type: params.type,
       userId: params.userId,
       status: params.status,
-      shopId: params.shopId,
+      shopId: params.shop_id,
+      shopCover: params.shopCover,
+      shopName: params.shopName,
+      shopAddress: params.shopAddress,
       products: params.products,
       username: params.username,
-      address: params.adderss,
       mobile: params.mobile,
-      orderCode 
+      orderCode,
+      remark: '',
+      createdAt : new Date(),
     })
-    // return {
-    //   ...orders,
-    //   formMethod: 'app.orders.insert'
-    // }
+    return {
+      orderCode,
+      formMethod: 'app.orders.insert'
+    }
   },
   'app.shop_carts.orders'(product,filter,userId) {
-    console.log(product[0].productsData)
-    for(var i =0; i< product[0].productsData.length; i++){
-      console.log(111);
+    console.log(product);
+    console.log(filter);
+    console.log(userId);
+    
+    let  orderCode = new Date().getTime().toString()+generateRondom(10).toString();
+    for(var i=0;i<product.length;i++){
+      if(product[i].productsData.length !== 0 )
+         var order = Orders.insert({
+             userId,
+             status: 'unpaid',
+             address: "user.address.id",
+             username: product[i].username,
+             nickname: product[i].nickname,
+             mobile: product[i].mobile,
+             shopId: product[i].shop_id,
+             products: product[i].productsData,
+             orderCode,
+             remark: '',
+             createdAt : new Date(),
+          })
+         if(order){
+           ShopCarts.update(
+             { userId },
+              { $set:
+                {"shopsData": filter}
+              }
+            ) 
+         }
+    }
+    return {
+      orderCode,
+      formMethod: 'app.shop_carts.orders',
     }
   },
   'app.order.getone'(id) {
+    let total = 0;
+    let orders =  Orders.find({
+      orderCode: id
+    }).fetch()
+    console.log('order: ' + orders.length            );
+    for(var i=0;i<orders.length;i++){
+
+      for(var j =0;j<orders[i].products.length; j++) {
+        total += orders[i].products[j].count*orders[i].products[j].productSpec.spec_value/100
+      }
+    }
+   return {
+    orders, 
+    total,
+    formMethod: 'app.order.getone'
+   }
+  },
+  'app.getOrderByCode'(code) {
     let order =  Orders.findOne({
-      _id: id
+      orderCode: code
     })
-    let shop = Shops.findOne({_id: order.shopId})
-    return {
-     order,
-     shop
+   return {
+    order,
+    formMethod: 'app.getOrderByCode'
    }
   },
   'app.order.update'(params) {
@@ -100,8 +151,7 @@ Meteor.methods({
     return Orders.find(condition).count();
   },
   "get.allOrders"(userId){
-    let orders =  Orders.find({'createdBy':userId}).fetch();
-    console.log('++++++++++++++++++')
+    let orders =  Orders.find({'userId':userId}).fetch();
     console.log(orders)
     if(orders.length > 0){
       return orders
@@ -110,7 +160,7 @@ Meteor.methods({
     }
   },
   "get.paidOrders"(userId){
-    let orders =  Orders.find({'createdBy':userId,'status':'paid'}).fetch();
+    let orders =  Orders.find({'userId':userId,'status':'paid'}).fetch();
     console.log(orders)
     if(orders.length > 0){
       return orders
@@ -119,11 +169,29 @@ Meteor.methods({
     }
   },
   "get.unpaidOrders"(userId){
-    let orders =  Orders.find({'createdBy':userId,'status':'unpaid'}).fetch();
+    let orders =  Orders.find({'userId':userId,'status':'unpaid'}).fetch();
     if(orders.length > 0){
       return orders
     }else{
       return []
     }
   },
+  "get.cancelOrders"(userId){
+    let orders =  Orders.find({'userId':userId,'status':'canceled'}).fetch();
+    if(orders.length > 0){
+      return orders
+    }else{
+      return []
+    }
+  },
+  'app.cancel.order'(code,token){
+    if(validLoginToken(token)){
+      let order = Orders.findOne({orderCode:code})
+      Orders.update(order,{
+        $set:{
+          status: "canceled"
+        }
+      })
+    }
+  }
 });

@@ -20,5 +20,8 @@ import '/imports/api/reg/methods.js';
 import '/imports/api/balances/server/publications.js';
 import '/imports/api/shops/server/publications.js';
 import '/imports/api/products/server/publications.js';
+import '/imports/api/fancyshop/methods.js';
+import '/imports/api/apps/methods.js';
+import '/imports/api/apps/http.js';
 
 

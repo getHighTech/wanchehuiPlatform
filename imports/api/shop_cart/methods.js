@@ -24,6 +24,7 @@ Meteor.methods({
         ...shop_cart,
         formMethod: 'shop_carts.get_cart'
     }
+    
   },
   'shop_carts.insert_cart'(params) {
     let shop_cart = ShopCarts.insert(
@@ -31,5 +32,6 @@ Meteor.methods({
       )
     return ShopCarts.findOne({_id: shop_cart})
   },
+  
 
 })
