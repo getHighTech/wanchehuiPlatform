@@ -416,13 +416,39 @@ class ProductFormWrap extends Component {
       let spec_length=this.props.product.specifications;
       if(spec_length!=undefined)
       {
-        // var arr =new Array(4);
-        // for(var i=0;i<arr.length;i++){
-        //     arr[i] = i;
-        // }
-        // console.log(arr);
-        // this.change(a);
       }
+
+    }
+    handleConfirmName = (rule,value,callback ) => {
+      let id= this.props.id;
+      let condition={};
+      if(!this.props.modalState){
+        condition = {shopId:this.props.product.shopId,_id:{$ne:this.props.product._id}}
+      }
+      else{
+        condition={shopId:id}
+      }
+      console.log(condition);
+        const { getFieldValue } = this.props.form;
+        let newName=getFieldValue('name');
+        let newalt=[];
+        Meteor.call('get.product.byShopIdOr',condition,function(err,alt){
+          if(!err){
+            for(var i =0;i<alt.length;i++){
+              newalt.push(alt[i].name)
+            }
+
+          }
+          else{
+            console.log(err);
+          }
+          if(newalt.indexOf(newName)>-1){
+            callback('已有相同商品名！请重新输入')
+          }
+
+        })
+
+
 
     }
     getdesValue(){
@@ -616,7 +642,7 @@ class ProductFormWrap extends Component {
       >
       {getFieldDecorator('name', {
           initialValue: this.props.product.name,
-          rules: [{ required: true, message: '商品名称不能为空' }],
+          rules: [{ required: true, message: '商品名称不能为空'},{validator: this.handleConfirmName}]
       })(
 
           <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />

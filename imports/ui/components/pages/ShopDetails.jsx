@@ -75,6 +75,7 @@ class ShopDetails extends React.Component {
     }
     })
     Meteor.call('get.product.byShopId',id,function(error,result){
+      console.log(result);
       self.setState({
         product:result
       })
@@ -170,6 +171,24 @@ class ShopDetails extends React.Component {
     })
 
 
+  }
+  handleSearchInput(str){
+    let self= this;
+    let id= this.props.params._id;
+    let condition = {shopId:id,$or: [{name_zh: eval("/"+str+"/")},{name: eval("/"+str+"/")},{brief:eval("/"+str+"/")}]
+    };
+    console.log(condition);
+    Meteor.call('get.product.byShopIdOr',condition,function(err,alt){
+      if(!err){
+        console.log(alt);
+        self.setState({
+          product:alt
+        })
+      }
+      else{
+        console.log(err);
+      }
+    })
   }
 
   render(){
@@ -304,7 +323,7 @@ class ShopDetails extends React.Component {
 
         <div>
           <Input.Search
-                placeholder="搜索店铺相关"
+                placeholder="搜索商品相关"
                 style={{ width: 200 }}
                 onSearch={value => console.log(value)}
                 onInput={input => this.handleSearchInput(input.target.value) }

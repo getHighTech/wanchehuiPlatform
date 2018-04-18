@@ -116,6 +116,9 @@ Meteor.methods({
   'get.product.byShopId'(id){
     return Products.find({shopId:id}).fetch();
   },
+  'get.product.byShopIdOr'(condition){
+    return Products.find(condition).fetch();
+  },
   'get.oneproduct.id'(id,token){
     console.log(`打印token`)
     console.log(token)

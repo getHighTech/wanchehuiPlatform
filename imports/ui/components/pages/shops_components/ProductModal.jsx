@@ -95,7 +95,7 @@ class ProductModal extends React.Component{
     let self = this;
     let validated = true;
     console.log(this.formComponent);
-    this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated); // 不知道有没有更好的办法
+    this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated);
     if (!validated) {
       console.log('参数错误');
       return;
@@ -223,7 +223,6 @@ class ProductModal extends React.Component{
 
 
   render(){
-    console.log(this.props.productId);
     const {singleProduct, modalState, editState,length,key_arr,productId} = this.props
     return(
       <div>
@@ -236,7 +235,7 @@ class ProductModal extends React.Component{
           width={1000}
           style={{ top: 20 }}
         >
-          <ProductForm xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
+          <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
 
         </Modal>
       </div>
