@@ -299,7 +299,18 @@ export function updateOrder(loginToken, appName, orderParams, orderId){
             $set: {
                 ...orderParams
             }
-        })
+        });
+        if(updateRlt){
+            return {
+                type: "orders", 
+                msg: updateRlt,
+            }
+        }else{
+            return {
+                type: "error",
+                reason: "ORDERS UPDATE FAIL"
+            }
+        }
     })
 }
 
@@ -675,6 +686,49 @@ export function setUserContactDefatult(loginToken, appName, contactId){
                 type: "user_contact",
                 msg: updateRlt
             }
+        }
+    })
+}
+
+export function getNewestOneUserOrderByStatus(loginToken, appName, status, userId){
+    return getUserInfo(loginToken, appName, "orders", function(){
+        let order = Orders.find({userId, status},{
+            limit: 1,
+            sort: {
+                createdAt: -1
+            }
+        }).fetch()[0]
+        if(!order){
+            return {
+                type: "error",
+                reason: "ORDER NOT FOUND",
+            }
+        }
+        return {
+            type: "orders",
+            msg: order
+        }
+    })
+}
+
+export function getNewestUserOrders(loginToken, appName, status, userId, page, pagesize){
+    return getUserInfo(loginToken, appName, "orders", function(){
+        let orders = Orders.find({userId, status},{
+            skip: (page-1)*pagesize,
+            limit: pageize,
+            sort: {
+                createdAt: -1
+            }
+        }).fetch()
+        if(!orders || orders.lenght === 0){
+            return {
+                type: "error",
+                reason: "ORDER NOT FOUND",
+            }
+        }
+        return {
+            type: "orders",
+            msg: orders
         }
     })
 }
