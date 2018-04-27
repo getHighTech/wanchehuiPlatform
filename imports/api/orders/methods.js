@@ -83,13 +83,13 @@ Meteor.methods({
     formMethod: 'app.order.getone'
    }
   },
-  'app.getOrderByCode'(code) {
+  'app.getOrderById'(orderId) {
     let order =  Orders.findOne({
-      orderCode: code
+      _id: orderId
     })
    return {
     order,
-    formMethod: 'app.getOrderByCode'
+    formMethod: 'app.getOrderById'
    }
   },
   'app.order.update'(params) {
@@ -185,14 +185,19 @@ Meteor.methods({
       return []
     }
   },
-  'app.cancel.order'(code,token){
+  'app.cancel.order'(orderId,token){
     if(validLoginToken(token)){
-      let order = Orders.findOne({orderCode:code})
+      let order = Orders.findOne({_id:orderId})
       Orders.update(order,{
         $set:{
           status: "canceled"
         }
       })
+      let newOrder = Orders.findOne({_id:orderId})
+      return {
+        newOrder,
+        formMethod: 'app.cancel.order'
+       }
     }
   }
 });
