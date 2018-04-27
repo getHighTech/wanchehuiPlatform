@@ -18,13 +18,26 @@ import 'antd/lib/dropdown/style';
 class HeaderUserArea extends React.Component {
   constructor(props) {
     super(props);
-    let state = {
-      username: "载入中"
-    }
+
   }
+
+  state = {
+    username: "载入中"
+  }
+  
   componentDidMount(){
-    // let username = Meteor.user().username;
+    let self = this
+    Meteor.call('get.current.user',function(err,rlt) {
+      console.log(rlt)
+      if(!err){
+        self.setState({
+          username: rlt.username
+        })
+      }
+    })
   }
+
+
   loutOut(e){
     const { dispatch } = this.props;
     Meteor.logout(function(){
@@ -62,7 +75,7 @@ class HeaderUserArea extends React.Component {
       <Dropdown overlay={menu}>
         <Button  style={{ marginLeft: 8,
         display: "inline-block", }}>
-          用户名 <Icon type="down" />
+         {this.state.username}<Icon type="down" />
         </Button>
      </Dropdown>
     );

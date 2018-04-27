@@ -11,6 +11,7 @@ Meteor.methods({
     return Roles.insert({
         name_zh: params.name_zh,
         name: params.name,
+        time_limit:params.time_limit,
         permissions:params.permissions,
         state: true, 
         weight: 0,  //0权重权限最大
@@ -45,6 +46,7 @@ Meteor.methods({
             'createdAt': 1,
             'isSuper':1,
             'state':1,
+            'time_limit':1,
             'users':1,
             'weight':1
           }
@@ -57,7 +59,8 @@ Meteor.methods({
         $set: {
           name: params.name,
           name_zh: params.name_zh,
-          permissions: params.permissions,
+          time_limit: params.time_limit,
+          permissions:params.permissions,
         }
       });
     },
@@ -68,7 +71,11 @@ Meteor.methods({
         }
       });
     },
-    'roels.count'(){
+    'roles.count'(){
       return Roles.find().count();
+    },
+    'roles.all'(){
+      let roles = Roles.find({name: {$ne:"superAdmin"}});
+      return roles.fetch();
     }
 });

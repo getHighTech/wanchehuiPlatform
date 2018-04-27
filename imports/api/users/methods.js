@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-
+import { Accounts } from 'meteor/accounts-base'
 import {Orders} from "/imports/api/orders/orders.js"
+import { rolesBindingUser } from "/imports/api/roles/actions.js"
 
 import { allUsersMount,
         allCardUsersMount,
@@ -75,7 +76,9 @@ Meteor.methods({
     return getUserByAgencyId(agencyId);
   },
 
-
+  "get.user.byUserName"(username){
+    return  Meteor.users.findOne({"username": username});
+  },
   'users.cards.addOnToady'(){
     let date = new Date();
     let nextdate = (new Date((date/1000+86400)*1000))
@@ -167,6 +170,241 @@ Meteor.methods({
   },
   'user.findUsersbyUserIds'(userIds){
     return Meteor.users.find({_id: $in(userIds)})
-  }
+  },
+  'users.update'(id,phone,address){
+   let user = Meteor.users.update(id,
+      {
+        $set: {
+          profile: {mobile: phone},
+          adderss: {location: address}
+        }
+      }
+    );
+     return user
+  },
+  'users.mobile.exist'(mobile){
+    let phone = Meteor.users.findOne(
+      {
+        'profile.mobile': mobile
+      }
+    )
+    if (!phone) {
+      return true
+    }else {
+      return false
+    }
+  },
+  'login.mobie'(mobile) {
+     let user = Meteor.users.findOne({'profile.mobile': mobile})
+     if(user == undefined){
+         user =  Accounts.createUser({username: mobile})
+         Meteor.users.update(user,{
+          $set: {
+            'profile.mobile': mobile
+          }
+         })
+     }
+     return user
+  },
+  'forgot.mobile'(mobile) {
+     let user = Meteor.users.findOne({'profile.mobile': mobile})
+     Meteor.users.findOne({'username': mobile})
+     return  user._id
+  },
+  'set.password'(user,pwd) {
+      Accounts.setPassword(user,pwd,[])
+      return user
+  },
 
+  'set.password.from.fancyshop'(userId, password){
+    Accounts.setPassword(userId, password,[])
+    return userId
+  },
+
+  'register.user.from.fancyshop'(username, mobile, password, registerAddress){
+    userId =  Accounts.createUser({username, password});
+    if(userId){
+      Meteor.users.update(user,{
+        $set: {
+          'profile.mobile': mobile,
+          registerAddress,
+        }
+       })
+    }
+    
+  },
+
+  'get.current.user'(){
+    let user = Meteor.user()
+    if(user == undefined){
+      return
+    }else{
+      return user
+    }
+  },
+  'user.findUserById'(userId){
+    var stampedToken = Accounts._generateStampedLoginToken();
+    console.log(stampedToken);
+    var hashStampedToken = Accounts._hashStampedToken(stampedToken);
+    console.log(hashStampedToken);
+    Meteor.users.update(userId,
+      {$push: {'services.resume.loginTokens': hashStampedToken}}
+    );
+    //valid
+    let token = Accounts._hashLoginToken(stampedToken.token);
+    console.log(token);
+    let user =  Meteor.users.findOne({"_id": userId});
+    return {
+      ...user,
+      formMethod: 'user.findUserById'
+    }
+  },
+  'user.findUserByName'(username){
+    return Meteor.users.findOne({"username": username});
+  },
+  'user.login.from.fancyshop'(type, loginParams){
+    switch (type) {
+      case 'mobileSMS':
+      let mobileUser = Meteor.users.findOne({username: loginParams.mobile});
+      if(mobileUser === undefined){
+        mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.username});
+        if(mobileUser===undefined){
+          let newUserId =Accounts.createUser({
+            username: loginParams.mobile,
+            password: oginParams.mobile,
+          })
+          Meteor.update(mobileUser._id, {
+            "profile.mobile": loginParams.mobile,
+          });
+          mobileUser = Meteor.users.findOne({_id: newUserId});
+          return {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: true};
+        }
+      }
+      if(mobileUser){
+        let stampedTokenMobile = Accounts._generateStampedLoginToken();
+        let hashStampedTokenMobile = Accounts._hashStampedToken(stampedTokenMobile);
+        Meteor.users.update(mobileUser._id,
+          {$push: {'services.resume.loginTokens': hashStampedTokenMobile}}
+        );
+        return {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false};
+      }else{
+        return mobileUser;
+      }
+      case 'password':
+        let user = Meteor.users.findOne({username: loginParams.username});
+        if(user === undefined){
+          user = Meteor.users.findOne({'profile.mobile': loginParams.username});
+          if(user===undefined){
+            return "USER NOT FOUND";
+          }
+        }
+        let rlt = Accounts._checkPassword(user, loginParams.password);
+        if(rlt.userId === user._id && !rlt.error){
+          let stampedToken = Accounts._generateStampedLoginToken();
+          let hashStampedToken = Accounts._hashStampedToken(stampedToken);
+          Meteor.users.update(user._id,
+            {$push: {'services.resume.loginTokens': hashStampedToken}}
+          );
+          return {stampedToken, userId: user._id};
+        }else{
+          return rlt;
+        }
+        
+      default:
+        return "error";
+    }
+  },
+
+  'user.logined'(userId, stampedToken){
+    let hashStampedToken = Accounts._hashStampedToken(stampedToken);
+    let hashedToken = hashStampedToken.hashedToken;
+    let validToken = Accounts._hashLoginToken(stampedToken.token);
+    if(hashedToken===validToken){
+      let user = Meteor.users.findOne({_id: userId});
+      user = {
+        ...user,
+        formMethod: 'user.logined'
+      }
+      return user;
+    }else{
+      return null;
+    }
+  },
+  
+  'user.changeNickname'(userId,nickname){
+    if(userId==undefined){
+      return "未获取到当前用户"
+    }else{
+      Meteor.users.update(userId,{
+        $set: {
+          'nickname': nickname
+        }
+       })
+       return  Meteor.users.findOne({_id:userId})
+    }
+  },
+  'user.changeSex'(userId,sex){
+    if(userId==undefined){
+      return "未获取到当前用户"
+    }else{
+       Meteor.users.update(userId,{
+        $set: {
+          'sex': sex
+        }
+       })
+       return Meteor.users.findOne({_id:userId})
+    }
+
+  },
+  'user.changeDataAutograph'(userId,dataAutograph){
+    if(userId==undefined){
+      return "未获取到当前用户"
+    }else{
+      Meteor.users.update(userId,{
+        $set: {
+          'dataAutograph': dataAutograph
+        }
+       })
+       return Meteor.users.findOne({_id:userId});
+    }
+
+  },
+  'user.changeCarnumber'(user,carnumber){
+    if(user==undefined){
+      return "未获取到当前用户"
+    }else{
+      return Meteor.users.update(user,{
+        $set: {
+          'carnumber': carnumber
+        }
+       })
+    }
+
+  },
+  'user.changeBirthday'(userId,birthday){
+    if(userId==undefined){
+      return "未获取到当前用户"
+    }else{
+       Meteor.users.update(userId,{
+        $set: {
+          'birthday': birthday
+        }
+       })
+       return Meteor.users.findOne({_id:userId});
+    }
+
+  },
+  'user.changeArea'(userId,area){
+    if(userId==undefined){
+      return "未获取到当前用户"
+    }else{
+      Meteor.users.update(userId,{
+        $set: {
+          'area': area
+        }
+       })
+       return Meteor.users.findOne({_id:userId});
+    }
+
+  },
 });

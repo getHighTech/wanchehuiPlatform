@@ -3,12 +3,14 @@ import { Meteor } from 'meteor/meteor';
 import {findBalanceChargeData} from './balance_charge_actions.js'
 import {BalanceCharges} from './balance_charges';
 import {Balances} from './balances';
-import {allBalanceChargeCount} from './actions.js';
+import {allBalanceChargeCount,getCurrentMonthFirst,getCurrentMonthLast} from './actions.js';
 import { Bankcards } from "/imports/api/bankcards/bankcards.js";
+import { BalanceIncomes } from './balance_incomes.js';
 
 import { findBalanceByUserId, findBalanceByUserIdAll, findBalanceByUsername } from './balances_actions.js'
 import { getIncomeRecords } from './balance_incomes_actions.js'
 import { log } from 'util';
+import { validLoginToken } from '../actions/validLoginToken.js';
 
 Meteor.methods({
   "balances.userId"(userId){
@@ -62,7 +64,7 @@ Meteor.methods({
     return Bankcards.findOne({userId:_id}).accountNumber;
   },
   'bankcards.accouts'(ids) {
-    return Bankcards.find({userId: {$in: ids}}).fetch();
+    return Bankcards.find({_id: {$in: ids}}).fetch();
   },
   'bankcards.address'(ids) {
     return Bankcards.find({userId: {$in: ids}}).fetch();
@@ -104,7 +106,72 @@ Meteor.methods({
   },
   "get.balance_charges.InThisTimeCount"(condition){
     return BalanceCharges.find(condition).count();
+  },
+   'app.get.balance_incomes.toady.total'(userId,token){
+    if(validLoginToken(token)){
+      console.log(`获取佣金`)
+    console.log(userId)
+    let date = new Date();
+    let nextdate = (new Date((date/1000+86400)*1000))
+    var currentDate = date.Format("yyyy/MM/dd");
+    var nextDate = nextdate.Format("yyyy/MM/dd");
+    var day_of_week = new Date().getDay()
+    if( day_of_week == 0){
+       day_of_week = 7
+    }
+    let exdate = (new Date((date/1000-day_of_week*86400)*1000))
+    var currentMondayDate =  (new Date((exdate/1000+86400*7
+      )*1000)).Format("yyyy/MM/dd");
+    var exDate = exdate.Format("yyyy/MM/dd");
+    var getCurrentMonthFirstDay = getCurrentMonthFirst().Format("yyyy/MM/dd");
+    var getCurrentMonthLastDay = getCurrentMonthLast().Format("yyyy/MM/dd");
+    let today_balance_incomes = BalanceIncomes.aggregate([
+        { $match: {userId: userId, createdAt: {'$gte':new Date(currentDate),'$lt':new Date(nextDate)}}},
+        { $group: {_id: '$userId',total: {$sum: "$amount"}}}
+    ])
+    let week_balance_incomes = BalanceIncomes.aggregate([
+        { $match: {userId: userId,createdAt: {'$gt':new Date(exDate),'$lte':new Date(currentMondayDate)}}},
+        { $group: {_id: '$userId',total: {$sum: "$amount"}}}
+    ])
+    let month_balance_incomes = BalanceIncomes.aggregate([
+        { $match: {userId: userId,createdAt: {'$gte':new Date(getCurrentMonthFirstDay),'$lte':new Date(getCurrentMonthLastDay)}}},
+        { $group: {_id: '$userId',total: {$sum: "$amount"}}}
+    ])
+    if(today_balance_incomes.length==0){
+      today_balance_incomes =  0 
+    }else{
+      today_balance_incomes = today_balance_incomes[0].total
+    }
+    if(week_balance_incomes.length==0){
+      week_balance_incomes =  0 
+    }else{
+      week_balance_incomes = week_balance_incomes[0].total
+    } 
+    if(month_balance_incomes.length==0){
+      month_balance_incomes = 0 
+    }else{
+      month_balance_incomes = month_balance_incomes[0].total
+    }
+    let total = {todayTotal: today_balance_incomes, weekTotal:  week_balance_incomes,monthTotal: month_balance_incomes, }
+    console.log(total);
+    return { total,formMethod: 'app.get.balance_incomes.toady.total' }
+  }else{
+    return { formMethod: 'app.get.balance_incomes.toady.total', err: "ACCESS DENY"}
   }
-
+    
+  },
+  "app.get.current.balance" (userId,token) {
+    console.log(`userId`);
+    console.log(userId)
+    if(validLoginToken(token)){
+      let balance = Balances.findOne({userId: userId})
+      if(balance==null){
+        balance = {amount: 0}
+      }
+      return Object.assign({},balance,{ formMethod: 'app.get.current.balance'})
+    }else{
+      return {formMethod: 'app.get.current.balance', err: "ACCESS DENY"}
+    }
+  },
 
 });

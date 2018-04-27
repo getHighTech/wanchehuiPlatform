@@ -1,4 +1,6 @@
 import { Roles } from '../../api/roles/roles.js';
+import { UserRoles } from '../../api/user_roles/user_roles.js';
+
 //这里预设好所有的用户及其角色
 export function prebuildAdmin(){
   let roles = Roles.find({name: "superAdmin"});
@@ -64,15 +66,6 @@ export function prebuildAdmin(){
         },
       }
     });
-    Roles.update(newAdminId, {
-      $set: {
-        recordAccess: {
-          read: [newAdminId],
-          edit: [newAdminId],
-          remove: [],
-        },
-      }
-    });
 
   }
 
@@ -85,16 +78,23 @@ export function prebuildAdmin(){
         });
 
     console.log("超级管理员", newUserId);
-    Meteor.users.update(newUserId,{
-      $set: {
-        roleId: newAdminId
-      }
-    }),
-    Roles.update(newAdminId, {
-      $set: {
-        users: [newUserId]
-      }
-    });
+    UserRoles.insert({
+      roleName: 'superAdmin',
+      userId: newUserId,
+      roleId: newAdminId,
+      createdAt: new Date(),
+      status:true
+    })
+    // Meteor.users.update(newUserId,{
+    //   $set: {
+    //     roleId: newAdminId
+    //   }
+    // }),
+    // Roles.update(newAdminId, {
+    //   $set: {
+    //     users: [newUserId]
+    //   }
+    // });
 
   }
 

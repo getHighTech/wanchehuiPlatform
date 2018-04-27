@@ -17,3 +17,7 @@ export function getProductTypeById(productId){
   return "NOT FOUND";
 
 }
+
+export function getProductByZhName(zhName){
+  return Products.findOne({name_zh: zhName});
+}

@@ -1,17 +1,32 @@
 import { Meteor } from 'meteor/meteor';
 import { Shops } from './shops.js'
-
+import { validLoginToken } from '../actions/validLoginToken.js';
 Meteor.methods({
     'shops.insert'(params){
       console.log(params)
         return Shops.insert({
-            shopName: params.shopName,
-            shopPhone: params.shopPhone,
-            shopPicture:params.shopPicture,
-            shopAddress: params.shopAddress,
-            shopDescrption:params.shopDescrption,
-            shopTag:params.shopTag,
-            shopState: true, //true为营业，fasle为关闭
+            name: params.name,
+            phone: params.phone,
+            pictures:params.pictures,
+            description: params.description,
+            tags:params.tags,
+            cover:params.cover,
+            address: params.address,
+            lntAndLat:params.lntAndLat,
+            status: true, //true为营业，fasle为关闭
+            acl: {
+              own: {
+                roles: ["shop_owner"],
+                users: [],
+              },
+              read: {
+                roles: ['nobody', 'login_user']
+              },
+              write: {
+                roles: ["shop_owner","shop_manager"],
+                users: [],
+              }
+            },
             createdAt : new Date(),
           });
     },
@@ -21,12 +36,17 @@ Meteor.methods({
             sort: {"createdAt": -1},
             fields:
               {
-                'shopName': 1,
-                'shopAddress': 1,
-                'shopPhone': 1,
-                'shopState':1 ,
-                'shopPicture':1,
+                'name': 1,
+                'phone': 1,
+                'pictures': 1,
+                'description':1 ,
+                'tags':1,
                 'createdAt': 1,
+                'cover':1,
+                'address':1,
+                'lntAndLat':1,
+                'status':1,
+                'acl':1
               }
             }
           );
@@ -39,11 +59,34 @@ Meteor.methods({
       }
       return shop;
     },
+    'shops.findShopName'(shopId,token){
+      if(validLoginToken(token)){
+        let shop = Shops.findOne({_id:shopId})
+        if (!shop) {
+          return "SHOP NOT FOUND";
+        }
+        return {
+          shopName:shop.name,
+          formMethod: "shops.findShopName"
+        };
+      }
+
+    },
+    'shops.findOneShopById'(shopId){
+      let shop = Shops.find({_id:shopId}).fetch();
+      return shop;
+    },
+    'shops.editAddress'(id,address){
+      return Shops.update({_id:id},{$set:{address:address}});
+    },
+    'shops.editPhone'(id,phone){
+      return Shops.update({_id:id},{$set:{phone:phone}});
+    },
     'shops.changeShopState'(shopId){
       let shop = Shops.findOne({_id:shopId})
        Shops.update(shopId, {
         $set: {
-          shopState: !shop.shopState,
+          status: !shop.status,
         }
       });
       return shop
@@ -51,16 +94,50 @@ Meteor.methods({
     'shops.update'(shop, params){
       Shops.update(shop, {
         $set: {
-          shopName: params.shopName,
-          shopAddress: params.shopAddress,
-          shopPhone: params.shopPhone,
-          shopDescrption:params.shopDescrption,
-          shopTag:params.shopTag,
-          shopPicture:params.shopPicture,
+          name: params.name,
+          phone: params.phone,
+          pictures:params.pictures,
+          description: params.description,
+          tags:params.tags,
+          cover:params.cover,
+          address: params.address,
+          lntAndLat:params.lntAndLat,
         }
       });
     },
     'shops.count'(){
       return Shops.find().count();
+    },
+    'shop.update.acl_own'(shop,userId){
+      if(shop.acl.own.users.length > 0){
+        console.log('=============')
+        console.log('以前有店长')
+        let OldOwner = shop.acl.own.users
+        Shops.update(shop, {
+          $set:{
+            'acl.own.users': userId
+          }
+        });
+      console.log('=============')
+      console.log('旧店长ID:'+ OldOwner)
+      return OldOwner;
+      }else{
+        console.log('=============')
+        console.log('以前无店长')
+        Shops.update(shop, {
+          $set:{
+            'acl.own.users': userId
+          }
+        })
+      }
+
+    },
+    'shops.getByCurrentUser'(currentUserId){
+      let shops = Shops.find({'acl.own.users': currentUserId}).fetch()
+      if(shops.length ===0){
+        return []
+      }else{
+        return shops
+      }
     }
 })

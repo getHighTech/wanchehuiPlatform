@@ -45,11 +45,15 @@ class NewMemberApplyWrap extends Component {
 
   constructor(props){
     super(props);
+    console.log(props);
     const html = this.props.applyInfo.applyIntro;
+    console.log(html);
     const contentBlock = htmlToDraft(html);
+    console.log(contentBlock);
     const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+    console.log(contentState);
     const editorState = EditorState.createWithContent(contentState);
-
+    console.log(editorState);
     this.state = {
       applyName: {
         validateStatus: "success",
@@ -77,6 +81,10 @@ class NewMemberApplyWrap extends Component {
     };
 
 
+  }
+  state={
+    a:'',
+    b:0
   }
   componentDidMount(){
 
@@ -136,6 +144,7 @@ class NewMemberApplyWrap extends Component {
     }else {
       //文本块行数
         let blocks = form.getFieldValue("applyIntro").blocks;
+        console.log(blocks);
         this.checkBlockBlank(blocks);
 
     }
@@ -222,7 +231,6 @@ class NewMemberApplyWrap extends Component {
       let self = this;
       this.props.form.validateFields((err, values) => {
         if (!err) {
-
           if (values.applyName == undefined) {
             self.setState({
               applyName: {
@@ -255,8 +263,11 @@ class NewMemberApplyWrap extends Component {
 
             });
           }
+          console.log(self.state.contentState);
           let htmlcontent = draftToHtml(convertToRaw(self.state.contentState.getCurrentContent()));
+          console.log(htmlcontent);
           const contentBlock = htmlToDraft(htmlcontent);
+          console.log(contentBlock);
           if (contentBlock == undefined) {
             self.setState({
               applyIntro: {
@@ -287,6 +298,7 @@ class NewMemberApplyWrap extends Component {
     }
 
     onEditorStateChange(editorState) {
+      console.log(editorState);
       this.setState({
         contentState: editorState,
       });

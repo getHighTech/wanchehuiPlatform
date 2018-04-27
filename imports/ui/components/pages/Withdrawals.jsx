@@ -39,7 +39,9 @@ state= {
   totalCount:500,
 }
 
+getData(){
 
+}
 getDateSearchData(rlt){
   this.setState({
     balanceChargesData:rlt
@@ -327,7 +329,10 @@ handleonChange(date, dateString) {
     getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
     SearchCondition = {this.state.condition}
     />
-    <Exportexcel />
+
+    <Exportexcel
+    getData={this.state.balanceChargesData}
+    />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
             pagination={{defaultPageSize: 20,
@@ -345,8 +350,10 @@ handleonChange(date, dateString) {
     getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
     SearchCondition = {this.state.condition}
     />
-    <Exportexcel />
 
+    <Exportexcel
+    getData={this.state.balanceChargesData}
+    />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
             pagination={{defaultPageSize: 20,
@@ -364,8 +371,10 @@ handleonChange(date, dateString) {
     getDateSearchtotalCount ={this.getDateSearchtotalCount.bind(this)}
     SearchCondition = {this.state.condition}
     />
-    <Exportexcel />
-    
+
+    <Exportexcel
+    getData={this.state.balanceChargesData}
+    />
     <Table  dataSource={this.state.balanceChargesData}
             rowKey='_id'
             pagination={{defaultPageSize: 20,

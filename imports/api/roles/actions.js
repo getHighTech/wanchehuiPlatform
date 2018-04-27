@@ -25,3 +25,27 @@ export function permitRoleRule(role, moduleName, weight, curd){
  // }
 
 }
+
+export function rolesBindingUser(roleId,userId){
+  Roles.update(roleId,{
+    $push:{
+      users: { userId }
+    }
+  })
+}
+export function getRoleById(roleId) {
+  let role =  Roles.findOne({_id:roleId})
+  if (role === undefined){
+    return null;
+  }else{
+    return role
+  }
+}
+export function getRoleByName(name) {
+  let role =  Roles.findOne({name:name})
+  if (role === undefined){
+    return null;
+  }else{
+    return role
+  }
+}

@@ -16,6 +16,8 @@ import "antd/lib/icon/style";
 import PageHeader from "./PageHeader.jsx";
 import { createContainer } from 'meteor/react-meteor-data';
 import { Roles } from '/imports/api/roles/roles.js';
+import { getCurrentRoles,createMeunList } from '/imports/ui/actions/roles.js';
+
 class MainLayout extends Component {
   constructor(props) {
     super(props);
@@ -25,11 +27,48 @@ class MainLayout extends Component {
 
   }
   componentDidMount(){
+    let SuperAdminMenu = [
+      {"key": "dashboard", "name": "控制面板", "IconType": "bars"},
+      {"key": "users", "name": "用户管理", "IconType": "user"},
+      {"key": "shops", "name": "店铺管理", "IconType": "shop"},
+      {"key": "orders", "name": "订单管理", "IconType": "book"},
+      {"key": "withdrawals", "name": "提现管理", "IconType": "pay-circle-o"},
+      {"key": "roles", "name": "角色管理", "IconType": "paper-clip"},
+      {"key": "settings", "name": "系统设置", "IconType": "setting"},
+      {"key": "logs", "name": "系统日志", "IconType": "paper-clip"},
+      {"key": "component_test", "name": "测试组件", "IconType": "paper-clip"}
+    ]
+    let ShopOwnerMenu = [
+      {"key": "dashboard", "name": "控制面板", "IconType": "bars"},
+      {"key": "shops", "name": "店铺管理", "IconType": "shop"},
+      {"key": "orders", "name": "订单管理", "IconType": "book"}
+
+    ]
+    let self = this
     if (Meteor.userId() == null) {
       //若是已经登录 就返回主页
       const { dispatch } = this.props;
       dispatch(push("/login"));
       message.warning("请先登录！")
+    }else{
+      const { dispatch } = this.props;
+      let userId = Meteor.userId()
+      Meteor.call('roleNames.find_by_user_id',userId, function(err,rlt){
+        dispatch(getCurrentRoles(rlt));
+        if(rlt.indexOf('superAdmin') == -1){
+          console.log("不是超级管理员")
+          dispatch(createMeunList(ShopOwnerMenu))
+        }else{
+          console.log("超级管理员")
+          dispatch(createMeunList(SuperAdminMenu))
+        }
+        // console.log('将角色存入REDUX')
+
+        console.log(self.props)
+
+
+
+      })
     }
     const pathname = this.props.routing.locationBeforeTransitions.pathname;
     switch (pathname) {
@@ -39,7 +78,6 @@ class MainLayout extends Component {
       });
       break;
       default:
-
     }
     $(document).ready(function(){
       $(this).unbind("click").on('click',function(e){
@@ -90,6 +128,8 @@ class MainLayout extends Component {
 
 
   render() {
+    const { LeftMenuList } = this.props;
+
     return(  <Layout>
         <Sider
           breakpoint="lg"
@@ -103,7 +143,15 @@ class MainLayout extends Component {
           mode="inline" defaultSelectedKeys={[this.state.menuActiveKey]}
           onClick={this.handleMenuItemClicked.bind(this)}
           >
-            <Menu.Item key="dashboard">
+          	{
+              this.props.LeftMenuList.map((e, index) =>
+              <Menu.Item key={e.key}>
+                    <Icon type={e.IconType} />
+                    <span className="nav-text">{e.name}</span>
+              </Menu.Item>
+              )
+            }
+           {/* <Menu.Item key="dashboard">
               <Icon type="bars" />
               <span className="nav-text">控制面板</span>
             </Menu.Item>
@@ -123,10 +171,6 @@ class MainLayout extends Component {
               <Icon type="pay-circle-o" />
               <span className="nav-text">提现管理</span>
             </Menu.Item>
-            <Menu.Item key="agency_relations">
-              <Icon type="paper-clip" />
-              <span className="nav-text">分销关系管理</span>
-            </Menu.Item>
             <Menu.Item key="roles">
               <Icon type="paper-clip" />
               <span className="nav-text">角色管理</span>
@@ -142,8 +186,7 @@ class MainLayout extends Component {
             <Menu.Item key="component_test">
               <Icon type="paper-clip" />
               <span className="nav-text">组件测试页面</span>
-            </Menu.Item>
-
+            </Menu.Item> */}
           </Menu>
         </Sider>
         <Layout>
@@ -179,15 +222,10 @@ class MainLayout extends Component {
 
 function mapStateToProps(state) {
   return {
-    routing: state.routing
+    routing: state.routing,
+    currentRoles:state.RolesList.currentRoles,
+    LeftMenuList:state.RolesList.LeftMenuList,
    };
 }
 
-export default createContainer(() => {
-  if (Meteor.userId()) {
-    Meteor.subscribe('roles.current');
-  }
-  return {
-    current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
-  };
-}, connect(mapStateToProps)(MainLayout));
+export default connect(mapStateToProps)(MainLayout);

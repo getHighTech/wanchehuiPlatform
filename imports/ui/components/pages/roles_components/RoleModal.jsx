@@ -15,6 +15,8 @@ import Tooltip from 'antd/lib/tooltip';
 import "antd/lib/tooltip/style";
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style';
+import InputNumber from 'antd/lib/input-number';
+import 'antd/lib/input-number/style';
 import Row from 'antd/lib/row';
 import 'antd/lib/row/style';
 import Col from 'antd/lib/col';
@@ -55,6 +57,12 @@ class RoleModalWrap extends React.Component {
         const newObj = {}
         newObj.name = oldFormData.name
         newObj.name_zh = oldFormData.name_zh
+        if(oldFormData.time_limit === -1){
+          newObj.time_limit = oldFormData.time_limit
+        }else{
+          newObj.time_limit = oldFormData.time_limit*525600000
+        }
+        
         // let permissionObj = {shops:{}, orders:{},users:{},roles:{},distributions:{}}
         newObj.permissions = {};
         let permissionsProps = ['shops', 'orders','users','roles','distributions'];
@@ -74,7 +82,13 @@ class RoleModalWrap extends React.Component {
                   message.success('角色添加成功');
                   self.props.refleshTable();
                   console.log(rlt)
-                  
+                  self.setState({
+                    shops:{},
+                    orders:{},
+                    users:{},
+                    roles:{},
+                    distributions:{}
+                  })
                 }
               })
             }else{
@@ -85,6 +99,8 @@ class RoleModalWrap extends React.Component {
           console.log("执行修改操作")
           Meteor.call('role.update', self.props.singleRole,newObj,function(err,rlt){
             if(!err){
+              console.log(newObj)
+              console.log(self.props.singleRole)
               self.hideModal();
               form.resetFields();
               message.success('角色修改成功');
@@ -209,6 +225,7 @@ class RoleModalWrap extends React.Component {
   }
 
   getInitialvalue = (str) => {
+    console.log("执行初始值转化")
     return this.objToArry(this.props.singleRole, str)
   };
 
@@ -310,6 +327,24 @@ class RoleModalWrap extends React.Component {
                 })(
                   <Input disabled={!this.props.modalInsert}/>
                 )}
+              </FormItem>
+              <FormItem
+                {...formItemLayout}
+                label={(
+                  <span>
+                    角色期限&nbsp;
+                    <Tooltip title="英文标识必须为唯一的">
+                      <Icon type="question-circle-o" />
+                    </Tooltip>
+                  </span>
+                )}
+              >
+                {getFieldDecorator('time_limit', {
+                  initialValue: this.props.singleRole.time_limit === -1 ? -1 : (isNaN(this.props.singleRole.time_limit)?'':this.props.singleRole.time_limit/525600000),
+                })(
+                  <Input  style={{ width: '65%', marginRight: '3%' }}/>
+                )}
+                <span className="ant-form-text">年</span>
               </FormItem>
               <Divider>为该角色添加以下权限</Divider>
               <FormItem

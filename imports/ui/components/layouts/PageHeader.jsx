@@ -4,7 +4,6 @@ import HeaderUserArea from './HeaderUserArea.js';
 
 const PageHeader = (path) => {
   let title = function(path){
-
     switch (path) {
       case "/component_test":
         return "组件测试页面"
@@ -17,6 +16,10 @@ const PageHeader = (path) => {
         break;
       case "/shops":
         return "店铺管理"
+        break;
+      case (path.match(/\/shops\/single_shop\/shop_details\/\S{2,}/) || {}).input:
+      // /\/shops\/singleshop\/publishgoods\/\S{2,}/.test(path):
+        return "商家店铺详情"
         break;
       case "/shops/shop_item":
       return "新增店铺"
