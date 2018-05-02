@@ -84,8 +84,10 @@ class ProductFormWrap extends Component {
     state = {
         cover: '',
         fileList: [],
+        fileListDetails:[],
         fileListMore:this.props.xx,
         image_url:this.props.product.cover,
+        image_details:this.props.product.detailsImage,
         value: false,
         status:false,
         images:[],
@@ -229,6 +231,16 @@ class ProductFormWrap extends Component {
 
       })
     }
+    if(this.props.product.detailsImage!=null){
+      this.setState({
+        fileListDetails:[{uid:1,url:this.props.product.detailsImage}]
+      })
+    }
+    else{
+      this.setState({
+        fileListDetails:[{uid:1,url:''}]
+      })
+    }
     let self =this;
 
     self.setState({
@@ -283,6 +295,22 @@ class ProductFormWrap extends Component {
           this.setState({
             cover: nextProps.product.cover,
           })
+console.log(nextProps.product.detailsImage);
+
+        if(nextProps.product.detailsImage!=null){
+          console.log(nextProps.product.detailsImage);
+          this.setState({
+            fileListImages:[{uid:1,url:nextProps.product.detailsImage}],
+          })
+        }
+        else{
+          this.setState({
+            fileListImages:[{uid:1,url:''}]
+          })
+        }
+        this.setState({
+          detailsImage:nextProps.product.detailsImage
+        })
         }
         else {
           if(nextProps.coverState!='done'){
@@ -350,6 +378,31 @@ class ProductFormWrap extends Component {
       }
       self.setState({
         fileList:fileList
+      })
+    }
+    handleChangeDetails(info) {
+      let fileList = info.fileList;
+      fileList = fileList.slice(-1);
+      let self = this
+      if (info.file.status === 'uploading') {
+          console.log("上传中。");
+      }
+      if (info.file.status === 'done') {
+          console.log("上传成功。");
+          // console.log(info.file.response.data.link)
+          // console.log(self.state.image_url);
+          self.setState({
+            image_details:info.file.response.data.link
+          })
+          self.props.changedetailsState(info.file.status)
+          const setFieldsValue = this.props.form.setFieldsValue;
+          setFieldsValue({detailsImage:self.state.image_details})
+
+      } else if (info.file.status === 'error') {
+          console.log("上传失败。");
+      }
+      self.setState({
+        fileListDetails:fileList
       })
     }
     changeOpenState(){
@@ -538,7 +591,7 @@ class ProductFormWrap extends Component {
     }
 
     render() {
-      const { contentState,cover ,fileList,fileListMore} = this.state;
+      const { contentState,cover ,fileList,fileListMore,fileListDetails} = this.state;
       const  { product } = this.props;
         let uploadProps = {
           action: '/images/upload',
@@ -553,6 +606,12 @@ class ProductFormWrap extends Component {
         listType: 'picture',
         fileList:fileListMore
       };
+      const uploadPropsDetails={
+        action: '/images/upload',
+        onChange:this.handleChangeDetails.bind(this),
+        listType:'picture',
+        fileList:fileListDetails
+      }
 
       const { getFieldDecorator, getFieldValue } = this.props.form;
           const formItemLayout = {
@@ -721,7 +780,23 @@ class ProductFormWrap extends Component {
                 </Button>
             </Upload>
         </FormItem>
+        <FormItem
+        {...formItemLayout}
+        label="商品图片"
+        hasFeedback
+        >
+        {getFieldDecorator('detailsImage',{
+          initialValue:this.props.product.detailsImage,
+        })(
+          <Input type="text"   style={{display:'none'}}    placeholder="图片地址" />
+        )}
 
+        <Upload {...uploadPropsDetails}>
+            <Button disabled={this.props.editState}>
+            <Icon type="upload" /> 上传详情图片
+            </Button>
+        </Upload>
+        </FormItem>
 
       <FormItem
       {...formItemLayout}

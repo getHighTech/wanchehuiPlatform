@@ -62,8 +62,11 @@ class OrdersForShop extends React.Component{
     let self =this;
 
     Meteor.call('orders.getShopId',shopId,function(erroy,result){
-      console.log(result);
-      console.log(erroy);
+      console.log(result[0]);
+      // let a =result[0]
+      // Meteor.call('role_order_status.insert',a,function(err,alt){
+      //   console.log(err);
+      // })
       if(!erroy){
         for(var i = 0;i<result.length;i++){
           let productName=[];
