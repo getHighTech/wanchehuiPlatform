@@ -37,9 +37,11 @@ class ProductModal extends React.Component{
     xx:[],
     fileState:'',
     coverState:'',
+    detailsState:'',
     spec : '',
     spec_length:0,
-    descriptionKey:[]
+    descriptionKey:[],
+    shopName:''
   }
 
   initAmap(){
@@ -83,8 +85,14 @@ class ProductModal extends React.Component{
   componentWillMount(){
   }
   componentDidMount(){
-    console.log('2');
-    console.log(this.props)
+    let shopId=this.props.id;
+    // Meteor.call('shops.findShopById',shopId,function(err,alt){
+    //   console.log(alt);
+    //   this.setState({
+    //     shopName:alt.name
+    //   })
+    // })
+
     console.log(this.props.productmodalVisible);
     console.log(this.props.productId);
   }
@@ -154,7 +162,8 @@ class ProductModal extends React.Component{
           self.setState({
             xx:[],
             fileState:'',
-            coverState:''
+            coverState:'',
+            detailsState:''
           })
           console.log(self.state.xx);
         }else{
@@ -171,7 +180,8 @@ class ProductModal extends React.Component{
           self.setState({
             xx:[],
             fileState:'',
-            coverState:''
+            coverState:'',
+            detailsState:''
           })
           console.log(self.state.xx);
         }else{
@@ -195,7 +205,8 @@ class ProductModal extends React.Component{
       descriptionKey:[],
       xx:[],
       fileState:'',
-      coverState:''
+      coverState:'',
+      detailsState:''
     })
 
 
@@ -220,6 +231,11 @@ class ProductModal extends React.Component{
       coverState:state
     })
   }
+  changedetailsState(state){
+    this.setState({
+      detailsState:state
+    })
+  }
 
 
   render(){
@@ -235,7 +251,7 @@ class ProductModal extends React.Component{
           width={1000}
           style={{ top: 20 }}
         >
-          <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
+          <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} detailsState={this.state.detailsState} changedetailsState={this.changedetailsState.bind(this)} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
 
         </Modal>
       </div>

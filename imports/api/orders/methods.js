@@ -33,7 +33,7 @@ Meteor.methods({
     console.log(product);
     console.log(filter);
     console.log(userId);
-    
+
     let  orderCode = new Date().getTime().toString()+generateRondom(10).toString();
     for(var i=0;i<product.length;i++){
       if(product[i].productsData.length !== 0 )
@@ -56,7 +56,7 @@ Meteor.methods({
               { $set:
                 {"shopsData": filter}
               }
-            ) 
+            )
          }
     }
     return {
@@ -77,7 +77,7 @@ Meteor.methods({
       }
     }
    return {
-    orders, 
+    orders,
     total,
     formMethod: 'app.order.getone'
    }
@@ -129,6 +129,11 @@ Meteor.methods({
     }
   )
     return ordersdata.fetch();
+  },
+  'orders.getShopId'(id){
+    console.log(id);
+    console.log(Orders.find({'products.shopId':id}).fetch());
+    return Orders.find({'products.shopId':id}).fetch();
   },
   'orders.accouts'(ids) {
     return Orders.find({createdBy: {$in: ids}}).fetch();
