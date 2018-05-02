@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 
 import {Products} from '../products/products';
-import { findOneAppByName, getOneProduct, appLoginUser, syncUser, createNewOrder, loadOneOrderById, loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult } from './apps';
+import { findOneAppByName, getOneProduct, appLoginUser, syncUser, createNewOrder, loadOneOrderById, loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus } from './apps';
 
 Meteor.methods({
-    'wanrenchehui.temp.home'(appName){
+    'wanrenchehui.temp.home'(loginToken, appName){
         //临时的万人车汇项目首页，以后此接口将会被废止
 
         if(!findOneAppByName(appName)){
@@ -21,17 +21,15 @@ Meteor.methods({
         }
     },
 
-    "app.syncRemote.user"(userId, stampedToken, appName){
+    "app.syncRemote.user"(loginToken, appName, userId){
         //同步用户信息
-        let stampedTokenObj = JSON.parse(stampedToken);
-        console.log(stampedTokenObj);
-        
+        let stampedTokenObj = JSON.parse(loginToken);
         return Object.assign({}, syncUser(userId, stampedTokenObj, appName), {
             fromMethod: "app.syncRemote.user"
         })
     },
 
-    "app.user.login"(type, loginParams, appName){
+    "app.user.login"(loginToken, appName, type, loginParams){
         //用户登陆
         let rlt = appLoginUser(type, loginParams, appName);
         return Object.assign({}, rlt, {
@@ -39,7 +37,7 @@ Meteor.methods({
         })
     },
 
-    'app.load.app.info'(appName){
+    'app.load.app.info'(loginToken, appName){
         //载入应用信息
         let app = findOneAppByName(appName);
         if(!app){
@@ -57,14 +55,14 @@ Meteor.methods({
         }
     },
 
-    "app.get.one.product.id"(productId, appName){
+    "app.get.one.product.id"(loginToken, appName, productId){
         //载入商品信息
         let productMsg = getOneProduct(null, appName, {_id: productId});
         return Object.assign({}, productMsg, {
             fromMethod: "app.get.one.product.id"
         })
     },
-    'app.get.one.product.rolename'(roleName, appName){
+    'app.get.one.product.rolename'(loginToken, appName, roleName){
         //载入道具类别商品
         let productMsg = getOneProduct(null, appName, {roleName});
         return Object.assign({}, productMsg, {
@@ -235,6 +233,13 @@ Meteor.methods({
             let rltObj = setUserContactDefatult(stampedTokenObj,appName, contactId);
             return Object.assign({}, rltObj, {
                 fromMethod: "app.set.user.contact,default"
+            })
+        },
+        "app.get.newest.user.order.status"(loginToken, appName, status, userId){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getNewestOneUserOrderByStatus(stampedTokenObj, status, userId);
+            return Object.assign({}, rltObj, {
+                fromMethod: "app.get.newest.user.order.status"
             })
         }
 
