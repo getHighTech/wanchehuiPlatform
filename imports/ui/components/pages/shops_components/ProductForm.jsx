@@ -84,8 +84,10 @@ class ProductFormWrap extends Component {
     state = {
         cover: '',
         fileList: [],
+        fileListDetails:[],
         fileListMore:this.props.xx,
         image_url:this.props.product.cover,
+        image_details:this.props.product.detailsImage,
         value: false,
         status:false,
         images:[],
@@ -229,6 +231,16 @@ class ProductFormWrap extends Component {
 
       })
     }
+    if(this.props.product.detailsImage!=null){
+      this.setState({
+        fileListDetails:[{uid:1,url:this.props.product.detailsImage}]
+      })
+    }
+    else{
+      this.setState({
+        fileListDetails:[{uid:1,url:''}]
+      })
+    }
     let self =this;
 
     self.setState({
@@ -244,14 +256,13 @@ class ProductFormWrap extends Component {
       // console.log(nextProps.fileState);
 
       if(nextProps.product.images==null){
-        nextProps.product.images=this.state.images;
+        nextProps.product.images=[];
         // console.log(nextProps.product.images);
       }
 
       let images=nextProps.product.images;
       let fileListImages=[];
       if(images!=null){
-        // console.log(images.length);
         for(var i=0;i<images.length;i++){
           var url=images[i];
           var first={uid:i};
@@ -280,14 +291,36 @@ class ProductFormWrap extends Component {
           fileList:[{uid:1,url:''}],
         })
       }
+          // this.setState({
+          //   cover: nextProps.product.cover,
+          // })
+
+        if(nextProps.product.detailsImage!=null){
           this.setState({
-            cover: nextProps.product.cover,
+            fileListDetails:[{uid:2,url:nextProps.product.detailsImage}],
           })
         }
+        else{
+          console.log('nsadasdasd');
+          this.setState({
+            fileListDetails:[{uid:2,url:''}]
+          })
+        }
+        // this.setState({
+        //   detailsImage:nextProps.product.detailsImage
+        // })
+        }
         else {
+          console.log(nextProps);
           if(nextProps.coverState!='done'){
             this.setState({
               fileList:[{uid:1,url:''}],
+            })
+          }
+          console.log(nextProps.detailsState);
+          if(nextProps.detailsState!='done'){
+            this.setState({
+              fileListDetails:[{uid:1,url:''}],
             })
           }
 
@@ -352,6 +385,32 @@ class ProductFormWrap extends Component {
         fileList:fileList
       })
     }
+    handleChangeDetails(info) {
+      let fileList = info.fileList;
+      fileList = fileList.slice(-1);
+      let self = this
+      if (info.file.status === 'uploading') {
+          console.log("上传中。");
+      }
+      if (info.file.status === 'done') {
+          console.log("上传成功。");
+          // console.log(info.file.response.data.link)
+          // console.log(self.state.image_url);
+          self.setState({
+            image_details:info.file.response.data.link
+          })
+          self.props.changedetailsState(info.file.status)
+          const setFieldsValue = this.props.form.setFieldsValue;
+          console.log(self.state.image_details);
+          setFieldsValue({detailsImage:self.state.image_details})
+
+      } else if (info.file.status === 'error') {
+          console.log("上传失败。");
+      }
+      self.setState({
+        fileListDetails:fileList
+      })
+    }
     changeOpenState(){
       this.setState({
         openKeys:[]
@@ -369,6 +428,11 @@ class ProductFormWrap extends Component {
           // console.log(self.state.images);
           // console.log(self.state.fileListMore);
           let old_images = self.state.images;
+          console.log(old_images);
+          // if(old_images==null){
+          //   console.log('null');
+          //   old_images=[];
+          // }
           old_images.push(info.file.response.data.link);
           self.setState({
             images:old_images,
@@ -538,7 +602,7 @@ class ProductFormWrap extends Component {
     }
 
     render() {
-      const { contentState,cover ,fileList,fileListMore} = this.state;
+      const { contentState,cover ,fileList,fileListMore,fileListDetails} = this.state;
       const  { product } = this.props;
         let uploadProps = {
           action: '/images/upload',
@@ -548,11 +612,17 @@ class ProductFormWrap extends Component {
         };
 
       const uploadPropsMore = {
-        action: '/images/upload',    
+        action: '/images/upload',
         onChange: this.handleChangeMore.bind(this),
         listType: 'picture',
         fileList:fileListMore
       };
+      const uploadPropsDetails={
+        action: '/images/upload',
+        onChange:this.handleChangeDetails.bind(this),
+        listType:'picture',
+        fileList:fileListDetails
+      }
 
       const { getFieldDecorator, getFieldValue } = this.props.form;
           const formItemLayout = {
@@ -721,7 +791,23 @@ class ProductFormWrap extends Component {
                 </Button>
             </Upload>
         </FormItem>
+        <FormItem
+        {...formItemLayout}
+        label="商品详情图片"
+        hasFeedback
+        >
+        {getFieldDecorator('detailsImage',{
+          initialValue:this.props.product.detailsImage,
+        })(
+          <Input type="text"   style={{display:'none'}}    placeholder="图片地址" />
+        )}
 
+        <Upload {...uploadPropsDetails}>
+            <Button disabled={this.props.editState}>
+            <Icon type="upload" /> 上传详情图片
+            </Button>
+        </Upload>
+        </FormItem>
 
       <FormItem
       {...formItemLayout}

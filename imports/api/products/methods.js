@@ -21,6 +21,7 @@ Meteor.methods({
       createdByUserId: product.createdByUserId,
       endPrice:product.endPrice,
       curency:product.curency,
+      detailsImage:product.detailsImage,
       isTool:product.isTool,
       roleName:product.roleName,
       categoryld:product.categoryld,
@@ -45,6 +46,10 @@ Meteor.methods({
         write: {
           roles: ["shop_owner","shop_manager"],
           users: [],
+        },
+        copy:{
+          roles:["blackcard_holder"],
+          users:[]
         }
       },
     },function (err,alt) {
@@ -147,6 +152,7 @@ Meteor.methods({
         brief:product.brief,
         image_des: product.image_des,
         images: product.images,
+        detailsImage:product.detailsImage,
         cover:product.cover,
         endPrice:product.endPrice,
         isTool:product.isTool,
