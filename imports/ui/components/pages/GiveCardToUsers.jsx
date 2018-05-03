@@ -41,6 +41,7 @@ class GiveCardToUser extends React.Component{
         contentType: "application/x-www-form-urlencoded;charset=utf8",
       },
       onChange(info) {
+        console.log(info);
         if (info.file.status !== 'uploading') {
           console.log("上传完毕");
         }

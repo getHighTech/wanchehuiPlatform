@@ -158,7 +158,9 @@ class ProductWrap extends React.Component {
       editphoneVisible:false,
     });
   }
-
+  onAddProduct(){
+    this.props.onAddProduct()
+  }
 
 
 
@@ -200,7 +202,7 @@ class ProductWrap extends React.Component {
         <Card style={{width:'100%'}} bordered={false}>
         <Meta
 
-            description={[<Button key='1'>发布商品</Button>,<Button key='2' onClick={this.showModal}  style={{marginLeft:20}}>修改店铺</Button>,<Button key='3' style={{marginLeft:20}}>指派管理员</Button>]} />
+            description={[<Button key='1' onClick={this.onAddProduct.bind(this)}>发布商品</Button>,<Button key='2' onClick={this.showModal}  style={{marginLeft:20}}>修改店铺</Button>,<Button key='3' style={{marginLeft:20}}>指派管理员</Button>]} />
 
         </Card>
         </Col>

@@ -34,9 +34,14 @@ class ProductModal extends React.Component{
     console.log(props);
   }
   state={
+    xx:[],
+    fileState:'',
+    coverState:'',
+    detailsState:'',
     spec : '',
     spec_length:0,
-    descriptionKey:[]
+    descriptionKey:[],
+    shopName:''
   }
 
   initAmap(){
@@ -80,10 +85,17 @@ class ProductModal extends React.Component{
   componentWillMount(){
   }
   componentDidMount(){
-    console.log('2');
-    console.log(this.props)
-    console.log(this.props.productmodalVisible);
-    console.log(this.props.productId);
+    // console.log(this.props.singleProduct);
+    let shopId=this.props.id;
+    let self =this;
+    Meteor.call('shops.findShopById',shopId,function(err,alt){
+      console.log(alt);
+      self.setState({
+        shopName:alt.name
+      })
+    })
+    console.log(self.state.shopName);
+
   }
 
 
@@ -92,7 +104,7 @@ class ProductModal extends React.Component{
     let self = this;
     let validated = true;
     console.log(this.formComponent);
-    this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated); // 不知道有没有更好的办法
+    this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated);
     if (!validated) {
       console.log('参数错误');
       return;
@@ -104,7 +116,6 @@ class ProductModal extends React.Component{
     // console.log(getFieldValue('shopAddress'))
     const getFieldValue = this.formComponent.getFieldValue;
     const setFieldsValue = this.formComponent.setFieldsValue;
-    // setFieldsValue({specifications: self.state.spec})
     const oldObj = this.formComponent.getFieldsValue();
     let speckeys = oldObj.keys;
     console.log(speckeys);
@@ -122,6 +133,7 @@ class ProductModal extends React.Component{
       end_spec.push(obj);
     }
     setFieldsValue({specifications: end_spec})
+
     //把表单中跟时间有关系的参数进行时间格式化
     for (const key in oldObj) {
         newObj[key] = oldObj[key];
@@ -133,14 +145,17 @@ class ProductModal extends React.Component{
     newObj.endPrice=newEndPrice*100;
     newObj.specifications=end_spec;
     console.log(newObj);
-
+    console.log(this.props.singleProduct.shop_name);
     self.hideModal();
 
     //将转化好的数据传给后端
     if(self.props.modalState){
+      console.log(self.state.shopName);
       //新增店铺到数据库
-      let shopId=this.props.id
-      Meteor.call("products.insert", newObj, shopId,function(error,result){
+      let shopId=this.props.id;
+      let shopName= this.state.shopName;
+      console.log(shopName,shopId);
+      Meteor.call("products.insert", newObj, shopId,shopName,function(error,result){
         if(!error){
           console.log("新增商品");
           console.log(result);
@@ -148,7 +163,13 @@ class ProductModal extends React.Component{
           self.reflashTable();
           self.setFormData({});
           console.log("刷新表格成功");
-
+          self.setState({
+            xx:[],
+            fileState:'',
+            coverState:'',
+            detailsState:''
+          })
+          console.log(self.state.xx);
         }else{
           console.log(error);
         }
@@ -160,12 +181,20 @@ class ProductModal extends React.Component{
           console.log('更新商品');
           self.reflashTable();
           self.setFormData({});
+          self.setState({
+            xx:[],
+            fileState:'',
+            coverState:'',
+            detailsState:''
+          })
+          console.log(self.state.xx);
         }else{
           console.log(error);
         }
       })
 
     }
+
   }
 
 
@@ -173,10 +202,15 @@ class ProductModal extends React.Component{
 
 
   handleCancel = (e) => {
+    console.log('走了这');
     this.props.onCancel();
     this.setFormData({});
     this.setState({
-      descriptionKey:[]
+      descriptionKey:[],
+      xx:[],
+      fileState:'',
+      coverState:'',
+      detailsState:''
     })
 
 
@@ -185,11 +219,30 @@ class ProductModal extends React.Component{
   hideModal = () => {
     this.props.onCancel();
   };
-
+  changeXX(v){
+    console.log(v);
+    this.setState({
+      xx:v
+    })
+  }
+  changefileState(state){
+    this.setState({
+      fileState:state
+    })
+  }
+  changecoverState(state){
+    this.setState({
+      coverState:state
+    })
+  }
+  changedetailsState(state){
+    this.setState({
+      detailsState:state
+    })
+  }
 
 
   render(){
-    console.log(this.props.productId);
     const {singleProduct, modalState, editState,length,key_arr,productId} = this.props
     return(
       <div>
@@ -202,7 +255,7 @@ class ProductModal extends React.Component{
           width={1000}
           style={{ top: 20 }}
         >
-          <ProductForm spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)} product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
+          <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} detailsState={this.state.detailsState} changedetailsState={this.changedetailsState.bind(this)} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
 
         </Modal>
       </div>

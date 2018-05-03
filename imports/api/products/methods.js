@@ -7,7 +7,7 @@ import { validLoginToken } from '../actions/validLoginToken.js'
 
 
 Meteor.methods({
-  "products.insert"(product,shopId){
+  "products.insert"(product,shopId,shopName){
     if(product.isTool){
 
     }
@@ -18,15 +18,18 @@ Meteor.methods({
       description: product.description,
       brief:product.brief,
       cover:product.cover,
+      detailsImage:product.detailsImage,
       createdByUserId: product.createdByUserId,
       endPrice:product.endPrice,
       curency:product.curency,
+      detailsImage:product.detailsImage,
       isTool:product.isTool,
       roleName:product.roleName,
       categoryld:product.categoryld,
       images: product.images,
       isSale: true,
       shopId:shopId,
+      shopName:shopName,
       specifications:product.specifications,
       createdByUserId:"dadad",
       curency:'cny',
@@ -45,6 +48,10 @@ Meteor.methods({
         write: {
           roles: ["shop_owner","shop_manager"],
           users: [],
+        },
+        copy:{
+          roles:["blackcard_holder"],
+          users:[]
         }
       },
     },function (err,alt) {
@@ -116,6 +123,9 @@ Meteor.methods({
   'get.product.byShopId'(id){
     return Products.find({shopId:id}).fetch();
   },
+  'get.product.byShopIdOr'(condition){
+    return Products.find(condition).fetch();
+  },
   'get.oneproduct.id'(id,token){
     console.log(`打印token`)
     console.log(token)
@@ -131,11 +141,11 @@ Meteor.methods({
         shop_cover: shop.cover,
         formMethod: 'get.oneproduct.id'
       }
-   
+
     // Object.assign(product,{shop_name: shop.name})
   },
   'product.update'(old,product){
-    Products.update(old,{
+    Products.update({_id:old._id},{
       $set:{
         name: product.name,
         name_zh:product.name_zh,
@@ -144,8 +154,9 @@ Meteor.methods({
         brief:product.brief,
         image_des: product.image_des,
         images: product.images,
-        isSale: product.isSale,
+        detailsImage:product.detailsImage,
         cover:product.cover,
+        detailsImage:product.detailsImage,
         endPrice:product.endPrice,
         isTool:product.isTool,
         recommend:product.recommend,
@@ -160,9 +171,9 @@ Meteor.methods({
         recommend: true,
         isSale: true
       },
-      { 
-        skip: (page-1)*pagesize, 
-        limit: pagesize, 
+      {
+        skip: (page-1)*pagesize,
+        limit: pagesize,
         sort: {createdAt: -1},
         fields:
               {
@@ -210,7 +221,7 @@ Meteor.methods({
   'app.product.search'(data) {
     let products = Products.aggregate([
         { $match: { name_zh: {$regex:data}}},
-        { 
+        {
           $lookup: {
             from: "Shops",
             localField: "shopId",
@@ -232,6 +243,6 @@ Meteor.methods({
     }
   }
 
-   
+
 
 });

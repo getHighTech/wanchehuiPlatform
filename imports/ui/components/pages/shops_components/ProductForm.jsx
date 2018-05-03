@@ -82,14 +82,19 @@ class ProductFormWrap extends Component {
     }
     rootSubmenuKeys = [];
     state = {
+        cover: '',
         fileList: [],
-        image_url:'',
+        fileListDetails:[],
+        fileListMore:this.props.xx,
+        image_url:this.props.product.cover,
+        image_details:this.props.product.detailsImage,
         value: false,
         status:false,
         images:[],
         key_arr:[],
         key_length:0,
         openKeys:this.props.descriptionKey,
+        fileState:this.props.changefileState
       };
 
       onOpenChange = (openKeys) => {
@@ -179,63 +184,177 @@ class ProductFormWrap extends Component {
       uuid:uuid
     })
   }
-  // addover = (e) =>{
-  //   let self =this;
-  //   const { form } = this.props;
-  //   e.preventDefault();
-  //   const getFieldValue = this.props.form.getFieldValue;
-  //   let end_spec=[];
-  //   for(var i =0;i<getFieldValue('keys').length;i++){
-  //     var spec_index=getFieldValue('keys')[i]
-  //     var spec_name =getFieldValue('spec_name')[spec_index];
-  //     var spec_value= getFieldValue('spec_value')[spec_index];
-  //     var o1={spec_name:spec_name};
-  //     var o2={spec_value:spec_value};
-  //     var o3={isThis:false}
-  //     var obj =Object.assign(o1,o2,o3)
-  //     end_spec.push(obj);
-  //   }
-  //   console.log(end_spec);
-  //       // const setFieldsValue = this.props.form.setFieldsValue;
-  //       // setFieldsValue({specifications:end_spec})
-  //   self.props.getSpec(end_spec);
-  // }
-    componentWillReceiveProps(nextProps){
-        this.setState(nextProps);
-
-    }
+    //
+    // componentWillReceiveProps(nextProps){
+    //     this.setState(nextProps);
+    //
+    // }
 
     changeisTool = (e) => {
-    console.log('radio checked', e.target.value);
     this.setState({
       value: e.target.value,
     });
 
   }
   componentDidMount(){
+    let images=this.props.product.images;
+    let fileListImages=[];
+    if(images!=null){
+      for(var i=0;i<images.length;i++){
+        var url=images[i];
+        var first={uid:i};
+        var end={url:url}
+        var obj =Object.assign(first,end);
+        fileListImages.push(obj)
+      }
+      this.setState({
+        images:this.props.product.images,
+        fileListMore:fileListImages
+      })
+    }
+    else{
+      // console.log('did 插入商品');
+      this.setState({
+        fileListMore:[],
+        images:[],
+      })
+    }
+    if(this.props.product.cover!=null){
+      this.setState({
+        fileList:[{uid:1,url:this.props.product.cover}],
+
+      })
+    }
+    else{
+      this.setState({
+        fileList:[{uid:1,url:''}],
+
+      })
+    }
+    if(this.props.product.detailsImage!=null){
+      this.setState({
+        fileListDetails:[{uid:1,url:this.props.product.detailsImage}]
+      })
+    }
+    else{
+      this.setState({
+        fileListDetails:[{uid:1,url:''}]
+      })
+    }
     let self =this;
 
     self.setState({
-      openKeys: this.props.descriptionKey,
+      openKeys: self.props.descriptionKey,
+      cover:self.props.product.cover,
     })
-    // Meteor.call('get.oneproduct.id',this.props.productId,function(err,alt){
-    //   let description= alt.description
-    //   const html =description;
-    //   console.log(html);
-    //   const contentBlock = htmlToDraft(html);
-    //   console.log(contentBlock);
-    //   const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-    //   console.log(contentState);
-    //   const editorState = EditorState.createWithContent(contentState);
-    //   console.log(editorState);
-    //   // self.state={
-    //   //   contentState: editorState,
-    //   // }
-    //   self.changel(editorState);
-    // })
-
-
   }
+  componentWillReceiveProps(nextProps){
+    if(!nextProps.modalState){
+      // console.log(nextProps);
+      // console.log('will',nextProps.product.images);
+      // console.log(this.state.images);
+      // console.log(nextProps.fileState);
+
+      if(nextProps.product.images==null){
+        nextProps.product.images=[];
+        // console.log(nextProps.product.images);
+      }
+
+      let images=nextProps.product.images;
+      let fileListImages=[];
+      if(images!=null){
+        for(var i=0;i<images.length;i++){
+          var url=images[i];
+          var first={uid:i};
+          var end={url:url}
+          var obj =Object.assign(first,end);
+          fileListImages.push(obj)
+        }
+      }
+      if(nextProps.fileState!='removed'&&nextProps.fileState!='done'){
+        // console.log('add');
+        this.setState({
+          fileListMore:fileListImages,
+          images:nextProps.product.images,
+        })
+      }
+      else{
+        // console.log('removed');
+      }
+      console.log(nextProps.coverState);
+      if(nextProps.coverState!='removed'&&nextProps.coverState!='done'){
+      if(nextProps.product.cover!=null){
+        console.log(nextProps.coverState);
+        this.setState({
+          fileList:[{uid:1,url:nextProps.product.cover}],
+        })
+      }
+      else{
+        this.setState({
+          fileList:[{uid:1,url:''}],
+        })
+      }
+    }
+          // this.setState({
+          //   cover: nextProps.product.cover,
+          // })
+        if(nextProps.detailsState!='removed'&&nextProps.detailsState!='done'){
+        if(nextProps.product.detailsImage!=null){
+          this.setState({
+            fileListDetails:[{uid:2,url:nextProps.product.detailsImage}],
+          })
+        }
+        else{
+          console.log('nsadasdasd');
+          this.setState({
+            fileListDetails:[{uid:2,url:''}]
+          })
+        }
+      }
+        // this.setState({
+        //   detailsImage:nextProps.product.detailsImage
+        // })
+        }
+        else {
+          console.log(nextProps);
+          if(nextProps.coverState!='done'){
+            this.setState({
+              fileList:[{uid:1,url:''}],
+            })
+          }
+          console.log(nextProps.detailsState);
+          if(nextProps.detailsState!='done'){
+            this.setState({
+              fileListDetails:[{uid:1,url:''}],
+            })
+          }
+
+          let file =nextProps.xx;
+          let newfile=[];
+          for(var i=0;i<file.length;i++){
+            if (file[i].url==undefined) {
+              newfile.push(file[i].response.data.link)
+            }
+            else{
+              newfile.push(file[i].url)
+            }
+          }
+          // console.log(newfile);
+          if(nextProps.fileState!='removed'&&nextProps.fileState!='done'){
+            // console.log('add');
+            this.setState({
+              fileListMore:nextProps.xx,
+              images:newfile
+            })
+          }
+          else{
+            // console.log('removed');
+          }
+        }
+    }
+
+
+
   onEditorStateChange(editorState) {
     this.setState({
       contentState: editorState,
@@ -247,25 +366,55 @@ class ProductFormWrap extends Component {
 
 
     handleChange(info) {
-      console.log(info)
+      let fileList = info.fileList;
+      fileList = fileList.slice(-1);
       let self = this
       if (info.file.status === 'uploading') {
           console.log("上传中。");
       }
       if (info.file.status === 'done') {
           console.log("上传成功。");
-          console.log(info.file.response.data.link)
-          console.log(self.state.image_url);
+          // console.log(info.file.response.data.link)
+          // console.log(self.state.image_url);
           self.setState({
             image_url:info.file.response.data.link
           })
+          self.props.changecoverState(info.file.status)
           const setFieldsValue = this.props.form.setFieldsValue;
           setFieldsValue({cover:self.state.image_url})
 
       } else if (info.file.status === 'error') {
           console.log("上传失败。");
       }
+      self.setState({
+        fileList:fileList
+      })
+    }
+    handleChangeDetails(info) {
+      let fileList = info.fileList;
+      fileList = fileList.slice(-1);
+      let self = this
+      if (info.file.status === 'uploading') {
+          console.log("上传中。");
+      }
+      if (info.file.status === 'done') {
+          console.log("上传成功。");
+          // console.log(info.file.response.data.link)
+          // console.log(self.state.image_url);
+          self.setState({
+            image_details:info.file.response.data.link
+          })
+          self.props.changedetailsState(info.file.status)
+          const setFieldsValue = this.props.form.setFieldsValue;
 
+          setFieldsValue({detailsImage:self.state.image_details})
+
+      } else if (info.file.status === 'error') {
+          console.log("上传失败。");
+      }
+      self.setState({
+        fileListDetails:fileList
+      })
     }
     changeOpenState(){
       this.setState({
@@ -273,41 +422,102 @@ class ProductFormWrap extends Component {
       })
     }
     handleChangeMore(info) {
-      console.log(info)
+      let fileList = info.fileList;
       let self = this
       if (info.file.status === 'uploading') {
           console.log("上传中。");
       }
       if (info.file.status === 'done') {
           console.log("上传成功。");
-          console.log(info.file.response.data.link)
-          console.log(self.state.images);
+          // console.log(info.file.response.data.link)
+          // console.log(self.state.images);
+          // console.log(self.state.fileListMore);
           let old_images = self.state.images;
           console.log(old_images);
+          // if(old_images==null){
+          //   console.log('null');
+          //   old_images=[];
+          // }
           old_images.push(info.file.response.data.link);
           self.setState({
-            images:old_images
+            images:old_images,
           })
+          // console.log(this.state.images);
+          // console.log(this.state.fileListMore);
+          let v =this.state.fileListMore;
+          let state=info.file.status;
+          self.props.changeXX(v)
+          self.props.changefileState(state)
           const setFieldsValue = this.props.form.setFieldsValue;
           setFieldsValue({images:self.state.images})
-          // const getFieldValue = this.props.form.getFieldValue;
-          // console.log(getFieldValue('shopPicture'))
       } else if (info.file.status === 'error') {
           console.log("上传失败。");
       }
+      self.setState({
+        fileListMore:fileList
+      })
+      if(info.file.status === 'removed'){
+        // console.log(this.state.fileListMore);
+        // console.log(this.state.images);
+        let file=this.state.fileListMore;
+        let newfile=[];
+        for(var i=0;i<file.length;i++){
+          if (file[i].url==undefined) {
+            newfile.push(file[i].response.data.link)
+          }
+          else{
+            newfile.push(file[i].url)
+          }
+        }
+        // console.log(newfile);
+        this.setState({
+          images:newfile,
+        })
+        let state=info.file.status;
+        this.props.changefileState(state)
+        const setFieldsValue = this.props.form.setFieldsValue;
+        setFieldsValue({images:newfile})
+      }
 
     }
+
     getInitialvalue(){
       let spec_length=this.props.product.specifications;
       if(spec_length!=undefined)
       {
-        // var arr =new Array(4);
-        // for(var i=0;i<arr.length;i++){
-        //     arr[i] = i;
-        // }
-        // console.log(arr);
-        // this.change(a);
       }
+
+    }
+    handleConfirmName = (rule,value,callback ) => {
+      let id= this.props.id;
+      let condition={};
+      if(!this.props.modalState){
+        condition = {shopId:this.props.product.shopId,_id:{$ne:this.props.product._id}}
+      }
+      else{
+        condition={shopId:id}
+      }
+      console.log(condition);
+        const { getFieldValue } = this.props.form;
+        let newName=getFieldValue('name');
+        let newalt=[];
+        Meteor.call('get.product.byShopIdOr',condition,function(err,alt){
+          if(!err){
+            for(var i =0;i<alt.length;i++){
+              newalt.push(alt[i].name)
+            }
+
+          }
+          else{
+            console.log(err);
+          }
+          if(newalt.indexOf(newName)>-1){
+            callback('已有相同商品名！请重新输入')
+          }
+
+        })
+
+
 
     }
     getdesValue(){
@@ -389,25 +599,35 @@ class ProductFormWrap extends Component {
     }
 
     selectHandleChange(value){
-      console.log(`selected ${value}`);
+      // console.log(`selected ${value}`);
     }
     //初次挂载去获取数据
     changeholeder(){
-      console.log(this.props.product.holder);
+      // console.log(this.props.product.holder);
     }
 
     render() {
-      const { contentState } = this.state;
-      const uploadProps = {
-        action: '/images/upload',
-        onChange: this.handleChange.bind(this),
-        listType: 'picture',
-      };
+      const { contentState,cover ,fileList,fileListMore,fileListDetails} = this.state;
+      const  { product } = this.props;
+        let uploadProps = {
+          action: '/images/upload',
+          onChange: this.handleChange.bind(this),
+          listType: 'picture',
+          fileList:fileList
+        };
+
       const uploadPropsMore = {
         action: '/images/upload',
         onChange: this.handleChangeMore.bind(this),
         listType: 'picture',
+        fileList:fileListMore
       };
+      const uploadPropsDetails={
+        action: '/images/upload',
+        onChange:this.handleChangeDetails.bind(this),
+        listType:'picture',
+        fileList:fileListDetails
+      }
 
       const { getFieldDecorator, getFieldValue } = this.props.form;
           const formItemLayout = {
@@ -437,8 +657,8 @@ class ProductFormWrap extends Component {
             const formItems = keys.map((k, index) => {
               return (
                 <FormItem
-                  {...(index === 0 ? formItemLayout : tailFormItemLayout)}
-                  label={index === 0 ? '规格' : ''}
+                {...formItemLayout}
+                label='规格属性'
                   required={false}
                   key={k}
                 >
@@ -453,22 +673,26 @@ class ProductFormWrap extends Component {
                   })(
                     <Input placeholder="产品规格" style={{ width: '100%'}} />
                   )}
-                  <Divider dashed style={{marginTop:5 ,marginBottom:5}}/>
                 </FormItem>
               );
             });
             const formItems2 = keys.map((k, index) => {
               return (
                 <FormItem
-                  {...(index === 0 ? formItemLayout : tailFormItemLayout)}
-                  label={index === 0 ? '价格' : ''}
+                  {...formItemLayout}
+                  label='价格'
                   required={false}
                   key={k}
                 >
                   {getFieldDecorator(`spec_value[${k}]`, {
                     initialValue:this.getSpecValue(k),
                     validateTrigger: ['onChange', 'onBlur'],
-
+                    rules: [
+                    {
+                      required: true,
+                      whitespace: true,
+                      message: "请输入价格.",
+                    }],
                   })(
                     <Input placeholder="价格" style={{ width: '70%'}} />
                   )}
@@ -481,7 +705,6 @@ class ProductFormWrap extends Component {
                       onClick={() => this.remove(k)}
                     />
                   ) : null}
-                  <Divider dashed style={{marginTop:5 ,marginBottom:5}}/>
                 </FormItem>
               );
             });
@@ -494,7 +717,7 @@ class ProductFormWrap extends Component {
       >
       {getFieldDecorator('name', {
           initialValue: this.props.product.name,
-          rules: [{ required: true, message: '商品名称不能为空' }],
+          rules: [{ required: true, message: '商品名称不能为空'},{validator: this.handleConfirmName}]
       })(
 
           <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
@@ -523,11 +746,12 @@ class ProductFormWrap extends Component {
           })(
             <Input type="text"       placeholder="图片地址" />
           )}
-          <Upload {...uploadProps}>
-              <Button disabled={this.props.editState}>
-              <Icon type="upload" /> 上传图片
-              </Button>
-          </Upload>
+            <Upload {...uploadProps}>
+                <Button disabled={this.props.editState}>
+                <Icon type="upload" /> 上传图片
+                </Button>
+            </Upload>
+
       </FormItem>
       <FormItem
       {...formItemLayout}
@@ -572,7 +796,24 @@ class ProductFormWrap extends Component {
                 </Button>
             </Upload>
         </FormItem>
+        <FormItem
+        {...formItemLayout}
 
+        label="商品详情图片"
+        hasFeedback
+        >
+        {getFieldDecorator('detailsImage',{
+          initialValue:this.props.product.detailsImage,
+        })(
+          <Input type="text"   style={{display:'none'}}    placeholder="图片地址" />
+        )}
+
+        <Upload {...uploadPropsDetails}>
+            <Button disabled={this.props.editState}>
+            <Icon type="upload" /> 上传详情图片
+            </Button>
+        </Upload>
+        </FormItem>
 
       <FormItem
       {...formItemLayout}
@@ -611,18 +852,19 @@ class ProductFormWrap extends Component {
           )}
       </FormItem>
       <Divider dashed />
-      <Row>
-        <Col span={2}></Col>
-        <Col span={10}>{formItems}</Col>
-        <Col span={10}>{formItems2}</Col>
-        <Col span={2}></Col>
-      </Row>
-        <FormItem {...tailFormItemLayout}>
-          <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
-            <Icon type="plus" /> Add field
-          </Button>
+      <FormItem {...formItemLayout}label='添加商品规格'>
+        <Button type="dashed" onClick={this.add} >
+          <Icon type="plus" />添加
+        </Button>
 
-        </FormItem>
+      </FormItem>
+      <Row>
+        <Col span={4}></Col>
+        <Col span={8}>{formItems}</Col>
+        <Col span={11}>{formItems2}</Col>
+        <Col span={4}></Col>
+      </Row>
+
         <Divider dashed style={{marginTop:5 ,marginBottom:5}}/>
         <FormItem label='商品描述'>
           {getFieldDecorator('description',{initialValue:this.getDescription()})(
@@ -670,6 +912,6 @@ class ProductFormWrap extends Component {
     }
   }
 
-const ProductForm = Form.create()(ProductFormWrap);
+  const ProductForm = Form.create()(ProductFormWrap);
 
-export default ProductForm;
+  export default ProductForm;

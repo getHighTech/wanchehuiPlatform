@@ -149,6 +149,11 @@ HTTP.methods({
 
     }
   },
+  'excels/export':{
+    post:function(){
+
+    }
+  },
    '/excels/upload/mobile_agency': {
      post: function(file) {
 
