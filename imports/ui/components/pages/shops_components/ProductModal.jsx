@@ -85,16 +85,17 @@ class ProductModal extends React.Component{
   componentWillMount(){
   }
   componentDidMount(){
+    // console.log(this.props.singleProduct);
     let shopId=this.props.id;
-    // Meteor.call('shops.findShopById',shopId,function(err,alt){
-    //   console.log(alt);
-    //   this.setState({
-    //     shopName:alt.name
-    //   })
-    // })
+    let self =this;
+    Meteor.call('shops.findShopById',shopId,function(err,alt){
+      console.log(alt);
+      self.setState({
+        shopName:alt.name
+      })
+    })
+    console.log(self.state.shopName);
 
-    console.log(this.props.productmodalVisible);
-    console.log(this.props.productId);
   }
 
 
@@ -115,7 +116,6 @@ class ProductModal extends React.Component{
     // console.log(getFieldValue('shopAddress'))
     const getFieldValue = this.formComponent.getFieldValue;
     const setFieldsValue = this.formComponent.setFieldsValue;
-    // setFieldsValue({specifications: self.state.spec})
     const oldObj = this.formComponent.getFieldsValue();
     let speckeys = oldObj.keys;
     console.log(speckeys);
@@ -133,6 +133,7 @@ class ProductModal extends React.Component{
       end_spec.push(obj);
     }
     setFieldsValue({specifications: end_spec})
+
     //把表单中跟时间有关系的参数进行时间格式化
     for (const key in oldObj) {
         newObj[key] = oldObj[key];
@@ -144,14 +145,17 @@ class ProductModal extends React.Component{
     newObj.endPrice=newEndPrice*100;
     newObj.specifications=end_spec;
     console.log(newObj);
-    console.log(this.props.singleProduct);
+    console.log(this.props.singleProduct.shop_name);
     self.hideModal();
 
     //将转化好的数据传给后端
     if(self.props.modalState){
+      console.log(self.state.shopName);
       //新增店铺到数据库
-      let shopId=this.props.id
-      Meteor.call("products.insert", newObj, shopId,function(error,result){
+      let shopId=this.props.id;
+      let shopName= this.state.shopName;
+      console.log(shopName,shopId);
+      Meteor.call("products.insert", newObj, shopId,shopName,function(error,result){
         if(!error){
           console.log("新增商品");
           console.log(result);

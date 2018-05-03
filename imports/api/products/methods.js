@@ -7,7 +7,7 @@ import { validLoginToken } from '../actions/validLoginToken.js'
 
 
 Meteor.methods({
-  "products.insert"(product,shopId){
+  "products.insert"(product,shopId,shopName){
     if(product.isTool){
 
     }
@@ -22,12 +22,14 @@ Meteor.methods({
       createdByUserId: product.createdByUserId,
       endPrice:product.endPrice,
       curency:product.curency,
+      detailsImage:product.detailsImage,
       isTool:product.isTool,
       roleName:product.roleName,
       categoryld:product.categoryld,
       images: product.images,
       isSale: true,
       shopId:shopId,
+      shopName:shopName,
       specifications:product.specifications,
       createdByUserId:"dadad",
       curency:'cny',
@@ -46,6 +48,10 @@ Meteor.methods({
         write: {
           roles: ["shop_owner","shop_manager"],
           users: [],
+        },
+        copy:{
+          roles:["blackcard_holder"],
+          users:[]
         }
       },
     },function (err,alt) {
@@ -148,6 +154,7 @@ Meteor.methods({
         brief:product.brief,
         image_des: product.image_des,
         images: product.images,
+        detailsImage:product.detailsImage,
         cover:product.cover,
         detailsImage:product.detailsImage,
         endPrice:product.endPrice,

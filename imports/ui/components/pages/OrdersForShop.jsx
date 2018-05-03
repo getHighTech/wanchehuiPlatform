@@ -40,10 +40,12 @@ class OrdersForShop extends React.Component{
 
   componentDidMount(){
     let currentUserId = Meteor.userId();
+    console.log(currentUserId);
     let self =this;
     let shopId='';
     Meteor.call('shops.getByCurrentUser', currentUserId,function(err,rlt){
       if(!err){
+        console.log(rlt);
          shopId=rlt[0]._id;
         self.setState({
           shopId:shopId,

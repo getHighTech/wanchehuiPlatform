@@ -256,14 +256,13 @@ class ProductFormWrap extends Component {
       // console.log(nextProps.fileState);
 
       if(nextProps.product.images==null){
-        nextProps.product.images=this.state.images;
+        nextProps.product.images=[];
         // console.log(nextProps.product.images);
       }
 
       let images=nextProps.product.images;
       let fileListImages=[];
       if(images!=null){
-        // console.log(images.length);
         for(var i=0;i<images.length;i++){
           var url=images[i];
           var first={uid:i};
@@ -282,7 +281,10 @@ class ProductFormWrap extends Component {
       else{
         // console.log('removed');
       }
+      console.log(nextProps.coverState);
+      if(nextProps.coverState!='removed'&&nextProps.coverState!='done'){
       if(nextProps.product.cover!=null){
+        console.log(nextProps.coverState);
         this.setState({
           fileList:[{uid:1,url:nextProps.product.cover}],
         })
@@ -292,30 +294,38 @@ class ProductFormWrap extends Component {
           fileList:[{uid:1,url:''}],
         })
       }
-          this.setState({
-            cover: nextProps.product.cover,
-          })
-console.log(nextProps.product.detailsImage);
-
+    }
+          // this.setState({
+          //   cover: nextProps.product.cover,
+          // })
+        if(nextProps.detailsState!='removed'&&nextProps.detailsState!='done'){
         if(nextProps.product.detailsImage!=null){
-          console.log(nextProps.product.detailsImage);
           this.setState({
-            fileListImages:[{uid:1,url:nextProps.product.detailsImage}],
+            fileListDetails:[{uid:2,url:nextProps.product.detailsImage}],
           })
         }
         else{
+          console.log('nsadasdasd');
           this.setState({
-            fileListImages:[{uid:1,url:''}]
+            fileListDetails:[{uid:2,url:''}]
           })
         }
-        this.setState({
-          detailsImage:nextProps.product.detailsImage
-        })
+      }
+        // this.setState({
+        //   detailsImage:nextProps.product.detailsImage
+        // })
         }
         else {
+          console.log(nextProps);
           if(nextProps.coverState!='done'){
             this.setState({
               fileList:[{uid:1,url:''}],
+            })
+          }
+          console.log(nextProps.detailsState);
+          if(nextProps.detailsState!='done'){
+            this.setState({
+              fileListDetails:[{uid:1,url:''}],
             })
           }
 
@@ -396,6 +406,7 @@ console.log(nextProps.product.detailsImage);
           })
           self.props.changedetailsState(info.file.status)
           const setFieldsValue = this.props.form.setFieldsValue;
+
           setFieldsValue({detailsImage:self.state.image_details})
 
       } else if (info.file.status === 'error') {
@@ -422,6 +433,11 @@ console.log(nextProps.product.detailsImage);
           // console.log(self.state.images);
           // console.log(self.state.fileListMore);
           let old_images = self.state.images;
+          console.log(old_images);
+          // if(old_images==null){
+          //   console.log('null');
+          //   old_images=[];
+          // }
           old_images.push(info.file.response.data.link);
           self.setState({
             images:old_images,
@@ -601,7 +617,7 @@ console.log(nextProps.product.detailsImage);
         };
 
       const uploadPropsMore = {
-        action: '/images/upload',    
+        action: '/images/upload',
         onChange: this.handleChangeMore.bind(this),
         listType: 'picture',
         fileList:fileListMore
@@ -782,7 +798,8 @@ console.log(nextProps.product.detailsImage);
         </FormItem>
         <FormItem
         {...formItemLayout}
-        label="商品图片"
+
+        label="商品详情图片"
         hasFeedback
         >
         {getFieldDecorator('detailsImage',{
