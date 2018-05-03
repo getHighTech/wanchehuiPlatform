@@ -281,7 +281,10 @@ class ProductFormWrap extends Component {
       else{
         // console.log('removed');
       }
+      console.log(nextProps.coverState);
+      if(nextProps.coverState!='removed'&&nextProps.coverState!='done'){
       if(nextProps.product.cover!=null){
+        console.log(nextProps.coverState);
         this.setState({
           fileList:[{uid:1,url:nextProps.product.cover}],
         })
@@ -291,10 +294,11 @@ class ProductFormWrap extends Component {
           fileList:[{uid:1,url:''}],
         })
       }
+    }
           // this.setState({
           //   cover: nextProps.product.cover,
           // })
-
+        if(nextProps.detailsState!='removed'&&nextProps.detailsState!='done'){
         if(nextProps.product.detailsImage!=null){
           this.setState({
             fileListDetails:[{uid:2,url:nextProps.product.detailsImage}],
@@ -306,6 +310,7 @@ class ProductFormWrap extends Component {
             fileListDetails:[{uid:2,url:''}]
           })
         }
+      }
         // this.setState({
         //   detailsImage:nextProps.product.detailsImage
         // })
@@ -401,7 +406,7 @@ class ProductFormWrap extends Component {
           })
           self.props.changedetailsState(info.file.status)
           const setFieldsValue = this.props.form.setFieldsValue;
-          console.log(self.state.image_details);
+
           setFieldsValue({detailsImage:self.state.image_details})
 
       } else if (info.file.status === 'error') {
@@ -793,6 +798,7 @@ class ProductFormWrap extends Component {
         </FormItem>
         <FormItem
         {...formItemLayout}
+
         label="商品详情图片"
         hasFeedback
         >

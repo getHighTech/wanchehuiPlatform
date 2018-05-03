@@ -313,7 +313,7 @@ class ShopDetails extends React.Component {
     return (
 
       <div>
-      <Product id={this.props.params._id}/>
+      <Product id={this.props.params._id} onAddProduct={this.onAddProduct.bind(this)}/>
 
       <div style={headerMenuStyle}>
         <Tooltip placement="topLeft" title="发布商品" arrowPointAtCenter>
