@@ -9,13 +9,20 @@ import { Table } from 'antd';
 import Icon from 'antd/lib/icon';
 import "antd/lib/icon/style";
 import { Select } from 'antd';
-
+import { Modal} from 'antd';
 import Button from 'antd/lib/button';
 import "antd/lib/button/style";
 
 import Tooltip from 'antd/lib/tooltip';
 import "antd/lib/tooltip/style";
 const Option = Select.Option;
+import { Radio } from 'antd';
+import { editOrderStatus } from '/imports/ui/actions/order_status.js';
+
+
+
+const RadioGroup = Radio.Group;
+
 class OrdersForShop extends React.Component{
   constructor(props) {
     super(props);
@@ -27,8 +34,50 @@ class OrdersForShop extends React.Component{
     shopId:'',
     orderData:[],
     defaultShopName:'暂无商铺',
-    shopkey:''
+    shopkey:'',
+    visible: false,
+    changeStatus:[]
   }
+
+  showModal = (status) => {
+    console.log('走了这');
+    let self =this;
+    console.log(status);
+    self.setState({
+      visible: true,
+    });
+    const {dispatch } = self.props;
+    dispatch(editOrderStatus(status))
+
+
+
+    // Meteor.call('get.OrderState.byStatus',status,function(err,alt){
+    //   console.log(alt);
+    //   let getStatus=[];
+    //   for(var i=0;i<alt.length;i++){
+    //     getStatus.push(alt[i].sTo)
+    //   }
+    //   console.log(getStatus);
+    //   self.setState({
+    //     changeStatus:getStatus
+    //   })
+    // })
+  }
+  handleOk = (e) => {
+    console.log(this.state.changeStatus);
+    console.log(e);
+    this.setState({
+      visible: false,
+    });
+  }
+  handleCancel = (e) => {
+    console.log(e);
+    this.setState({
+      visible: false,
+    });
+  }
+
+
    handleChange(value) {
      let self =this;
       console.log(value);
@@ -59,6 +108,9 @@ class OrdersForShop extends React.Component{
     })
 
   }
+  // onChangeOrderStatus(0)
+
+
   getProName(){
     let shopId=this.state.shopId;
     let self =this;
@@ -98,6 +150,7 @@ class OrdersForShop extends React.Component{
 
 
   render() {
+    console.log(this.state.changeStatus);
           const columns = [
         { title: '订单号', width: 200, dataIndex: 'orderCode', key: 'orderCode', fixed: 'left' },
         { title: '用户名', width: 100, dataIndex: 'name', key: 'name', fixed: 'left' },
@@ -122,23 +175,26 @@ class OrdersForShop extends React.Component{
           width: 100,
           render: (text,record) => {
             return(
-              <Select defaultValue={record.status} onChange={this.handleChange.bind(this)}>
-                <Option key='1'>未确认</Option>
-                <Option key='2'>已确认</Option>
-                <Option key='3'>未支付</Option>
-                <Option key='4'>已支付</Option>
-                <Option key='5'>已撤销</Option>
-                <Option key='6'>已出货</Option>
-                <Option key='7'>已退款</Option>
-              </Select>
+              <Button type="primary" onClick={ () => this.showModal(record.status)}>修改</Button>
+              //  <RadioGroup options={plainOptions} onChange={this.onChange1} value={this.state.value1} />
+              // <Select defaultValue={record.status} onChange={this.handleChange.bind(this)}>
+              //   <Option key='1'>未确认</Option>
+              //   <Option key='2'>已确认</Option>
+              //   <Option key='3'>未支付</Option>
+              //   <Option key='4'>已支付</Option>
+              //   <Option key='5'>已撤销</Option>
+              //   <Option key='6'>已出货</Option>
+              //   <Option key='7'>已退款</Option>
+              // </Select>
             )
           },
         },
+
+
       ];
 
       const shopOption=[];
       const shop=this.state.shopData;
-      console.log(shop);
       for(let i=0;i<shop.length;i++){
         shopOption.push(<Option key ={i}>{shop[i].name}</Option>)
       }
@@ -149,6 +205,9 @@ class OrdersForShop extends React.Component{
            {shopOption}
       </Select>
         <Table columns={columns} dataSource={this.state.orderData} scroll={{ x: 1300 }} />
+        <Modal  title="修改订单状态"  visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} >
+          <RadioGroup options={this.state.changeStatus}  onChange={this.onChangeOrderStatus}/>
+        </Modal>
       </div>
     )
   }

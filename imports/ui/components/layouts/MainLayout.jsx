@@ -36,7 +36,8 @@ class MainLayout extends Component {
       {"key": "roles", "name": "角色管理", "IconType": "paper-clip"},
       {"key": "settings", "name": "系统设置", "IconType": "setting"},
       {"key": "logs", "name": "系统日志", "IconType": "paper-clip"},
-      {"key": "component_test", "name": "测试组件", "IconType": "paper-clip"}
+      {"key": "component_test", "name": "测试组件", "IconType": "paper-clip"},
+      {"key": "orderstate", "name": "状态管理", "IconType": "paper-clip"}
     ]
     let ShopOwnerMenu = [
       {"key": "dashboard", "name": "控制面板", "IconType": "bars"},
@@ -120,6 +121,9 @@ class MainLayout extends Component {
       case 'component_test':
         dispatch(push('/component_test'));
         break;
+        case "orderstate":
+          dispatch(push('/orderstate'));
+          break;
       default:
         dispatch(push('/'));
         break;
