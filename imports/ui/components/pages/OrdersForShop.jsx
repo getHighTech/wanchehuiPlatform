@@ -46,10 +46,20 @@ class OrdersForShop extends React.Component{
     console.log(currentUserId);
     let self =this;
 
-    Meteor.call('rolesAcl.find_by_user_id',currentUserId,function(err,alt){
+    Meteor.call('roles.find_by_user_id',currentUserId,function(err,alt){
       if(!err){
         console.log(alt);
-        if(alt.indexOf('shop_owner') == -1){
+        let rolesAcl=[];
+        for(var i=0;i<alt.length;i++){
+          Meteor.call('roles.permissions',alt[i],function(error,rlt){
+            if(!error){
+              console.log(rlt);
+              rolesAcl.push(rlt)
+            }
+          })
+        }
+        console.log(rolesAcl);
+        if(rolesAcl.indexOf('true') == -1){
           console.log('不能进行状态修改');
           message.error('该用户不能进行状态修改');
         }

@@ -165,7 +165,7 @@ Meteor.methods({
   },
   "get.allOrders"(userId){
     let orders =  Orders.find({'userId':userId}).fetch();
-    console.log(orders)
+    // console.log(orders)
     if(orders.length > 0){
       return orders
     }else{

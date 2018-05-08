@@ -79,8 +79,14 @@ Meteor.methods({
       return roles.fetch();
     },
     'roles.permissions'(id){
-      let rolesAcl = Roles.find({_id:id}).fetch();
+      let rolesAcl = Roles.findOne({_id:id});
       console.log('-------------------------');
-      console.log(rolesAcl);
+      console.log(rolesAcl.permissions.orders.updatable);
+      if(rolesAcl.permissions.orders.updatable==true){
+        return 'true'
+      }
+      else {
+        return 'false'
+      }
     }
 });
