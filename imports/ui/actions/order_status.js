@@ -1,19 +1,23 @@
-export const Edit_Order_Status = "Edit_Order_Status";
+export const EDIT_ORDER_STATUS = "EDIT_ORDER_STATUS";
+export const START_EDIT="START_EDIT";
 
 
 
-export function editOrderStatus(status){
-  Meteor.call('get.OrderState.byStatus',status,function(err,alt){
-    console.log(alt);
-    let getStatus=[];
-    for(var i=0;i<alt.length;i++){
-      getStatus.push(alt[i].sTo)
-    }
-    console.log(getStatus);
-  })
+export function startEdit(){
+  console.log('调用startEdit')
+  return{
+    type:START_EDIT
+  }
+}
 
+
+export function editOrderStatus(getStatus,id){
+    console.log(getStatus,id);
     return{
-        type:Edit_Order_Status,
-        getStatus
+
+        type:EDIT_ORDER_STATUS,
+        getStatus,
+        id
+
     }
 }

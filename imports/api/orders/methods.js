@@ -149,6 +149,14 @@ Meteor.methods({
     })
 
   },
+  "shopOrders.updateStatus"(_id,status){
+    return Orders.update(_id,{
+      $set:{
+        status:status
+      }
+    })
+
+  },
   "get.orders.InThisTime"(condition){
     return Orders.find(condition,{sort: {"createdAt": -1}}).fetch();
   },

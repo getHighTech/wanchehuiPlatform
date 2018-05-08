@@ -1,6 +1,7 @@
 import {UserRoles} from './user_roles.js';
 import { getRoleById,getRoleByName} from '/imports/api/roles/actions.js'
-import { Shops } from '../shops/shops.js'
+import { Shops } from '../shops/shops.js';
+import {Roles} from '../roles/roles.js'
 
 export function userBindingRoles(userId,roleIds){
   let user_roles = UserRoles.find({'userId': userId,'status': true}).fetch();
@@ -76,6 +77,25 @@ export function rolesFindByUserId(userId){
     return []
   }
 }
+
+export function rolesACLFindByUserId(userId){
+  let user_role_record = UserRoles.find({'userId': userId,'status': true}).fetch();
+  if(user_role_record.length > 0){
+    let roleIds = []
+    for (let i = 0; i < user_role_record.length; i++) {
+      // roleIds.push(user_role_record[i].roleId)
+      Meteor.call('roles.permissions',user_role_record[i].roleId,function(err,alt){
+        console.log(alt);
+      })
+    }
+    // return roleIds
+
+  } else{
+    return []
+  }
+}
+
+
 export function userBindingShopOwner(userId,OldOwner,role_name){
   let record = UserRoles.findOne({userId:userId,roleName:role_name})
   if(record === undefined){
@@ -107,7 +127,7 @@ export function userBindingShopOwner(userId,OldOwner,role_name){
     console.log(shops)
     if(shops.length > 0){
       //以前的店长还有其他的店
-      return 
+      return
     }else{
       //没有其他的店，收回他的店长角色
       console.log("!!!!!!!!!!!!!")
@@ -118,7 +138,7 @@ export function userBindingShopOwner(userId,OldOwner,role_name){
         }
       })
     }
-    
+
   }
 }
 export function rolesNameFindByUserId(userId){
