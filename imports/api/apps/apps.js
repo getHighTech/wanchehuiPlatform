@@ -79,6 +79,12 @@ export function syncUser(userId, stampedToken, appName){
         roles.push(item.roleName);
       });
       let user = Meteor.users.findOne({_id: userId});
+      if(!user){
+        return {
+            type: "fail",
+            msg: "NOT LOGINED"
+        };
+      }
       let userContact = UserContacts.findOne({userId, default: true})
       roles.push("login_user");
       return {
@@ -553,6 +559,12 @@ export function syncRemoteCartToLocal(loginToken, appName, cartId){
 
 export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
     return getUserInfo(loginToken, appName, "app_carts", function(){
+        let createNew = function(){
+            return newCartId = AppCarts.insert({
+                ...cartParams,
+                createdAt: new Date()
+            })
+        }
         let updateRlt = null;
         if(cartId){
             let cart = AppCarts.findOne({_id: cartId, status: "notFinish"});
@@ -573,11 +585,8 @@ export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
                 msg: updateRlt,
             }
         }else{
-          let newCartId = AppCarts.insert({
-              ...cartParams,
-              createdAt: new Date()
-          })
-          if(!newCartId){
+          
+          if(!createNew()){
               return {
                   type: "error",
                   reason: "CREATE CART FAIL"
