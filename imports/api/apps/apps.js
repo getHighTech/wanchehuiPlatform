@@ -539,10 +539,10 @@ export function createBankcard(
     });
 }
 
-export function syncRemoteCartToLocal(loginToken, appName, cartId){
+export function syncRemoteCartToLocal(loginToken, appName, userId, cartId){
     return getUserInfo(loginToken, appName, "app_carts", function(){
-        let cart = AppCarts.findOne({_id: cartId, status: "notFinish"});
-        if(!cart){
+        let cart = AppCarts.findOne({_id: cartId, userId, orderStatus: "notFinish"});
+        if(cart){
             return {
                 type: "app_carts",
                 msg: cart
@@ -558,8 +558,10 @@ export function syncRemoteCartToLocal(loginToken, appName, cartId){
 
 
 export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
+    
     return getUserInfo(loginToken, appName, "app_carts", function(){
         let createNew = function(){
+            
             let newCartId = AppCarts.insert({
                 ...cartParams,
                 createdAt: new Date()
@@ -571,17 +573,20 @@ export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
                 }
             }else{
                 return {
-                   type: "app_cart",
+                   type: "app_carts",
                    msg: newCartId
                 }
             }
         }
         let updateRlt = null;
         if(cartId){
-            let cart = AppCarts.findOne({_id: cartId, status: "notFinish"});
+            let cart = AppCarts.findOne({_id: cartId, orderStatus: "notFinish"});
+            
             if(!cart){
                 return createNew();
             }
+            console.log(cartParams);
+            
             updateRlt = AppCarts.update(cartId, {
                 $set: {
                     ...cartParams,
@@ -594,7 +599,7 @@ export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
                 }
             }
             return {
-                tyep: "app_cart",
+                type: "app_carts",
                 msg: updateRlt,
             }
         }else{
