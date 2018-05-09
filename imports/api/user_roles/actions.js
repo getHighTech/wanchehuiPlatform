@@ -82,19 +82,19 @@ export function rolesACLFindByUserId(userId){
   let user_role_record = UserRoles.find({'userId': userId,'status': true}).fetch();
   if(user_role_record.length > 0){
     let roleIds = []
-    // for (let i = 0; i < user_role_record.length; i++) {
-    //   // roleIds.push(user_role_record[i].roleId
-    //   console.log("1111");
-    //   console.log(user_role_record[i].roleId);
-    //   Meteor.call('roles.permissions',user_role_record[i].roleId,function(err,alt){
-    //     console.log('2222');
-    //     // result = alt
-    //     // return result
-    //     roleIds.push(alt);
-    //     console.log(roleIds);
-    //
-    //   })
-    // }
+    for (let i = 0; i < user_role_record.length; i++) {
+      console.log("1111");
+      console.log(user_role_record[i].roleId);
+      let aaa=Roles.findOne({_id:user_role_record[i].roleId}).permissions.orders.updatable;
+      console.log(aaa);
+      if(aaa==true){
+        roleIds.push('true')
+      }
+      else {
+        roleIds.push('false')
+      }
+
+    }
     console.log('3333');
     console.log(roleIds);
     return roleIds

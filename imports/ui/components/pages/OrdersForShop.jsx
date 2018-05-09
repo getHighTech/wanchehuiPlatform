@@ -38,55 +38,41 @@ class OrdersForShop extends React.Component{
     shopkey:'',
     visible: false,
     changeStatus:[],
-    localStatus:''
+    localStatus:'',
   }
 
   showModal = (status,_id) => {
     let currentUserId = Meteor.userId();
     console.log(currentUserId);
     let self =this;
+    Meteor.call('rolesAcl.find_by_user_id',currentUserId,function(error,rlt){
+      console.log(rlt);
+      if(!error){
+              if(rlt.indexOf('true') == -1){
+                console.log('不能进行状态修改');
+                message.error('该用户不能进行状态修改');
+              }
+              else {
+                let id = _id;
+                self.setState({
+                  visible: true,
+                  localStatus:status
+                });
+                const {dispatch } = self.props;
+                Meteor.call('get.OrderState.byStatus',status,function(err,alt){
+                  let getStatus=[];
+                  for(var i=0;i<alt.length;i++){
+                    getStatus.push(alt[i].sTo)
+                  }
+                  self.setState({
+                    changeStatus:getStatus
+                  })
+                  dispatch(editOrderStatus(getStatus,id))
 
-    Meteor.call('roles.find_by_user_id',currentUserId,function(err,alt){
-      if(!err){
-        console.log(alt);
-        let rolesAcl=[];
-        for(var i=0;i<alt.length;i++){
-          Meteor.call('roles.permissions',alt[i],function(error,rlt){
-            if(!error){
-              console.log(rlt);
-              rolesAcl.push(rlt)
-            }
-          })
-        }
-        console.log(rolesAcl);
-        if(rolesAcl.indexOf('true') == -1){
-          console.log('不能进行状态修改');
-          message.error('该用户不能进行状态修改');
-        }
-        else {
-          console.log('走了这');
-          let id = _id;
-          self.setState({
-            visible: true,
-            localStatus:status
-          });
-          const {dispatch } = self.props;
+                })
+              }
 
 
-
-          Meteor.call('get.OrderState.byStatus',status,function(err,alt){
-            console.log(alt);
-            let getStatus=[];
-            for(var i=0;i<alt.length;i++){
-              getStatus.push(alt[i].sTo)
-            }
-            self.setState({
-              changeStatus:getStatus
-            })
-            dispatch(editOrderStatus(getStatus,id))
-
-          })
-        }
       }
     })
 
@@ -236,7 +222,7 @@ class OrdersForShop extends React.Component{
 function mapStateToProps(state) {
   return {
     getStatus: state.OrderStatus.OrderStatus,
-    id:state.OrderStatus.Id
+    id:state.OrderStatus.Id,
    };
 }
 

@@ -10,6 +10,20 @@ Meteor.methods({
   },
   'get.OrderState.byStatus'(status){
     return OrderStatusAccesses.find({'sFrom':status}).fetch();
+  },
+  'get.all.OrderStatusAccesses'(){
+    return OrderStatusAccesses.find().fetch();
+  },
+  'get.OrderState.byId'(id){
+    return OrderStatusAccesses.findOne({_id:id})
+  },
+  'OrderStatus.update'(old,newObj){
+    OrderStatusAccesses.update({_id:old._id},{
+      $set:{
+        sFrom:newObj.current,
+        sTo:newObj.next
+      }
+    })
   }
 
   })
