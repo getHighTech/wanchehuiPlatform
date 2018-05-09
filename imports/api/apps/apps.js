@@ -560,15 +560,28 @@ export function syncRemoteCartToLocal(loginToken, appName, cartId){
 export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
     return getUserInfo(loginToken, appName, "app_carts", function(){
         let createNew = function(){
-            return newCartId = AppCarts.insert({
+            let newCartId = AppCarts.insert({
                 ...cartParams,
                 createdAt: new Date()
             })
+            if(!newCartId){
+                return {
+                    type: "error",
+                    reason: "CREATE CART FAIL"
+                }
+            }else{
+                return {
+                   type: "app_cart",
+                   msg: newCartId
+                }
+            }
         }
         let updateRlt = null;
         if(cartId){
             let cart = AppCarts.findOne({_id: cartId, status: "notFinish"});
-            
+            if(!cart){
+                return createNew();
+            }
             updateRlt = AppCarts.update(cartId, {
                 $set: {
                     ...cartParams,
@@ -585,18 +598,7 @@ export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
                 msg: updateRlt,
             }
         }else{
-          
-          if(!createNew()){
-              return {
-                  type: "error",
-                  reason: "CREATE CART FAIL"
-              }
-          }else{
-              return {
-                 type: "app_cart",
-                 msg: newCartId
-              }
-          }
+          return createNew();
         }
         
        
