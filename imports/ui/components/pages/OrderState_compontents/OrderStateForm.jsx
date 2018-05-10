@@ -2,9 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Form, Icon, Input, Button } from 'antd';
+import "antd/lib/modal/style";
+import { Select, Radio } from 'antd';
+import 'antd/dist/antd.css';
 const FormItem = Form.Item;
+const Option = Select.Option;
 
 
+function handleChange(value) {
+  console.log(`Selected: ${value}`);
+}
 
 class OrderStateFormWrap extends Component {
     constructor(props){
@@ -12,7 +19,13 @@ class OrderStateFormWrap extends Component {
     }
 render(){
   const { getFieldDecorator, getFieldValue } = this.props.form;
-  const {OrderStatus}=this.props;
+  const {OrderStatus,modalState,getStatus}=this.props;
+  const children = [];
+  for (let i = 0; i < this.props.getStatus.length; i++) {
+    children.push(<Option key={getStatus[i]} >{getStatus[i]}</Option>);
+  }
+
+
   const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -24,6 +37,7 @@ render(){
       },
     };
   return(
+
     <Form>
         <FormItem
             {...formItemLayout}
@@ -33,7 +47,15 @@ render(){
             {getFieldDecorator('last', {
             })(
 
-                <Input className="shop-name-input"   prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
+              <Select
+                    mode="tags"
+                    placeholder="Please select"
+                    onChange={handleChange}
+                    dropdownStyle={{zIndex:'99999' }}
+                    style={{ width: '100%' }}
+                  >
+                    {children}
+                  </Select>
             )}
         </FormItem>
         <FormItem
@@ -56,13 +78,23 @@ render(){
             >
             {getFieldDecorator('next', {
                 initialValue: this.props.OrderStatus.sTo,
-                rules: [{ required: true, message: '商品名称不能为空'},{validator: this.handleConfirmName}]
             })(
 
-                <Input className="shop-name-input"   prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
+              <Select
+                    mode="tags"
+                    placeholder="Please select"
+                    onChange={handleChange}
+                    dropdownStyle={{zIndex:'99999' }}
+                    style={{ width: '100%' }}
+                  >
+                    {children}
+                  </Select>
             )}
         </FormItem>
     </Form>
+
+
+
   )
 }
 

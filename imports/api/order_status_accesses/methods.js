@@ -14,6 +14,9 @@ Meteor.methods({
   'get.all.OrderStatusAccesses'(){
     return OrderStatusAccesses.find().fetch();
   },
+  // 'get.all.status'(){
+  //   let OrderStatusAccesses.find().fetch
+  // }
   'get.OrderState.byId'(id){
     return OrderStatusAccesses.findOne({_id:id})
   },
@@ -23,6 +26,14 @@ Meteor.methods({
         sFrom:newObj.current,
         sTo:newObj.next
       }
+    })
+  },
+  'OrderStatus.insert'(newObj){
+    console.log(newObj);
+    OrderStatusAccesses.insert({
+      sFrom:newObj.current,
+      sTo:newObj.next,
+      accessable:true
     })
   }
 
