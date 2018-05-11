@@ -233,9 +233,6 @@ class Users extends React.Component{
   handlePageChange(page, pageSize){
     $(document).scrollTop(0);
     this.getPageUsers(page, pageSize, this.state.condition);
-
-
-
   }
 
   getPageUsers(page, pageSize, condition){
