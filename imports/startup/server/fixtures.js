@@ -295,7 +295,7 @@ Meteor.startup(() => {
   //     });
   //
   //     console.log("end of script");
-<<<<<<< HEAD
+
       // Products.find({}).forEach(product => {
       //   if(!product.acl.copy){
       //     Products.update(product._id, {
@@ -308,25 +308,6 @@ Meteor.startup(() => {
       //     })
       //   }
       //   console.log(product.acl, product._id);
-        
       // });
-=======
-
-      Products.find({}).forEach(product => {
-        if(!product.acl.copy){
-          Products.update(product._id, {
-            $set: {
-              "acl.copy": {
-                roles: ['blackcard_holder'],
-                users: []
-              }
-            }
-          })
-        }
-        console.log(product.acl, product._id);
-
-      });
-// >>>>>>> e2366b2df09f3aae72cfd3ce02186d8d44210dbf
->>>>>>> e5c3618bfc300d78cdbdb97e98cc2565e960a71b
 
 });
