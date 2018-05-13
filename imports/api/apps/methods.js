@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import {Products} from '../products/products';
-import { findOneAppByName, getOneProduct, appLoginUser, syncUser, createNewOrder, loadOneOrderById, loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus } from './apps';
+import { findOneAppByName, getOneProduct, appLoginUser, syncUser, createNewOrder, loadOneOrderById, loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, removeBankcard,syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus } from './apps';
 
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
@@ -149,7 +149,7 @@ Meteor.methods({
             fromMethod: "app.withdraw.money"
         })
     },
-
+    //获取银行卡列表
     "app.get.user.bankcards"(loginToken, appName, userId){
         let stampedTokenObj = JSON.parse(loginToken);
         let rltObj = getUserBankcards(stampedTokenObj, appName, userId);
@@ -158,6 +158,7 @@ Meteor.methods({
         });
         
     },
+    //插入银行卡
     "app.user.create.bankcard"(
         loginToken, 
         appName,
@@ -178,6 +179,14 @@ Meteor.methods({
                 fromMethod: "app.user.create.bankcard"
             })
         },
+    //删除银行卡
+    'app.user.remove.bankcard'(loginToken,appName,bankcardId){
+        let stampedTokenObj = JSON.parse(loginToken);
+        let rltObj = removeBankcard(loginToken,appName,bankcardId)
+        return Object.assign({},rltObj,{
+            fromMethod:"app.user.remove.bankcard"
+        })
+    },
 
         "app.sync.remote.cart.local"(loginToken, appName,userId, cartId){
             

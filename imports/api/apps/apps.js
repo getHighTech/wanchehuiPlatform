@@ -545,6 +545,27 @@ export function createBankcard(
         
     });
 }
+export function removeBankcard(
+    loginToken,
+    appName,
+    bankcardId
+){
+    return getUserInfo(loginToken, appName, "bankcards", function(){
+        Bankcards.remove(bankcardId,function(err,rlt){
+            if(!err){
+                return {
+                    type: "bankcards",
+                    msg: "REMOVE BANKCARD SUCCESS"
+                }
+            }else{
+                return {
+                    type: "error",
+                    reason: "CREATE BANKCARD ERROR"
+                }
+            }
+        })
+    });
+}
 
 export function syncRemoteCartToLocal(loginToken, appName, userId, cartId){
     return getUserInfo(loginToken, appName, "app_carts", function(){
