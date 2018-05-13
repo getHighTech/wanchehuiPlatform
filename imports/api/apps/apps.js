@@ -589,6 +589,7 @@ export function syncRemoteCartToLocal(loginToken, appName, userId, cartId){
 
 
 export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
+    console.log(cartId);
     
     return getUserInfo(loginToken, appName, "app_carts", function(){
         let createNew = function(){
