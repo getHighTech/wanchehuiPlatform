@@ -179,9 +179,12 @@ Meteor.methods({
             })
         },
 
-        "app.sync.remote.cart.local"(loginToken, appName, cartId){
+        "app.sync.remote.cart.local"(loginToken, appName,userId, cartId){
+            
             let stampedTokenObj = JSON.parse(loginToken);
-            let rltObj = syncRemoteCartToLocal(stampedTokenObj, appName, cartId);
+            
+            let rltObj = syncRemoteCartToLocal(stampedTokenObj, appName, userId, cartId);
+            
             return Object.assign({}, rltObj, {
                 fromMethod: "app.sync.remote.cart.local"
             });

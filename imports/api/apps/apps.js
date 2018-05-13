@@ -321,6 +321,13 @@ export function updateOrder(loginToken, appName, orderParams, orderId){
 }
 
 export function createNewOrder(loginToken, appName, orderParams){
+    if(orderParams.cartId){
+        AppCarts.update(orderParams.cartId, {
+            $set: {
+                orderStatus: "finish"
+            }
+        })
+    }
     if(!findOneAppByName(appName)){
         return {
             type: "error",
@@ -542,6 +549,9 @@ export function createBankcard(
 export function syncRemoteCartToLocal(loginToken, appName, userId, cartId){
     return getUserInfo(loginToken, appName, "app_carts", function(){
         let cart = AppCarts.findOne({_id: cartId, userId, orderStatus: "notFinish"});
+        if(!cart){
+            cart = AppCarts.findOne({userId, orderStatus: "notFinish"});
+        }
         if(cart){
             return {
                 type: "app_carts",
@@ -585,7 +595,6 @@ export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
             if(!cart){
                 return createNew();
             }
-            console.log(cartParams);
             
             updateRlt = AppCarts.update(cartId, {
                 $set: {
