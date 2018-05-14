@@ -13,7 +13,6 @@ class EditOrderStateFormWrap extends Component {
 render(){
   const { getFieldDecorator, getFieldValue } = this.props.form;
   const {OrderStatus,modalState}=this.props;
-  console.log(this.props.modalState);
   const formItemLayout = {
       labelCol: {
         xs: { span: 24 },

@@ -83,11 +83,8 @@ export function rolesACLFindByUserId(userId){
   if(user_role_record.length > 0){
     let roleIds = []
     for (let i = 0; i < user_role_record.length; i++) {
-      console.log("1111");
-      console.log(user_role_record[i].roleId);
-      let aaa=Roles.findOne({_id:user_role_record[i].roleId}).permissions.orders.updatable;
-      console.log(aaa);
-      if(aaa==true){
+      let result=Roles.findOne({_id:user_role_record[i].roleId}).permissions.orders.updatable;
+      if(result==true){
         roleIds.push('true')
       }
       else {
@@ -95,7 +92,6 @@ export function rolesACLFindByUserId(userId){
       }
 
     }
-    console.log('3333');
     console.log(roleIds);
     return roleIds
 

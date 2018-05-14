@@ -5,10 +5,13 @@ import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Modal,Button } from 'antd';
 import { Input } from 'antd';
+import { Switch} from 'antd';
 import OrderStateForm from './OrderState_compontents/OrderStateForm.jsx';
 import EditOrderStateForm from './OrderState_compontents/EditOrderStateForm.jsx';
 import {addOrderStatus,editStatus,getOrderStatus} from '/imports/ui/actions/order_status.js'
 import { Table } from 'antd';
+import message from 'antd/lib/message';
+import 'antd/lib/message/style';
 import Tooltip from 'antd/lib/tooltip';
 import "antd/lib/tooltip/style";
 
@@ -16,7 +19,9 @@ class OrderState extends Component {
   state = {
      addvisible: false,
      editvisible:false,
-     dataSource:[]
+     dataSource:[],
+     ButtonState:true,
+
    }
 
   showModal = () => {
@@ -29,25 +34,28 @@ class OrderState extends Component {
           status.push(alt[i].sTo);
         }
       }
-      console.log(status);
       var newStatus = status.filter(function(element,index,self){
       return self.indexOf(element) === index;
       });
-      console.log(newStatus);
       dispatch(getOrderStatus(newStatus));
 
     })
     const {dispatch } = self.props;
     dispatch(addOrderStatus());
     self.setState({
+      ButtonState:true,
       addvisible: true,
     });
 
   }
   handleAddOk = (e) => {
+    // (async()=>{
+    //     let data = awiat
+    // })()
     let self = this;
     let validated = true;
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated);
+    console.log(validated);
     if (!validated) {
       console.log('参数错误');
       return;
@@ -68,8 +76,14 @@ class OrderState extends Component {
     }
     if(newObj.last.length>0){
       for (var i = 0; i < newObj.last.length; i++) {
-        newObj.last[i]
-        let newobj={current:newObj.last[i],next:newObj.current}
+        let newobj={current:newObj.last[i],next:newObj.current};
+        // Meteor.call('find.SameStatus',newobj,function(error,result){
+        //   if (!error) {
+        //     if(result=!0){
+        //       message.error('已存在'+newobj.current+'到'+newobj.next+'的关系');
+        //     }
+        //   }
+        // })
         Meteor.call('OrderStatus.insert',newobj,function(err,alt){
           if(!err){
             self.getDataSource();
@@ -78,9 +92,9 @@ class OrderState extends Component {
         })
       }
     }
+
     if(newObj.next.length>0){
       for (var i = 0; i < newObj.next.length; i++) {
-        newObj.last[i]
         let newobj={current:newObj.current,next:newObj.next[i]}
         Meteor.call('OrderStatus.insert',newobj,function(err,alt){
           if(!err){
@@ -90,16 +104,9 @@ class OrderState extends Component {
         })
       }
     }
-
-
-
-
-
-
-
-
-    this.setState({
+    self.setState({
       addvisible: false,
+      ButtonState:true
     });
   }
   handleEditOk = (e) => {
@@ -132,6 +139,8 @@ class OrderState extends Component {
     let self =this;
     self.setState({
       addvisible: false,
+      ButtonState:true,
+
     });
     self.setFormData({});
   }
@@ -152,6 +161,12 @@ class OrderState extends Component {
         editvisible:true
       })
     }
+    })
+  }
+  changebutton(state){
+    console.log(state);
+    this.setState({
+      ButtonState:state
     })
   }
   getDataSource(){
@@ -177,10 +192,36 @@ class OrderState extends Component {
     self.getDataSource();
 
   }
+  changeAccessable(_id){
+    Meteor.call('OrderStatus.AccessableUpdate',_id,function(error,result){
+      if (!error) {
+        console.log(result);
+        if (!result.accessable){
+          message.success('开通此关系！')
+        }else{
+          message.success('关闭此关系！！')
+        }
+      }
+      else{
+        message.success('操作失败')
+      }
+    })
+  }
+  handleSearchInput(str){
+    let self = this ;
+    let condition = {$or: [{sFrom:eval("/"+str+"/")},{sTo:eval("/"+str+"/")}]};
+    Meteor.call('get.OrderState.byCondition',condition,function(err,alt){
+      if (!err) {
+        console.log(alt);
+        self.setState({
+          dataSource:alt
+        })
+      }
+    })
+  }
 
  render() {
    const {OrderStatus,modalState,editState}=this.props
-
    const columns = [
      {title:'当前状态',width:200,dataIndex:'sFrom',key:'sFrom'},
      {title:'改变状态',width:200,dataIndex:'sTo',key:'sTo'},
@@ -192,9 +233,13 @@ class OrderState extends Component {
          return(
            <span>
 
-           <span className="ant-divider" />
            <Tooltip placement="topLeft" title="修改" arrowPointAtCenter>
              <Button shape="circle" icon="edit"  onClick={ () => this.onEditOrderStatus(record._id)}></Button>
+           </Tooltip>
+           <span className="ant-divider" />
+
+           <Tooltip placement="topLeft" title="关闭此关系" arrowPointAtCenter>
+             <Switch checkedChildren="打开" unCheckedChildren="关闭"  defaultChecked={record.accessable} onChange={() => this.changeAccessable(record._id)}  />
            </Tooltip>
 
 
@@ -207,8 +252,26 @@ class OrderState extends Component {
    return (
      <div>
           <Button type="dashed" icon="plus" onClick={this.showModal}>添加状态</Button>
-          <Modal title="添加状态" visible={this.state.addvisible} onOk={this.handleAddOk} onCancel={this.handleAddCancel}  >
-          <OrderStateForm OrderStatus={this.props.OrderStatus} modalState={this.props.modalState} getStatus={this.props.getStatus} ref = {(input) => { this.formComponent = input; }} />
+
+           <br /><br />
+          <Input.Search
+                placeholder="搜索关系相关"
+                onSearch={value => console.log(value)}
+                size="large"
+                style={{ width: '75%' }}
+                enterButton="Search"
+                onInput={input => this.handleSearchInput(input.target.value) }
+              />
+           <br /><br />
+
+
+          <Modal title="添加状态" visible={this.state.addvisible} onCancel={this.handleAddCancel} footer={[
+            <Button key="back" onClick={this.handleAddCancel}>Return</Button>,
+            <Button key="submit" type="primary"  disabled={this.state.ButtonState} onClick={this.handleAddOk}>
+              Submit
+            </Button>,
+          ]} >
+          <OrderStateForm OrderStatus={this.props.OrderStatus}  changebutton={this.changebutton.bind(this)}  modalState={this.props.modalState} getStatus={this.props.getStatus} ref = {(input) => { this.formComponent = input; }} />
           </Modal>
           <Modal title="编辑状态" visible={this.state.editvisible} onOk={this.handleEditOk} onCancel={this.handleEditCancel}  >
           <EditOrderStateForm OrderStatus={this.props.OrderStatus} modalState={this.props.modalState} getStatus={this.props.getStatus} ref = {(input) => { this.formComponent = input; }} />

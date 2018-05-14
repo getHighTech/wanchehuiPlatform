@@ -9,7 +9,7 @@ Meteor.methods({
 
   },
   'get.OrderState.byStatus'(status){
-    return OrderStatusAccesses.find({'sFrom':status}).fetch();
+    return OrderStatusAccesses.find({'sFrom':status,'accessable':true}).fetch();
   },
   'get.all.OrderStatusAccesses'(){
     return OrderStatusAccesses.find().fetch();
@@ -17,8 +17,22 @@ Meteor.methods({
   // 'get.all.status'(){
   //   let OrderStatusAccesses.find().fetch
   // }
+  'get.OrderState.byCondition'(condition){
+    return OrderStatusAccesses.find(condition).fetch()
+  },
   'get.OrderState.byId'(id){
     return OrderStatusAccesses.findOne({_id:id})
+  },
+  'OrderStatus.AccessableUpdate'(_id){
+    let access = OrderStatusAccesses.findOne({_id:_id});
+    console.log(access.accessable);
+    OrderStatusAccesses.update(_id,{
+      $set:{
+        'accessable':!access.accessable
+      }
+    })
+
+    return access
   },
   'OrderStatus.update'(old,newObj){
     OrderStatusAccesses.update({_id:old._id},{
@@ -35,6 +49,16 @@ Meteor.methods({
       sTo:newObj.next,
       accessable:true
     })
+  },
+  'find.SameStatus'(newobj){
+    console.log('------------------------------------');
+    console.log(newobj);
+    let result =OrderStatusAccesses.find({
+      sFrom:newobj.current,
+      sTo:newobj.next
+    }).fetch();
+    console.log(result);
+    return result.length
   }
 
   })
