@@ -5,7 +5,7 @@ import {Agencies} from '/imports/api/agencies/agencies.js'
 import {Shops} from '/imports/api/shops/shops.js'
 import {Balances} from '/imports/api/balances/balances.js'
 import {BalanceIncomes} from '/imports/api/balances/balance_incomes.js'
-
+import {ProductOwners} from '/imports/api/product_owners/product_owners.js';
 
 HTTP.methods({
   
@@ -13,10 +13,8 @@ HTTP.methods({
      get: function(){
        return "开始发货"
      },
-     post: function(){
-
-       return "success";
-      let status = "failed";
+     post: function(data){
+       let status = "failed";
        let wechatOrderId = null;
        let originOrderId = null;
        if (data.ext != undefined) {
@@ -34,6 +32,26 @@ HTTP.methods({
 
        let superAgencyId = data.attach.super_agency_id;
        let order = Orders.findOne({_id: orderId});
+        if (status == "failed") {
+          return "WECHAT PAY FAILED"
+          }
+        if (status == "canceled") {
+          return "WECHAT PAY CANCELED";
+          } 
+        if (status == "success") {
+        //改变订单状态
+        if (order.status == "paid") {
+          return "ORDER IS ALREADY DEALED"
+          console.log("ORDER IS ALREADY DEALED");
+        }
+        Orders.update(orderId,{
+          $set: {
+            status: "paid",
+            transactionId,
+            tradeId,//存入订单和微信订单的对应
+            payMode,//存入支付渠道
+          }
+        })
        if(data.attach.version){
          //2.0开始处理已经支付的订单
          let products = order.products;
@@ -66,7 +84,34 @@ HTTP.methods({
                 $set: {
                   amount: totalAmount+moneyToGive
                 }
-              })
+              });
+              //给完钱了,
+              //给渠道money ===================
+              //加入凯歌算法
+              // let shop = Shops.findOne({_id: product.shopId});
+              // let channel = kaigeAlg(shop);
+              // let channelShop = Shops.findOne({channel});
+              // let channelOwner = channelShop.acl.own.users[0];
+              //give chanel owner product.agencyLevelPrices[1]
+              // if(product.shopId)
+              //==============================
+              //发货并且声明货品拥有人
+              let additional = {
+                //买了卡的需要绑定车牌号
+
+              }
+
+              if(product.name === "wanchehui black card"){
+                additional = {
+                  cardNumber: order.contact.cardNumber
+                }
+              }
+              let productOwner = ProductOwners.insert({
+                productId: product._id,
+                userId: order.userId,
+                createdAt: new Date(),
+                additional
+              });
 
            }
          }
@@ -81,17 +126,14 @@ HTTP.methods({
        let cardToGive = Cards.findOne({_id: order.productId});
        if (status == "failed") {
          return "WECHAT PAY FAILED"
-         console.log("WECHAT PAY FAILED");
        }
        if (status == "canceled") {
          return "WECHAT PAY CANCELED";
-         console.log("WECHAT PAY CANCELED");
        }
        if (status == "success") {
          //改变订单状态
          if (order.status == "paid") {
            return "ORDER IS ALREADY DEALED"
-           console.log("ORDER IS ALREADY DEALED");
          }
          Orders.update(orderId,{
            $set: {
@@ -128,9 +170,9 @@ HTTP.methods({
 
          //分润
           //给上级钱
-          let buyer = Meteor.users.findOne({_id: order.createdBy});
+        let buyer = Meteor.users.findOne({_id: order.createdBy});
          let superAgency = Agencies.findOne({_id: superAgencyId});
-         if (superAgency == undefined) {
+        if (superAgency == undefined) {
            giveOutTheCoupon(buyer);
            return "SUPER ANGENCY MISSING";
            console.log("SUPER ANGENCY MISSING");
@@ -221,8 +263,10 @@ HTTP.methods({
 
 
 
-       }//if success status
+          }//if success status
       //兼容1。0==============================================================
-   },
+      }
+    }
   }
+  
  });
