@@ -22,5 +22,5 @@ HTTP.methods({
        return updateUsernameByMobile(mobile);
 
      }
-   }
+   },
  });

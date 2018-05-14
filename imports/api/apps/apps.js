@@ -79,6 +79,12 @@ export function syncUser(userId, stampedToken, appName){
         roles.push(item.roleName);
       });
       let user = Meteor.users.findOne({_id: userId});
+      if(!user){
+        return {
+            type: "fail",
+            msg: "NOT LOGINED"
+        };
+      }
       let userContact = UserContacts.findOne({userId, default: true})
       roles.push("login_user");
       return {
@@ -315,6 +321,13 @@ export function updateOrder(loginToken, appName, orderParams, orderId){
 }
 
 export function createNewOrder(loginToken, appName, orderParams){
+    if(orderParams.cartId){
+        AppCarts.update(orderParams.cartId, {
+            $set: {
+                orderStatus: "finish"
+            }
+        })
+    }
     if(!findOneAppByName(appName)){
         return {
             type: "error",
@@ -532,11 +545,35 @@ export function createBankcard(
         
     });
 }
+export function removeBankcard(
+    loginToken,
+    appName,
+    bankcardId
+){
+    return getUserInfo(loginToken, appName, "bankcards", function(){
+        Bankcards.remove(bankcardId,function(err,rlt){
+            if(!err){
+                return {
+                    type: "bankcards",
+                    msg: "REMOVE BANKCARD SUCCESS"
+                }
+            }else{
+                return {
+                    type: "error",
+                    reason: "CREATE BANKCARD ERROR"
+                }
+            }
+        })
+    });
+}
 
-export function syncRemoteCartToLocal(loginToken, appName, cartId){
+export function syncRemoteCartToLocal(loginToken, appName, userId, cartId){
     return getUserInfo(loginToken, appName, "app_carts", function(){
-        let cart = AppCarts.findOne({_id: cartId, status: "notFinish"});
+        let cart = AppCarts.findOne({_id: cartId, userId, orderStatus: "notFinish"});
         if(!cart){
+            cart = AppCarts.findOne({userId, orderStatus: "notFinish"});
+        }
+        if(cart){
             return {
                 type: "app_carts",
                 msg: cart
@@ -552,10 +589,34 @@ export function syncRemoteCartToLocal(loginToken, appName, cartId){
 
 
 export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
+    console.log(cartId);
+    
     return getUserInfo(loginToken, appName, "app_carts", function(){
+        let createNew = function(){
+            
+            let newCartId = AppCarts.insert({
+                ...cartParams,
+                createdAt: new Date()
+            })
+            if(!newCartId){
+                return {
+                    type: "error",
+                    reason: "CREATE CART FAIL"
+                }
+            }else{
+                return {
+                   type: "app_carts",
+                   msg: newCartId
+                }
+            }
+        }
         let updateRlt = null;
         if(cartId){
-            let cart = AppCarts.findOne({_id: cartId, status: "notFinish"});
+            let cart = AppCarts.findOne({_id: cartId, orderStatus: "notFinish"});
+            
+            if(!cart){
+                return createNew();
+            }
             
             updateRlt = AppCarts.update(cartId, {
                 $set: {
@@ -569,25 +630,11 @@ export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
                 }
             }
             return {
-                tyep: "app_cart",
+                type: "app_carts",
                 msg: updateRlt,
             }
         }else{
-          let newCartId = AppCarts.insert({
-              ...cartParams,
-              createdAt: new Date()
-          })
-          if(!newCartId){
-              return {
-                  type: "error",
-                  reason: "CREATE CART FAIL"
-              }
-          }else{
-              return {
-                 type: "app_cart",
-                 msg: newCartId
-              }
-          }
+          return createNew();
         }
         
        

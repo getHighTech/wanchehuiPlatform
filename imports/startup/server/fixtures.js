@@ -297,20 +297,18 @@ Meteor.startup(() => {
   //     console.log("end of script");
 
 
-      Products.find({}).forEach(product => {
-        if(!product.acl.copy){
-          Products.update(product._id, {
-            $set: {
-              "acl.copy": {
-                roles: ['blackcard_holder'],
-                users: []
-              }
-            }
-          })
-        }
-        console.log(product.acl, product._id);
-
-      });
-
+      // Products.find({}).forEach(product => {
+      //   if(!product.acl.copy){
+      //     Products.update(product._id, {
+      //       $set: {
+      //         "acl.copy": {
+      //           roles: ['blackcard_holder'],
+      //           users: []
+      //         }
+      //       }
+      //     })
+      //   }
+      //   console.log(product.acl, product._id);
+      // });
 
 });
