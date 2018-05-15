@@ -69,7 +69,8 @@ Meteor.methods({
             fromMethod: 'app.get.one.product.rolename'
         })
     },
-    'app.get.phonesms'(mobile, appName) {
+    'app.get.phonesms'(loginToken, appName, mobile) {
+        
         //验证码短信
         if(!findOneAppByName(appName)){
             return {
