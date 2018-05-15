@@ -21,6 +21,7 @@ import { Radio } from 'antd';
 import { editOrderStatus } from '/imports/ui/actions/order_status.js';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
+import {Spin} from 'antd';
 
 const RadioGroup = Radio.Group;
 
@@ -39,6 +40,7 @@ class OrdersForShop extends React.Component{
     visible: false,
     changeStatus:[],
     localStatus:'',
+    loading:false
   }
 
   showModal = (status,_id) => {
@@ -55,6 +57,7 @@ class OrdersForShop extends React.Component{
               else {
                 let id = _id;
                 self.setState({
+                  loading:true,
                   visible: true,
                   localStatus:status
                 });
@@ -95,6 +98,7 @@ class OrdersForShop extends React.Component{
   handleCancel = (e) => {
     this.setState({
       visible: false,
+      loading:false
     });
   }
 
@@ -112,6 +116,9 @@ class OrdersForShop extends React.Component{
     let currentUserId = Meteor.userId();
     console.log(currentUserId);
     let self =this;
+    self.setState({
+      loading:true
+    })
     let shopId='';
     Meteor.call('shops.getByCurrentUser', currentUserId,function(err,rlt){
       if(!err){
@@ -158,7 +165,8 @@ class OrdersForShop extends React.Component{
           result[i].ProPrice=productPrice/100
         }
         self.setState({
-          orderData:result
+          orderData:result,
+          loading:false
         })
       }
     })
@@ -211,7 +219,9 @@ class OrdersForShop extends React.Component{
       <Select value={this.state.defaultShopName} style={{ width: 160 }} onChange={this.handleChange.bind(this)}>
            {shopOption}
       </Select>
+      <Spin spinning={this.state.loading}>
         <Table columns={columns} dataSource={this.state.orderData} scroll={{ x: 1300 }} />
+      </Spin>
         <Modal  title="修改订单状态"  visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} >
           <RadioGroup options={this.props.getStatus}  onChange={this.onChangeOrderStatus}  value={this.state.localStatus}/>
         </Modal>
