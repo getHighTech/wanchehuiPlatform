@@ -300,6 +300,7 @@ export function getOneProduct(token, appName, condition){
     }
 }
 export function updateOrder(loginToken, appName, orderParams, orderId){
+    
     return getUserInfo(loginToken, appName, "orders", function(){
         let updateRlt = Orders.update(orderId, {
             $set: {
@@ -309,7 +310,7 @@ export function updateOrder(loginToken, appName, orderParams, orderId){
         if(updateRlt){
             return {
                 type: "orders", 
-                msg: updateRlt,
+                msg: orderId,
             }
         }else{
             return {
@@ -660,7 +661,9 @@ export function getUserDetailsById(loginToken, appName, userId){
 
 export function createUserContact(loginToken, appName, userId, contactParams){
     return getUserInfo(loginToken, appName, "user_contacts", function(){
+        
         if(contactParams.default === true){
+            //若是新的地址要社为默认，则用户其他地址就不是默认的
             let contacts = UserContacts.find({userId});
             contacts.forEach(contact=>{
                 UserContacts.update(contact._id, {
@@ -672,6 +675,7 @@ export function createUserContact(loginToken, appName, userId, contactParams){
         }
         let newContactId = UserContacts.insert({
             ...contactParams,
+            userId,
             deleted: false,
             createdAt: new Date(),
 
@@ -685,7 +689,9 @@ export function createUserContact(loginToken, appName, userId, contactParams){
 
 export function getUserContacts(loginToken, appName, userId){
     return getUserInfo(loginToken, appName, "user_contacts", function(){
-        let contacts = UserContacts.find({userId, deleted: false})
+        let contacts = UserContacts.find({userId, deleted: false}, {sort: {
+            createdAt: -1
+        }}).fetch();
         return {
             type: "user_contact",
             msg: contacts

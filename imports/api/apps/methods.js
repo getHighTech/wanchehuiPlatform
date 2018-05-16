@@ -214,8 +214,9 @@ Meteor.methods({
             })
         },
         "app.update.order"(loginToken, appName, orderParams, orderId){
+            
             let stampedTokenObj = JSON.parse(loginToken);
-            let rltObj = updateOrder(stampedTokenObj, orderParams, orderId);
+            let rltObj = updateOrder(stampedTokenObj,appName, orderParams, orderId);
             return Object.assign({}, rltObj, {
                 fromMethod: "app.update.order"
             })
