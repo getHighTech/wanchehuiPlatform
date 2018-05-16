@@ -149,6 +149,14 @@ Meteor.methods({
     })
 
   },
+  "shopOrders.updateStatus"(_id,status){
+    return Orders.update(_id,{
+      $set:{
+        status:status
+      }
+    })
+
+  },
   "get.orders.InThisTime"(condition){
     return Orders.find(condition,{sort: {"createdAt": -1}}).fetch();
   },
@@ -157,7 +165,7 @@ Meteor.methods({
   },
   "get.allOrders"(userId){
     let orders =  Orders.find({'userId':userId}).fetch();
-    console.log(orders)
+    // console.log(orders)
     if(orders.length > 0){
       return orders
     }else{

@@ -28,6 +28,7 @@ import PermissonDenied from '/imports/ui/components/pages/PermissonDenied';
 import CheckRoles from "/imports/ui/components/pages/tools/CheckRoles";
 import ShopDashBoard from '/imports/ui/components/pages/ShopDashBoard';
 import OrdersForShop from '/imports/ui/components/pages/OrdersForShop';
+import OrderState from '/imports/ui/components/pages/OrderState';
 
 
 const store = configureStore();
@@ -51,7 +52,7 @@ const Routes = ({ location }) =>
         <IndexRoute component={{superAdmin:DashBoard,commonUser:ShopDashBoard}} />
       </Route>
       {/* 以下一组路由为需要验证超级管理员之后才能访问 */}
-      <Route component={PermissionAuth}> 
+      <Route component={PermissionAuth}>
         <Route path="/users" component={Users}/>
         <Route path="/withdrawals" component={Withdrawals}/>
         <Route path="/roles" component={Roles}/>
@@ -62,6 +63,7 @@ const Routes = ({ location }) =>
       <Route path="/shops/shop_item" component={ShopItem}/>
       <Route path="/settings" component={Settings}/>
       <Route path="/component_test" component={ComponentTest}/>
+      <Route path="/orderstate" component={OrderState}/>
     </Route>
     <Route path="/login" component={Login}/>
     <Route path="/login/forgot" component={LoginForgot}/>

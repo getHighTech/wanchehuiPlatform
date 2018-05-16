@@ -3,32 +3,106 @@
 import React from "react";
 
 import { connect } from 'react-redux';
+import { createContainer } from 'meteor/react-meteor-data';
 import Card from 'antd/lib/card/';
 import 'antd/lib/card/style';
 import { Table } from 'antd';
 import Icon from 'antd/lib/icon';
 import "antd/lib/icon/style";
 import { Select } from 'antd';
-
+import { Modal} from 'antd';
 import Button from 'antd/lib/button';
 import "antd/lib/button/style";
-
+import { Roles } from '/imports/api/roles/roles.js';
 import Tooltip from 'antd/lib/tooltip';
 import "antd/lib/tooltip/style";
 const Option = Select.Option;
+import { Radio } from 'antd';
+import { editOrderStatus } from '/imports/ui/actions/order_status.js';
+import message from 'antd/lib/message';
+import 'antd/lib/message/style';
+import {Spin} from 'antd';
+
+const RadioGroup = Radio.Group;
+
 class OrdersForShop extends React.Component{
   constructor(props) {
     super(props);
     console.log(props);
-
+    console.log(this.props.getStatus);
   }
   state={
     shopData:[],
     shopId:'',
     orderData:[],
     defaultShopName:'暂无商铺',
-    shopkey:''
+    shopkey:'',
+    visible: false,
+    changeStatus:[],
+    localStatus:'',
+    loading:false
   }
+
+  showModal = (status,_id) => {
+    let currentUserId = Meteor.userId();
+    console.log(currentUserId);
+    let self =this;
+    Meteor.call('rolesAcl.find_by_user_id',currentUserId,function(error,rlt){
+      console.log(rlt);
+      if(!error){
+              if(rlt.indexOf('true') == -1){
+                console.log('不能进行状态修改');
+                message.error('该用户不能进行状态修改');
+              }
+              else {
+                let id = _id;
+                self.setState({
+                  loading:true,
+                  visible: true,
+                  localStatus:status
+                });
+                const {dispatch } = self.props;
+                Meteor.call('get.OrderState.byStatus',status,function(err,alt){
+                  let getStatus=[];
+                  for(var i=0;i<alt.length;i++){
+                    getStatus.push(alt[i].sTo)
+                  }
+                  self.setState({
+                    changeStatus:getStatus
+                  })
+                  dispatch(editOrderStatus(getStatus,id))
+
+                })
+              }
+
+
+      }
+    })
+
+
+
+
+  }
+  handleOk = (e) => {
+    let self =this;
+    this.setState({
+      visible: false,
+    });
+    Meteor.call('shopOrders.updateStatus',self.props.id,self.state.localStatus,function(err,alt){
+      if(!err){
+        self.getProName();
+      }
+    })
+
+  }
+  handleCancel = (e) => {
+    this.setState({
+      visible: false,
+      loading:false
+    });
+  }
+
+
    handleChange(value) {
      let self =this;
       console.log(value);
@@ -42,10 +116,12 @@ class OrdersForShop extends React.Component{
     let currentUserId = Meteor.userId();
     console.log(currentUserId);
     let self =this;
+    self.setState({
+      loading:true
+    })
     let shopId='';
     Meteor.call('shops.getByCurrentUser', currentUserId,function(err,rlt){
       if(!err){
-        console.log(rlt);
          shopId=rlt[0]._id;
         self.setState({
           shopId:shopId,
@@ -59,38 +135,38 @@ class OrdersForShop extends React.Component{
     })
 
   }
+  onChangeOrderStatus=(e)=>{
+    console.log( e.target.value);
+    let localStatus = e.target.value;
+    this.setState({
+      localStatus:localStatus
+    })
+  }
+
+
   getProName(){
     let shopId=this.state.shopId;
     let self =this;
 
     Meteor.call('orders.getShopId',shopId,function(erroy,result){
-      console.log(result[0]);
-      // let a =result[0]
-      // Meteor.call('role_order_status.insert',a,function(err,alt){
-      //   console.log(err);
-      // })
       if(!erroy){
         for(var i = 0;i<result.length;i++){
           let productName=[];
           let productPrice=0;
-          console.log(result[i].products);
           let OneOrderPro = result[i].products;
           for(var j = 0; j < OneOrderPro.length; j++){
             if(OneOrderPro[j].shopId==shopId){
-              console.log(OneOrderPro[j].price);
               productPrice=productPrice+OneOrderPro[j].price;
-              console.log(productPrice);
               productName.push(OneOrderPro[j].name,' ');
             }
           }
-          console.log(productName.length);
           result[i].ProCount=productName.length/2;
           result[i].ProName=productName;
           result[i].ProPrice=productPrice/100
-          console.log(result[i]);
         }
         self.setState({
-          orderData:result
+          orderData:result,
+          loading:false
         })
       }
     })
@@ -98,6 +174,7 @@ class OrdersForShop extends React.Component{
 
 
   render() {
+    const {getStatus} = this.props
           const columns = [
         { title: '订单号', width: 200, dataIndex: 'orderCode', key: 'orderCode', fixed: 'left' },
         { title: '用户名', width: 100, dataIndex: 'name', key: 'name', fixed: 'left' },
@@ -122,23 +199,17 @@ class OrdersForShop extends React.Component{
           width: 100,
           render: (text,record) => {
             return(
-              <Select defaultValue={record.status} onChange={this.handleChange.bind(this)}>
-                <Option key='1'>未确认</Option>
-                <Option key='2'>已确认</Option>
-                <Option key='3'>未支付</Option>
-                <Option key='4'>已支付</Option>
-                <Option key='5'>已撤销</Option>
-                <Option key='6'>已出货</Option>
-                <Option key='7'>已退款</Option>
-              </Select>
+              <Button type="primary" onClick={ () => this.showModal(record.status,record._id)}>修改</Button>
+
             )
           },
         },
+
+
       ];
 
       const shopOption=[];
       const shop=this.state.shopData;
-      console.log(shop);
       for(let i=0;i<shop.length;i++){
         shopOption.push(<Option key ={i}>{shop[i].name}</Option>)
       }
@@ -148,15 +219,28 @@ class OrdersForShop extends React.Component{
       <Select value={this.state.defaultShopName} style={{ width: 160 }} onChange={this.handleChange.bind(this)}>
            {shopOption}
       </Select>
+      <Spin spinning={this.state.loading}>
         <Table columns={columns} dataSource={this.state.orderData} scroll={{ x: 1300 }} />
+      </Spin>
+        <Modal  title="修改订单状态"  visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} >
+          <RadioGroup options={this.props.getStatus}  onChange={this.onChangeOrderStatus}  value={this.state.localStatus}/>
+        </Modal>
       </div>
     )
   }
 }
 function mapStateToProps(state) {
   return {
-
+    getStatus: state.OrderStatus.OrderStatus,
+    id:state.OrderStatus.Id,
    };
 }
 
-export default connect(mapStateToProps)(OrdersForShop);
+export default createContainer(() => {
+  if (Meteor.userId()) {
+    Meteor.subscribe('roles.current');
+  }
+  return {
+    current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
+  };
+}, connect(mapStateToProps)(OrdersForShop));

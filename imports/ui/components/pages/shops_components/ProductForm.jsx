@@ -316,13 +316,13 @@ class ProductFormWrap extends Component {
         // })
         }
         else {
-          console.log(nextProps);
+          // console.log(nextProps);
           if(nextProps.coverState!='done'){
             this.setState({
               fileList:[{uid:1,url:''}],
             })
           }
-          console.log(nextProps.detailsState);
+          // console.log(nextProps.detailsState);
           if(nextProps.detailsState!='done'){
             this.setState({
               fileListDetails:[{uid:1,url:''}],
@@ -581,6 +581,24 @@ class ProductFormWrap extends Component {
     }
 
     }
+    getSpecPrice(k){
+      let aaa =this.props.key_arr.length;
+      let spec=this.props.product.specifications;
+      if(typeof(spec)!='undefined'){
+        let length=spec.length-1;
+
+      if(k<=length){
+      return  spec[k].spec_price;
+        }
+      else {
+        return ''
+      }
+    }
+    else {
+      return ''
+    }
+
+    }
 
     change(a){
       this.setState({
@@ -676,7 +694,7 @@ class ProductFormWrap extends Component {
                 </FormItem>
               );
             });
-            const formItems2 = keys.map((k, index) => {
+            const formItems3 = keys.map((k, index) => {
               return (
                 <FormItem
                   {...formItemLayout}
@@ -684,8 +702,8 @@ class ProductFormWrap extends Component {
                   required={false}
                   key={k}
                 >
-                  {getFieldDecorator(`spec_value[${k}]`, {
-                    initialValue:this.getSpecValue(k),
+                  {getFieldDecorator(`spec_price[${k}]`, {
+                    initialValue:this.getSpecPrice(k),
                     validateTrigger: ['onChange', 'onBlur'],
                     rules: [
                     {
@@ -705,6 +723,29 @@ class ProductFormWrap extends Component {
                       onClick={() => this.remove(k)}
                     />
                   ) : null}
+                </FormItem>
+              );
+            });const formItems2 = keys.map((k, index) => {
+              return (
+                <FormItem
+                  {...formItemLayout}
+                  label='属性'
+                  required={false}
+                  key={k}
+                >
+                  {getFieldDecorator(`spec_value[${k}]`, {
+                    initialValue:this.getSpecValue(k),
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [
+                    {
+                      required: true,
+                      whitespace: true,
+                      message: "请输入属性.",
+                    }],
+                  })(
+                    <Input placeholder="属性" style={{ width: '70%'}} />
+                  )}
+
                 </FormItem>
               );
             });
@@ -860,8 +901,9 @@ class ProductFormWrap extends Component {
       </FormItem>
       <Row>
         <Col span={4}></Col>
-        <Col span={8}>{formItems}</Col>
-        <Col span={11}>{formItems2}</Col>
+        <Col span={6}>{formItems}</Col>
+        <Col span={6}>{formItems2}</Col>
+        <Col span={6}>{formItems3}</Col>
         <Col span={4}></Col>
       </Row>
 

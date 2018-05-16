@@ -13,21 +13,21 @@ Meteor.methods({
         name: params.name,
         time_limit:params.time_limit,
         permissions:params.permissions,
-        state: true, 
+        state: true,
         weight: 0,  //0权重权限最大
-        createdAt : new Date(), 
+        createdAt : new Date(),
         isSuper: false,
         users:[]
       });
     },
-  'role.findByTag'(tag){ 
+  'role.findByTag'(tag){
     let role = Roles.findOne({'name':tag})
     if(!role){
       return "ROLE NOT FOUND";
     }
     return role
   },
-  'role.findById'(roleId){ 
+  'role.findById'(roleId){
     let role = Roles.findOne({'_id':roleId})
     if(!role){
       return "ROLE NOT FOUND";
@@ -77,5 +77,16 @@ Meteor.methods({
     'roles.all'(){
       let roles = Roles.find({name: {$ne:"superAdmin"}});
       return roles.fetch();
+    },
+    'roles.permissions'(id){
+      let rolesAcl = Roles.findOne({_id:id});
+      console.log('-------------------------');
+      console.log(rolesAcl.permissions.orders.updatable);
+      if(rolesAcl.permissions.orders.updatable==true){
+        return 'true'
+      }
+      else {
+        return 'false'
+      }
     }
 });

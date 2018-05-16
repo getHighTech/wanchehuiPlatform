@@ -296,6 +296,7 @@ Meteor.startup(() => {
   //
   //     console.log("end of script");
 
+
       // Products.find({}).forEach(product => {
       //   if(!product.acl.copy){
       //     Products.update(product._id, {
