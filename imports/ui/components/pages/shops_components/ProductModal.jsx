@@ -121,15 +121,18 @@ class ProductModal extends React.Component{
     console.log(speckeys);
     let specname=oldObj.spec_name;
     let specvalue=oldObj.spec_value;
+    let specprice=oldObj.spec_price;
     let end_spec=[];
     for(var i = 0; i<speckeys.length;i++){
       var spec_index=speckeys[i];
       var spec_name=specname[spec_index];
       var spec_value=specvalue[spec_index];
+      var spec_price=specprice[spec_index];
       var o1={spec_name:spec_name};
       var o2={spec_value:spec_value};
-      var o3={isThis:false};
-      var obj = Object.assign(o1,o2,o3);
+      var o3={spec_price:spec_price}
+      var o4={isThis:false};
+      var obj = Object.assign(o1,o2,o3,o4);
       end_spec.push(obj);
     }
     setFieldsValue({specifications: end_spec})
@@ -145,7 +148,6 @@ class ProductModal extends React.Component{
     newObj.endPrice=newEndPrice*100;
     newObj.specifications=end_spec;
     console.log(newObj);
-    console.log(this.props.singleProduct.shop_name);
     self.hideModal();
 
     //将转化好的数据传给后端
@@ -154,27 +156,29 @@ class ProductModal extends React.Component{
       //新增店铺到数据库
       let shopId=this.props.id;
       let shopName= this.state.shopName;
-      console.log(shopName,shopId);
-      Meteor.call("products.insert", newObj, shopId,shopName,function(error,result){
-        if(!error){
-          console.log("新增商品");
-          console.log(result);
-          //数据变化后，刷新表格
-          self.reflashTable();
-          self.setFormData({});
-          console.log("刷新表格成功");
-          self.setState({
-            xx:[],
-            fileState:'',
-            coverState:'',
-            detailsState:''
+        for(var i =0; i<end_spec.length;i++ ){
+          let newspce = newObj.specifications[i];
+          console.log(newspce);
+          Meteor.call("products.insert", newObj, shopId,shopName,function(error,result){
+            if(!error){
+              console.log("新增商品");
+              console.log(result);
+              //数据变化后，刷新表格
+              self.reflashTable();
+              self.setFormData({});
+              console.log("刷新表格成功");
+              self.setState({
+                xx:[],
+                fileState:'',
+                coverState:'',
+                detailsState:''
+              })
+              console.log(self.state.xx);
+            }else{
+              console.log(error);
+            }
           })
-          console.log(self.state.xx);
-        }else{
-          console.log(error);
-        }
-      })
-
+       }
     }else{
       Meteor.call('product.update',this.props.singleProduct, newObj, function(error,result){
         if(!error){
@@ -252,7 +256,7 @@ class ProductModal extends React.Component{
           visible={this.props.productmodalVisible}
           onOk={this.handleModalOk}
           onCancel={this.handleCancel.bind(this)}
-          width={1000}
+          width={'80%'}
           style={{ top: 20 }}
         >
           <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} detailsState={this.state.detailsState} changedetailsState={this.changedetailsState.bind(this)} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
