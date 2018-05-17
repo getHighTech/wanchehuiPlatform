@@ -27,7 +27,6 @@ const FormItem = Form.Item;
 const { TextArea } = Input;
 import { Row, Col } from 'antd';
 
-
 import MDReactComponent from 'markdown-react-js';
 
 
@@ -36,85 +35,156 @@ import MDReactComponent from 'markdown-react-js';
 var Markdown = require('react-markdown');
 
 
-function uploadImageCallBack(file) {
 
-  return new Promise(
-    (resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', '/images/upload/handler');
-      xhr.send(file);
-
-      xhr.addEventListener('load', () => {
-        const response = JSON.parse(xhr.responseText);
-        resolve(response);
-      });
-      xhr.addEventListener('error', () => {
-        const error = JSON.parse(xhr.responseText);
-        reject(error);
-
-      });
-    }
-  );
-}
 
 
 let uuid = 0;
+let aaa = 0;
 class ComponentTest extends Component {
 
   state = {
-   fileList: [{
-     uid: -1,
-     name: 'xxx.png',
-     status: 'done',
-     url: 'http://www.baidu.com/xxx.png',
-   }],
+
  }
- handleChange = (info) => {
-   let fileList = info.fileList;
+ remove = (k) => {
+    const { form } = this.props;
+    // can use data-binding to get
+    const keys = form.getFieldValue('keys');
+    // We need at least one passenger
+    if (keys.length === 1) {
+      return;
+    }
 
-   // 1. Limit the number of uploaded files
-   //    Only to show two recent uploaded files, and old ones will be replaced by the new
-   fileList = fileList.slice(-2);
+    // can use data-binding to set
+    form.setFieldsValue({
+      keys: keys.filter(key => key !== k),
+    });
+  }
 
-   // 2. read from response and show file link
-   fileList = fileList.map((file) => {
-     console.log(file.response);
-     if (file.response) {
-       // Component will show file.url as link
-       file.url = file.response.url;
-     }
-     console.log(file);
-     return file;
-   });
+  add = () => {
+    const { form } = this.props;
+    const keys = form.getFieldValue('keys');
+    const nextKeys = keys.concat(uuid);
+    uuid++;
 
-   // 3. filter successfully uploaded files according to response from server
-   fileList = fileList.filter((file) => {
-     if (file.response) {
-       return file.response.status === 'success';
-     }
-     return true;
-   });
-   console.log(fileList);
-   this.setState({ fileList });
+    form.setFieldsValue({
+      keys: nextKeys,
+    });
+  }
+  addmodal = () =>{
+    const { form } = this.props;
+    const child = form.getFieldValue('child');
+    const nextKeys = child.concat(aaa);
+    aaa++;
+    console.log(child);
+    form.setFieldsValue({
+      child: nextKeys,
+    });
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+      }
+    });
+  }
+
+
+  render() {
+     const { getFieldDecorator, getFieldValue } = this.props.form;
+     const formItemLayout = {
+       labelCol: {
+         xs: { span: 24 },
+         sm: { span: 4 },
+       },
+       wrapperCol: {
+         xs: { span: 24 },
+         sm: { span: 20 },
+       },
+     };
+     const formItemLayoutWithOutLabel = {
+       wrapperCol: {
+         xs: { span: 24, offset: 0 },
+         sm: { span: 20, offset: 4 },
+       },
+     };
+     getFieldDecorator('keys', { initialValue: [] });
+     getFieldDecorator('child',{initialValue:[]})
+     const keys = getFieldValue('keys');
+     const child = getFieldValue('child');
+     const formItems2=child.map((k,index)=>{
+       return (
+         <FormItem
+           {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+           label={index === 0 ? 'Passengers' : ''}
+           required={false}
+           key={k}
+         >
+           {getFieldDecorator(`result[${k}]`, {
+             validateTrigger: ['onChange', 'onBlur'],
+             rules: [{
+               required: true,
+               whitespace: true,
+               message: "Please ",
+             }],
+           })(
+             <Input placeholder="passenger name" style={{ width: '20%', marginRight: 8 }} />
+           )}
+
+
+
+         </FormItem>
+       )
+     })
+     const formItems = keys.map((k, index) => {
+       return (
+         <FormItem
+           {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+           label={index === 0 ? 'Passengers' : ''}
+           required={false}
+           key={k}
+         >
+           {getFieldDecorator(`names[${k}]`, {
+             validateTrigger: ['onChange', 'onBlur'],
+             rules: [{
+               required: true,
+               whitespace: true,
+               message: "Please input passenger's name or delete this field.",
+             }],
+           })(
+             <Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} />
+           )}
+           {keys.length > 1 ? (
+             <Icon
+               className="dynamic-delete-button"
+               type="minus-circle-o"
+               disabled={keys.length === 1}
+               onClick={() => this.remove(k)}
+             />
+           ) : null}
+           <br /><br />
+           <Button onClick={this.addmodal}>12312</Button>
+
+         </FormItem>
+       );
+     });
+     return (
+       <Form onSubmit={this.handleSubmit}>
+         {formItems}
+         {formItems2}
+         <FormItem {...formItemLayoutWithOutLabel}>
+           <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
+             <Icon type="plus" /> Add field
+           </Button>
+         </FormItem>
+         <FormItem {...formItemLayoutWithOutLabel}>
+           <Button type="primary" htmlType="submit">Submit</Button>
+         </FormItem>
+       </Form>
+     );
+   }
  }
- render() {
-   const props = {
-     action: '//jsonplaceholder.typicode.com/posts/',
-     onChange: this.handleChange,
-     multiple: true,
-   };
-   return (
-     <Upload {...props} fileList={this.state.fileList}>
-       <Button>
-         <Icon type="upload" /> upload
-       </Button>
-     </Upload>
-   );
- }
-
-
-
-}
 const WrappedComponentTest = Form.create()(ComponentTest);
 
 export default WrappedComponentTest;

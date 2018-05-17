@@ -7,7 +7,7 @@ import { validLoginToken } from '../actions/validLoginToken.js'
 
 
 Meteor.methods({
-  "products.insert"(product,shopId,shopName){
+  "products.insert"(product,shopId,shopName,newSpec){
     if(product.isTool){
 
     }
@@ -30,7 +30,7 @@ Meteor.methods({
       isSale: true,
       shopId:shopId,
       shopName:shopName,
-      specifications:product.specifications,
+      specifications:newSpec,
       createdByUserId:"dadad",
       curency:'cny',
       recommend:product.recommend,

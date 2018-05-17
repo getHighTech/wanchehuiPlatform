@@ -626,7 +626,8 @@ class ProductFormWrap extends Component {
 
     render() {
       const { contentState,cover ,fileList,fileListMore,fileListDetails} = this.state;
-      const  { product } = this.props;
+      const  { product,editState,modalState } = this.props;
+      console.log(this.props.modalState);
         let uploadProps = {
           action: '/images/upload',
           onChange: this.handleChange.bind(this),
@@ -894,7 +895,7 @@ class ProductFormWrap extends Component {
       </FormItem>
       <Divider dashed />
       <FormItem {...formItemLayout}label='添加商品规格'>
-        <Button type="dashed" onClick={this.add} >
+        <Button type="dashed" onClick={this.add} disabled={!this.props.modalState} >
           <Icon type="plus" />添加
         </Button>
 

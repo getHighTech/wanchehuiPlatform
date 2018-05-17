@@ -137,11 +137,9 @@ class ProductModal extends React.Component{
     }
     setFieldsValue({specifications: end_spec})
 
-    //把表单中跟时间有关系的参数进行时间格式化
     for (const key in oldObj) {
         newObj[key] = oldObj[key];
     }
-    // 至此表单中的数据格式转换完毕
     let newPrice=newObj.price;
     newObj.price=newPrice*100;
     let newEndPrice =newObj.endPrice;
@@ -150,35 +148,36 @@ class ProductModal extends React.Component{
     console.log(newObj);
     self.hideModal();
 
-    //将转化好的数据传给后端
     if(self.props.modalState){
-      console.log(self.state.shopName);
       //新增店铺到数据库
       let shopId=this.props.id;
       let shopName= this.state.shopName;
-        for(var i =0; i<end_spec.length;i++ ){
-          let newspce = newObj.specifications[i];
-          console.log(newspce);
-          Meteor.call("products.insert", newObj, shopId,shopName,function(error,result){
-            if(!error){
-              console.log("新增商品");
-              console.log(result);
-              //数据变化后，刷新表格
-              self.reflashTable();
-              self.setFormData({});
-              console.log("刷新表格成功");
-              self.setState({
-                xx:[],
-                fileState:'',
-                coverState:'',
-                detailsState:''
-              })
-              console.log(self.state.xx);
-            }else{
-              console.log(error);
-            }
-          })
-       }
+      for (var i = 0; i < end_spec.length; i++) {
+        let newSpec = []
+        let newspec =newObj.specifications[i];
+        newSpec.push(newspec)
+        console.log(newSpec);
+        Meteor.call("products.insert", newObj, shopId,shopName,newSpec,function(error,result){
+          if(!error){
+            console.log("新增商品");
+            console.log(result);
+            //数据变化后，刷新表格
+            self.reflashTable();
+            self.setFormData({});
+            console.log("刷新表格成功");
+            self.setState({
+              xx:[],
+              fileState:'',
+              coverState:'',
+              detailsState:''
+            })
+            console.log(self.state.xx);
+          }else{
+            console.log(error);
+          }
+        })
+      }
+
     }else{
       Meteor.call('product.update',this.props.singleProduct, newObj, function(error,result){
         if(!error){
