@@ -790,3 +790,29 @@ export function getNewestUserOrders(loginToken, appName, status, userId, page, p
         }
     })
 }
+
+export function getIncomeWithinTime(loginToken, appName, rangeLength, userId, unit){
+    return getUserInfo(loginToken, appName, "balances", function(){
+        console.log('function in', unit);
+        
+        let yestoday = moment().subtract(rangeLength, unit);
+        yestoday = yestoday.toISOString();
+        let yestodayInData = new Date(yestoday);
+        let incomes = BalanceIncomes.find({createdAt: {'$gte':yestodayInData,'$lt':new Date()}, userId});
+        let totalAmount = 0;
+        incomes.forEach(income=>{
+            totalAmount+=income.amount
+        });
+        console.log(totalAmount);
+        console.log("准备返回", unit);
+        
+        return {
+            type: "balances",
+            msg: {
+                incomes: incomes.fetch(),
+                totalAmount,
+                unit,
+            }
+        }
+    })
+}

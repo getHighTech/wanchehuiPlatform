@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import {Products} from '../products/products';
-import { findOneAppByName, getOneProduct, appLoginUser, syncUser, createNewOrder, loadOneOrderById, loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, removeBankcard,syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus } from './apps';
+import { findOneAppByName, getOneProduct, appLoginUser, syncUser, createNewOrder, loadOneOrderById, loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, removeBankcard,syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus, getIncomeWithinTime } from './apps';
 
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
@@ -253,9 +253,18 @@ Meteor.methods({
         },
         "app.get.newest.user.order.status"(loginToken, appName, status, userId){
             let stampedTokenObj = JSON.parse(loginToken);
-            let rltObj = getNewestOneUserOrderByStatus(stampedTokenObj, status, userId);
+            let rltObj = getNewestOneUserOrderByStatus(stampedTokenObj,appName, status, userId);
             return Object.assign({}, rltObj, {
                 fromMethod: "app.get.newest.user.order.status"
+            })
+        },
+        'app.get.incomes.time.range'(loginToken, appName, rangeLength, userId, unit){
+            console.log(unit);
+            
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getIncomeWithinTime(stampedTokenObj, appName, rangeLength, userId, unit);
+            return Object.assign({}, rltObj, {
+                fromMethod: "app.get.incomes.time.range"
             })
         }
 
