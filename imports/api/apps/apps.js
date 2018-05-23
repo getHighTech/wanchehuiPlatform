@@ -280,24 +280,25 @@ export function appNewOrder(cartParams, appName){
     }
 }
 
-export function getOneProduct(token, appName, condition){
-    if(!findOneAppByName(appName)){
-        return {
-            type: "error",
-            reason: "invalid app"
+export function getOneProduct(loginToken, appName, productId){
+    return getUserInfo(loginToken, appName, "products", function(){
+        let product = Products.findOne({_id: productId});
+        if(!product){
+            product = Products.findOne({roleName: productId});
         }
-    }
-    let product = Products.findOne(condition);
-    if (!product) {
-        return {
-            type: "error",
-            reason: "PRODUCT NOT FOUND"
+        if (!product) {
+            return {
+                type: "error",
+                reason: "PRODUCT NOT FOUND"
+            }
         }
-    }
-    return {
-        type: "products",
-        msg: product
-    }
+        return {
+            type: "products",
+            msg: product
+        }
+    })
+   
+   
 }
 export function updateOrder(loginToken, appName, orderParams, orderId){
     
@@ -420,7 +421,7 @@ export function loadOneOrderById(loginToken, appName, orderId){
 }
 
 export function loadMoneyPage(loginToken, appName, userId){
-    return getUserInfo(loginToken, appName, "balances", {userId}, function(params){
+    return getUserInfo(loginToken, appName, "balances", function(params){
         let balance = Balances.findOne({userId});
         if(!balance){
            let balanceId = Balances.insert({
@@ -432,8 +433,10 @@ export function loadMoneyPage(loginToken, appName, userId){
            balance = Balances.findOne({_id: balanceId});
             
         }
-        let balance_incomes = BalanceIncomes.find({userId});
-        let balance_charges = BalanceCharges.find({userId});
+        let balance_incomes = BalanceIncomes.find({userId}, 
+            {skip: 0, limit: 5, sort: {createdAt: -1}});
+        let balance_charges = BalanceCharges.find({userId}, 
+            {skip: 0, limit: 5, sort: {createdAt: -1}});
         //数据结构兼容，之后可以删除
         let incomeNeedToUpdate = false;
         balance_incomes.forEach(income=>{
@@ -447,7 +450,8 @@ export function loadMoneyPage(loginToken, appName, userId){
             }
         })
         if(incomeNeedToUpdate){
-            balance_incomes = BalanceIncomes.find({balanceId: userId});
+            balance_incomes = BalanceIncomes.find({balanceId}, 
+                {skip: 0, limit: 5, sort: {createdAt: -1}});
         }
         
         //======================收入更新完毕
@@ -464,7 +468,8 @@ export function loadMoneyPage(loginToken, appName, userId){
             }
         });
         if(chargeNeedToUpdate){
-            balance_charges = BalanceCharges.find({userId});
+            balance_charges = BalanceCharges.find({userId}, 
+                {skip: 0, limit: 5, sort: {createdAt: -1}});
         }
         //======================支出更新完毕
 
@@ -472,7 +477,7 @@ export function loadMoneyPage(loginToken, appName, userId){
             type: "balances",
             msg: {
                 balance,
-                balance_incomes: balance_charges.fetch(),
+                balance_incomes: balance_incomes.fetch(),
                 balance_charges: balance_charges.fetch()
             }
         }
@@ -701,7 +706,7 @@ export function getUserContacts(loginToken, appName, userId){
 
 export function deleteUserContact(loginToken, appName, contactId){
     return getUserInfo(loginToken, appName, "user_contacts", function(){
-        let delRlt = UserContacts.update({
+        let delRlt = UserContacts.update(contactId, {
             $set: {
                 deleted: true
             }

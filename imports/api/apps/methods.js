@@ -57,16 +57,18 @@ Meteor.methods({
 
     "app.get.one.product.id"(loginToken, appName, productId){
         //载入商品信息
-        let productMsg = getOneProduct(null, appName, {_id: productId});
-        return Object.assign({}, productMsg, {
-            fromMethod: "app.get.one.product.id"
+        //创建新的订单
+        let stampedTokenObj = JSON.parse(loginToken);
+        return Object.assign({}, getOneProduct(stampedTokenObj, appName, productId), {
+            fromMethod:  "app.get.one.product.id"
         })
+       
     },
     'app.get.one.product.rolename'(loginToken, appName, roleName){
         //载入道具类别商品
-        let productMsg = getOneProduct(null, appName, {roleName});
-        return Object.assign({}, productMsg, {
-            fromMethod: 'app.get.one.product.rolename'
+        let stampedTokenObj = JSON.parse(loginToken);
+        return Object.assign({}, getOneProduct(stampedTokenObj, appName, roleName), {
+            fromMethod:  "app.get.one.product.rolename"
         })
     },
     'app.get.phonesms'(loginToken, appName, mobile) {
