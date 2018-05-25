@@ -7,12 +7,19 @@ import {Balances} from '/imports/api/balances/balances.js'
 import {BalanceIncomes} from '/imports/api/balances/balance_incomes.js'
 import {ProductOwners} from '/imports/api/product_owners/product_owners.js';
 import { updateShopOrders, ShopOrders } from '../api/apps/apps';
+import { Roles } from '/imports/api/roles/roles.js';
+import { UserRoles } from '/imports/api/user_roles/user_roles.js';
+
+let GorderId = null;
 
 HTTP.methods({
   
    '/api/v2/order/give': {
      get: function(){
-       return "开始发货"
+       return {
+         paid1: ShopOrders.findOne({orderId}),
+
+       }
      },
      post: function(data){
        let status = "failed";
@@ -30,7 +37,7 @@ HTTP.methods({
          status = "success"
        }
        let orderId = data.attach.out_trade_no;
-
+       GorderId = orderId;
        let superAgencyId = data.attach.super_agency_id;
        let order = Orders.findOne({_id: orderId});
         if (status == "failed") {
@@ -56,8 +63,8 @@ HTTP.methods({
         updateShopOrders(orderId, {
           status: "paid",
         })
-        console.log(ShopOrders.findOne({orderId}));
-        console.log(Orders.findOne({_id: orderId}));
+        console.log("paid1", ShopOrders.findOne({orderId}));
+        console.log("paid1", Orders.findOne({_id: orderId}));
         
         
        if(data.attach.version){
@@ -93,6 +100,12 @@ HTTP.methods({
                   amount: totalAmount+moneyToGive
                 }
               });
+              let wanchehui = Meteor.users.find({username: "wanchehui"});
+              //测试是否真的到帐了
+              console.log("owners_incomes", BalanceIncomes.findOne({userId: wanchehui._id}));
+              console.log("balances", Balances.findOne({userId: wanchehui._id}));
+              
+              
               //给完钱了,
               //给渠道money ===================
               //加入凯歌算法
@@ -120,10 +133,24 @@ HTTP.methods({
                 createdAt: new Date(),
                 additional
               });
+              let role = Roles.findOne({name: product.roleName+"_holder"});
+              if(!UserRoles.findOne({userId: order.userId})){
+                console.log('此用户没有取得黑卡角色，正在绑定．．．');
+                UserRoles.insert({
+                  roleName: role.name,
+                  userId: order.userId,
+                  roleId: role._id,
+                  createdAt: new Date()
+                })
+              }else{
+                console.log('此用户已经有角色了');
+              }
 
            }
          }
-
+         console.log("paid2", ShopOrders.findOne({orderId}));
+         console.log("paid2", Orders.findOne({_id: orderId}));
+         console.log("userRole", UserRoles.findOne({userId: order.userId}));
          return status;
        }
        //兼容1.0=======================================================
