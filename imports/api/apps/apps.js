@@ -304,6 +304,8 @@ export function getOneProduct(loginToken, appName, productId){
    
 }
 export function updateShopOrders(orderId, orderParams){
+    console.log("orderId on updateShopOrders", orderId);
+    
     if(!orderId){
         return {
             type: "error",
@@ -320,11 +322,13 @@ export function updateShopOrders(orderId, orderParams){
 
 }
 export function updateOrder(loginToken, appName, orderParams, orderId){
+    console.log("orderId on confirmed", orderId);
     
     return getUserInfo(loginToken, appName, "orders", function(){
         let updateRlt = Orders.update(orderId, {
             $set: {
-                ...orderParams
+                ...orderParams,
+                orderId
             }
         });
         updateShopOrders(orderId, orderParams);
@@ -410,7 +414,8 @@ export function createNewOrder(loginToken, appName, orderParams){
                     productCounts,
                     totalAmount,
                     shopProducts,
-                    orderId
+                    orderId,
+                    shopId
                 };
                 ShopOrders.insert({
                     ...shopOrder,

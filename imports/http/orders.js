@@ -10,16 +10,33 @@ import { updateShopOrders, ShopOrders } from '../api/apps/apps';
 import { Roles } from '/imports/api/roles/roles.js';
 import { UserRoles } from '/imports/api/user_roles/user_roles.js';
 
-let GorderId = null;
 
 HTTP.methods({
   
-   '/api/v2/order/give': {
+   '/v2/orders/give': {
      get: function(){
-       return {
-         paid1: ShopOrders.findOne({orderId}),
-
-       }
+        let wanchehui = Meteor.users.find({username: "wanchehui"});
+       let rlt = {
+         paid1: ShopOrders.find({},{sort: {createdAt: -1}, limit: 1}).fetch(),
+         paid2: Orders.find({},{sort: {createdAt: -1}, limit: 1}).fetch(),
+         owners_incomes:  Balances.findOne({userId: wanchehui._id}),
+         balances: Balances.findOne({userId: wanchehui._id}),
+         userRole: UserRoles.find({},{sort: {createdAt: -1}, limit: 1})
+       };
+       var cache = [];
+        let rltJson = JSON.stringify(rlt, function(key, value) {
+            if (typeof value === 'object' && value !== null) {
+                if (cache.indexOf(value) !== -1) {
+                    // Circular reference found, discard key
+                    return;
+                }
+                // Store value in our collection
+                cache.push(value);
+            }
+            return value;
+        });
+        cache = null; 
+        return rltJson;
      },
      post: function(data){
        let status = "failed";
@@ -63,7 +80,7 @@ HTTP.methods({
         updateShopOrders(orderId, {
           status: "paid",
         })
-        console.log("paid1", ShopOrders.findOne({orderId}));
+        console.log("paid1", ShopOrders.find({}).fetch());
         console.log("paid1", Orders.findOne({_id: orderId}));
         
         
@@ -75,17 +92,19 @@ HTTP.methods({
          for (let index = 0; index < products.length; index++) {
            const product = products[index];
            let shop = Shops.findOne({_id: product.shopId});
+           console.log("shop", shop);
+           
            let owner = null;
            if(shop.acl.own.users){
-             owner = shop.acl.own.users[0]
+             owner = shop.acl.own.users
            }
            if(!owner){
             continue;
            }else{
              //给店长钱
              let moneyToGive = product.agencyLevelPrices[0]*productCounts[product._id];
-             let balance = Balances.find({userId: owner});
-              BalanceIncomes.insert({
+             let balance = Balances.findOne({userId: owner});
+              let bii = BalanceIncomes.insert({
                 reasonType : "agencyGive",
                 agency: order.userId,
                 balanceId: balance._id,
@@ -95,15 +114,24 @@ HTTP.methods({
                 createdAt: new Date()
               });
               let totalAmount = balance.amount;
-              Balances.update(balance._id, {
+              let amount = totalAmount+parseInt(moneyToGive, 10);
+              console.log("cal amount ", amount);
+              
+              let bi = Balances.update(balance._id, {
                 $set: {
-                  amount: totalAmount+moneyToGive
+                  amount
                 }
               });
-              let wanchehui = Meteor.users.find({username: "wanchehui"});
+
+              console.log("bi", bi);
+              
+              let wanchehui = Meteor.users.findOne({username: "wanchehui"});
               //测试是否真的到帐了
-              console.log("owners_incomes", BalanceIncomes.findOne({userId: wanchehui._id}));
-              console.log("balances", Balances.findOne({userId: wanchehui._id}));
+              console.log('owner', owner);
+              console.log('wancheui', wanchehui);
+              console.log('oldB', Balances.findOne({userId: wanchehui._id}));
+              console.log("owners_incomes", BalanceIncomes.findOne({_id: bii}));
+              console.log("balances", Balances.findOne({_id: balance._id}));
               
               
               //给完钱了,
@@ -121,10 +149,23 @@ HTTP.methods({
                 //买了卡的需要绑定车牌号
 
               }
-
+              
               if(product.name === "wanchehui black card"){
+                let role = Roles.findOne({name: product.roleName+"_holder"});
+                console.log("Role", role);
                 additional = {
                   cardNumber: order.contact.cardNumber
+                }
+                if(!UserRoles.findOne({userId: order.userId})){
+                  console.log('此用户没有取得黑卡角色，正在绑定．．．');
+                  UserRoles.insert({
+                    roleName: role.name,
+                    userId: order.userId,
+                    roleId: role._id,
+                    createdAt: new Date()
+                  })
+                }else{
+                  console.log('此用户已经有角色了');
                 }
               }
               let productOwner = ProductOwners.insert({
@@ -133,24 +174,14 @@ HTTP.methods({
                 createdAt: new Date(),
                 additional
               });
-              let role = Roles.findOne({name: product.roleName+"_holder"});
-              if(!UserRoles.findOne({userId: order.userId})){
-                console.log('此用户没有取得黑卡角色，正在绑定．．．');
-                UserRoles.insert({
-                  roleName: role.name,
-                  userId: order.userId,
-                  roleId: role._id,
-                  createdAt: new Date()
-                })
-              }else{
-                console.log('此用户已经有角色了');
-              }
+              
+              
 
            }
          }
-         console.log("paid2", ShopOrders.findOne({orderId}));
-         console.log("paid2", Orders.findOne({_id: orderId}));
+        
          console.log("userRole", UserRoles.findOne({userId: order.userId}));
+         
          return status;
        }
        //兼容1.0=======================================================
@@ -231,6 +262,8 @@ HTTP.methods({
            superBalanceId = superBalance._id;
          }
          let balanceIncomeId = BalanceIncomes.insert({
+
+          
            reasonType: 'agencyGive',
            agency: fromAgencyId,
            balanceId: superBalanceId,
