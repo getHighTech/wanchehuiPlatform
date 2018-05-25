@@ -6,6 +6,7 @@ import {Shops} from '/imports/api/shops/shops.js'
 import {Balances} from '/imports/api/balances/balances.js'
 import {BalanceIncomes} from '/imports/api/balances/balance_incomes.js'
 import {ProductOwners} from '/imports/api/product_owners/product_owners.js';
+import { updateShopOrders, ShopOrders } from '../api/apps/apps';
 
 HTTP.methods({
   
@@ -52,6 +53,13 @@ HTTP.methods({
             payMode,//存入支付渠道
           }
         })
+        updateShopOrders(orderId, {
+          status: "paid",
+        })
+        console.log(ShopOrders.findOne({orderId}));
+        console.log(Orders.findOne({_id: orderId}));
+        
+        
        if(data.attach.version){
          //2.0开始处理已经支付的订单
          let products = order.products;

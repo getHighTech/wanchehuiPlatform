@@ -13,7 +13,7 @@ import {BalanceCharges} from '../balances/balance_charges.js';
 export const Apps = new Mongo.Collection('apps');
 export const AppCarts = new Mongo.Collection("app_carts");
 export const UserContacts = new Mongo.Collection("user_contacts");
-
+export const ShopOrders = new Mongo.Collection("shop_orders");
 
 //需要用的工具类函数， 
 function validUserLogin(token){
@@ -265,6 +265,8 @@ export function updateCart(cartId, userId, appName, cartParams){
     }
 }
 
+
+
 export function appNewOrder(cartParams, appName){
     if(!findOneAppByName(appName)){
         return {
@@ -300,6 +302,22 @@ export function getOneProduct(loginToken, appName, productId){
    
    
 }
+export function updateShopOrders(orderId, orderParams){
+    if(!orderId){
+        return {
+            type: "error",
+            reason: "ORDER NOT FOUND"
+        }
+    }
+    return ShopOrders.find({orderId}).forEach((shopOrder)=>{
+        ShopOrders.update(shopOrder._id, {
+            $set: {
+                ...orderParams,
+            }
+        })
+    });
+
+}
 export function updateOrder(loginToken, appName, orderParams, orderId){
     
     return getUserInfo(loginToken, appName, "orders", function(){
@@ -308,6 +326,7 @@ export function updateOrder(loginToken, appName, orderParams, orderId){
                 ...orderParams
             }
         });
+        updateShopOrders(orderId, orderParams);
         if(updateRlt){
             return {
                 type: "orders", 
@@ -346,6 +365,9 @@ export function createNewOrder(loginToken, appName, orderParams){
                 reason: "ORDERCODE REPEAT"
             }
         }
+        let shopProducts = orderParams.shopProducts;
+        //分店铺建立订单
+        
         let orderParamsDealed = {
             ...orderParams,
             type: "card",
@@ -364,6 +386,39 @@ export function createNewOrder(loginToken, appName, orderParams){
             createdAt: new Date()
         }
         let orderId = Orders.insert(orderParamsDealed);
+        for(const shopId in shopProducts){//把这个订单拆分给各个店铺
+            if(shopProducts.hasOwnProperty(shopId)){
+                let shopOrder = {};
+                let products = [];
+                let productIds = [];
+                let totalAmount = 0;
+                let productCounts = {};
+
+                for (let index = 0; index < shopProducts[shopId].length; index++) {
+                    const productIndex = shopProducts[shopId][index];
+                    products.push(orderParams.products[productIndex]);
+                    productIds.push(orderParams.productIds[productIndex]);
+                    totalAmount += orderParams.products[productIndex].endPrice;
+                    productCounts[productIds[productIndex]] = 
+                    orderParams.productCounts[productIds[productIndex]];
+                    
+                }
+                shopOrder = {
+                    products,
+                    productIds,
+                    productCounts,
+                    totalAmount,
+                    shopProducts,
+                    orderId
+                };
+                ShopOrders.insert({
+                    ...shopOrder,
+                    createdAt: new Date(),
+                    orderCode: new Date().getTime().toString()+generateRondom(10).toString(),
+                    status: "unconfirmed"
+                });
+            }
+        }
         return {
             type: "orders",
             msg: orderId
