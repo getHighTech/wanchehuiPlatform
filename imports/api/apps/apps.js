@@ -106,7 +106,7 @@ export function findOneAppByName(name){
                 breif: "专注网约车创业"
             });
         }
-    }
+    }Products
     return Apps.findOne({name});
 }
 
@@ -326,7 +326,8 @@ export function createNewOrder(loginToken, appName, orderParams){
     if(orderParams.cartId){
         AppCarts.update(orderParams.cartId, {
             $set: {
-                orderStatus: "finish"
+                orderStatus: "finish",
+                version: 2,
             }
         })
     }
@@ -447,6 +448,20 @@ export function loadMoneyPage(loginToken, appName, userId){
                     }
                 })
                 incomeNeedToUpdate = true;
+            }
+            if(income.agency){
+                let agency = Agencies.findOne({_id: income.agency});
+                let buyer= Meteor.users.findOne({_id: agency.userId});
+                let product = null;
+                if(agency.productId){
+                    product = Products.findOne({name_zh: "万人车汇黑卡"});
+                }
+                BalanceIncomes.update(income._id, {
+                    $set: {
+                        buyer,
+                        product
+                    }
+                })
             }
         })
         if(incomeNeedToUpdate){

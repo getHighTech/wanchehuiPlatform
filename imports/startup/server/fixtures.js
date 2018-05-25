@@ -310,5 +310,7 @@ Meteor.startup(() => {
       //   }
       //   console.log(product.acl, product._id);
       // });
-
+      let orderRmRlt = Orders.remove({totalAmount: {$exists: true}});
+      console.log(orderRmRlt);
+      
 });
