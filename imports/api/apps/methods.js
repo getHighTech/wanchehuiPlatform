@@ -1,7 +1,15 @@
 import { Meteor } from 'meteor/meteor';
 
 import {Products} from '../products/products';
-import { findOneAppByName, getOneProduct, appLoginUser, syncUser, createNewOrder, loadOneOrderById, loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, removeBankcard,syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus, getIncomeWithinTime } from './apps';
+import { 
+    findOneAppByName,
+     getOneProduct,
+    appLoginUser, 
+    syncUser, 
+    createNewOrder, 
+    loadOneOrderById,
+    getIncomes, 
+    loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, removeBankcard,syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus, getIncomeWithinTime } from './apps';
 
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
@@ -259,13 +267,19 @@ Meteor.methods({
             })
         },
         'app.get.incomes.time.range'(loginToken, appName, rangeLength, userId, unit){
-            console.log(unit);
             
             let stampedTokenObj = JSON.parse(loginToken);
             let rltObj = getIncomeWithinTime(stampedTokenObj, appName, rangeLength, userId, unit);
             return Object.assign({}, rltObj, {
                 fromMethod: "app.get.incomes.time.range"
             })
+        },
+        'app.get.incomes.limit'(loginToken, appName,userId, page,pagesize){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getIncomes(stampedTokenObj, appName, userId, page, pagesize);
+            
+            return Object.assign({}, rltObj, {
+                fromMethod: "app.get.incomes.limit"
+            })
         }
-
 });

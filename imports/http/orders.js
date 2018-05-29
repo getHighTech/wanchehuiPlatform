@@ -107,15 +107,17 @@ HTTP.methods({
               let bii = BalanceIncomes.insert({
                 reasonType : "agencyGive",
                 agency: order.userId,
+                user: Meteor.users.findOne(owner),
+                shop: shop,
                 balanceId: balance._id,
                 userId: owner,
                 amount: moneyToGive,
+                product,
                 text: "零售利润",
                 createdAt: new Date()
               });
               let totalAmount = balance.amount;
               let amount = totalAmount+parseInt(moneyToGive, 10);
-              console.log("cal amount ", amount);
               
               let bi = Balances.update(balance._id, {
                 $set: {

@@ -30,6 +30,12 @@ function validUserLogin(token){
 }
 
 function getUserInfo(loginToken, appName, collectionType, callBack){
+    if(!loginToken){
+        return {
+            type: "error",
+            reason: "Not Logined"
+        }
+    }
     //标准获取用户信息模板
     if(!findOneAppByName(appName)){
         return {
@@ -64,6 +70,12 @@ export function syncUser(userId, stampedToken, appName){
         return {
             type: "error",
             reason: "invalid app"
+        }
+    }
+    if(!stampedToken){
+        return {
+            type: "error",
+            reason: "Not Logined"
         }
     }
     let hashStampedToken = Accounts._hashStampedToken(stampedToken);
@@ -284,7 +296,6 @@ export function appNewOrder(cartParams, appName){
 }
 
 export function getOneProduct(loginToken, appName, productId){
-    return getUserInfo(loginToken, appName, "products", function(){
         let product = Products.findOne({_id: productId});
         if(!product){
             product = Products.findOne({roleName: productId});
@@ -299,7 +310,6 @@ export function getOneProduct(loginToken, appName, productId){
             type: "products",
             msg: product
         }
-    })
    
    
 }
@@ -501,6 +511,8 @@ export function loadMoneyPage(loginToken, appName, userId){
             {skip: 0, limit: 5, sort: {createdAt: -1}});
         //数据结构兼容，之后可以删除
         let incomeNeedToUpdate = false;
+        let agencies = [];
+        let users = [];
         balance_incomes.forEach(income=>{
             if(!income.balanceId){
                 BalanceIncomes.update(income._id, {
@@ -510,9 +522,25 @@ export function loadMoneyPage(loginToken, appName, userId){
                 })
                 incomeNeedToUpdate = true;
             }
+            
+            if(income.userId){
+                users.push(Meteor.users.findOne({_id: income.userId}));
+            }
             if(income.agency){
+                
                 let agency = Agencies.findOne({_id: income.agency});
-                let buyer= Meteor.users.findOne({_id: agency.userId});
+                agencies.push(agency);
+                let buyer = null;
+                if(!agency){
+                    return 
+                }
+                if(agency.userId){
+                    buyer= Meteor.users.findOne({_id: agency.userId});
+                    users.push(buyer);
+                    
+                }else{
+                    buyer = Meteor.users.fondOne({name: 'wanchehui'})
+                }
                 let product = null;
                 if(agency.productId){
                     product = Products.findOne({name_zh: "万人车汇黑卡"});
@@ -554,7 +582,9 @@ export function loadMoneyPage(loginToken, appName, userId){
             msg: {
                 balance,
                 balance_incomes: balance_incomes.fetch(),
-                balance_charges: balance_charges.fetch()
+                balance_charges: balance_charges.fetch(),
+                agencies,
+                users,
             }
         }
         
@@ -879,9 +909,6 @@ export function getIncomeWithinTime(loginToken, appName, rangeLength, userId, un
         incomes.forEach(income=>{
             totalAmount+=income.amount
         });
-        console.log(totalAmount);
-        console.log("准备返回", unit);
-        
         return {
             type: "balances",
             msg: {
@@ -890,5 +917,46 @@ export function getIncomeWithinTime(loginToken, appName, rangeLength, userId, un
                 unit,
             }
         }
+    })
+}
+
+export function getIncomes(loginToken, appName, userId, page, pagesize){
+    return getUserInfo(loginToken, appName, "balances", function(){
+        
+        let incomes = BalanceIncomes.find({}, {
+            skip: (page-1)*pagesize, limit: pagesize, 
+            sort: {createdAt: -1}});
+
+        let users = [];
+        incomes.forEach((income)=> {
+            if(!income.user && income.userId){
+                users.push(Meteor.users.findOne(income.userId));
+            }
+            if(income.user){
+                users.push(user);
+            }
+        })
+        if(incomes.count()===0){
+            return {
+                type: "balances",
+                msg: {
+                    incomes: incomes.fetch(),
+                    count: incomes.count(),
+                    users,
+                }
+            }
+        }else{
+            return {
+                type: "balances",
+                msg: {
+                    incomes: incomes.fetch(),
+                    count: incomes.count(),
+                    users,
+                }
+            }
+            
+        }
+        
+        
     })
 }
