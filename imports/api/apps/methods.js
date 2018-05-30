@@ -9,7 +9,7 @@ import {
     createNewOrder, 
     loadOneOrderById,
     getIncomes, 
-    loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, removeBankcard,syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus, getIncomeWithinTime } from './apps';
+    loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, removeBankcard,syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus, getIncomeWithinTime, getProductByShopId } from './apps';
 
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
@@ -21,7 +21,7 @@ Meteor.methods({
                 reason: "invalid app"
             }
         }
-        let products = Products.find({name_zh: {$in: ["万人车汇黑卡", "VIRIDI"]}}).fetch();
+        let products = Products.find({isSale: true}).fetch();
         return {
             type: "products", 
             msg: products,
@@ -281,5 +281,14 @@ Meteor.methods({
             return Object.assign({}, rltObj, {
                 fromMethod: "app.get.incomes.limit"
             })
+        },
+        //获取店铺商品
+        'app.get.products.shop.limit'(loginToken, appName, shopId, page, pagesize){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getProductByShopId(appName, shopId, page, pagesize);
+            return Object.assign({}, rltObj, {
+                fromMethod: "app.get.products.shop.limit"
+            })
+
         }
 });
