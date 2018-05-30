@@ -923,7 +923,7 @@ export function getIncomeWithinTime(loginToken, appName, rangeLength, userId, un
 export function getIncomes(loginToken, appName, userId, page, pagesize){
     return getUserInfo(loginToken, appName, "balances", function(){
         
-        let incomes = BalanceIncomes.find({}, {
+        let incomes = BalanceIncomes.find({userId}, {
             skip: (page-1)*pagesize, limit: pagesize, 
             sort: {createdAt: -1}});
 
