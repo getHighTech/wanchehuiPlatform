@@ -24,7 +24,6 @@ export function buyProuct(
     roles.push("login_user")
   }
 
-  let roles = [];
   UserRoles.find({userId: user._id}).forEach((item)=>{
     roles.push(item.roleName);
   });

@@ -1,7 +1,15 @@
 import { Meteor } from 'meteor/meteor';
 
 import {Products} from '../products/products';
-import { findOneAppByName, getOneProduct, appLoginUser, syncUser, createNewOrder, loadOneOrderById, loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, removeBankcard,syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus } from './apps';
+import { 
+    findOneAppByName,
+     getOneProduct,
+    appLoginUser, 
+    syncUser, 
+    createNewOrder, 
+    loadOneOrderById,
+    getIncomes, 
+    loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, removeBankcard,syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus, getIncomeWithinTime } from './apps';
 
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
@@ -57,16 +65,18 @@ Meteor.methods({
 
     "app.get.one.product.id"(loginToken, appName, productId){
         //载入商品信息
-        let productMsg = getOneProduct(null, appName, {_id: productId});
-        return Object.assign({}, productMsg, {
-            fromMethod: "app.get.one.product.id"
+        //创建新的订单
+        let stampedTokenObj = JSON.parse(loginToken);
+        return Object.assign({}, getOneProduct(stampedTokenObj, appName, productId), {
+            fromMethod:  "app.get.one.product.id"
         })
+       
     },
     'app.get.one.product.rolename'(loginToken, appName, roleName){
         //载入道具类别商品
-        let productMsg = getOneProduct(null, appName, {roleName});
-        return Object.assign({}, productMsg, {
-            fromMethod: 'app.get.one.product.rolename'
+        let stampedTokenObj = JSON.parse(loginToken);
+        return Object.assign({}, getOneProduct(stampedTokenObj, appName, roleName), {
+            fromMethod:  "app.get.one.product.rolename"
         })
     },
     'app.get.phonesms'(loginToken, appName, mobile) {
@@ -251,10 +261,25 @@ Meteor.methods({
         },
         "app.get.newest.user.order.status"(loginToken, appName, status, userId){
             let stampedTokenObj = JSON.parse(loginToken);
-            let rltObj = getNewestOneUserOrderByStatus(stampedTokenObj, status, userId);
+            let rltObj = getNewestOneUserOrderByStatus(stampedTokenObj,appName, status, userId);
             return Object.assign({}, rltObj, {
                 fromMethod: "app.get.newest.user.order.status"
             })
+        },
+        'app.get.incomes.time.range'(loginToken, appName, rangeLength, userId, unit){
+            
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getIncomeWithinTime(stampedTokenObj, appName, rangeLength, userId, unit);
+            return Object.assign({}, rltObj, {
+                fromMethod: "app.get.incomes.time.range"
+            })
+        },
+        'app.get.incomes.limit'(loginToken, appName,userId, page,pagesize){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getIncomes(stampedTokenObj, appName, userId, page, pagesize);
+            
+            return Object.assign({}, rltObj, {
+                fromMethod: "app.get.incomes.limit"
+            })
         }
-
 });

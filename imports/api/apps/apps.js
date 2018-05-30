@@ -10,10 +10,11 @@ import {Balances} from '../balances/balances.js';
 import {Bankcards} from '../bankcards/bankcards.js';
 import {BalanceIncomes} from '../balances/balance_incomes.js';
 import {BalanceCharges} from '../balances/balance_charges.js';
+import {Agencies} from '/imports/api/agencies/agencies.js';
 export const Apps = new Mongo.Collection('apps');
 export const AppCarts = new Mongo.Collection("app_carts");
 export const UserContacts = new Mongo.Collection("user_contacts");
-
+export const ShopOrders = new Mongo.Collection("shop_orders");
 
 //需要用的工具类函数， 
 function validUserLogin(token){
@@ -29,6 +30,12 @@ function validUserLogin(token){
 }
 
 function getUserInfo(loginToken, appName, collectionType, callBack){
+    if(!loginToken){
+        return {
+            type: "error",
+            reason: "Not Logined"
+        }
+    }
     //标准获取用户信息模板
     if(!findOneAppByName(appName)){
         return {
@@ -63,6 +70,12 @@ export function syncUser(userId, stampedToken, appName){
         return {
             type: "error",
             reason: "invalid app"
+        }
+    }
+    if(!stampedToken){
+        return {
+            type: "error",
+            reason: "Not Logined"
         }
     }
     let hashStampedToken = Accounts._hashStampedToken(stampedToken);
@@ -106,7 +119,7 @@ export function findOneAppByName(name){
                 breif: "专注网约车创业"
             });
         }
-    }
+    }Products
     return Apps.findOne({name});
 }
 
@@ -265,6 +278,8 @@ export function updateCart(cartId, userId, appName, cartParams){
     }
 }
 
+
+
 export function appNewOrder(cartParams, appName){
     if(!findOneAppByName(appName)){
         return {
@@ -280,33 +295,53 @@ export function appNewOrder(cartParams, appName){
     }
 }
 
-export function getOneProduct(token, appName, condition){
-    if(!findOneAppByName(appName)){
+export function getOneProduct(loginToken, appName, productId){
+        let product = Products.findOne({_id: productId});
+        if(!product){
+            product = Products.findOne({roleName: productId});
+        }
+        if (!product) {
+            return {
+                type: "error",
+                reason: "PRODUCT NOT FOUND"
+            }
+        }
+        return {
+            type: "products",
+            msg: product
+        }
+   
+   
+}
+export function updateShopOrders(orderId, orderParams){
+    console.log("orderId on updateShopOrders", orderId);
+    
+    if(!orderId){
         return {
             type: "error",
-            reason: "invalid app"
+            reason: "ORDER NOT FOUND"
         }
     }
-    let product = Products.findOne(condition);
-    if (!product) {
-        return {
-            type: "error",
-            reason: "PRODUCT NOT FOUND"
-        }
-    }
-    return {
-        type: "products",
-        msg: product
-    }
+    return ShopOrders.find({orderId}).forEach((shopOrder)=>{
+        ShopOrders.update(shopOrder._id, {
+            $set: {
+                ...orderParams,
+            }
+        })
+    });
+
 }
 export function updateOrder(loginToken, appName, orderParams, orderId){
+    console.log("orderId on confirmed", orderId);
     
     return getUserInfo(loginToken, appName, "orders", function(){
         let updateRlt = Orders.update(orderId, {
             $set: {
-                ...orderParams
+                ...orderParams,
+                orderId
             }
         });
+        updateShopOrders(orderId, orderParams);
         if(updateRlt){
             return {
                 type: "orders", 
@@ -325,7 +360,8 @@ export function createNewOrder(loginToken, appName, orderParams){
     if(orderParams.cartId){
         AppCarts.update(orderParams.cartId, {
             $set: {
-                orderStatus: "finish"
+                orderStatus: "finish",
+                version: 2,
             }
         })
     }
@@ -344,6 +380,9 @@ export function createNewOrder(loginToken, appName, orderParams){
                 reason: "ORDERCODE REPEAT"
             }
         }
+        let shopProducts = orderParams.shopProducts;
+        //分店铺建立订单
+        
         let orderParamsDealed = {
             ...orderParams,
             type: "card",
@@ -362,6 +401,40 @@ export function createNewOrder(loginToken, appName, orderParams){
             createdAt: new Date()
         }
         let orderId = Orders.insert(orderParamsDealed);
+        for(const shopId in shopProducts){//把这个订单拆分给各个店铺
+            if(shopProducts.hasOwnProperty(shopId)){
+                let shopOrder = {};
+                let products = [];
+                let productIds = [];
+                let totalAmount = 0;
+                let productCounts = {};
+
+                for (let index = 0; index < shopProducts[shopId].length; index++) {
+                    const productIndex = shopProducts[shopId][index];
+                    products.push(orderParams.products[productIndex]);
+                    productIds.push(orderParams.productIds[productIndex]);
+                    totalAmount += orderParams.products[productIndex].endPrice;
+                    productCounts[productIds[productIndex]] = 
+                    orderParams.productCounts[productIds[productIndex]];
+                    
+                }
+                shopOrder = {
+                    products,
+                    productIds,
+                    productCounts,
+                    totalAmount,
+                    shopProducts,
+                    orderId,
+                    shopId
+                };
+                ShopOrders.insert({
+                    ...shopOrder,
+                    createdAt: new Date(),
+                    orderCode: new Date().getTime().toString()+generateRondom(10).toString(),
+                    status: "unconfirmed"
+                });
+            }
+        }
         return {
             type: "orders",
             msg: orderId
@@ -420,7 +493,7 @@ export function loadOneOrderById(loginToken, appName, orderId){
 }
 
 export function loadMoneyPage(loginToken, appName, userId){
-    return getUserInfo(loginToken, appName, "balances", {userId}, function(params){
+    return getUserInfo(loginToken, appName, "balances", function(params){
         let balance = Balances.findOne({userId});
         if(!balance){
            let balanceId = Balances.insert({
@@ -432,10 +505,14 @@ export function loadMoneyPage(loginToken, appName, userId){
            balance = Balances.findOne({_id: balanceId});
             
         }
-        let balance_incomes = BalanceIncomes.find({userId});
-        let balance_charges = BalanceCharges.find({userId});
+        let balance_incomes = BalanceIncomes.find({userId}, 
+            {skip: 0, limit: 5, sort: {createdAt: -1}});
+        let balance_charges = BalanceCharges.find({userId}, 
+            {skip: 0, limit: 5, sort: {createdAt: -1}});
         //数据结构兼容，之后可以删除
         let incomeNeedToUpdate = false;
+        let agencies = [];
+        let users = [];
         balance_incomes.forEach(income=>{
             if(!income.balanceId){
                 BalanceIncomes.update(income._id, {
@@ -445,9 +522,40 @@ export function loadMoneyPage(loginToken, appName, userId){
                 })
                 incomeNeedToUpdate = true;
             }
+            
+            if(income.userId){
+                users.push(Meteor.users.findOne({_id: income.userId}));
+            }
+            if(income.agency){
+                
+                let agency = Agencies.findOne({_id: income.agency});
+                agencies.push(agency);
+                let buyer = null;
+                if(!agency){
+                    return 
+                }
+                if(agency.userId){
+                    buyer= Meteor.users.findOne({_id: agency.userId});
+                    users.push(buyer);
+                    
+                }else{
+                    buyer = Meteor.users.fondOne({name: 'wanchehui'})
+                }
+                let product = null;
+                if(agency.productId){
+                    product = Products.findOne({name_zh: "万人车汇黑卡"});
+                }
+                BalanceIncomes.update(income._id, {
+                    $set: {
+                        buyer,
+                        product
+                    }
+                })
+            }
         })
         if(incomeNeedToUpdate){
-            balance_incomes = BalanceIncomes.find({balanceId: userId});
+            balance_incomes = BalanceIncomes.find({balanceId}, 
+                {skip: 0, limit: 5, sort: {createdAt: -1}});
         }
         
         //======================收入更新完毕
@@ -464,7 +572,8 @@ export function loadMoneyPage(loginToken, appName, userId){
             }
         });
         if(chargeNeedToUpdate){
-            balance_charges = BalanceCharges.find({userId});
+            balance_charges = BalanceCharges.find({userId}, 
+                {skip: 0, limit: 5, sort: {createdAt: -1}});
         }
         //======================支出更新完毕
 
@@ -472,8 +581,10 @@ export function loadMoneyPage(loginToken, appName, userId){
             type: "balances",
             msg: {
                 balance,
-                balance_incomes: balance_charges.fetch(),
-                balance_charges: balance_charges.fetch()
+                balance_incomes: balance_incomes.fetch(),
+                balance_charges: balance_charges.fetch(),
+                agencies,
+                users,
             }
         }
         
@@ -701,7 +812,7 @@ export function getUserContacts(loginToken, appName, userId){
 
 export function deleteUserContact(loginToken, appName, contactId){
     return getUserInfo(loginToken, appName, "user_contacts", function(){
-        let delRlt = UserContacts.update({
+        let delRlt = UserContacts.update(contactId, {
             $set: {
                 deleted: true
             }
@@ -783,5 +894,69 @@ export function getNewestUserOrders(loginToken, appName, status, userId, page, p
             type: "orders",
             msg: orders
         }
+    })
+}
+
+export function getIncomeWithinTime(loginToken, appName, rangeLength, userId, unit){
+    return getUserInfo(loginToken, appName, "balances", function(){
+        console.log('function in', unit);
+        
+        let yestoday = moment().subtract(rangeLength, unit);
+        yestoday = yestoday.toISOString();
+        let yestodayInData = new Date(yestoday);
+        let incomes = BalanceIncomes.find({createdAt: {'$gte':yestodayInData,'$lt':new Date()}, userId});
+        let totalAmount = 0;
+        incomes.forEach(income=>{
+            totalAmount+=income.amount
+        });
+        return {
+            type: "balances",
+            msg: {
+                incomes: incomes.fetch(),
+                totalAmount,
+                unit,
+            }
+        }
+    })
+}
+
+export function getIncomes(loginToken, appName, userId, page, pagesize){
+    return getUserInfo(loginToken, appName, "balances", function(){
+        
+        let incomes = BalanceIncomes.find({userId}, {
+            skip: (page-1)*pagesize, limit: pagesize, 
+            sort: {createdAt: -1}});
+
+        let users = [];
+        incomes.forEach((income)=> {
+            if(!income.user && income.userId){
+                users.push(Meteor.users.findOne(income.userId));
+            }
+            if(income.user){
+                users.push(user);
+            }
+        })
+        if(incomes.count()===0){
+            return {
+                type: "balances",
+                msg: {
+                    incomes: incomes.fetch(),
+                    count: incomes.count(),
+                    users,
+                }
+            }
+        }else{
+            return {
+                type: "balances",
+                msg: {
+                    incomes: incomes.fetch(),
+                    count: incomes.count(),
+                    users,
+                }
+            }
+            
+        }
+        
+        
     })
 }
