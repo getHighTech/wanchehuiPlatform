@@ -7,6 +7,7 @@ const initialState = {
     productmodalEditable: true,
     key_length:0,
     key_arr:[],
+    key_agencyarr:[],
     id:''
   };
 
@@ -27,6 +28,7 @@ const initialState = {
           productmodalEditable: true,
           key_length:action.spec_length,
           key_arr:action.arr,
+          key_agencyarr:action.agency_arr,
           productId:action.id
         })
         case ADD_PRODUCT:
@@ -35,7 +37,8 @@ const initialState = {
           productmodalInsert: true,
           productmodalEditable: true,
           key_length:0,
-          key_arr:[]
+          key_arr:[],
+          key_agencyarr:[]
         })
 
 

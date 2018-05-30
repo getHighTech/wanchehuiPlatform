@@ -152,13 +152,18 @@ class ShopDetails extends React.Component {
       })
       let spec_length =alt.specifications.length;
       var arr =new Array(spec_length);
+      let agency_length=alt.agencyLevelPrices.length;
+      var agency_arr = new Array(agency_length)
       for(var i=0;i<arr.length;i++){
           arr[i] = i;
+      }
+      for(var i = 0;i<agency_arr.length;i++){
+        agency_arr[i]=i;
       }
       const {dispatch } = self.props;
       if(!err){
         console.log(alt);
-        dispatch(editProduct(alt,spec_length,arr,id))
+        dispatch(editProduct(alt,spec_length,arr,agency_arr,id))
         self.setState({
           productmodalVisible:true,
           productmodalTitle:'修改商品',
@@ -367,6 +372,7 @@ function mapStateToProps(state) {
     editState: !state.ProductsList.productmodalEditable,
     length:state.ProductsList.key_length,
     key_arr:state.ProductsList.key_arr,
+    key_agencyarr:state.ProductsList.key_agencyarr,
     productId:state.ProductsList.productId
   };
 }

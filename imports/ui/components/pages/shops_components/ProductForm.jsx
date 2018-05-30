@@ -66,6 +66,7 @@ function uploadImageCallBack(file) {
 
 
 let dudu=0;
+let agencyLength = 0;
 class ProductFormWrap extends Component {
 
 
@@ -93,6 +94,8 @@ class ProductFormWrap extends Component {
         images:[],
         key_arr:[],
         key_length:0,
+        agencykey_arr:[],
+        agencykey_length:0,
         openKeys:this.props.descriptionKey,
         fileState:this.props.changefileState
       };
@@ -156,6 +159,43 @@ class ProductFormWrap extends Component {
       keys: keys.filter(key => key !== k),
     });
   }
+  agencyremove = (k) => {
+  const { form } = this.props;
+  // can use data-binding to get
+  const keyss = form.getFieldValue('keyss');
+  // We need at least one passenger
+  if (keyss.length === 1) {
+    return;
+  }
+
+  // can use data-binding to set
+  form.setFieldsValue({
+    keyss: keyss.filter(key => key !== k),
+  });
+}
+
+agencyadd = () => {
+  const { form } = this.props;
+  // can use data-binding to get
+
+  const keyss = form.getFieldValue('keyss');
+  this.setState({
+    agencykey_arr:keyss
+  })
+  let agencyLength = keyss.length;
+  this.setState({
+    agencykey_length:agencyLength
+  })
+  const nextKeys = keyss.concat(agencyLength);
+  agencyLength++;
+  // console.log(uuid);
+  //
+  // this.update_uuid(uuid);
+  // console.log(this.state.uuid);
+  form.setFieldsValue({
+    keyss: nextKeys,
+  });
+}
 
   add = () => {
     const { form } = this.props;
@@ -563,6 +603,23 @@ class ProductFormWrap extends Component {
       return ''
     }
     }
+
+    getAgency(k){
+      const {form} =this.props;
+      let agency=this.props.product.agencyLevelPrices;
+      if(typeof(agency)!='undefined'){
+        let length = agency.length -1 ;
+        if(k<=length){
+          return agency[k]/100;
+        }
+        else {
+          return ''
+        }
+      }
+      else {
+        return ''
+      }
+    }
     getSpecValue(k){
       let aaa =this.props.key_arr.length;
       let spec=this.props.product.specifications;
@@ -671,6 +728,42 @@ class ProductFormWrap extends Component {
                 },
               },
             };
+            getFieldDecorator('keyss',{initialValue:this.props.key_agencyarr})
+            console.log(this.props.key_arr);
+            const keyss = getFieldValue('keyss');
+            console.log(keyss);
+            const formItemsAgency = keyss.map((k, index) => {
+              return (
+                <FormItem
+                {...formItemLayout}
+                label={k+1+'级分销'}
+                  required={false}
+                  key={k}
+                >
+                  {getFieldDecorator(`agencyPrice[${k}]`, {
+                    initialValue:this.getAgency(k),
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [{
+                      required: true,
+                      whitespace: true,
+                      message: "请输入奖励.",
+                    }],
+                  })(
+                    <Input placeholder="奖励" style={{ width: '40%'}} />
+                  )}
+                  {keyss.length > 1 ? (
+                    <Icon
+                      style={{marginLeft:10}}
+                      className="dynamic-delete-button"
+                      type="minus-circle-o"
+                      disabled={keyss.length === 1}
+                      onClick={() => this.agencyremove(k)}
+                    />
+                  ) : null}
+                </FormItem>
+              );
+            });
+
             getFieldDecorator('keys', { initialValue:this.props.key_arr});
             const keys = getFieldValue('keys');
             const formItems = keys.map((k, index) => {
@@ -871,6 +964,8 @@ class ProductFormWrap extends Component {
       )}
       </FormItem>
 
+
+
       <FormItem
       {...formItemLayout}
       label="商品类型"
@@ -894,6 +989,19 @@ class ProductFormWrap extends Component {
           )}
       </FormItem>
       <Divider dashed />
+      <FormItem
+      {...formItemLayout}
+      label="商品分销奖励"
+      hasFeedback
+      >
+      <Button type="dashed" onClick={this.agencyadd} disabled={!this.props.modalState} >
+        <Icon type="plus" />添加
+      </Button>
+      </FormItem>
+
+        {formItemsAgency}
+
+
       <FormItem {...formItemLayout}label='添加商品规格'>
         <Button type="dashed" onClick={this.add} disabled={!this.props.modalState} >
           <Icon type="plus" />添加

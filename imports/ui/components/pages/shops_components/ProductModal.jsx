@@ -136,7 +136,6 @@ class ProductModal extends React.Component{
       end_spec.push(obj);
     }
     setFieldsValue({specifications: end_spec})
-
     for (const key in oldObj) {
         newObj[key] = oldObj[key];
     }
@@ -146,18 +145,58 @@ class ProductModal extends React.Component{
     newObj.endPrice=newEndPrice*100;
     newObj.specifications=end_spec;
     console.log(newObj);
-    self.hideModal();
+    let agencyPrice=newObj.agencyPrice;
+    console.log(typeof(agencyPrice)=='undefined');
+    if (typeof(agencyPrice)!='undefined') {
+      for(var i = 0; i<agencyPrice.length;i++){
+        agencyPrice[i]=agencyPrice[i]*100
+        console.log(agencyPrice[i]);
+      }
+    }
+    else {
+      agencyPrice= [];
+    }
 
+    console.log(agencyPrice);
+    self.hideModal();
+    // return;
     if(self.props.modalState){
       //新增店铺到数据库
+      console.log('111');
       let shopId=this.props.id;
       let shopName= this.state.shopName;
-      for (var i = 0; i < end_spec.length; i++) {
-        let newSpec = []
-        let newspec =newObj.specifications[i];
-        newSpec.push(newspec)
-        console.log(newSpec);
-        Meteor.call("products.insert", newObj, shopId,shopName,newSpec,function(error,result){
+      let userId = Meteor.userId();
+      console.log(end_spec.length);
+      if(end_spec.length>0){
+        for (var i = 0; i < end_spec.length; i++) {
+          let newSpec = []
+          let newspec =newObj.specifications[i];
+          newSpec.push(newspec)
+          console.log(newSpec);
+          Meteor.call("products.insert", newObj, shopId,shopName,newSpec,userId,function(error,result){
+            if(!error){
+              console.log("新增商品");
+              console.log(result);
+              //数据变化后，刷新表格
+              self.reflashTable();
+              self.setFormData({});
+              console.log("刷新表格成功");
+              self.setState({
+                xx:[],
+                fileState:'',
+                coverState:'',
+                detailsState:''
+              })
+              console.log(self.state.xx);
+            }else{
+              console.log(error);
+            }
+          })
+        }
+      }
+      else {
+        let newSpec= [];
+        Meteor.call("products.insert", newObj, shopId,shopName,newSpec,userId,function(error,result){
           if(!error){
             console.log("新增商品");
             console.log(result);
@@ -177,6 +216,11 @@ class ProductModal extends React.Component{
           }
         })
       }
+
+
+
+
+
 
     }else{
       Meteor.call('product.update',this.props.singleProduct, newObj, function(error,result){
@@ -258,7 +302,7 @@ class ProductModal extends React.Component{
           width={'80%'}
           style={{ top: 20 }}
         >
-          <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} detailsState={this.state.detailsState} changedetailsState={this.changedetailsState.bind(this)} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
+          <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} detailsState={this.state.detailsState} changedetailsState={this.changedetailsState.bind(this)} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr}  key_agencyarr={this.props.key_agencyarr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
 
         </Modal>
       </div>
@@ -273,6 +317,7 @@ function mapStateToProps(state) {
     editState: !state.ProductsList.productmodalEditable,
     length:state.ProductsList.key_length,
     key_arr:state.ProductsList.key_arr,
+    key_agencyarr:state.ProductsList.key_agencyarr,
     productId:state.ProductsList.productId
    };
 }
