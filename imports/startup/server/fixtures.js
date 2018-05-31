@@ -79,15 +79,15 @@ Meteor.startup(() => {
   //   let tag = Tags.findOne({name: "4s保养"});
   //   for (var j = 0; j < 5; j++) {
   //     let product = Products.findOne({name_zh: "测试商品"+j.toString()+i.toString() });
-  //
-  //
+  
+  
   //     if (product) {
   //       continue;
   //     }
   //     let params = {
-  //
+  
   //       isSale: true,
-  //
+  
   //       name_zh: "测试商品"+j.toString()+i.toString(),
   //       name: "test product"+j.toString()+i.toString(),
   //       price: 1,
@@ -120,7 +120,7 @@ Meteor.startup(() => {
   //       if (product.acl.buy.roles[i]=="blackcard_holder") {
   //         isThereMemberPermission = true;
   //       }
-  //
+  
   //     }
   //     console.log('是否有黑卡权限', isThereMemberPermission);
   //     if (!isThereMemberPermission) {
@@ -142,7 +142,7 @@ Meteor.startup(() => {
   //     shopIds.push(shopId);
   //     productIds.push(product._id)
   //   }
-  //
+  
   //   Tags.update(tag._id, {
   //     $set: {
   //       shopIds,
@@ -150,8 +150,8 @@ Meteor.startup(() => {
   //       updatedAt: new Date()
   //     }
   //   })
-  //
-  //
+  
+  
   // };
   // ////循环加入测试店铺结束// 开始绑定黑卡和用户
   // let product = Products.findOne({name_zh: "万人车汇黑卡"});
@@ -163,7 +163,7 @@ Meteor.startup(() => {
   //   if(user.cards === null){
   //     console.log('此用户已经退卡了');
   //   }else{
-  //
+  
   //     if(!ProductOwners.findOne({userId: user._id})){
   //       ProductOwners.insert({
   //         productId: product._id,
@@ -185,11 +185,11 @@ Meteor.startup(() => {
   //   }
   // });
   //     let shop = Shops.findOne({name: "万人车汇自营店"});
-  //
+  
   //       let params = {
-  //
+  
   //       isSale: true,
-  //
+  
   //       name_zh: "VIRIDI",
   //       name: "VIRIDI",
   //       price: 1,
@@ -201,7 +201,7 @@ Meteor.startup(() => {
   //           'https://wanchehui.oss-cn-qingdao.aliyuncs.com/viridi/583542866.jpg',
   //           'https://wanchehui.oss-cn-qingdao.aliyuncs.com/viridi/613049835.jpg',
   //           'https://wanchehui.oss-cn-qingdao.aliyuncs.com/viridi/1136468872.jpg'
-  //
+  
   //         ],
   //       cover: 'https://wanchehui.oss-cn-qingdao.aliyuncs.com/viridi/1136468872.jpg',
   //       shopId: shop._id,
@@ -231,7 +231,7 @@ Meteor.startup(() => {
   //       }
   //     });
   //     console.log("更改每个订单的productId");
-  //
+  
   //     Orders.find().forEach(order => {
   //       Orders.update(order._id, {
   //         $set: {
@@ -240,12 +240,12 @@ Meteor.startup(() => {
   //         }
   //       })
   //     })
-  //
+  
   //     console.log("为每个卡片持有者绑定其车牌");
-  //
+  
   //     ProductOwners.find().forEach(owner=>{
   //         console.log("owner get");
-  //
+  
   //         let order = Orders.findOne({createdBy: owner.userId, status: "paid"});
   //         let carNumber = null
   //         if(order){
@@ -259,12 +259,12 @@ Meteor.startup(() => {
   //           if(!carNumber){
   //             carNumber = order.realNote.carnumber;
   //           }
-  //
+  
   //         }else{
   //           carNumber = "川A12345";
   //           let user = Meteor.users.findOne({_id: owner.userId});
   //           let mobile = null;
-  //
+  
   //           if(user.profile){
   //             mobile = user.profile.mobile;
   //           }
@@ -284,7 +284,7 @@ Meteor.startup(() => {
   //           }
   //         )
   //         }
-  //
+  
   //         ProductOwners.update(owner._id, {
   //           $set: {
   //             additional: {
@@ -293,24 +293,24 @@ Meteor.startup(() => {
   //           }
   //         })
   //     });
-  //
+  
   //     console.log("end of script");
 
 
-      // Products.find({}).forEach(product => {
-      //   if(!product.acl.copy){
-      //     Products.update(product._id, {
-      //       $set: {
-      //         "acl.copy": {
-      //           roles: ['blackcard_holder'],
-      //           users: []
-      //         }
-      //       }
-      //     })
-      //   }
-      //   console.log(product.acl, product._id);
-      // });
-      // let orderRmRlt = Orders.remove({totalAmount: {$exists: true}});
-      // console.log(orderRmRlt);
+  //     Products.find({}).forEach(product => {
+  //       if(!product.acl.copy){
+  //         Products.update(product._id, {
+  //           $set: {
+  //             "acl.copy": {
+  //               roles: ['blackcard_holder'],
+  //               users: []
+  //             }
+  //           }
+  //         })
+  //       }
+  //       console.log(product.acl, product._id);
+  //     });
+  //     let orderRmRlt = Orders.remove({totalAmount: {$exists: true}});
+  //     console.log(orderRmRlt);
       
 });

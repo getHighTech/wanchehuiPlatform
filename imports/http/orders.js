@@ -93,7 +93,11 @@ HTTP.methods({
            const product = products[index];
            let shop = Shops.findOne({_id: product.shopId});
            console.log("shop", shop);
-           
+           let shopOrder = ShopOrders.findOne({productIds: {$in: [product._id]}});
+           console.log("收入相关的订单是", shopOrder);
+           let shopCustomer = Metoer.users.findOne(shopOrder.userId);
+
+           console.log("shopCustomer", shopCustomer);
            let owner = null;
            if(shop.acl.own.users){
              owner = shop.acl.own.users
@@ -109,6 +113,8 @@ HTTP.methods({
                 agency: order.userId,
                 user: Meteor.users.findOne(owner),
                 shop: shop,
+                shopOrder,
+                shopCustomer,
                 balanceId: balance._id,
                 userId: owner,
                 amount: moneyToGive,
