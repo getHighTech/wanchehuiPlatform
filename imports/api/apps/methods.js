@@ -164,10 +164,10 @@ Meteor.methods({
             fromMethod: "app.load.money.page"
         });
     },
-    "app.withdraw.money"(loginToken, appName, userId, amount, bankId){
+    "app.withdraw.money"(loginToken, appName, userId, amount, bank, bankId){
         let stampedTokenObj = JSON.parse(loginToken);
-        let rltObj = withdrawMoney(stampedTokenObj, appName, userId, amount, bankId);
-        return Object.assign({}, state, {
+        let rltObj = withdrawMoney(stampedTokenObj, appName, userId, amount, bank, bankId);
+        return Object.assign({}, rltObj, {
             fromMethod: "app.withdraw.money"
         })
     },
