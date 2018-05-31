@@ -99,7 +99,9 @@ class ProductFormWrap extends Component {
         key_arr:[],
         key_length:0,
         agencykey_arr:[],
+        parameterkey_arr:[],
         agencykey_length:0,
+        parameterkey_length:0,
         openKeys:this.props.descriptionKey,
         fileState:this.props.changefileState
       };
@@ -178,6 +180,19 @@ class ProductFormWrap extends Component {
   });
   }
 
+  parameterremove = (k) => {
+    const {form} =this.props;
+    const parameterkeys = form.getFieldValue('parameterkeys');
+    if (parameterkeys.length === 1) {
+      return;
+    }
+
+    // can use data-binding to set
+    form.setFieldsValue({
+      parameterkeys: parameterkeys.filter(key => key !== k),
+    });
+  }
+
   agencyadd = () => {
     const { form } = this.props;
     // can use data-binding to get
@@ -201,7 +216,7 @@ class ProductFormWrap extends Component {
     });
   }
 
-  parameteradd =（）={
+  parameteradd =()=>{
     const { form } = this.props;
     // can use data-binding to get
 
@@ -631,7 +646,40 @@ class ProductFormWrap extends Component {
       return ''
     }
     }
+    getParameterName(k){
+      const { form } = this.props;
+      let parameter=this.props.product.parameterlist;
+      if(typeof(parameter)!='undefined'){
+        let length=parameter.length-1;
 
+      if(k<=length){
+      return  parameter[k].parameter_name;
+        }
+      else {
+        return ''
+      }
+      }
+      else {
+      return ''
+      }
+      }
+      getParameterValue(k){
+        const { form } = this.props;
+        let parameter=this.props.product.parameterlist;
+        if(typeof(parameter)!='undefined'){
+          let length=parameter.length-1;
+
+        if(k<=length){
+        return  parameter[k].parameter_value;
+          }
+        else {
+          return ''
+        }
+        }
+        else {
+        return ''
+        }
+        }
     getAgency(k){
       const {form} =this.props;
       let agency=this.props.product.agencyLevelPrices;
@@ -712,6 +760,9 @@ class ProductFormWrap extends Component {
     render() {
       const { contentState,cover ,fileList,fileListMore,fileListDetails} = this.state;
       const  { product,editState,modalState } = this.props;
+      console.log(this.props.key_agencyarr);
+      console.log('---------');
+      console.log(this.props.key_parameterarr);
         let uploadProps = {
           action: '/images/upload',
           onChange: this.handleChange.bind(this),
@@ -755,8 +806,55 @@ class ProductFormWrap extends Component {
                 },
               },
             };
-            getFieldDecorator('keyss',{initialValue:this.props.key_agencyarr})
+            getFieldDecorator('parameterkeys',{initialValue:this.props.key_parameterarr})
+            const parameterkeys = getFieldValue('parameterkeys');
+            const parameterItems =parameterkeys.map((k, index) => {
+              return(
+                <FormItem
+                {...formItemLayout}
+                label='参数名'
+                  required={false}
+                  key={k}
+                >
+                  {getFieldDecorator(`parameter_name[${k}]`, {
+                    initialValue:this.getParameterName(k),
+                    validateTrigger: ['onChange', 'onBlur'],
 
+                  })(
+                    <Input placeholder="参数名" style={{ width: '100%'}} />
+                  )}
+                </FormItem>
+
+              )
+            })
+            const parameterItems2 = parameterkeys.map((k, index) => {
+              return(
+                <FormItem
+                {...formItemLayout}
+                label='参数值'
+                  required={false}
+                  key={k}
+                >
+                  {getFieldDecorator(`parameter_value[${k}]`, {
+                    initialValue:this.getParameterValue(k),
+                    validateTrigger: ['onChange', 'onBlur'],
+
+                  })(
+                    <Input placeholder="参数值" style={{ width: '80%'}} />
+                  )}
+                  {parameterkeys.length > 1 ? (
+                          <Icon
+                            style={{marginLeft:10}}
+                            className="dynamic-delete-button"
+                            type="minus-circle-o"
+                            disabled={parameterkeys.length === 1}
+                            onClick={() => this.parameterremove(k)}
+                          />
+                        ) : null}
+                </FormItem>
+
+              )
+            })
 
 
 
@@ -1118,6 +1216,7 @@ class ProductFormWrap extends Component {
           )}
           </FormItem>
         {getFieldDecorator('specifications', { initialValue:this.getInitialvalue()})}
+        {getFieldDecorator('parameterlist', { initialValue:this.getInitialvalue()})}
 
       </Form>
       )

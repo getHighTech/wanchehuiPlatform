@@ -31,6 +31,7 @@ Meteor.methods({
       isSale: false,
       shopId:shopId,
       shopName:shopName,
+      parameterlist:product.parameterlist,
       specName:product.spec_name,
       specifications:newSpec,
       curency:'cny',
