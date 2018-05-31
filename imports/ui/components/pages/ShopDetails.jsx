@@ -148,9 +148,9 @@ class ShopDetails extends React.Component {
     Meteor.call('get.oneproduct.id',id,function(err,alt){
       console.log(alt);
       self.setState({
-        spec_length:alt.specifications.length
+        spec_length:alt.specName.length
       })
-      let spec_length =alt.specifications.length;
+      let spec_length =alt.specName.length;
       var arr =new Array(spec_length);
       let agency_length=alt.agencyLevelPrices.length;
       var agency_arr = new Array(agency_length)

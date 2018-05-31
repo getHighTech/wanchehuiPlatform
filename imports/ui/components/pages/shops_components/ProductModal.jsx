@@ -97,6 +97,39 @@ class ProductModal extends React.Component{
     console.log(self.state.shopName);
 
   }
+  doExchange(arr){
+       var len = arr.length;
+       console.log(arr);
+       if(len >= 2){
+           var len1 = arr[0].length;
+           var len2 = arr[1].length;
+           var lenBoth = len1 * len2;
+           var items = new Array(lenBoth);
+           var index = 0;
+           for(var i=0; i<len1; i++){
+               for(var j=0; j<len2; j++){
+                 if(arr[0][i] instanceof Array){
+                      items[index] = arr[0][i].concat(arr[1][j]);
+                  }else{
+                      items[index] = [arr[0][i]].concat(arr[1][j]);
+                  }
+                  index++;
+               }
+           }
+           var newArr = new Array(len -1);
+           for(var i=2;i<arr.length;i++){
+               newArr[i-1] = arr[i];
+           }
+           newArr[0] = items;
+           if(newArr.length<=len){
+             return this.doExchange(newArr);
+
+           }
+
+       }else{
+           return arr[0];
+       }
+   }
 
 
 
@@ -121,18 +154,18 @@ class ProductModal extends React.Component{
     console.log(speckeys);
     let specname=oldObj.spec_name;
     let specvalue=oldObj.spec_value;
-    let specprice=oldObj.spec_price;
+    // let specprice=oldObj.spec_price;
     let end_spec=[];
     for(var i = 0; i<speckeys.length;i++){
       var spec_index=speckeys[i];
       var spec_name=specname[spec_index];
       var spec_value=specvalue[spec_index];
-      var spec_price=specprice[spec_index];
+      // var spec_price=specprice[spec_index];
       var o1={spec_name:spec_name};
       var o2={spec_value:spec_value};
-      var o3={spec_price:spec_price}
-      var o4={isThis:false};
-      var obj = Object.assign(o1,o2,o3,o4);
+      // var o3={spec_price:spec_price}
+      var o3={isThis:false};
+      var obj = Object.assign(o1,o2,o3);
       end_spec.push(obj);
     }
     setFieldsValue({specifications: end_spec})
@@ -143,56 +176,146 @@ class ProductModal extends React.Component{
     newObj.price=newPrice*100;
     let newEndPrice =newObj.endPrice;
     newObj.endPrice=newEndPrice*100;
-    newObj.specifications=end_spec;
-    console.log(newObj);
+
+    let specValue = newObj.spec_value;
+    let specName = newObj.spec_name;
+    self.doExchange(specValue)
+    let specAllValue = self.doExchange(specValue);
+    console.log(specAllValue);
+    let aaass = [];
+    if(typeof(specAllValue)!='undefined'){
+      console.log(specAllValue.length);
+
+      if(specName.length>1){
+        for(var i = 0;i<specAllValue.length;i++){
+          let aa = specAllValue[i];
+          console.log(aa.length);
+          var obj =''
+          var index = 0;
+          var zzzz= []
+          for (var j = 0; j < aa.length; j++) {
+            var zsxzz =aa[j]
+            var name = specName[j]
+            var index ={[name]:zsxzz}
+              obj =Object.assign(index)
+              index++
+              console.log(obj);
+              zzzz.push(obj)
+
+
+          }
+          aaass.push(zzzz)
+        }
+      }
+      else {
+        console.log(specAllValue);
+        var obj =''
+        var index = 0;
+        var zzzz= []
+        for(var i = 0;i<specAllValue.length;i++){
+          var zsxzz=specAllValue[i];
+          var name = specName[0];
+          var index ={[name]:zsxzz}
+          obj =Object.assign(index)
+          index++
+          console.log(obj);
+          zzzz.push(obj)
+        }
+        aaass.push(zzzz)
+      }
+      console.log(aaass);
+
+
+
+
+    }
+    newObj.specifications=aaass;
+    console.log(newObj.specifications);
+
     let agencyPrice=newObj.agencyPrice;
-    console.log(typeof(agencyPrice)=='undefined');
     if (typeof(agencyPrice)!='undefined') {
       for(var i = 0; i<agencyPrice.length;i++){
         agencyPrice[i]=agencyPrice[i]*100
-        console.log(agencyPrice[i]);
       }
     }
     else {
-      agencyPrice= [];
+      newObj.agencyPrice= [];
     }
 
-    console.log(agencyPrice);
-    self.hideModal();
     // return;
+    console.log(newObj);
+    // return;
+    self.hideModal();
     if(self.props.modalState){
       //新增店铺到数据库
-      console.log('111');
       let shopId=this.props.id;
       let shopName= this.state.shopName;
       let userId = Meteor.userId();
       console.log(end_spec.length);
-      if(end_spec.length>0){
-        for (var i = 0; i < end_spec.length; i++) {
-          let newSpec = []
-          let newspec =newObj.specifications[i];
-          newSpec.push(newspec)
-          console.log(newSpec);
-          Meteor.call("products.insert", newObj, shopId,shopName,newSpec,userId,function(error,result){
-            if(!error){
-              console.log("新增商品");
-              console.log(result);
-              //数据变化后，刷新表格
-              self.reflashTable();
-              self.setFormData({});
-              console.log("刷新表格成功");
-              self.setState({
-                xx:[],
-                fileState:'',
-                coverState:'',
-                detailsState:''
-              })
-              console.log(self.state.xx);
-            }else{
-              console.log(error);
-            }
-          })
+      if(aaass.length>0){
+        if(specName.length>1){
+          console.log('specName长度大于1');
+          for (var i = 0; i < aaass.length; i++) {
+            let newSpec = []
+            let newspec =newObj.specifications[i];
+            newSpec.push(newspec)
+            console.log(newSpec);
+            Meteor.call("products.insert", newObj, shopId,shopName,newSpec[0],userId,function(error,result){
+              if(!error){
+                console.log("新增商品");
+                console.log(result);
+                //数据变化后，刷新表格
+                self.reflashTable();
+                self.setFormData({});
+                console.log("刷新表格成功");
+                self.setState({
+                  xx:[],
+                  fileState:'',
+                  coverState:'',
+                  detailsState:''
+                })
+                console.log(self.state.xx);
+              }else{
+                console.log(error);
+              }
+            })
+          }
+        }else {
+          console.log('specName长度为于1');
+
+          var newaaass=aaass[0];
+          console.log(newaaass);
+          for (var i = 0; i < newaaass.length; i++) {
+            let newSpec = []
+            let newspec =newaaass[i];
+            newSpec.push(newspec)
+            console.log(newSpec);
+            Meteor.call("products.insert", newObj, shopId,shopName,newSpec,userId,function(error,result){
+              if(!error){
+                console.log("新增商品");
+                console.log(result);
+                //数据变化后，刷新表格
+                self.reflashTable();
+                self.setFormData({});
+                console.log("刷新表格成功");
+                self.setState({
+                  xx:[],
+                  fileState:'',
+                  coverState:'',
+                  detailsState:''
+                })
+                console.log(self.state.xx);
+              }else{
+                console.log(error);
+              }
+            })
+          }
         }
+
+
+
+
+
       }
       else {
         let newSpec= [];

@@ -41,7 +41,7 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
-
+const Option =Select.Option;
 const SubMenu = Menu.SubMenu;
 function uploadImageCallBack(file) {
 
@@ -62,6 +62,9 @@ function uploadImageCallBack(file) {
       });
     }
   );
+}
+function handleChangeSpec(value) {
+  console.log(`selected ${value}`);
 }
 
 
@@ -684,7 +687,6 @@ agencyadd = () => {
     render() {
       const { contentState,cover ,fileList,fileListMore,fileListDetails} = this.state;
       const  { product,editState,modalState } = this.props;
-      console.log(this.props.modalState);
         let uploadProps = {
           action: '/images/upload',
           onChange: this.handleChange.bind(this),
@@ -729,9 +731,7 @@ agencyadd = () => {
               },
             };
             getFieldDecorator('keyss',{initialValue:this.props.key_agencyarr})
-            console.log(this.props.key_arr);
             const keyss = getFieldValue('keyss');
-            console.log(keyss);
             const formItemsAgency = keyss.map((k, index) => {
               return (
                 <FormItem
@@ -767,81 +767,106 @@ agencyadd = () => {
             getFieldDecorator('keys', { initialValue:this.props.key_arr});
             const keys = getFieldValue('keys');
             const formItems = keys.map((k, index) => {
-              return (
-                <FormItem
-                {...formItemLayout}
-                label='规格属性'
-                  required={false}
-                  key={k}
-                >
-                  {getFieldDecorator(`spec_name[${k}]`, {
-                    initialValue:this.getSpecName(k),
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [{
-                      required: true,
-                      whitespace: true,
-                      message: "请输入产品规格.",
-                    }],
-                  })(
-                    <Input placeholder="产品规格" style={{ width: '100%'}} />
-                  )}
-                </FormItem>
-              );
-            });
-            const formItems3 = keys.map((k, index) => {
-              return (
-                <FormItem
+                return (
+                  <FormItem
                   {...formItemLayout}
-                  label='价格'
-                  required={false}
-                  key={k}
-                >
-                  {getFieldDecorator(`spec_price[${k}]`, {
-                    initialValue:this.getSpecPrice(k),
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: "请输入价格.",
-                    }],
-                  })(
-                    <Input placeholder="价格" style={{ width: '70%'}} />
-                  )}
-                  {keys.length > 1 ? (
-                    <Icon
-                      style={{marginLeft:10}}
-                      className="dynamic-delete-button"
-                      type="minus-circle-o"
-                      disabled={keys.length === 1}
-                      onClick={() => this.remove(k)}
-                    />
-                  ) : null}
-                </FormItem>
-              );
-            });const formItems2 = keys.map((k, index) => {
-              return (
-                <FormItem
-                  {...formItemLayout}
-                  label='属性'
-                  required={false}
-                  key={k}
-                >
-                  {getFieldDecorator(`spec_value[${k}]`, {
-                    initialValue:this.getSpecValue(k),
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: "请输入属性.",
-                    }],
-                  })(
-                    <Input placeholder="属性" style={{ width: '70%'}} />
-                  )}
+                  label='规格名'
+                    required={false}
+                    key={k}
+                  >
+                    {getFieldDecorator(`spec_name[${k}]`, {
+                      initialValue:this.getSpecName(k),
+                      validateTrigger: ['onChange', 'onBlur'],
 
-                </FormItem>
-              );
+                    })(
+                      <Input placeholder="产品规格" style={{ width: '100%'}} />
+                    )}
+                  </FormItem>
+                );
+
+            });
+            // const formItems3 = keys.map((k, index) => {
+            //   return (
+            //     <FormItem
+            //       {...formItemLayout}
+            //       label='价格'
+            //       required={false}
+            //       key={k}
+            //     >
+            //       {getFieldDecorator(`spec_price[${k}]`, {
+            //         initialValue:this.getSpecPrice(k),
+            //         validateTrigger: ['onChange', 'onBlur'],
+            //         rules: [
+            //         {
+            //           required: true,
+            //           whitespace: true,
+            //           message: "请输入价格.",
+            //         }],
+            //       })(
+            //         <Input placeholder="价格" style={{ width: '70%'}} />
+            //       )}
+            //       {keys.length > 1 ? (
+            //         <Icon
+            //           style={{marginLeft:10}}
+            //           className="dynamic-delete-button"
+            //           type="minus-circle-o"
+            //           disabled={keys.length === 1}
+            //           onClick={() => this.remove(k)}
+            //         />
+            //       ) : null}
+            //     </FormItem>
+            //   );
+            // });
+            const formItems2 = keys.map((k, index) => {
+              if (this.props.modalState) {
+                return (
+                  <FormItem
+                    {...formItemLayout}
+                    label='规格值1'
+                    required={false}
+                    key={k}
+                  >
+                    {getFieldDecorator(`spec_value[${k}]`, {
+                      validateTrigger: ['onChange', 'onBlur'],
+                      
+                    })(
+                      <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      placeholder="Please select"
+                      onChange={handleChangeSpec}
+                      dropdownStyle={{zIndex:'99999' }}
+                      ></Select>
+                    )}
+
+                  </FormItem>
+                );
+              }
+              else {
+                return (
+                  <FormItem
+                    {...formItemLayout}
+                    label='规格值2'
+                    required={false}
+                    key={k}
+                  >
+                    {getFieldDecorator(`spec_value[${k}]`, {
+                      initialValue:this.getSpecValue(k),
+                      validateTrigger: ['onChange', 'onBlur'],
+                      rules: [
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "请输入属性.",
+                      }],
+                    })(
+                      <Input placeholder="属性" style={{ width: '70%'}} />
+                    )}
+
+                  </FormItem>
+                );
+              }
+
             });
       return (
         <Form onSubmit={this.handleSubmit}>
@@ -1012,7 +1037,6 @@ agencyadd = () => {
         <Col span={4}></Col>
         <Col span={6}>{formItems}</Col>
         <Col span={6}>{formItems2}</Col>
-        <Col span={6}>{formItems3}</Col>
         <Col span={4}></Col>
       </Row>
 
