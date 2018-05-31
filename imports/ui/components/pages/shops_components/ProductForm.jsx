@@ -70,6 +70,7 @@ function handleChangeSpec(value) {
 
 let dudu=0;
 let agencyLength = 0;
+let parameterLength =0
 class ProductFormWrap extends Component {
 
 
@@ -175,30 +176,54 @@ class ProductFormWrap extends Component {
   form.setFieldsValue({
     keyss: keyss.filter(key => key !== k),
   });
-}
+  }
 
-agencyadd = () => {
-  const { form } = this.props;
-  // can use data-binding to get
+  agencyadd = () => {
+    const { form } = this.props;
+    // can use data-binding to get
 
-  const keyss = form.getFieldValue('keyss');
-  this.setState({
-    agencykey_arr:keyss
-  })
-  let agencyLength = keyss.length;
-  this.setState({
-    agencykey_length:agencyLength
-  })
-  const nextKeys = keyss.concat(agencyLength);
-  agencyLength++;
-  // console.log(uuid);
-  //
-  // this.update_uuid(uuid);
-  // console.log(this.state.uuid);
-  form.setFieldsValue({
-    keyss: nextKeys,
-  });
-}
+    const keyss = form.getFieldValue('keyss');
+    this.setState({
+      agencykey_arr:keyss
+    })
+    let agencyLength = keyss.length;
+    this.setState({
+      agencykey_length:agencyLength
+    })
+    const nextKeys = keyss.concat(agencyLength);
+    agencyLength++;
+    // console.log(uuid);
+    //
+    // this.update_uuid(uuid);
+    // console.log(this.state.uuid);
+    form.setFieldsValue({
+      keyss: nextKeys,
+    });
+  }
+
+  parameteradd =（）={
+    const { form } = this.props;
+    // can use data-binding to get
+
+    const parameterkeys = form.getFieldValue('parameterkeys');
+    this.setState({
+      parameterkey_arr:parameterkeys
+    })
+    let parameterLength = parameterkeys.length;
+    this.setState({
+      parameterkey_length:parameterLength
+    })
+    const nextKeys = parameterkeys.concat(parameterLength);
+    parameterLength++;
+    // console.log(uuid);
+    //
+    // this.update_uuid(uuid);
+    // console.log(this.state.uuid);
+    form.setFieldsValue({
+      parameterkeys: nextKeys,
+    });
+  }
+
 
   add = () => {
     const { form } = this.props;
@@ -731,6 +756,13 @@ agencyadd = () => {
               },
             };
             getFieldDecorator('keyss',{initialValue:this.props.key_agencyarr})
+
+
+
+
+
+
+            getFieldDecorator('keyss',{initialValue:this.props.key_agencyarr})
             const keyss = getFieldValue('keyss');
             const formItemsAgency = keyss.map((k, index) => {
               return (
@@ -767,6 +799,7 @@ agencyadd = () => {
             getFieldDecorator('keys', { initialValue:this.props.key_arr});
             const keys = getFieldValue('keys');
             const formItems = keys.map((k, index) => {
+              if (this.props.modalState) {
                 return (
                   <FormItem
                   {...formItemLayout}
@@ -783,6 +816,8 @@ agencyadd = () => {
                     )}
                   </FormItem>
                 );
+              }
+
 
             });
             // const formItems3 = keys.map((k, index) => {
@@ -850,8 +885,8 @@ agencyadd = () => {
                     required={false}
                     key={k}
                   >
-                    {getFieldDecorator(`spec_value[${k}]`, {
-                      initialValue:this.getSpecValue(k),
+                    {getFieldDecorator('specifications', {
+                      initialValue:this.props.product.specifications,
                       validateTrigger: ['onChange', 'onBlur'],
                       rules: [
                       {
@@ -913,32 +948,7 @@ agencyadd = () => {
             </Upload>
 
       </FormItem>
-      <FormItem
-      {...formItemLayout}
-      label="商品价格"
-      hasFeedback
-      >
-      {getFieldDecorator('price', {
-          initialValue: this.getProductPrice(),
-          rules: [{ required: true, message: '商品价格不能为空' }],
-      })(
 
-          <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品价格" />
-      )}
-      </FormItem>
-      <FormItem
-      {...formItemLayout}
-      label="商品最终价格"
-      hasFeedback
-      >
-      {getFieldDecorator('endPrice', {
-          initialValue: this.getProductEndprice(),
-          rules: [{ required: true, message: '商品价格不能为空' }],
-      })(
-
-          <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品价格" />
-      )}
-      </FormItem>
 
         <FormItem
         {...formItemLayout}
@@ -1027,20 +1037,36 @@ agencyadd = () => {
       <Divider dashed />
       <FormItem
       {...formItemLayout}
+      label="商品参数"
+      hasFeedback
+      >
+      <Button type="dashed" onClick={this.parameteradd} disabled={!this.props.modalState} >
+        <Icon type="plus" />添加参数
+      </Button>
+      </FormItem>
+      <Row>
+        <Col span={4}></Col>
+        <Col span={6}>{parameterItems}</Col>
+        <Col span={6}>{parameterItems2}</Col>
+        <Col span={4}></Col>
+      </Row>
+      <Divider dashed />
+      <FormItem
+      {...formItemLayout}
       label="商品分销奖励"
       hasFeedback
       >
       <Button type="dashed" onClick={this.agencyadd} disabled={!this.props.modalState} >
-        <Icon type="plus" />添加
+        <Icon type="plus" />添加等级
       </Button>
       </FormItem>
 
         {formItemsAgency}
 
-
+      <Divider dashed />
       <FormItem {...formItemLayout}label='添加商品规格'>
         <Button type="dashed" onClick={this.add} disabled={!this.props.modalState} >
-          <Icon type="plus" />添加
+          <Icon type="plus" />添加规格
         </Button>
 
       </FormItem>

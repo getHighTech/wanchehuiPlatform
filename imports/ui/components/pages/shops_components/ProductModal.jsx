@@ -177,10 +177,10 @@ class ProductModal extends React.Component{
     for (const key in oldObj) {
         newObj[key] = oldObj[key];
     }
-    let newPrice=newObj.price;
-    newObj.price=newPrice*100;
-    let newEndPrice =newObj.endPrice;
-    newObj.endPrice=newEndPrice*100;
+    // let newPrice=newObj.price;
+    // newObj.price=newPrice*100;
+    // let newEndPrice =newObj.endPrice;
+    // newObj.endPrice=newEndPrice*100;
 
     let specValue = newObj.spec_value;
     let specName = newObj.spec_name;
@@ -264,7 +264,7 @@ class ProductModal extends React.Component{
             let newSpec = []
             let newspec =newObj.specifications[i];
             newSpec.push(newspec)
-            console.log(newSpec);
+            console.log(newSpec[0]);
             Meteor.call("products.insert", newObj, shopId,shopName,newSpec[0],userId,function(error,result){
               if(!error){
                 console.log("新增商品");
