@@ -35,7 +35,7 @@ import "antd/lib/upload/style";
 import 'antd/lib/modal/style';
 import 'antd/lib/message/style';
 import { Roles } from '/imports/api/roles/roles.js';
-import { showProduct, editProduct,addProduct } from '/imports/ui/actions/products.js';
+import { showProduct, editProduct,addProduct,changePrice } from '/imports/ui/actions/products.js';
 import ProductModal from './shops_components/ProductModal.jsx';
 import Product from './shops_components/Product.jsx';
 
@@ -57,6 +57,8 @@ class ShopDetails extends React.Component {
     editphoneVisible:false,
     editaddress:'',
     editphone:[],
+    pricevisible:false,
+    defaultprice:0,
     productmodalVisible: false,  // modal是否可见
     productmodalTitle: '',
     spec_length:0,
@@ -140,6 +142,52 @@ class ShopDetails extends React.Component {
       }
     })
   }
+  onChangePrice = (id) =>{
+    console.log(id);
+    let self = this;
+
+    Meteor.call('product.price',id,function(err,alt){
+      const {dispatch } = self.props;
+      if (!err) {
+        console.log(alt);
+
+        dispatch(changePrice(alt,id))
+        self.setState({
+          pricevisible:true
+
+        })
+      }
+
+    })
+
+  }
+  pricehandleCancel = (e) => {
+    let self = this;
+    self.setState({
+      pricevisible:false,
+      defaultprice:0,
+    })
+  }
+  priceinput(value){
+    this.setState({
+      defaultprice:value
+    })
+  }
+  pricehandleOk= (e) =>{
+    let self = this;
+    let price =self.state.defaultprice;
+    let id = self.props.localproductid;
+    Meteor.call('product.updatePrice',id,price,function(err,alt){
+      if (!err) {
+        self.setState({
+          pricevisible:false,
+          defaultprice:0
+        })
+        self.getProducts();
+
+      }
+    })
+  }
   onEditProduct = (id) => {
     let self =this;
 
@@ -148,17 +196,22 @@ class ShopDetails extends React.Component {
     Meteor.call('get.oneproduct.id',id,function(err,alt){
       console.log(alt);
       self.setState({
-        spec_length:alt.specifications.length
+        spec_length:alt.specName.length
       })
-      let spec_length =alt.specifications.length;
+      let spec_length =alt.specName.length;
       var arr =new Array(spec_length);
+      let agency_length=alt.agencyLevelPrices.length;
+      var agency_arr = new Array(agency_length)
       for(var i=0;i<arr.length;i++){
           arr[i] = i;
+      }
+      for(var i = 0;i<agency_arr.length;i++){
+        agency_arr[i]=i;
       }
       const {dispatch } = self.props;
       if(!err){
         console.log(alt);
-        dispatch(editProduct(alt,spec_length,arr,id))
+        dispatch(editProduct(alt,spec_length,arr,agency_arr,id))
         self.setState({
           productmodalVisible:true,
           productmodalTitle:'修改商品',
@@ -192,6 +245,7 @@ class ShopDetails extends React.Component {
   }
 
   render(){
+    console.log(this.state.defaultprice);
       const {singleProduct, modalState, editState,allState,length,key_arr,productId} = this.props
     const actionStyle = {
       fontSize: 16, color: '#08c'
@@ -261,6 +315,10 @@ class ShopDetails extends React.Component {
           <span className="ant-divider" />
           <Tooltip placement="topLeft" title="商品上下架" arrowPointAtCenter>
             <Switch checkedChildren="上架" unCheckedChildren="下架"  defaultChecked={record.isSale} onChange={() => this.changeOnline(record.isSale,record._id)}  />
+          </Tooltip>
+          <span className="ant-divider" />
+          <Tooltip placement="topLeft" title="价格" arrowPointAtCenter>
+            <Button shape="circle" icon="eye"  onClick={ () => this.onChangePrice(record._id)}></Button>
           </Tooltip>
 
         </span>)
@@ -342,7 +400,15 @@ class ShopDetails extends React.Component {
 
 
       <Table rowSelection={rowSelection} rowKey={record => record._id} dataSource={this.state.product} columns={Columns} />
-
+      <Modal
+          title="价格"
+          visible={this.state.pricevisible}
+          onOk={this.pricehandleOk}
+          onCancel={this.pricehandleCancel}
+        >
+          <p>当前价格:{this.props.productprice/100}元</p>
+          <Input placeholder="请输入价格"  defaultValue={0}  onInput={input => this.priceinput(input.target.value)} />
+        </Modal>
       <div>
 
 
@@ -367,7 +433,10 @@ function mapStateToProps(state) {
     editState: !state.ProductsList.productmodalEditable,
     length:state.ProductsList.key_length,
     key_arr:state.ProductsList.key_arr,
-    productId:state.ProductsList.productId
+    key_agencyarr:state.ProductsList.key_agencyarr,
+    productId:state.ProductsList.productId,
+    productprice:state.ProductsList.productprice,
+    localproductid:state.ProductsList.localproductid,
   };
 }
 

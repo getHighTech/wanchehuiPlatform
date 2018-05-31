@@ -45,7 +45,6 @@ class OrdersForShop extends React.Component{
 
   showModal = (status,_id) => {
     let currentUserId = Meteor.userId();
-    console.log(currentUserId);
     let self =this;
     Meteor.call('rolesAcl.find_by_user_id',currentUserId,function(error,rlt){
       console.log(rlt);
@@ -114,7 +113,6 @@ class OrdersForShop extends React.Component{
 
   componentDidMount(){
     let currentUserId = Meteor.userId();
-    console.log(currentUserId);
     let self =this;
     self.setState({
       loading:true
@@ -147,7 +145,6 @@ class OrdersForShop extends React.Component{
   getProName(){
     let shopId=this.state.shopId;
     let self =this;
-
     Meteor.call('orders.getShopId',shopId,function(erroy,result){
       if(!erroy){
         for(var i = 0;i<result.length;i++){
