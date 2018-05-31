@@ -9,7 +9,18 @@ import {
     createNewOrder, 
     loadOneOrderById,
     getIncomes, 
-    loadMoneyPage, withdrawMoney, getUserBankcards, createBankcard, removeBankcard,syncRemoteCartToLocal, syncLocalCartToRemote, getUserDetailsById, updateOrder, createUserContact, getUserContacts, deleteUserContact, setUserContactDefatult, getNewestOneUserOrderByStatus, getIncomeWithinTime, getProductByShopId } from './apps';
+    loadMoneyPage, 
+    withdrawMoney, 
+    getUserBankcards, 
+    createBankcard, 
+    removeBankcard,
+    syncRemoteCartToLocal, 
+    syncLocalCartToRemote, 
+    getUserDetailsById, updateOrder, 
+    createUserContact, getUserContacts, 
+    deleteUserContact, setUserContactDefatult, 
+    getNewestOneUserOrderByStatus, getIncomeWithinTime, 
+    getProductByShopId, agencyOneProduct } from './apps';
 
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
@@ -162,6 +173,8 @@ Meteor.methods({
     },
     //获取银行卡列表
     "app.get.user.bankcards"(loginToken, appName, userId){
+        console.log(userId);
+        
         let stampedTokenObj = JSON.parse(loginToken);
         let rltObj = getUserBankcards(stampedTokenObj, appName, userId);
         return Object.assign({}, rltObj, {
@@ -290,5 +303,12 @@ Meteor.methods({
                 fromMethod: "app.get.products.shop.limit"
             })
 
+        },
+        'app.agency.one.product'(loginToken, appName, product, userId){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = agencyOneProduct(stampedTokenObj, appName, product, userId);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.agency.one.product'
+            })
         }
 });

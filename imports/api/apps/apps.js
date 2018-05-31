@@ -425,6 +425,8 @@ export function createNewOrder(loginToken, appName, orderParams){
                     productCounts,
                     totalAmount,
                     shopProducts,
+                    userId: orderParams.userId,
+                    contact: orderParams.contact,
                     orderId,
                     shopId
                 };
@@ -620,6 +622,8 @@ export function withdrawMoney(loginToken, appName, userId, amount, bankId){
 }
 
 export function getUserBankcards(loginToken, appName, userId){
+    console.log(userId);
+    
     return getUserInfo(loginToken, appName, "bankcards", function(){
         let bankcards = Bankcards.find({userId});
         return {
@@ -989,5 +993,104 @@ export function getProductByShopId(appName, shopId, page, pagesize){
         type: "products",
         msg: products.fetch()
     }
+}
+
+export function agencyOneProduct(loginToken, product, userId){
+    return getUserInfo(loginToken, appName, "shops", function(){
+        if(!product.shopId){
+            return {
+                type: "error",
+                reason: "SERVICE ERROR"
+            }
+        }
+        
+        let shop = Shops.findOne({_id: product.shopId});
+        if(!shop){
+            return {
+                type: "error",
+                reason: "SERVICE ERROR"
+            }
+        }
+
+        let user = Meteor.users.findOne(userId);
+
+        if(!user){
+            return {
+                type: "error",
+                reason: "USER NOT FOUND"
+            }
+        }
+
+
+
+        let newShop = Shops.findOne({"acl.own.users": userId});
+        let newShopId = null;
+        if(!newShop){
+            newShopId = Shops.insert({
+                name: user.username+"的店铺",
+                phone: user.profile.mobile,
+                pictures: [],
+                description: '欢迎光临'+user.username+"的店铺",
+                tags: ["黑卡", "代理", "挣钱"],
+                cover: user.headurl,
+                address:'',
+                lntAndLat:[],
+                status: true,
+                createdAt: new Date(),
+                acl: {
+                  own: {
+                    roles: ["shop_owner"],
+                    users: userId,
+                  },
+                  read: {
+                    roles: ['nobody', 'login_user']
+                  },
+                  write: {
+                    roles: ["shop_owner","shop_manager"],
+                    users: [],
+                  }
+                }
+              });
+        }else{
+            newShopId = newShop._id;
+        }
+        newShop = Shops.findOne(newShopId);
+
+        let newProductParams = {};
+        for (const key in product) {
+            if (!product.hasOwnProperty("_id")) {
+                const element = product[key];
+                newProductParams[key] = element;
+            }
+        }
+        newProductParams.shoId = newShopId;
+        newProductParams.createdAt = new Date();
+
+        console.log(newProductParams);
+        
+        let newProductId = Products.insert({
+            ...newProductParams
+        })
+
+        if(!newProductId){
+            return {
+                type: "error",
+                reason: "SERVICE ERROR"
+            }
+        }
+
+        return {
+            type: "shops",
+            msg: {
+                newProductId,
+                newShopId
+            }
+        }
+        
+
+
+
+
+    });
 }
 
