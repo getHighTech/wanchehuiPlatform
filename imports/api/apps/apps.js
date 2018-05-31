@@ -596,21 +596,40 @@ export function loadMoneyPage(loginToken, appName, userId){
 }
 
 
-export function withdrawMoney(loginToken, appName, userId, amount, bankId){
+export function withdrawMoney(loginToken, appName, userId, amount, bank, bankId){
     return getUserInfo(loginToken, appName, "balances", function(){
-        let incomeId = BalanceIncomes.insert({
+        let balance  = Balances.findOne({userId});
+        if(!balance){
+            return {
+                type: "error",
+                reason: "BALANCE NOT FOUND"
+            }
+        }
+        let chargeId = BalanceCharges.insert({
           userId, 
           text: "提现金额",
-          money: amount, 
+          money: amount*100, 
           bankId, 
+          bank,
+          balanceId: balance._id,
           status: "revoke", 
           reasonType: "withdrawals", 
           createdAt: new Date()
          });
-         if(incomeId){
+         
+         newTotalAmount = balance.amount;
+         newTotalAmount = newTotalAmount - amount*100;
+         Balances.update(balance._id, {
+             $set: {
+                 amount: newTotalAmount
+             }
+         })
+         console.log(newTotalAmount);
+         
+         if(chargeId){
             return {
                 type: "balances",
-                msg: incomeId
+                msg: chargeId
             }
          }else{
              return {
@@ -995,7 +1014,7 @@ export function getProductByShopId(appName, shopId, page, pagesize){
     }
 }
 
-export function agencyOneProduct(loginToken, product, userId){
+export function agencyOneProduct(loginToken, appName, product, userId){
     return getUserInfo(loginToken, appName, "shops", function(){
         if(!product.shopId){
             return {
@@ -1057,20 +1076,45 @@ export function agencyOneProduct(loginToken, product, userId){
         newShop = Shops.findOne(newShopId);
 
         let newProductParams = {};
-        for (const key in product) {
-            if (!product.hasOwnProperty("_id")) {
-                const element = product[key];
-                newProductParams[key] = element;
-            }
-        }
-        newProductParams.shoId = newShopId;
+        newProductParams = product;
+        delete newProductParams._id;
+        newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
 
         console.log(newProductParams);
         
         let newProductId = Products.insert({
             ...newProductParams
+        });
+
+
+        //标记被代理的商品
+        let agencies = product.agencies;
+        if(!agencies){
+            agencies = [];
+        }
+        let agencyShops = product.agencyShops;
+        if(!agencyShops){
+            agencyShops = [];
+        }
+        if(!agencies.includes(userId)){
+            agencies.push(userId);
+        }
+        if(!agencyShops.includes(newShop._id)){
+            agencyShops.push(newShop._id);
+        }
+
+        let updateRlt = Products.update(product._id, {
+            $set: {
+                agencies,
+                agencyShops,
+            }
         })
+        // console.log("new_product", Products.findOne(newProductId));
+        
+        // console.log("updateRlt", updateRlt);
+        // console.log("newSHop", newShop);
+        // console.log("usreId", userId);
 
         if(!newProductId){
             return {
