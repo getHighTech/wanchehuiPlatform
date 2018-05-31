@@ -70,6 +70,7 @@ function handleChangeSpec(value) {
 
 let dudu=0;
 let agencyLength = 0;
+let parameterLength =0
 class ProductFormWrap extends Component {
 
 
@@ -98,7 +99,9 @@ class ProductFormWrap extends Component {
         key_arr:[],
         key_length:0,
         agencykey_arr:[],
+        parameterkey_arr:[],
         agencykey_length:0,
+        parameterkey_length:0,
         openKeys:this.props.descriptionKey,
         fileState:this.props.changefileState
       };
@@ -175,30 +178,67 @@ class ProductFormWrap extends Component {
   form.setFieldsValue({
     keyss: keyss.filter(key => key !== k),
   });
-}
+  }
 
-agencyadd = () => {
-  const { form } = this.props;
-  // can use data-binding to get
+  parameterremove = (k) => {
+    const {form} =this.props;
+    const parameterkeys = form.getFieldValue('parameterkeys');
+    if (parameterkeys.length === 1) {
+      return;
+    }
 
-  const keyss = form.getFieldValue('keyss');
-  this.setState({
-    agencykey_arr:keyss
-  })
-  let agencyLength = keyss.length;
-  this.setState({
-    agencykey_length:agencyLength
-  })
-  const nextKeys = keyss.concat(agencyLength);
-  agencyLength++;
-  // console.log(uuid);
-  //
-  // this.update_uuid(uuid);
-  // console.log(this.state.uuid);
-  form.setFieldsValue({
-    keyss: nextKeys,
-  });
-}
+    // can use data-binding to set
+    form.setFieldsValue({
+      parameterkeys: parameterkeys.filter(key => key !== k),
+    });
+  }
+
+  agencyadd = () => {
+    const { form } = this.props;
+    // can use data-binding to get
+
+    const keyss = form.getFieldValue('keyss');
+    this.setState({
+      agencykey_arr:keyss
+    })
+    let agencyLength = keyss.length;
+    this.setState({
+      agencykey_length:agencyLength
+    })
+    const nextKeys = keyss.concat(agencyLength);
+    agencyLength++;
+    // console.log(uuid);
+    //
+    // this.update_uuid(uuid);
+    // console.log(this.state.uuid);
+    form.setFieldsValue({
+      keyss: nextKeys,
+    });
+  }
+
+  parameteradd =()=>{
+    const { form } = this.props;
+    // can use data-binding to get
+
+    const parameterkeys = form.getFieldValue('parameterkeys');
+    this.setState({
+      parameterkey_arr:parameterkeys
+    })
+    let parameterLength = parameterkeys.length;
+    this.setState({
+      parameterkey_length:parameterLength
+    })
+    const nextKeys = parameterkeys.concat(parameterLength);
+    parameterLength++;
+    // console.log(uuid);
+    //
+    // this.update_uuid(uuid);
+    // console.log(this.state.uuid);
+    form.setFieldsValue({
+      parameterkeys: nextKeys,
+    });
+  }
+
 
   add = () => {
     const { form } = this.props;
@@ -606,7 +646,40 @@ agencyadd = () => {
       return ''
     }
     }
+    getParameterName(k){
+      const { form } = this.props;
+      let parameter=this.props.product.parameterlist;
+      if(typeof(parameter)!='undefined'){
+        let length=parameter.length-1;
 
+      if(k<=length){
+      return  parameter[k].parameter_name;
+        }
+      else {
+        return ''
+      }
+      }
+      else {
+      return ''
+      }
+      }
+      getParameterValue(k){
+        const { form } = this.props;
+        let parameter=this.props.product.parameterlist;
+        if(typeof(parameter)!='undefined'){
+          let length=parameter.length-1;
+
+        if(k<=length){
+        return  parameter[k].parameter_value;
+          }
+        else {
+          return ''
+        }
+        }
+        else {
+        return ''
+        }
+        }
     getAgency(k){
       const {form} =this.props;
       let agency=this.props.product.agencyLevelPrices;
@@ -687,6 +760,9 @@ agencyadd = () => {
     render() {
       const { contentState,cover ,fileList,fileListMore,fileListDetails} = this.state;
       const  { product,editState,modalState } = this.props;
+      console.log(this.props.key_agencyarr);
+      console.log('---------');
+      console.log(this.props.key_parameterarr);
         let uploadProps = {
           action: '/images/upload',
           onChange: this.handleChange.bind(this),
@@ -730,6 +806,60 @@ agencyadd = () => {
                 },
               },
             };
+            getFieldDecorator('parameterkeys',{initialValue:this.props.key_parameterarr})
+            const parameterkeys = getFieldValue('parameterkeys');
+            const parameterItems =parameterkeys.map((k, index) => {
+              return(
+                <FormItem
+                {...formItemLayout}
+                label='参数名'
+                  required={false}
+                  key={k}
+                >
+                  {getFieldDecorator(`parameter_name[${k}]`, {
+                    initialValue:this.getParameterName(k),
+                    validateTrigger: ['onChange', 'onBlur'],
+
+                  })(
+                    <Input placeholder="参数名" style={{ width: '100%'}} />
+                  )}
+                </FormItem>
+
+              )
+            })
+            const parameterItems2 = parameterkeys.map((k, index) => {
+              return(
+                <FormItem
+                {...formItemLayout}
+                label='参数值'
+                  required={false}
+                  key={k}
+                >
+                  {getFieldDecorator(`parameter_value[${k}]`, {
+                    initialValue:this.getParameterValue(k),
+                    validateTrigger: ['onChange', 'onBlur'],
+
+                  })(
+                    <Input placeholder="参数值" style={{ width: '80%'}} />
+                  )}
+                  {parameterkeys.length > 1 ? (
+                          <Icon
+                            style={{marginLeft:10}}
+                            className="dynamic-delete-button"
+                            type="minus-circle-o"
+                            disabled={parameterkeys.length === 1}
+                            onClick={() => this.parameterremove(k)}
+                          />
+                        ) : null}
+                </FormItem>
+
+              )
+            })
+
+
+
+
+
             getFieldDecorator('keyss',{initialValue:this.props.key_agencyarr})
             const keyss = getFieldValue('keyss');
             const formItemsAgency = keyss.map((k, index) => {
@@ -767,6 +897,7 @@ agencyadd = () => {
             getFieldDecorator('keys', { initialValue:this.props.key_arr});
             const keys = getFieldValue('keys');
             const formItems = keys.map((k, index) => {
+              if (this.props.modalState) {
                 return (
                   <FormItem
                   {...formItemLayout}
@@ -783,6 +914,8 @@ agencyadd = () => {
                     )}
                   </FormItem>
                 );
+              }
+
 
             });
             // const formItems3 = keys.map((k, index) => {
@@ -850,8 +983,8 @@ agencyadd = () => {
                     required={false}
                     key={k}
                   >
-                    {getFieldDecorator(`spec_value[${k}]`, {
-                      initialValue:this.getSpecValue(k),
+                    {getFieldDecorator('specifications', {
+                      initialValue:this.props.product.specifications,
                       validateTrigger: ['onChange', 'onBlur'],
                       rules: [
                       {
@@ -913,32 +1046,7 @@ agencyadd = () => {
             </Upload>
 
       </FormItem>
-      <FormItem
-      {...formItemLayout}
-      label="商品价格"
-      hasFeedback
-      >
-      {getFieldDecorator('price', {
-          initialValue: this.getProductPrice(),
-          rules: [{ required: true, message: '商品价格不能为空' }],
-      })(
 
-          <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品价格" />
-      )}
-      </FormItem>
-      <FormItem
-      {...formItemLayout}
-      label="商品最终价格"
-      hasFeedback
-      >
-      {getFieldDecorator('endPrice', {
-          initialValue: this.getProductEndprice(),
-          rules: [{ required: true, message: '商品价格不能为空' }],
-      })(
-
-          <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品价格" />
-      )}
-      </FormItem>
 
         <FormItem
         {...formItemLayout}
@@ -1027,20 +1135,36 @@ agencyadd = () => {
       <Divider dashed />
       <FormItem
       {...formItemLayout}
+      label="商品参数"
+      hasFeedback
+      >
+      <Button type="dashed" onClick={this.parameteradd} disabled={!this.props.modalState} >
+        <Icon type="plus" />添加参数
+      </Button>
+      </FormItem>
+      <Row>
+        <Col span={4}></Col>
+        <Col span={6}>{parameterItems}</Col>
+        <Col span={6}>{parameterItems2}</Col>
+        <Col span={4}></Col>
+      </Row>
+      <Divider dashed />
+      <FormItem
+      {...formItemLayout}
       label="商品分销奖励"
       hasFeedback
       >
       <Button type="dashed" onClick={this.agencyadd} disabled={!this.props.modalState} >
-        <Icon type="plus" />添加
+        <Icon type="plus" />添加等级
       </Button>
       </FormItem>
 
         {formItemsAgency}
 
-
+      <Divider dashed />
       <FormItem {...formItemLayout}label='添加商品规格'>
         <Button type="dashed" onClick={this.add} disabled={!this.props.modalState} >
-          <Icon type="plus" />添加
+          <Icon type="plus" />添加规格
         </Button>
 
       </FormItem>
@@ -1092,6 +1216,7 @@ agencyadd = () => {
           )}
           </FormItem>
         {getFieldDecorator('specifications', { initialValue:this.getInitialvalue()})}
+        {getFieldDecorator('parameterlist', { initialValue:this.getInitialvalue()})}
 
       </Form>
       )

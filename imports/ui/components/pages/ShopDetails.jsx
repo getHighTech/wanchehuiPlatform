@@ -58,7 +58,7 @@ class ShopDetails extends React.Component {
     editaddress:'',
     editphone:[],
     pricevisible:false,
-    defaultprice:0,
+    defaultprice:'',
     productmodalVisible: false,  // modal是否可见
     productmodalTitle: '',
     spec_length:0,
@@ -84,18 +84,33 @@ class ShopDetails extends React.Component {
     })
   }
   changeOnline(state,id) {
-
-        Meteor.call('product.isSale',id, function(error,result){
-          if(!error){
-              if (!result.isSale){
-                message.success('商品上架成功！')
-              }else{
-                message.success('商品下架成功！')
-              }
-          }else{
-            console.log("商品状态改变失败！")
+    let self =this;
+        Meteor.call('product.price',id,function(err,alt){
+          if (!err) {
+           let intprice = alt
+           if (intprice!=0) {
+             Meteor.call('product.isSale',id, function(error,result){
+               if(!error){
+                   if (!result.isSale){
+                     message.success('商品上架成功！')
+                   }else{
+                     message.success('商品下架成功！')
+                   }
+               }else{
+                 console.log("商品状态改变失败！")
+               }
+             })
+           }else {
+             Meteor.call('product.isSaleFalse',id,function(err,alt){
+               console.log(alt);
+               self.getProducts();
+             });
+             message.success('请先填写价格！！')
+           }
           }
         })
+
+
 
   }
   getProducts(){
@@ -126,6 +141,8 @@ class ShopDetails extends React.Component {
     dispatch(addProduct())
 
   }
+
+
   onShowProduct = (id) => {
     let self =this;
     self.setState({
@@ -153,8 +170,8 @@ class ShopDetails extends React.Component {
 
         dispatch(changePrice(alt,id))
         self.setState({
+          defaultprice:alt,
           pricevisible:true
-
         })
       }
 
@@ -165,7 +182,7 @@ class ShopDetails extends React.Component {
     let self = this;
     self.setState({
       pricevisible:false,
-      defaultprice:0,
+      defaultprice:'',
     })
   }
   priceinput(value){
@@ -175,13 +192,13 @@ class ShopDetails extends React.Component {
   }
   pricehandleOk= (e) =>{
     let self = this;
-    let price =self.state.defaultprice;
+    let price =self.state.defaultprice*100;
     let id = self.props.localproductid;
     Meteor.call('product.updatePrice',id,price,function(err,alt){
       if (!err) {
         self.setState({
           pricevisible:false,
-          defaultprice:0
+          defaultprice:''
         })
         self.getProducts();
 
@@ -198,6 +215,8 @@ class ShopDetails extends React.Component {
       self.setState({
         spec_length:alt.specName.length
       })
+      let parameter_length = alt.parameterlist.length;
+      var parameter_arr=new Array(parameter_length);
       let spec_length =alt.specName.length;
       var arr =new Array(spec_length);
       let agency_length=alt.agencyLevelPrices.length;
@@ -208,10 +227,13 @@ class ShopDetails extends React.Component {
       for(var i = 0;i<agency_arr.length;i++){
         agency_arr[i]=i;
       }
+      for(var i = 0;i<parameter_arr.length;i++){
+        parameter_arr[i]=i;
+      }
       const {dispatch } = self.props;
       if(!err){
         console.log(alt);
-        dispatch(editProduct(alt,spec_length,arr,agency_arr,id))
+        dispatch(editProduct(alt,spec_length,arr,agency_arr,parameter_arr,id))
         self.setState({
           productmodalVisible:true,
           productmodalTitle:'修改商品',
@@ -318,7 +340,7 @@ class ShopDetails extends React.Component {
           </Tooltip>
           <span className="ant-divider" />
           <Tooltip placement="topLeft" title="价格" arrowPointAtCenter>
-            <Button shape="circle" icon="eye"  onClick={ () => this.onChangePrice(record._id)}></Button>
+            <Button shape="circle" icon="pay-circle"  onClick={ () => this.onChangePrice(record._id)}></Button>
           </Tooltip>
 
         </span>)
@@ -369,7 +391,6 @@ class ShopDetails extends React.Component {
 
 
     return (
-
       <div>
       <Product id={this.props.params._id} onAddProduct={this.onAddProduct.bind(this)}/>
 
@@ -407,7 +428,7 @@ class ShopDetails extends React.Component {
           onCancel={this.pricehandleCancel}
         >
           <p>当前价格:{this.props.productprice/100}元</p>
-          <Input placeholder="请输入价格"  defaultValue={0}  onInput={input => this.priceinput(input.target.value)} />
+          <Input placeholder="请输入价格"   onInput={input => this.priceinput(input.target.value)} />
         </Modal>
       <div>
 

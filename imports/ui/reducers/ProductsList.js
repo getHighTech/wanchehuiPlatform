@@ -8,6 +8,7 @@ const initialState = {
     key_length:0,
     key_arr:[],
     key_agencyarr:[],
+    key_parameterarr:[],
     id:'',
     productprice:[],
     localproductid:''
@@ -31,6 +32,7 @@ const initialState = {
           key_length:action.spec_length,
           key_arr:action.arr,
           key_agencyarr:action.agency_arr,
+          key_parameterarr:action.parameter_arr,
           productId:action.id
         })
         case ADD_PRODUCT:
@@ -40,7 +42,8 @@ const initialState = {
           productmodalEditable: true,
           key_length:0,
           key_arr:[],
-          key_agencyarr:[]
+          key_agencyarr:[],
+          key_parameterarr:[]
         })
         case CHANGE_PRICE:
         return Object.assign({},state,{

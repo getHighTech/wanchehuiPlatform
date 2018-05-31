@@ -14,7 +14,7 @@ Meteor.methods({
     Products.insert({
       name: product.name,
       name_zh:product.name_zh,
-      price: product.price,
+      price: 0,
       description: product.description,
       brief:product.brief,
       cover:product.cover,
@@ -31,6 +31,7 @@ Meteor.methods({
       isSale: false,
       shopId:shopId,
       shopName:shopName,
+      parameterlist:product.parameterlist,
       specName:product.spec_name,
       specifications:newSpec,
       curency:'cny',
@@ -87,6 +88,15 @@ Meteor.methods({
     Products.update(_id, {
       $set: {
         isSale: !Product.isSale,
+      }
+    });
+    return Product
+  },
+  'product.isSaleFalse'(_id){
+    let Product = Products.findOne({_id:_id})
+    Products.update(_id, {
+      $set: {
+        isSale: false,
       }
     });
     return Product

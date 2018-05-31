@@ -174,13 +174,29 @@ class ProductModal extends React.Component{
       end_spec.push(obj);
     }
     setFieldsValue({specifications: end_spec})
+
+    let parameterkeys =oldObj.parameterkeys;
+    let parametername =oldObj.parameter_name;
+    let parametervalue=oldObj.parameter_value;
+    let end_parameter = [];
+    for(var i=0;i<parameterkeys.length;i++){
+      var parameter_index=parameterkeys[i];
+      var parameter_name=parametername[parameter_index];
+      var parameter_value=parametervalue[parameter_index];
+      var o1={parameter_name:parameter_name};
+      var o2={parameter_value:parameter_value};
+      var obj=Object.assign(o1,o2);
+      end_parameter.push(obj)
+    }
+    console.log(end_parameter);
+    oldObj.parameterlist=end_parameter;
     for (const key in oldObj) {
         newObj[key] = oldObj[key];
     }
-    let newPrice=newObj.price;
-    newObj.price=newPrice*100;
-    let newEndPrice =newObj.endPrice;
-    newObj.endPrice=newEndPrice*100;
+    // let newPrice=newObj.price;
+    // newObj.price=newPrice*100;
+    // let newEndPrice =newObj.endPrice;
+    // newObj.endPrice=newEndPrice*100;
 
     let specValue = newObj.spec_value;
     let specName = newObj.spec_name;
@@ -264,7 +280,7 @@ class ProductModal extends React.Component{
             let newSpec = []
             let newspec =newObj.specifications[i];
             newSpec.push(newspec)
-            console.log(newSpec);
+            console.log(newSpec[0]);
             Meteor.call("products.insert", newObj, shopId,shopName,newSpec[0],userId,function(error,result){
               if(!error){
                 console.log("新增商品");
@@ -432,7 +448,7 @@ class ProductModal extends React.Component{
           width={'80%'}
           style={{ top: 20 }}
         >
-          <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} detailsState={this.state.detailsState} changedetailsState={this.changedetailsState.bind(this)} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr}  key_agencyarr={this.props.key_agencyarr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
+          <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} detailsState={this.state.detailsState} changedetailsState={this.changedetailsState.bind(this)} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr}  key_agencyarr={this.props.key_agencyarr} key_parameterarr={this.props.key_parameterarr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
 
         </Modal>
       </div>
@@ -448,6 +464,7 @@ function mapStateToProps(state) {
     length:state.ProductsList.key_length,
     key_arr:state.ProductsList.key_arr,
     key_agencyarr:state.ProductsList.key_agencyarr,
+    key_parameterarr:state.ProductsList.key_parameterarr,
     productId:state.ProductsList.productId
    };
 }
