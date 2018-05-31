@@ -828,7 +828,7 @@ agencyadd = () => {
                   >
                     {getFieldDecorator(`spec_value[${k}]`, {
                       validateTrigger: ['onChange', 'onBlur'],
-                      
+
                     })(
                       <Select
                       mode="tags"
@@ -1000,6 +1000,17 @@ agencyadd = () => {
         initialValue: this.props.product.isTool,
           })(
             <Checkbox disabled={this.props.editState}>工具类型</Checkbox>
+          )}
+      </FormItem>
+      <FormItem
+      {...formItemLayout}
+      label="是否预约"
+      >
+      {getFieldDecorator('isAppointment', {
+        valuePropName:'checked',
+        initialValue: this.props.product.isAppointment,
+          })(
+            <Checkbox disabled={this.props.editState}>预约</Checkbox>
           )}
       </FormItem>
       <FormItem

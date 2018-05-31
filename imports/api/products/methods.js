@@ -24,6 +24,7 @@ Meteor.methods({
       curency:product.curency,
       detailsImage:product.detailsImage,
       isTool:product.isTool,
+      isAppointment:product.isAppointment,
       roleName:product.roleName,
       categoryld:product.categoryld,
       images: product.images,
@@ -89,6 +90,18 @@ Meteor.methods({
       }
     });
     return Product
+  },
+  'product.price'(_id){
+    let price = Products.findOne({_id:_id}).price;
+    console.log(price);
+    return price
+  },
+  'product.updatePrice'(id,price){
+    Products.update(id,{
+      $set:{
+        price:price
+      }
+    })
   },
   'product.offline'(id){
     Products.update(id, {

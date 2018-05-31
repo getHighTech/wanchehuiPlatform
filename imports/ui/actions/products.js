@@ -1,7 +1,7 @@
 export const ADD_PRODUCT = "ADD_PRODUCT ";
 export const SHOW_PRODUCT = "SHOW_PRODUCT ";
 export const EDIT_PRODUCT  = "EDIT_PRODUCT ";
-
+export const CHANGE_PRICE = "CHANGE_PRICE";
 
 
 
@@ -25,5 +25,12 @@ export function addProduct(state){
   return{
     type:ADD_PRODUCT,
     state
+  }
+}
+
+export function changePrice(alt,id){
+  return{
+    type:CHANGE_PRICE,
+    alt,id
   }
 }

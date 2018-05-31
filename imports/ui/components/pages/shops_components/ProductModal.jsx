@@ -98,6 +98,10 @@ class ProductModal extends React.Component{
 
   }
   doExchange(arr){
+    console.log(arr);
+    if (typeof(arr)!='undefined') {
+
+
        var len = arr.length;
        console.log(arr);
        if(len >= 2){
@@ -129,6 +133,7 @@ class ProductModal extends React.Component{
        }else{
            return arr[0];
        }
+     }
    }
 
 
@@ -319,6 +324,8 @@ class ProductModal extends React.Component{
       }
       else {
         let newSpec= [];
+        newObj.spec_name = [];
+        console.log(newObj);
         Meteor.call("products.insert", newObj, shopId,shopName,newSpec,userId,function(error,result){
           if(!error){
             console.log("新增商品");

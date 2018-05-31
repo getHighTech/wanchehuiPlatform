@@ -1,4 +1,4 @@
-import { SHOW_PRODUCT, EDIT_PRODUCT, ADD_PRODUCT } from "../actions/products.js";
+import { SHOW_PRODUCT, EDIT_PRODUCT, ADD_PRODUCT,CHANGE_PRICE } from "../actions/products.js";
 
 
 const initialState = {
@@ -8,7 +8,9 @@ const initialState = {
     key_length:0,
     key_arr:[],
     key_agencyarr:[],
-    id:''
+    id:'',
+    productprice:[],
+    localproductid:''
   };
 
 
@@ -39,6 +41,11 @@ const initialState = {
           key_length:0,
           key_arr:[],
           key_agencyarr:[]
+        })
+        case CHANGE_PRICE:
+        return Object.assign({},state,{
+          productprice:action.alt,
+          localproductid:action.id
         })
 
 
