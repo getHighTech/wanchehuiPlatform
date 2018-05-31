@@ -11,6 +11,7 @@ import {Bankcards} from '../bankcards/bankcards.js';
 import {BalanceIncomes} from '../balances/balance_incomes.js';
 import {BalanceCharges} from '../balances/balance_charges.js';
 import {Agencies} from '/imports/api/agencies/agencies.js';
+import {Shops} from '/imports/api/shops/shops.js';
 export const Apps = new Mongo.Collection('apps');
 export const AppCarts = new Mongo.Collection("app_carts");
 export const UserContacts = new Mongo.Collection("user_contacts");
@@ -920,6 +921,7 @@ export function getIncomeWithinTime(loginToken, appName, rangeLength, userId, un
     })
 }
 
+
 export function getIncomes(loginToken, appName, userId, page, pagesize){
     return getUserInfo(loginToken, appName, "balances", function(){
         
@@ -960,3 +962,32 @@ export function getIncomes(loginToken, appName, userId, page, pagesize){
         
     })
 }
+
+export function getProductByShopId(appName, shopId, page, pagesize){
+    
+    if(!findOneAppByName(appName)){
+        return {
+            type: "error",
+            reason: "invalid app"
+        }
+    }
+    let targetShopId = null;
+    if(shopId === "000"){
+        targetShopId = Shops.findOne({name: "万人车汇自营店"})._id;
+    }
+    console.log("targetShopId", targetShopId);
+    
+    let products = Products.find({shopId: targetShopId}, {
+        skip: (page-1)*pagesize,
+        limit: pagesize,
+        sort: {
+            createdAt: -1
+        }
+    });
+
+    return {
+        type: "products",
+        msg: products.fetch()
+    }
+}
+
