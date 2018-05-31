@@ -131,8 +131,6 @@ Meteor.methods({
     return ordersdata.fetch();
   },
   'orders.getShopId'(id){
-    console.log(id);
-    console.log(Orders.find({'products.shopId':id}).fetch());
     return Orders.find({'products.shopId':id}).fetch();
   },
   'orders.accouts'(ids) {

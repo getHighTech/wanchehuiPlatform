@@ -7,7 +7,7 @@ import { validLoginToken } from '../actions/validLoginToken.js'
 
 
 Meteor.methods({
-  "products.insert"(product,shopId,shopName,newSpec){
+  "products.insert"(product,shopId,shopName,newSpec,userId){
     if(product.isTool){
 
     }
@@ -19,23 +19,24 @@ Meteor.methods({
       brief:product.brief,
       cover:product.cover,
       detailsImage:product.detailsImage,
-      createdByUserId: product.createdByUserId,
+      createdByUserId: userId,
       endPrice:product.endPrice,
       curency:product.curency,
       detailsImage:product.detailsImage,
       isTool:product.isTool,
+      isAppointment:product.isAppointment,
       roleName:product.roleName,
       categoryld:product.categoryld,
       images: product.images,
-      isSale: true,
+      isSale: false,
       shopId:shopId,
       shopName:shopName,
+      specName:product.spec_name,
       specifications:newSpec,
-      createdByUserId:"dadad",
       curency:'cny',
       recommend:product.recommend,
       agencyLevelCount: 2,//eg: 2
-      agencyLevelPrices: [3880, 1280],
+      agencyLevelPrices: product.agencyPrice,
       createdAt : new Date(),
       acl: {
         own: {
@@ -89,6 +90,18 @@ Meteor.methods({
       }
     });
     return Product
+  },
+  'product.price'(_id){
+    let price = Products.findOne({_id:_id}).price;
+    console.log(price);
+    return price
+  },
+  'product.updatePrice'(id,price){
+    Products.update(id,{
+      $set:{
+        price:price
+      }
+    })
   },
   'product.offline'(id){
     Products.update(id, {
@@ -161,7 +174,8 @@ Meteor.methods({
         isTool:product.isTool,
         recommend:product.recommend,
         status:product.status,
-        specifications:product.specifications
+        specifications:product.specifications,
+        agencyLevelPrices:product.agencyPrice
       }
     })
   },
