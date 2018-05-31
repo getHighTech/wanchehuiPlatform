@@ -625,7 +625,7 @@ export function getUserBankcards(loginToken, appName, userId){
     console.log(userId);
     
     return getUserInfo(loginToken, appName, "bankcards", function(){
-        let bankcards = Bankcards.find({userId});
+        let bankcards = Bankcards.find({userId},{sort: {createdAt: -1}});
         return {
             type: "bankcards",
             msg: bankcards.fetch()
