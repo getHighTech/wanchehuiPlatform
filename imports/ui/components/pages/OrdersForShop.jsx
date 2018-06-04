@@ -22,7 +22,7 @@ import { editOrderStatus } from '/imports/ui/actions/order_status.js';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 import {Spin} from 'antd';
-
+import { push, replace, goBack } from 'react-router-redux';
 const RadioGroup = Radio.Group;
 
 class OrdersForShop extends React.Component{
@@ -140,10 +140,15 @@ class OrdersForShop extends React.Component{
       localStatus:localStatus
     })
   }
-
+  changeDetails = (_id) => {
+    const { dispatch } = this.props;
+    let self = this;
+    dispatch(push(`/orders/order_details/${_id}`));
+  }
 
   getProName(){
     let shopId=this.state.shopId;
+    console.log(shopId);
     let self =this;
     Meteor.call('orders.getShopId',shopId,function(erroy,result){
       if(!erroy){
@@ -192,7 +197,7 @@ class OrdersForShop extends React.Component{
         {
           title: '订单状态操作',
           key: 'operation',
-          fixed: 'right',
+          // fixed: 'right',
           width: 100,
           render: (text,record) => {
             return(
@@ -201,6 +206,11 @@ class OrdersForShop extends React.Component{
             )
           },
         },
+        {title:'订单详情',key:'details',render:(text,record) => {
+          return(
+            <Button type="primary" onClick={ () => this.changeDetails(record._id)}>核销订单</Button>
+          )
+        }}
 
 
       ];
