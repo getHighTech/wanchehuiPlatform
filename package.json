@@ -11,7 +11,7 @@
     "antd": "3.0.2",
     "autoprefixer": "^7.2.6",
     "babel-runtime": "^6.26.0",
-    "bcrypt": "^0.8.7",
+    "bcrypt": "^2.0.1",
     "core-js": "^2.5.7",
     "draft-js": "^0.10.5",
     "draftjs-to-html": "^0.7.5",

@@ -87,7 +87,7 @@ HTTP.methods({
     stream: true,
     post: function(){
       let form = new formidable.IncomingForm();
-      form.uploadDir = '/tmp';
+      form.uploadDir = path.resolve('../../programs/web.browser/app/img');
       form.multiples = true;
       let fileName = new Date().getTime() + '.png';
       form.parse(this.request, function(err, fields, files) {
