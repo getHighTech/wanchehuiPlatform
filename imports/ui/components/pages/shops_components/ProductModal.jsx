@@ -141,7 +141,6 @@ class ProductModal extends React.Component{
   handleModalOk = () => {
     let self = this;
     let validated = true;
-    console.log(this.formComponent);
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated);
     if (!validated) {
       console.log('参数错误');
@@ -156,7 +155,6 @@ class ProductModal extends React.Component{
     const setFieldsValue = this.formComponent.setFieldsValue;
     const oldObj = this.formComponent.getFieldsValue();
     let speckeys = oldObj.keys;
-    console.log(speckeys);
     let specname=oldObj.spec_name;
     let specvalue=oldObj.spec_value;
     // let specprice=oldObj.spec_price;
@@ -173,6 +171,7 @@ class ProductModal extends React.Component{
       var obj = Object.assign(o1,o2,o3);
       end_spec.push(obj);
     }
+    console.log(end_spec);
     setFieldsValue({specifications: end_spec})
 
     let parameterkeys =oldObj.parameterkeys;
@@ -188,7 +187,7 @@ class ProductModal extends React.Component{
       var obj=Object.assign(o1,o2);
       end_parameter.push(obj)
     }
-    console.log(end_parameter);
+    // console.log(end_parameter);
     oldObj.parameterlist=end_parameter;
     for (const key in oldObj) {
         newObj[key] = oldObj[key];
@@ -202,10 +201,9 @@ class ProductModal extends React.Component{
     let specName = newObj.spec_name;
     self.doExchange(specValue)
     let specAllValue = self.doExchange(specValue);
-    console.log(specAllValue);
     let aaass = [];
+    let  newSpecGroup= [];
     if(typeof(specAllValue)!='undefined'){
-      console.log(specAllValue.length);
 
       if(specName.length>1){
         for(var i = 0;i<specAllValue.length;i++){
@@ -213,45 +211,55 @@ class ProductModal extends React.Component{
           console.log(aa.length);
           var obj =''
           var index = 0;
-          var zzzz= []
+          var zzzz= [];
+          var newSpecObjArray=[]
+          var newSpecObj=''
           for (var j = 0; j < aa.length; j++) {
             var zsxzz =aa[j]
             var name = specName[j]
             var index ={[name]:zsxzz}
+            var newIndexOne ={spec_name:name}
+            var newIndexTwo ={spec_value:zsxzz}
               obj =Object.assign(index)
+              newSpecObj = Object.assign(newIndexOne,newIndexTwo)
               index++
-              console.log(obj);
+              newSpecObjArray.push(newSpecObj)
               zzzz.push(obj)
 
 
           }
           aaass.push(zzzz)
+          newSpecGroup.push(newSpecObjArray);
         }
       }
       else {
         console.log(specAllValue);
         var obj =''
         var index = 0;
-        var zzzz= []
+        var zzzz= [];
+        var newSpecObjArray=[]
+        var newSpecObj=''
         for(var i = 0;i<specAllValue.length;i++){
           var zsxzz=specAllValue[i];
           var name = specName[0];
           var index ={[name]:zsxzz}
+          var newIndexOne ={spec_name:name}
+          var newIndexTwo ={spec_value:zsxzz}
           obj =Object.assign(index)
+          newSpecObj = Object.assign(newIndexOne,newIndexTwo)
           index++
-          console.log(obj);
+          newSpecObjArray.push(newSpecObj)
           zzzz.push(obj)
         }
         aaass.push(zzzz)
+        newSpecGroup.push(newSpecObjArray);
       }
-      console.log(aaass);
-
+      newObj.newSpecGroup= newSpecGroup;
 
 
 
     }
     newObj.specifications=aaass;
-    console.log(newObj.specifications);
 
     let agencyPrice=newObj.agencyPrice;
     if (typeof(agencyPrice)!='undefined') {
@@ -264,24 +272,23 @@ class ProductModal extends React.Component{
     }
 
     // return;
-    console.log(newObj);
-    // return;
     self.hideModal();
     if(self.props.modalState){
       //新增店铺到数据库
       let shopId=this.props.id;
       let shopName= this.state.shopName;
       let userId = Meteor.userId();
-      console.log(end_spec.length);
       if(aaass.length>0){
         if(specName.length>1){
           console.log('specName长度大于1');
           for (var i = 0; i < aaass.length; i++) {
             let newSpec = []
             let newspec =newObj.specifications[i];
+            let newSpecGroups= [];
+            let newSpecgroup =newObj.newSpecGroup[i];
             newSpec.push(newspec)
-            console.log(newSpec[0]);
-            Meteor.call("products.insert", newObj, shopId,shopName,newSpec[0],userId,function(error,result){
+            newSpecGroups.push(newSpecgroup)
+            Meteor.call("products.insert", newObj, shopId,shopName,newSpec[0],newSpecGroups[0],userId,function(error,result){
               if(!error){
                 console.log("新增商品");
                 console.log(result);
@@ -305,13 +312,18 @@ class ProductModal extends React.Component{
           console.log('specName长度为于1');
 
           var newaaass=aaass[0];
+          var newSpecGroupOne=newSpecGroup[0];
+          console.log(newSpecGroup[0]);
           console.log(newaaass);
           for (var i = 0; i < newaaass.length; i++) {
             let newSpec = []
             let newspec =newaaass[i];
-            newSpec.push(newspec)
-            console.log(newSpec);
-            Meteor.call("products.insert", newObj, shopId,shopName,newSpec,userId,function(error,result){
+            let newSpecGroups= [];
+            let newSpecgroup =newSpecGroupOne[i];
+            newSpec.push(newspec);
+            newSpecGroups.push(newSpecgroup)
+            console.log(newSpecGroups);
+            Meteor.call("products.insert", newObj, shopId,shopName,newSpec,newSpecGroups,userId,function(error,result){
               if(!error){
                 console.log("新增商品");
                 console.log(result);

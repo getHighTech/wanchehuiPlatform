@@ -215,7 +215,14 @@ class ShopDetails extends React.Component {
       self.setState({
         spec_length:alt.specName.length
       })
-      let parameter_length = alt.parameterlist.length;
+      console.log(typeof(alt.parameterlist));
+      let parameter_length = 0
+      if(typeof(alt.parameterlist)!='undefined'){
+        parameter_length = alt.parameterlist.length;
+      }
+      else(
+        parameter_length = 0
+      )
       var parameter_arr=new Array(parameter_length);
       let spec_length =alt.specName.length;
       var arr =new Array(spec_length);

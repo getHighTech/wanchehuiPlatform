@@ -646,6 +646,44 @@ class ProductFormWrap extends Component {
       return ''
     }
     }
+
+    getSpecNameGroup(k){
+      const { form } = this.props;
+      let spec=this.props.product.newSpecGroups;
+      if(typeof(spec)!='undefined'){
+        let length=spec.length-1;
+
+      if(k<=length){
+      return  spec[k].spec_name;
+        }
+      else {
+        return ''
+      }
+    }
+    else {
+      return ''
+    }
+    }
+
+    getSpecValueGroup(k){
+      const { form } = this.props;
+      let spec=this.props.product.newSpecGroups;
+      if(typeof(spec)!='undefined'){
+        let length=spec.length-1;
+
+      if(k<=length){
+      return  spec[k].spec_value;
+        }
+      else {
+        return ''
+      }
+    }
+    else {
+      return ''
+    }
+    }
+
+
     getParameterName(k){
       const { form } = this.props;
       let parameter=this.props.product.parameterlist;
@@ -897,7 +935,7 @@ class ProductFormWrap extends Component {
             getFieldDecorator('keys', { initialValue:this.props.key_arr});
             const keys = getFieldValue('keys');
             const formItems = keys.map((k, index) => {
-              if (this.props.modalState) {
+              if(this.props.modalState){
                 return (
                   <FormItem
                   {...formItemLayout}
@@ -915,6 +953,24 @@ class ProductFormWrap extends Component {
                   </FormItem>
                 );
               }
+              else {
+                return (
+                  <FormItem
+                  {...formItemLayout}
+                  label='规格名'
+                    required={false}
+                    key={k}
+                  >
+                    {getFieldDecorator(`spec_name[${k}]`, {
+                      initialValue:this.getSpecNameGroup(k),
+                      validateTrigger: ['onChange', 'onBlur'],
+
+                    })(
+                      <Input placeholder="产品规格" style={{ width: '100%'}} />
+                    )}
+                  </FormItem>
+                );
+              }
 
 
             });
@@ -924,7 +980,7 @@ class ProductFormWrap extends Component {
                 return (
                   <FormItem
                     {...formItemLayout}
-                    label='规格值1'
+                    label='规格值'
                     required={false}
                     key={k}
                   >
@@ -956,12 +1012,12 @@ class ProductFormWrap extends Component {
                 return (
                   <FormItem
                     {...formItemLayout}
-                    label='规格值2'
+                    label='规格值'
                     required={false}
                     key={k}
                   >
-                    {getFieldDecorator('specifications', {
-                      initialValue:this.props.product.specifications,
+                    {getFieldDecorator(`spec_value[${k}]`, {
+                      initialValue:this.getSpecValueGroup(k),
                       validateTrigger: ['onChange', 'onBlur'],
                       rules: [
                       {

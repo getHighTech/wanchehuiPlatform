@@ -7,7 +7,7 @@ import { validLoginToken } from '../actions/validLoginToken.js'
 
 
 Meteor.methods({
-  "products.insert"(product,shopId,shopName,newSpec,userId){
+  "products.insert"(product,shopId,shopName,newSpec,newSpecGroups,userId){
     if(product.isTool){
 
     }
@@ -34,6 +34,7 @@ Meteor.methods({
       parameterlist:product.parameterlist,
       specName:product.spec_name,
       specifications:newSpec,
+      newSpecGroups:newSpecGroups,
       curency:'cny',
       recommend:product.recommend,
       agencyLevelCount: 2,//eg: 2
@@ -54,6 +55,9 @@ Meteor.methods({
         copy:{
           roles:["blackcard_holder"],
           users:[]
+        },
+        buy:{
+          roles: ['login_user']
         }
       },
     },function (err,alt) {
