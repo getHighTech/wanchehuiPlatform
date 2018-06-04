@@ -37,6 +37,7 @@ import 'antd/lib/message/style';
 import { Roles } from '/imports/api/roles/roles.js';
 import { showProduct, editProduct,addProduct,changePrice } from '/imports/ui/actions/products.js';
 import ProductModal from './shops_components/ProductModal.jsx';
+import ProductPriceForm from './shops_components/ProductPriceForm.jsx';
 import Product from './shops_components/Product.jsx';
 
 
@@ -163,14 +164,14 @@ class ShopDetails extends React.Component {
     console.log(id);
     let self = this;
 
-    Meteor.call('product.price',id,function(err,alt){
+    Meteor.call('get.oneproduct.id',id,function(err,alt){
       const {dispatch } = self.props;
       if (!err) {
         console.log(alt);
-
-        dispatch(changePrice(alt,id))
+        let price =alt.price;
+        let endPrice= alt.endPrice;
+        dispatch(changePrice(price,endPrice,id))
         self.setState({
-          defaultprice:alt,
           pricevisible:true
         })
       }
@@ -182,8 +183,9 @@ class ShopDetails extends React.Component {
     let self = this;
     self.setState({
       pricevisible:false,
-      defaultprice:'',
     })
+    self.setFormData({});
+
   }
   priceinput(value){
     this.setState({
@@ -192,18 +194,45 @@ class ShopDetails extends React.Component {
   }
   pricehandleOk= (e) =>{
     let self = this;
-    let price =self.state.defaultprice*100;
+    let validated = true;
+    this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated);
+    if (!validated) {
+      console.log('参数错误');
+      return;
+    }
+    const newObj = {};
+    const getFieldValue = this.formComponent.getFieldValue;
+    const setFieldsValue = this.formComponent.setFieldsValue;
+    const oldObj = this.formComponent.getFieldsValue();
+    for (const key in oldObj) {
+        newObj[key] = oldObj[key];
+    }
+    console.log(newObj);
+    let price =newObj.price*100;
+    let endPrice = newObj.endPrice*100;
     let id = self.props.localproductid;
-    Meteor.call('product.updatePrice',id,price,function(err,alt){
+    Meteor.call('product.updatePrice',id,price,endPrice,function(err,alt){
       if (!err) {
         self.setState({
           pricevisible:false,
           defaultprice:''
         })
         self.getProducts();
-
+        self.setFormData({});
       }
     })
+  }
+  setFormData(data) {
+    console.log(data);
+    if (this.formComponent) {
+      console.log(this.formComponent);
+      this.formComponent.resetFields();
+      if (data) {
+        this.formComponent.setFieldsValue(data);
+      }
+    } else {
+      this.formInitData = data;
+    }
   }
   onEditProduct = (id) => {
     let self =this;
@@ -211,9 +240,18 @@ class ShopDetails extends React.Component {
 
 
     Meteor.call('get.oneproduct.id',id,function(err,alt){
-      console.log(alt);
+      let spec_length = 0;
+
+      if (typeof(alt.specName)!='undefined') {
+        spec_length=alt.specName.length;
+      }
+      else {
+        spec_length = 0;
+
+      }
+
       self.setState({
-        spec_length:alt.specName.length
+        spec_length:spec_length
       })
       console.log(typeof(alt.parameterlist));
       let parameter_length = 0
@@ -224,7 +262,6 @@ class ShopDetails extends React.Component {
         parameter_length = 0
       )
       var parameter_arr=new Array(parameter_length);
-      let spec_length =alt.specName.length;
       var arr =new Array(spec_length);
       let agency_length=alt.agencyLevelPrices.length;
       var agency_arr = new Array(agency_length)
@@ -334,20 +371,18 @@ class ShopDetails extends React.Component {
       render: (text, record) => {
         return(
           <span>
-          <Tooltip placement="topLeft" title="查看" arrowPointAtCenter>
-            <Button shape="circle" icon="eye"  onClick={ () => this.onShowProduct(record._id)}></Button>
-          </Tooltip>
-          <span className="ant-divider" />
+
           <Tooltip placement="topLeft" title="修改" arrowPointAtCenter>
             <Button shape="circle" icon="edit"  onClick={ () => this.onEditProduct(record._id)}></Button>
+          </Tooltip>
+
+          <span className="ant-divider" />
+          <Tooltip placement="topLeft" title="价格" arrowPointAtCenter>
+            <Button shape="circle" icon="pay-circle"  onClick={ () => this.onChangePrice(record._id)}></Button>
           </Tooltip>
           <span className="ant-divider" />
           <Tooltip placement="topLeft" title="商品上下架" arrowPointAtCenter>
             <Switch checkedChildren="上架" unCheckedChildren="下架"  defaultChecked={record.isSale} onChange={() => this.changeOnline(record.isSale,record._id)}  />
-          </Tooltip>
-          <span className="ant-divider" />
-          <Tooltip placement="topLeft" title="价格" arrowPointAtCenter>
-            <Button shape="circle" icon="pay-circle"  onClick={ () => this.onChangePrice(record._id)}></Button>
           </Tooltip>
 
         </span>)
@@ -434,8 +469,7 @@ class ShopDetails extends React.Component {
           onOk={this.pricehandleOk}
           onCancel={this.pricehandleCancel}
         >
-          <p>当前价格:{this.props.productprice/100}元</p>
-          <Input placeholder="请输入价格"   onInput={input => this.priceinput(input.target.value)} />
+        <ProductPriceForm productprice={this.props.productprice}  productendprice={this.props.productendprice}  ref = {(input) => { this.formComponent = input; }} />
         </Modal>
       <div>
 
@@ -464,6 +498,7 @@ function mapStateToProps(state) {
     key_agencyarr:state.ProductsList.key_agencyarr,
     productId:state.ProductsList.productId,
     productprice:state.ProductsList.productprice,
+    productendprice:state.ProductsList.productendprice,
     localproductid:state.ProductsList.localproductid,
   };
 }

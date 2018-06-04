@@ -20,7 +20,7 @@ Meteor.methods({
       cover:product.cover,
       detailsImage:product.detailsImage,
       createdByUserId: userId,
-      endPrice:product.endPrice,
+      endPrice:0,
       curency:product.curency,
       detailsImage:product.detailsImage,
       isTool:product.isTool,
@@ -110,10 +110,11 @@ Meteor.methods({
     console.log(price);
     return price
   },
-  'product.updatePrice'(id,price){
+  'product.updatePrice'(id,price,endPrice){
     Products.update(id,{
       $set:{
-        price:price
+        price:price,
+        endPrice:endPrice
       }
     })
   },

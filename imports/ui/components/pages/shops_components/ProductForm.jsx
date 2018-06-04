@@ -948,7 +948,7 @@ class ProductFormWrap extends Component {
                       validateTrigger: ['onChange', 'onBlur'],
 
                     })(
-                      <Input placeholder="产品规格" style={{ width: '100%'}} />
+                      <Input placeholder="产品规格" disabled={this.props.modalState} style={{ width: '100%'}} />
                     )}
                   </FormItem>
                 );
@@ -966,7 +966,7 @@ class ProductFormWrap extends Component {
                       validateTrigger: ['onChange', 'onBlur'],
 
                     })(
-                      <Input placeholder="产品规格" style={{ width: '100%'}} />
+                      <Input placeholder="产品规格" disabled={!this.props.modalState} style={{ width: '100%'}} />
                     )}
                   </FormItem>
                 );
@@ -993,6 +993,7 @@ class ProductFormWrap extends Component {
                       style={{ width: '80%' }}
                       placeholder="Please select"
                       onChange={handleChangeSpec}
+                      disabled={this.props.modalState}
                       dropdownStyle={{zIndex:'99999' }}
                       ></Select>
                     )}
@@ -1026,7 +1027,7 @@ class ProductFormWrap extends Component {
                         message: "请输入属性.",
                       }],
                     })(
-                      <Input placeholder="属性" style={{ width: '70%'}} />
+                      <Input placeholder="属性" disabled={!this.props.modalState} style={{ width: '70%'}} />
                     )}
 
                   </FormItem>
