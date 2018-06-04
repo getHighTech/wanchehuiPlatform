@@ -12,12 +12,12 @@ export function showProduct(product){
   }
 }
 
-export function editProduct(product,spec_length,arr,agency_arr,id){
+export function editProduct(product,spec_length,arr,agency_arr,parameter_arr,id){
   return{
     type:EDIT_PRODUCT,
     product,
     spec_length,
-    arr,agency_arr,id
+    arr,agency_arr,parameter_arr,id
   }
 }
 
