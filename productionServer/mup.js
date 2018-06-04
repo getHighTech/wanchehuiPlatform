@@ -26,18 +26,18 @@ module.exports = {
     },
     docker: {
       // change to 'abernix/meteord:base' if your app is using Meteor 1.4 - 1.5
-      image: 'abernix/meteord:node-8.9.4-base',
+      image: 'abernix/meteord:node-8.4.0-base',
     },
         // Show progress bar while uploading bundle to server
     // You might need to disable it on CI servers
     enableUploadProgressBar: true,
     deployCheckWaitTime: 600
   },
-  proxy: {
-    domains: 'p.10000cars.cn',
-    ssl: {
-      letsEncryptEmail: 'xsqfeather@126.com',
-    }
-  },
+  // proxy: {
+  //   domains: 'p.10000cars.cn',
+  //   ssl: {
+  //     letsEncryptEmail: 'xsqfeather@126.com',
+  //   }
+  // },
 
 };

@@ -26,7 +26,7 @@ module.exports = {
       MONGO_URL: "mongodb://wanchehui:Wanchehui112358@139.198.3.158:27017/wanchehui"
     },
 
-    dockerImage: 'abernix/meteord:node-8.4.0-base',
+    dockerImage: 'abernix/meteord:node-8.9.3-binbuild',
     deployCheckWaitTime: 600
   },
 
