@@ -918,38 +918,7 @@ class ProductFormWrap extends Component {
 
 
             });
-            // const formItems3 = keys.map((k, index) => {
-            //   return (
-            //     <FormItem
-            //       {...formItemLayout}
-            //       label='价格'
-            //       required={false}
-            //       key={k}
-            //     >
-            //       {getFieldDecorator(`spec_price[${k}]`, {
-            //         initialValue:this.getSpecPrice(k),
-            //         validateTrigger: ['onChange', 'onBlur'],
-            //         rules: [
-            //         {
-            //           required: true,
-            //           whitespace: true,
-            //           message: "请输入价格.",
-            //         }],
-            //       })(
-            //         <Input placeholder="价格" style={{ width: '70%'}} />
-            //       )}
-            //       {keys.length > 1 ? (
-            //         <Icon
-            //           style={{marginLeft:10}}
-            //           className="dynamic-delete-button"
-            //           type="minus-circle-o"
-            //           disabled={keys.length === 1}
-            //           onClick={() => this.remove(k)}
-            //         />
-            //       ) : null}
-            //     </FormItem>
-            //   );
-            // });
+
             const formItems2 = keys.map((k, index) => {
               if (this.props.modalState) {
                 return (
@@ -965,13 +934,21 @@ class ProductFormWrap extends Component {
                     })(
                       <Select
                       mode="tags"
-                      style={{ width: '100%' }}
+                      style={{ width: '80%' }}
                       placeholder="Please select"
                       onChange={handleChangeSpec}
                       dropdownStyle={{zIndex:'99999' }}
                       ></Select>
                     )}
-
+                    {keys.length > 1 ? (
+                            <Icon
+                              style={{marginLeft:10}}
+                              className="dynamic-delete-button"
+                              type="minus-circle-o"
+                              disabled={keys.length === 1}
+                              onClick={() => this.remove(k)}
+                            />
+                          ) : null}
                   </FormItem>
                 );
               }
@@ -1171,7 +1148,7 @@ class ProductFormWrap extends Component {
       <Row>
         <Col span={4}></Col>
         <Col span={6}>{formItems}</Col>
-        <Col span={6}>{formItems2}</Col>
+        <Col span={12}>{formItems2}</Col>
         <Col span={4}></Col>
       </Row>
 
