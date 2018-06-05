@@ -270,7 +270,16 @@ class ProductModal extends React.Component{
     else {
       newObj.agencyPrice= [];
     }
-
+    if(newObj.isAppointment!=true){
+      newObj.isAppointment=false
+    }
+    if(newObj.isTool!=true){
+      newObj.isTool=false
+    }
+    if(newObj.recommend!=true){
+      newObj.recommend=false
+    }
+    console.log(newObj);
     // return;
     self.hideModal();
     if(self.props.modalState){
