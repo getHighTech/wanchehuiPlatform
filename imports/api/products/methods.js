@@ -7,7 +7,7 @@ import { validLoginToken } from '../actions/validLoginToken.js'
 
 
 Meteor.methods({
-  "products.insert"(product,shopId,shopName,newSpec,userId){
+  "products.insert"(product,shopId,shopName,newSpec,newSpecGroups,userId){
     if(product.isTool){
 
     }
@@ -20,7 +20,7 @@ Meteor.methods({
       cover:product.cover,
       detailsImage:product.detailsImage,
       createdByUserId: userId,
-      endPrice:product.endPrice,
+      endPrice:0,
       curency:product.curency,
       detailsImage:product.detailsImage,
       isTool:product.isTool,
@@ -34,6 +34,7 @@ Meteor.methods({
       parameterlist:product.parameterlist,
       specName:product.spec_name,
       specifications:newSpec,
+      newSpecGroups:newSpecGroups,
       curency:'cny',
       recommend:product.recommend,
       agencyLevelCount: 2,//eg: 2
@@ -54,6 +55,9 @@ Meteor.methods({
         copy:{
           roles:["blackcard_holder"],
           users:[]
+        },
+        buy:{
+          roles: ['login_user']
         }
       },
     },function (err,alt) {
@@ -106,10 +110,11 @@ Meteor.methods({
     console.log(price);
     return price
   },
-  'product.updatePrice'(id,price){
+  'product.updatePrice'(id,price,endPrice){
     Products.update(id,{
       $set:{
-        price:price
+        price:price,
+        endPrice:endPrice
       }
     })
   },

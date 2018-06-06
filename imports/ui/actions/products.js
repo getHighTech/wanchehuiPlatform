@@ -28,9 +28,9 @@ export function addProduct(state){
   }
 }
 
-export function changePrice(alt,id){
+export function changePrice(price,endPrice,id){
   return{
     type:CHANGE_PRICE,
-    alt,id
+    price,endPrice,id
   }
 }

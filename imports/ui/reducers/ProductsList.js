@@ -11,6 +11,7 @@ const initialState = {
     key_parameterarr:[],
     id:'',
     productprice:[],
+    productendprice:[],
     localproductid:''
   };
 
@@ -47,7 +48,8 @@ const initialState = {
         })
         case CHANGE_PRICE:
         return Object.assign({},state,{
-          productprice:action.alt,
+          productprice:action.price,
+          productendprice:action.endPrice,
           localproductid:action.id
         })
 

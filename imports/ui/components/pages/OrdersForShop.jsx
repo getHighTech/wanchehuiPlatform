@@ -22,7 +22,7 @@ import { editOrderStatus } from '/imports/ui/actions/order_status.js';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 import {Spin} from 'antd';
-
+import { push, replace, goBack } from 'react-router-redux';
 const RadioGroup = Radio.Group;
 
 class OrdersForShop extends React.Component{
@@ -140,41 +140,65 @@ class OrdersForShop extends React.Component{
       localStatus:localStatus
     })
   }
-
+  changeDetails = (_id) => {
+    const { dispatch } = this.props;
+    let self = this;
+    console.log(_id);
+    dispatch(push(`/orders/order_details/${_id}`));
+  }
 
   getProName(){
     let shopId=this.state.shopId;
+    console.log(shopId);
     let self =this;
-    Meteor.call('orders.getShopId',shopId,function(erroy,result){
-      if(!erroy){
-        for(var i = 0;i<result.length;i++){
+    Meteor.call('get.byShopId',shopId,function(err,alt){
+      if (!err) {
+        for (var i = 0; i < alt.length; i++) {
           let productName=[];
-          let productPrice=0;
-          let OneOrderPro = result[i].products;
+          let OneOrderPro = alt[i].products;
           for(var j = 0; j < OneOrderPro.length; j++){
             if(OneOrderPro[j].shopId==shopId){
-              productPrice=productPrice+OneOrderPro[j].price;
-              productName.push(OneOrderPro[j].name,' ');
+              productName.push(OneOrderPro[j].name_zh,<br key={j}/>);
             }
           }
-          result[i].ProCount=productName.length/2;
-          result[i].ProName=productName;
-          result[i].ProPrice=productPrice/100
+          alt[i].ProCount=productName.length/2;
+          alt[i].ProName=productName;
+          alt[i].name=alt[i].contact.name;
+          alt[i].ProPrice=alt[i].totalAmount/100;
         }
         self.setState({
-          orderData:result,
+          orderData:alt,
           loading:false
         })
       }
     })
+    // Meteor.call('orders.getShopId',shopId,function(erroy,result){
+    //   if(!erroy){
+    //     for(var i = 0;i<result.length;i++){
+    //       let productName=[];
+    //       let productPrice=0;
+    //       let OneOrderPro = result[i].products;
+    //       for(var j = 0; j < OneOrderPro.length; j++){
+    //         if(OneOrderPro[j].shopId==shopId){
+    //           productPrice=productPrice+OneOrderPro[j].price;
+    //           productName.push(OneOrderPro[j].name_zh,<br key={j}/>);
+    //         }
+    //       }
+    //       result[i].ProCount=productName.length/2;
+    //       result[i].ProName=productName;
+    //       result[i].ProPrice=productPrice/100
+    //     }
+    //
+    //   }
+    // })
   }
 
 
   render() {
     const {getStatus} = this.props
           const columns = [
-        { title: '订单号', width: 200, dataIndex: 'orderCode', key: 'orderCode', fixed: 'left' },
-        { title: '用户名', width: 100, dataIndex: 'name', key: 'name', fixed: 'left' },
+        { title: '订单号', width: 200, dataIndex: 'orderCode', key: 'orderCode' },
+        { title: '用户名', width: 100, dataIndex: 'name', key: 'name' },
         { title: '商品名', width: 200, dataIndex: 'ProName', key: 'ProName' },
         { title: '数量', dataIndex: 'ProCount', key: 'ProCount' },
         { title: '价格', dataIndex: 'ProPrice', key: 'ProPrice' },
@@ -192,7 +216,7 @@ class OrdersForShop extends React.Component{
         {
           title: '订单状态操作',
           key: 'operation',
-          fixed: 'right',
+          // fixed: 'right',
           width: 100,
           render: (text,record) => {
             return(
@@ -201,6 +225,11 @@ class OrdersForShop extends React.Component{
             )
           },
         },
+        {title:'订单详情',key:'details',render:(text,record) => {
+          return(
+            <Button type="primary" onClick={ () => this.changeDetails(record._id)}>核销订单</Button>
+          )
+        }}
 
 
       ];

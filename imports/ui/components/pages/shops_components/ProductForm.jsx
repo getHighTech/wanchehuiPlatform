@@ -646,6 +646,44 @@ class ProductFormWrap extends Component {
       return ''
     }
     }
+
+    getSpecNameGroup(k){
+      const { form } = this.props;
+      let spec=this.props.product.newSpecGroups;
+      if(typeof(spec)!='undefined'){
+        let length=spec.length-1;
+
+      if(k<=length){
+      return  spec[k].spec_name;
+        }
+      else {
+        return ''
+      }
+    }
+    else {
+      return ''
+    }
+    }
+
+    getSpecValueGroup(k){
+      const { form } = this.props;
+      let spec=this.props.product.newSpecGroups;
+      if(typeof(spec)!='undefined'){
+        let length=spec.length-1;
+
+      if(k<=length){
+      return  spec[k].spec_value;
+        }
+      else {
+        return ''
+      }
+    }
+    else {
+      return ''
+    }
+    }
+
+
     getParameterName(k){
       const { form } = this.props;
       let parameter=this.props.product.parameterlist;
@@ -806,7 +844,9 @@ class ProductFormWrap extends Component {
                 },
               },
             };
-            getFieldDecorator('parameterkeys',{initialValue:this.props.key_parameterarr})
+
+
+           getFieldDecorator('parameterkeys',{initialValue:this.props.key_parameterarr});
             const parameterkeys = getFieldValue('parameterkeys');
             const parameterItems =parameterkeys.map((k, index) => {
               return(
@@ -894,10 +934,14 @@ class ProductFormWrap extends Component {
               );
             });
 
+
+
+
+
             getFieldDecorator('keys', { initialValue:this.props.key_arr});
             const keys = getFieldValue('keys');
             const formItems = keys.map((k, index) => {
-              if (this.props.modalState) {
+              if(this.props.modalState){
                 return (
                   <FormItem
                   {...formItemLayout}
@@ -910,7 +954,25 @@ class ProductFormWrap extends Component {
                       validateTrigger: ['onChange', 'onBlur'],
 
                     })(
-                      <Input placeholder="产品规格" style={{ width: '100%'}} />
+                      <Input placeholder="产品规格" disabled={this.props.modalState} style={{ width: '100%'}} />
+                    )}
+                  </FormItem>
+                );
+              }
+              else {
+                return (
+                  <FormItem
+                  {...formItemLayout}
+                  label='规格名'
+                    required={false}
+                    key={k}
+                  >
+                    {getFieldDecorator(`spec_name[${k}]`, {
+                      initialValue:this.getSpecNameGroup(k),
+                      validateTrigger: ['onChange', 'onBlur'],
+
+                    })(
+                      <Input placeholder="产品规格" disabled={!this.props.modalState} style={{ width: '100%'}} />
                     )}
                   </FormItem>
                 );
@@ -918,44 +980,13 @@ class ProductFormWrap extends Component {
 
 
             });
-            // const formItems3 = keys.map((k, index) => {
-            //   return (
-            //     <FormItem
-            //       {...formItemLayout}
-            //       label='价格'
-            //       required={false}
-            //       key={k}
-            //     >
-            //       {getFieldDecorator(`spec_price[${k}]`, {
-            //         initialValue:this.getSpecPrice(k),
-            //         validateTrigger: ['onChange', 'onBlur'],
-            //         rules: [
-            //         {
-            //           required: true,
-            //           whitespace: true,
-            //           message: "请输入价格.",
-            //         }],
-            //       })(
-            //         <Input placeholder="价格" style={{ width: '70%'}} />
-            //       )}
-            //       {keys.length > 1 ? (
-            //         <Icon
-            //           style={{marginLeft:10}}
-            //           className="dynamic-delete-button"
-            //           type="minus-circle-o"
-            //           disabled={keys.length === 1}
-            //           onClick={() => this.remove(k)}
-            //         />
-            //       ) : null}
-            //     </FormItem>
-            //   );
-            // });
+
             const formItems2 = keys.map((k, index) => {
               if (this.props.modalState) {
                 return (
                   <FormItem
                     {...formItemLayout}
-                    label='规格值1'
+                    label='规格值'
                     required={false}
                     key={k}
                   >
@@ -965,13 +996,22 @@ class ProductFormWrap extends Component {
                     })(
                       <Select
                       mode="tags"
-                      style={{ width: '100%' }}
+                      style={{ width: '80%' }}
                       placeholder="Please select"
                       onChange={handleChangeSpec}
+                      disabled={this.props.modalState}
                       dropdownStyle={{zIndex:'99999' }}
                       ></Select>
                     )}
-
+                    {keys.length > 1 ? (
+                            <Icon
+                              style={{marginLeft:10}}
+                              className="dynamic-delete-button"
+                              type="minus-circle-o"
+                              disabled={keys.length === 1}
+                              onClick={() => this.remove(k)}
+                            />
+                          ) : null}
                   </FormItem>
                 );
               }
@@ -979,12 +1019,12 @@ class ProductFormWrap extends Component {
                 return (
                   <FormItem
                     {...formItemLayout}
-                    label='规格值2'
+                    label='规格值'
                     required={false}
                     key={k}
                   >
-                    {getFieldDecorator('specifications', {
-                      initialValue:this.props.product.specifications,
+                    {getFieldDecorator(`spec_value[${k}]`, {
+                      initialValue:this.getSpecValueGroup(k),
                       validateTrigger: ['onChange', 'onBlur'],
                       rules: [
                       {
@@ -993,7 +1033,7 @@ class ProductFormWrap extends Component {
                         message: "请输入属性.",
                       }],
                     })(
-                      <Input placeholder="属性" style={{ width: '70%'}} />
+                      <Input placeholder="属性" disabled={!this.props.modalState} style={{ width: '70%'}} />
                     )}
 
                   </FormItem>
@@ -1003,6 +1043,8 @@ class ProductFormWrap extends Component {
             });
       return (
         <Form onSubmit={this.handleSubmit}>
+
+
         <FormItem
       {...formItemLayout}
       label="商品名称"
@@ -1016,6 +1058,23 @@ class ProductFormWrap extends Component {
           <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
       )}
       </FormItem>
+
+      <FormItem
+    {...formItemLayout}
+    label="商品分类"
+    hasFeedback
+    >
+    {getFieldDecorator('productClass', {
+    })(
+      <Select >
+       <Option value="1">Option 1</Option>
+       <Option value="2">Option 2</Option>
+       <Option value="3">Option 3</Option>
+     </Select>
+
+    )}
+    </FormItem>
+
       <FormItem
       {...formItemLayout}
       label="商品中文名称"
@@ -1171,7 +1230,7 @@ class ProductFormWrap extends Component {
       <Row>
         <Col span={4}></Col>
         <Col span={6}>{formItems}</Col>
-        <Col span={6}>{formItems2}</Col>
+        <Col span={12}>{formItems2}</Col>
         <Col span={4}></Col>
       </Row>
 
