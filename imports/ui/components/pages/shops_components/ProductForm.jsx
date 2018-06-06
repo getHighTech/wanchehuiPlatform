@@ -844,7 +844,9 @@ class ProductFormWrap extends Component {
                 },
               },
             };
-            getFieldDecorator('parameterkeys',{initialValue:this.props.key_parameterarr})
+
+
+           getFieldDecorator('parameterkeys',{initialValue:this.props.key_parameterarr});
             const parameterkeys = getFieldValue('parameterkeys');
             const parameterItems =parameterkeys.map((k, index) => {
               return(
@@ -931,6 +933,10 @@ class ProductFormWrap extends Component {
                 </FormItem>
               );
             });
+
+
+
+
 
             getFieldDecorator('keys', { initialValue:this.props.key_arr});
             const keys = getFieldValue('keys');
@@ -1037,6 +1043,8 @@ class ProductFormWrap extends Component {
             });
       return (
         <Form onSubmit={this.handleSubmit}>
+
+
         <FormItem
       {...formItemLayout}
       label="商品名称"
@@ -1050,6 +1058,23 @@ class ProductFormWrap extends Component {
           <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
       )}
       </FormItem>
+
+      <FormItem
+    {...formItemLayout}
+    label="商品分类"
+    hasFeedback
+    >
+    {getFieldDecorator('productClass', {
+    })(
+      <Select >
+       <Option value="1">Option 1</Option>
+       <Option value="2">Option 2</Option>
+       <Option value="3">Option 3</Option>
+     </Select>
+
+    )}
+    </FormItem>
+
       <FormItem
       {...formItemLayout}
       label="商品中文名称"

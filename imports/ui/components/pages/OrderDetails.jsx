@@ -23,7 +23,8 @@ class OrderDetails extends React.Component{
   }
   state={
     order:[],
-    orderProducts:[]
+    orderProducts:[],
+    buttonStatus:false
   }
   changeStatus=(status,orderCode)=>{
     let self = this;
@@ -44,9 +45,12 @@ class OrderDetails extends React.Component{
     let self = this;
     let id = self.props.params._id;
     self.getData(id);
-    Meteor.call('get.shoporder',function(err,alt){
+    Meteor.call('get.shoporder',id,function(err,alt){
       if (!err) {
         console.log(alt);
+        self.setState({
+          buttonStatus:alt
+        })
       }
       else {
         console.log(err);
@@ -55,14 +59,20 @@ class OrderDetails extends React.Component{
   }
   getData(id){
     let self =this ;
-    Meteor.call('order.getById',id,function(err,alt){
+    Meteor.call('shopOrder.getById',id,function(err,alt){
       if (!err) {
         console.log(alt);
         let order =alt;
         console.log(order);
-        order.products[0].price=order.products[0].price/100
-        order.products[0].status=order.status;
-        order.products[0].orderCode=order.orderCode;
+        order.name=order.contact.name;
+        console.log(order.contact);
+        // order.products[0].price=order.products[0].price/100
+        // order.products[0].status=order.status;
+        // order.products[0].orderCode=order.orderCode;
+        for (var i = 0; i < order.products.length; i++) {
+          order.products[i].status=order.status;
+          order.products[i].price=order.products[i].price/100
+        }
         self.setState({
           order:order,
           orderProducts:order.products
@@ -76,7 +86,7 @@ class OrderDetails extends React.Component{
     console.log('---------------------');
     console.log(this.state.orderProducts);
     const columns=[
-      {title:'商品名',width:100,dataIndex:'name',key:'name'},
+      {title:'商品名',width:100,dataIndex:'name_zh',key:'name'},
       {title:'商品价格',width:100,dataIndex:'price',key:'price'},
       {title:'商品简介',width:100,dataIndex:'brief',key:'brief'},
       {
@@ -90,14 +100,25 @@ class OrderDetails extends React.Component{
       },
       {title:'状态',width:100,dataIndex:'status',key:'status'},
       {title:'操作',width:100,key:'operation',render:(text,record)=>{
-        return(
-        // <Button type="primary" onClick={ () => this.changeStatus(record.status,record.orderCode)} >核销</Button>
+      //   return(
+      //   // <Button type="primary" onClick={ () => this.changeStatus(record.status,record.orderCode)} >核销</Button>
+      //
+      //   <Popconfirm placement="bottom" title="请确定是否核销" onConfirm={() => this.changeStatus(record.status,record.orderCode)} okText="确定" onCancel={() => this.changeStatusNo()} cancelText="取消">
+      //   <Button>核销</Button>
+      // </Popconfirm>
+      //
+      //   )
+          if (this.state.buttonStatus) {
+            return(<Popconfirm placement="bottom" title="请确定是否核销" onConfirm={() => this.changeStatus(record.status,record.orderCode)} okText="确定" onCancel={() => this.changeStatusNo()} cancelText="取消">
+              <Button>核销</Button>
+             </Popconfirm>)
+          }
+          else {
+            return(<span>非预约类商品不能进行核销</span>)
+          }
 
-        <Popconfirm placement="bottom" title="请确定是否核销" onConfirm={() => this.changeStatus(record.status,record.orderCode)} okText="确定" onCancel={() => this.changeStatusNo()} cancelText="取消">
-        <Button>核销</Button>
-      </Popconfirm>
 
-        )
+
       }}
     ]
 

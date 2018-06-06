@@ -8,7 +8,6 @@ import {buildBlackCard} from '/imports/api/products/buildBlackCard.js'
 import {checkBalances} from '/imports/api/balances/checkBalances.js'
 import {CheckRolesAccess, CheckACLAccess} from '/imports/core/accesses.js'
 import { Roles } from '/imports/api/roles/roles.js';
-// import {ShopOrders} from '/imports/api/shop_orders/shop_orders.js'
 import { UserRoles } from '/imports/api/user_roles/user_roles.js';
 import { Shops } from '/imports/api/shops/shops.js';
 import { Products } from '/imports/api/products/products.js';
