@@ -91,6 +91,12 @@ Meteor.methods({
     formMethod: 'app.getOrderById'
    }
   },
+  'order.getById'(id){
+    return Orders.findOne({_id:id})
+  },
+  'order.updateByOrderCode'(orderCode){
+    return Orders.update({orderCode:orderCode},{$set:{status:'verification'}})
+  },
   'app.order.update'(params) {
     console.log(params)
       return Orders.update(

@@ -24,6 +24,10 @@ const PageHeader = (path) => {
       // /\/shops\/singleshop\/publishgoods\/\S{2,}/.test(path):
         return "商家店铺详情"
         break;
+        case (path.match(/\/orders\/order_details\/\S{2,}/) || {}).input:
+        // /\/shops\/singleshop\/publishgoods\/\S{2,}/.test(path):
+          return "订单详情"
+          break;
       case "/shops/shop_item":
       return "新增店铺"
       break;
