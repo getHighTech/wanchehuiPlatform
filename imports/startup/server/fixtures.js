@@ -143,20 +143,30 @@ Meteor.startup(() => {
   //     console.log("end of script");
 
 
-  //     Products.find({}).forEach(product => {
-  //       if(!product.acl.copy){
-  //         Products.update(product._id, {
-  //           $set: {
-  //             "acl.copy": {
-  //               roles: ['blackcard_holder'],
-  //               users: []
-  //             }
-  //           }
-  //         })
-  //       }
-  //       console.log(product.acl, product._id);
-  //     });
-  //     let orderRmRlt = Orders.remove({totalAmount: {$exists: true}});
-  //     console.log(orderRmRlt);
+      // Products.find({}).forEach(product => {
+      //   if(!product.acl.copy){
+      //     Products.update(product._id, {
+      //       $set: {
+      //         "acl.copy": {
+      //           roles: ['blackcard_holder'],
+      //           users: []
+      //         }, 
+      //       }
+      //     })
+      //   }
+      //   if(!product.acl.buy){
+      //     Products.update(product._id, {
+      //       $set: {
+      //         "acl.buy": {
+      //           roles: ['login_user'],
+      //           users: []
+      //         }, 
+      //       }
+      //     })
+      //   }
+      //   console.log(product.acl, product._id);
+      // });
+      // let orderRmRlt = Orders.remove({totalAmount: {$exists: true}});
+      // console.log(orderRmRlt);
       
 });

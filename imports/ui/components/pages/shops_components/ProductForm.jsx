@@ -48,7 +48,7 @@ function uploadImageCallBack(file) {
   return new Promise(
     (resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', '/images/upload/handler');
+      xhr.open('POST', '/images/upload');
       xhr.send(file);
 
       xhr.addEventListener('load', () => {
@@ -451,6 +451,8 @@ class ProductFormWrap extends Component {
     handleChange(info) {
       let fileList = info.fileList;
       fileList = fileList.slice(-1);
+      console.log("上传的链接", info);
+      
       let self = this
       if (info.file.status === 'uploading') {
           console.log("上传中。");
@@ -476,6 +478,8 @@ class ProductFormWrap extends Component {
     handleChangeDetails(info) {
       let fileList = info.fileList;
       fileList = fileList.slice(-1);
+      console.log("上传的链接", info);
+      
       let self = this
       if (info.file.status === 'uploading') {
           console.log("上传中。");
@@ -507,6 +511,8 @@ class ProductFormWrap extends Component {
     handleChangeMore(info) {
       let fileList = info.fileList;
       let self = this
+      console.log("上传的链接", info);
+      
       if (info.file.status === 'uploading') {
           console.log("上传中。");
       }

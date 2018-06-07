@@ -12,12 +12,8 @@ import {BalanceIncomes} from '../balances/balance_incomes.js';
 import {BalanceCharges} from '../balances/balance_charges.js';
 import {Agencies} from '/imports/api/agencies/agencies.js';
 import {Shops} from '/imports/api/shops/shops.js';
-<<<<<<< HEAD
 import { ProductOwners } from '/imports/api/product_owners/product_owners.js';
-
-=======
-import {ShopOrders}  from '/imports/api/shop_orders/shop_orders.js';
->>>>>>> c8cfdcccb34ffb47c70a0546b69265a452e5869a
+import { ShopOrders   } from '/imports/api/shop_orders/shop_orders.js';
 export const Apps = new Mongo.Collection('apps');
 export const AppCarts = new Mongo.Collection("app_carts");
 export const UserContacts = new Mongo.Collection("user_contacts");
@@ -1143,7 +1139,6 @@ export function agencyOneProduct(loginToken, appName, product, userId){
 
     });
 }
-<<<<<<< HEAD
 
 
 export function getProductOwners(loginToken, appName, userId){
@@ -1157,5 +1152,3 @@ export function getProductOwners(loginToken, appName, userId){
     });
     
 }
-=======
->>>>>>> c8cfdcccb34ffb47c70a0546b69265a452e5869a
