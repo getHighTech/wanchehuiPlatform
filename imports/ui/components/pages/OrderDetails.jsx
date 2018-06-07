@@ -26,7 +26,6 @@ class OrderDetails extends React.Component{
   componentDidMount(){
     //如果存在ID，说明是编辑
     console.log(this.props.params._id);
-
   }
 
   render() {
