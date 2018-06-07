@@ -30,6 +30,7 @@ Meteor.methods({
       images: product.images,
       isSale: false,
       shopId:shopId,
+      productClass:product.productClass,
       shopName:shopName,
       parameterlist:product.parameterlist,
       specName:product.spec_name,
