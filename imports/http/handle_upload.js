@@ -99,7 +99,8 @@ HTTP.methods({
       form.uploadDir = path.resolve('../../programs/web.browser/app/img');
       form.multiples = true;
       let fileName = new Date().getTime().toString()+generateRondom(10).toString()+ '.png';
-      form.parse(this.request, function(err, fields, files) {
+      let endPic = null;
+        form.parse(this.request, function(err, fields, files) {
         let filePath = '';
         //如果提交文件的form中将上传文件的input名设置为tmpFile，就从tmpFile中取上传文件。否则取for in循环第一个上传的文件。
         console.log("系统内的文件， in", files);
@@ -115,7 +116,8 @@ HTTP.methods({
         }
         console.log("系统内的文件， in", filePath);
         let ALY = require('aliyun-sdk');
-        let ossStream = require('aliyun-oss-upload-stream')(new ALY.OSS({
+       
+        let ossStream =  require('aliyun-oss-upload-stream')(new ALY.OSS({
           accessKeyId,
           secretAccessKey: accessKeySecret,
           endpoint: 'http://oss-cn-qingdao.aliyuncs.com',
@@ -138,8 +140,8 @@ HTTP.methods({
 
        upload.on('uploaded', function (details) {
           var s = (new Date() - startTime) / 1000;
-          console.log("上传成功的图", details)
-        });
+          endPic = details
+      });
 
         var read = fs.createReadStream(filePath);
         read.pipe(upload);
@@ -152,7 +154,8 @@ HTTP.methods({
         {
         "link":"http://wanchehui.oss-cn-qingdao.aliyuncs.com/"+fileName,
         "title":"for editor",
-        "status":200
+        "status":200,
+          // upload
         }
       };
 
