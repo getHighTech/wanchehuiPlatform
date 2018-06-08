@@ -26,6 +26,15 @@ var formidable = require('formidable'),
 http = require('http'),
 util = require('util');
 
+function generateRondom(n) {
+  let str = "";
+  let num ;
+  for(var i = 0; i < n ; i ++) {
+      num  = Math.ceil(Math.random()*10);
+      str += num ;
+  }
+ return str;
+}
 const accessKeyId = "LTAIMzirFnS118vy";
 const accessKeySecret = "tPnXTfIPrjDDbLzM8qmetbjmRZE6E5";
 //各种服务端响应
@@ -33,13 +42,13 @@ HTTP.methods({
 
   '/images/upload/handler': {
     post: function(buffer){
-
       let fs = require('fs');
       let images = require("images");
-      let filename = (new Date()).getTime().toString()+".png";
-      let path = '/tmp/output'+filename;
-
-      images(buffer).save(path, {operation:50});
+      let filename =new Date().getTime().toString()+generateRondom(10).toString()+".png";
+      var path = require('path');
+      let pathTemp = path.resolve('../../programs/web.browser/app/img')+"/"+filename;
+      console.log(pathTemp)
+      images(buffer).save(pathTemp, {operation:50});
       let ALY = require('aliyun-sdk');
       let ossStream = require('aliyun-oss-upload-stream')(new ALY.OSS({
         accessKeyId,
@@ -89,11 +98,12 @@ HTTP.methods({
       let form = new formidable.IncomingForm();
       form.uploadDir = path.resolve('../../programs/web.browser/app/img');
       form.multiples = true;
-      let fileName = new Date().getTime() + '.png';
-      form.parse(this.request, function(err, fields, files) {
+      let fileName = new Date().getTime().toString()+generateRondom(10).toString()+ '.png';
+      let endPic = null;
+        form.parse(this.request, function(err, fields, files) {
         let filePath = '';
         //如果提交文件的form中将上传文件的input名设置为tmpFile，就从tmpFile中取上传文件。否则取for in循环第一个上传的文件。
-        console.log(files)
+        console.log("系统内的文件， in", files);
         if(files.tmpFile){
             filePath = files.tmpFile.path;
         } else {
@@ -104,9 +114,10 @@ HTTP.methods({
                 }
             }
         }
-        console.log(filePath);
+        console.log("系统内的文件， in", filePath);
         let ALY = require('aliyun-sdk');
-        let ossStream = require('aliyun-oss-upload-stream')(new ALY.OSS({
+       
+        let ossStream =  require('aliyun-oss-upload-stream')(new ALY.OSS({
           accessKeyId,
           secretAccessKey: accessKeySecret,
           endpoint: 'http://oss-cn-qingdao.aliyuncs.com',
@@ -127,24 +138,27 @@ HTTP.methods({
           console.log('part:', part);
         });
 
-        upload.on('uploaded', function (details) {
+       upload.on('uploaded', function (details) {
           var s = (new Date() - startTime) / 1000;
-          console.log('details:', details);
-          console.log('Completed upload in %d seconds', s);
-        });
+          endPic = details
+      });
 
         var read = fs.createReadStream(filePath);
         read.pipe(upload);
         var startTime = new Date();
+        
       });
+
       return {
         "data":
         {
-        "link":"http://wanchehui.oss-cn-qingdao.aliyuncs.com/" + fileName,
-        "title":"images_uploads",
-        "status":200
+        "link":"http://wanchehui.oss-cn-qingdao.aliyuncs.com/"+fileName,
+        "title":"for editor",
+        "status":200,
+          // upload
         }
       };
+
 
 
     }
