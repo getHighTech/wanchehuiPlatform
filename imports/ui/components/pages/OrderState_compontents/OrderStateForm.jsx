@@ -18,7 +18,8 @@ class OrderStateFormWrap extends Component {
       super(props);
     }
 state={
-  disable:true
+  disable:true,
+  initialProductClass:[]
 }
 
 DuplicateCheckLast = (rule,value,callback) => {
@@ -125,6 +126,19 @@ DuplicateCheckNext = (rule,value,callback) => {
       })
     }
   }
+  componentDidMount(){
+    let self = this;
+    Meteor.call('get.productclass',function(err,alt){
+      if (!err) {
+        self.setState({
+          initialProductClass:alt
+        })
+      }
+      else {
+        console.log(err);
+      }
+    })
+  }
 
 render(){
   const { getFieldDecorator, getFieldValue } = this.props.form;
@@ -145,7 +159,7 @@ render(){
   }
 
 
-  const type=['黑卡','汽车','食物'];
+  const type=this.state.initialProductClass;
   const Prochildren=[];
   for (var i = 0; i < type.length; i++) {
     Prochildren.push(<Option key={type[i]}>{type[i]}</Option>)

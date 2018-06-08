@@ -102,6 +102,7 @@ class ProductFormWrap extends Component {
         parameterkey_arr:[],
         agencykey_length:0,
         parameterkey_length:0,
+        initialProductClass:[],
         openKeys:this.props.descriptionKey,
         fileState:this.props.changefileState
       };
@@ -325,6 +326,16 @@ class ProductFormWrap extends Component {
       })
     }
     let self =this;
+    Meteor.call('get.productclass',function(err,alt){
+      if (!err) {
+        self.setState({
+          initialProductClass:alt
+        })
+      }
+      else {
+        console.log(err);
+      }
+    })
 
     self.setState({
       openKeys: self.props.descriptionKey,
@@ -949,7 +960,7 @@ class ProductFormWrap extends Component {
               );
             });
 
-            const type=['黑卡','汽车','食物'];
+            const type=this.state.initialProductClass;
             const children=[];
             for (var i = 0; i < type.length; i++) {
               children.push(<Option key={type[i]}>{type[i]}</Option>)
