@@ -18,7 +18,8 @@ class OrderStateFormWrap extends Component {
       super(props);
     }
 state={
-  disable:true
+  disable:true,
+  initialProductClass:[]
 }
 
 DuplicateCheckLast = (rule,value,callback) => {
@@ -116,7 +117,6 @@ DuplicateCheckNext = (rule,value,callback) => {
   componentWillReceiveProps(nextProps){
     let self =this;
     const { getFieldValue } = this.props.form;
-    let current = getFieldValue('current');
     if(current==''){
       this.props.form.resetFields();
     }
@@ -126,16 +126,23 @@ DuplicateCheckNext = (rule,value,callback) => {
       })
     }
   }
+  componentDidMount(){
+    let self = this;
+    Meteor.call('get.productclass',function(err,alt){
+      if (!err) {
+        self.setState({
+          initialProductClass:alt
+        })
+      }
+      else {
+        console.log(err);
+      }
+    })
+  }
 
 render(){
   const { getFieldDecorator, getFieldValue } = this.props.form;
   const {OrderStatus,modalState,getStatus}=this.props;
-  const children = [];
-  for (let i = 0; i < this.props.getStatus.length; i++) {
-    children.push(<Option key={getStatus[i]} >{getStatus[i]}</Option>);
-  }
-
-
   const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -146,9 +153,52 @@ render(){
         sm: { span: 14 },
       },
     };
+  const children = [];
+  for (let i = 0; i < this.props.getStatus.length; i++) {
+    children.push(<Option key={getStatus[i]} >{getStatus[i]}</Option>);
+  }
+
+
+  const type=this.state.initialProductClass;
+  const Prochildren=[];
+  for (var i = 0; i < type.length; i++) {
+    Prochildren.push(<Option key={type[i]}>{type[i]}</Option>)
+  }
+
+  const productClassLength = [1];
+  const productClass = productClassLength.map((k,index) => {
+      return(
+        <FormItem
+        {...formItemLayout}
+        label='商品分类'
+          key={k}
+        >
+          {getFieldDecorator(`productClass`, {
+            validateTrigger: ['onChange', 'onBlur'],
+            // rules: [{ validator: this.proClassCheck }],
+
+          })(
+            <Select
+            placeholder="选择商品分类"
+            dropdownStyle={{zIndex:'99999' }}
+            style={{ width: '60%' }}>
+             {Prochildren}
+           </Select>
+          )}
+        </FormItem>
+
+      )
+
+  })
+
+
+
   return(
 
     <Form>
+        {productClass}
+
+
         <FormItem
             {...formItemLayout}
             label="前置状态"
@@ -178,7 +228,7 @@ render(){
                 rules: [{validator: this.change}]
             })(
 
-                <Input className="shop-name-input"   prefix={<Icon type="user" id="error" style={{ fontSize: 13 }} />} placeholder="商品名称" />
+                <Input className="shop-name-input"   prefix={<Icon type="user" id="error" style={{ fontSize: 13 }} />} placeholder="当前状态" />
             )}
         </FormItem>
         <FormItem

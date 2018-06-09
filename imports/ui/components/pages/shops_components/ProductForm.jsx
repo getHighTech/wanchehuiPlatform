@@ -48,7 +48,7 @@ function uploadImageCallBack(file) {
   return new Promise(
     (resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', '/images/upload/handler');
+      xhr.open('POST', '/images/upload');
       xhr.send(file);
 
       xhr.addEventListener('load', () => {
@@ -102,6 +102,7 @@ class ProductFormWrap extends Component {
         parameterkey_arr:[],
         agencykey_length:0,
         parameterkey_length:0,
+        initialProductClass:[],
         openKeys:this.props.descriptionKey,
         fileState:this.props.changefileState
       };
@@ -325,6 +326,16 @@ class ProductFormWrap extends Component {
       })
     }
     let self =this;
+    Meteor.call('get.productclass',function(err,alt){
+      if (!err) {
+        self.setState({
+          initialProductClass:alt
+        })
+      }
+      else {
+        console.log(err);
+      }
+    })
 
     self.setState({
       openKeys: self.props.descriptionKey,
@@ -451,6 +462,8 @@ class ProductFormWrap extends Component {
     handleChange(info) {
       let fileList = info.fileList;
       fileList = fileList.slice(-1);
+      console.log("上传的链接", info);
+      
       let self = this
       if (info.file.status === 'uploading') {
           console.log("上传中。");
@@ -476,6 +489,8 @@ class ProductFormWrap extends Component {
     handleChangeDetails(info) {
       let fileList = info.fileList;
       fileList = fileList.slice(-1);
+      console.log("上传的链接", info);
+      
       let self = this
       if (info.file.status === 'uploading') {
           console.log("上传中。");
@@ -507,6 +522,8 @@ class ProductFormWrap extends Component {
     handleChangeMore(info) {
       let fileList = info.fileList;
       let self = this
+      console.log("上传的链接", info);
+      
       if (info.file.status === 'uploading') {
           console.log("上传中。");
       }
@@ -683,6 +700,24 @@ class ProductFormWrap extends Component {
     }
     }
 
+    proClassCheck=(rule,value,callback) => {
+      let self =this;
+      const { getFieldValue } = this.props.form;
+      let result =getFieldValue('productClass');
+      console.log(result);
+      if (typeof(result)!='undefined') {
+        console.log('1');
+        callback()
+      }
+      else {
+        console.log('2');
+        callback('请选择商品种类！不能为空')
+      }
+    }
+
+
+
+
 
     getParameterName(k){
       const { form } = this.props;
@@ -798,9 +833,6 @@ class ProductFormWrap extends Component {
     render() {
       const { contentState,cover ,fileList,fileListMore,fileListDetails} = this.state;
       const  { product,editState,modalState } = this.props;
-      console.log(this.props.key_agencyarr);
-      console.log('---------');
-      console.log(this.props.key_parameterarr);
         let uploadProps = {
           action: '/images/upload',
           onChange: this.handleChange.bind(this),
@@ -934,13 +966,66 @@ class ProductFormWrap extends Component {
               );
             });
 
+            const type=this.state.initialProductClass;
+            const children=[];
+            for (var i = 0; i < type.length; i++) {
+              children.push(<Option key={type[i]}>{type[i]}</Option>)
+            }
 
 
+
+
+            const productClassLength = [1];
+            const productClass = productClassLength.map((k,index) => {
+              if(this.props.modalState){
+                return(
+                  <FormItem
+                  {...formItemLayout}
+                  label='商品分类'
+                    required={false}
+                    key={k}
+                  >
+                    {getFieldDecorator(`productClass`, {
+                      validateTrigger: ['onChange', 'onBlur'],
+                      rules: [{ validator: this.proClassCheck }],
+
+                    })(
+                      <Select
+                      placeholder="选择商品分类"
+                      dropdownStyle={{zIndex:'99999' }}
+                      style={{ width: '20%' }}>
+                       {children}
+                     </Select>
+                    )}
+                  </FormItem>
+
+                )
+              }
+              else {
+                return(
+                  <FormItem
+                  {...formItemLayout}
+                  label='商品分类'
+                    required={false}
+                    key={k}
+                  >
+                    {getFieldDecorator(`productClass`, {
+                      // validateTrigger: ['onChange', 'onBlur'],
+                      initialValue:this.props.product.productClass,
+                      rules: [{ required: true, message: '商品名称不能为空' }],
+                    })(
+                      <Input placeholder="商品分类" disabled={!this.props.modalState} style={{ width: '20%'}} />
+                    )}
+                  </FormItem>
+                )
+              }
+            })
 
 
             getFieldDecorator('keys', { initialValue:this.props.key_arr});
             const keys = getFieldValue('keys');
             const formItems = keys.map((k, index) => {
+              console.log(aaa.length);
               if(this.props.modalState){
                 return (
                   <FormItem
@@ -954,7 +1039,7 @@ class ProductFormWrap extends Component {
                       validateTrigger: ['onChange', 'onBlur'],
 
                     })(
-                      <Input placeholder="产品规格" disabled={this.props.modalState} style={{ width: '100%'}} />
+                      <Input placeholder="产品规格" disabled={!this.props.modalState} style={{ width: '100%'}} />
                     )}
                   </FormItem>
                 );
@@ -972,7 +1057,7 @@ class ProductFormWrap extends Component {
                       validateTrigger: ['onChange', 'onBlur'],
 
                     })(
-                      <Input placeholder="产品规格" disabled={!this.props.modalState} style={{ width: '100%'}} />
+                      <Input placeholder="产品规格" disabled={this.props.modalState} style={{ width: '100%'}} />
                     )}
                   </FormItem>
                 );
@@ -999,7 +1084,7 @@ class ProductFormWrap extends Component {
                       style={{ width: '80%' }}
                       placeholder="Please select"
                       onChange={handleChangeSpec}
-                      disabled={this.props.modalState}
+                      disabled={!this.props.modalState}
                       dropdownStyle={{zIndex:'99999' }}
                       ></Select>
                     )}
@@ -1033,7 +1118,7 @@ class ProductFormWrap extends Component {
                         message: "请输入属性.",
                       }],
                     })(
-                      <Input placeholder="属性" disabled={!this.props.modalState} style={{ width: '70%'}} />
+                      <Input placeholder="属性" disabled={this.props.modalState} style={{ width: '70%'}} />
                     )}
 
                   </FormItem>
@@ -1044,6 +1129,7 @@ class ProductFormWrap extends Component {
       return (
         <Form onSubmit={this.handleSubmit}>
 
+        {productClass}
 
         <FormItem
       {...formItemLayout}
@@ -1052,28 +1138,13 @@ class ProductFormWrap extends Component {
       >
       {getFieldDecorator('name', {
           initialValue: this.props.product.name,
-          rules: [{ required: true, message: '商品名称不能为空'},{validator: this.handleConfirmName}]
+          rules: [{validator: this.handleConfirmName}]
       })(
 
           <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
       )}
       </FormItem>
 
-      <FormItem
-    {...formItemLayout}
-    label="商品分类"
-    hasFeedback
-    >
-    {getFieldDecorator('productClass', {
-    })(
-      <Select >
-       <Option value="1">Option 1</Option>
-       <Option value="2">Option 2</Option>
-       <Option value="3">Option 3</Option>
-     </Select>
-
-    )}
-    </FormItem>
 
       <FormItem
       {...formItemLayout}

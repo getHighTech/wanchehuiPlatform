@@ -13,6 +13,10 @@ import {BalanceCharges} from '../balances/balance_charges.js';
 import {Agencies} from '/imports/api/agencies/agencies.js';
 import {Shops} from '/imports/api/shops/shops.js';
 import { ProductOwners } from '/imports/api/product_owners/product_owners.js';
+<<<<<<< HEAD
+=======
+import { ShopOrders   } from '/imports/api/shop_orders/shop_orders.js';
+>>>>>>> c6c65008871d81a55ab15af016ab77d340f1455e
 export const Apps = new Mongo.Collection('apps');
 export const AppCarts = new Mongo.Collection("app_carts");
 export const UserContacts = new Mongo.Collection("user_contacts");

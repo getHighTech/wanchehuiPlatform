@@ -15,6 +15,14 @@ import { Roles } from '/imports/api/roles/roles.js';
 
 import CommonModal from './shops_components/CommonModal.jsx';
 import CommonForm from './shops_components/CommonForm.jsx'
+export const setStore = (name, content) => {
+    if (!name) return;
+    if (typeof content !== 'string') {
+      content = JSON.stringify(content);
+    }
+    window.localStorage.setItem(name, content);
+  }
+
 
 class OrderDetails extends React.Component{
   constructor(props) {
@@ -44,7 +52,8 @@ class OrderDetails extends React.Component{
     //如果存在ID，说明是编辑
     let self = this;
     let id = self.props.params._id;
-    self.getData(id);
+    let ref ='http://localhost:3000/orders/order_details/'+id;
+    console.log(ref);
     Meteor.call('get.shoporder',id,function(err,alt){
       if (!err) {
         console.log(alt);

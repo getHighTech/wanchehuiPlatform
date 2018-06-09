@@ -74,9 +74,15 @@ class OrderState extends Component {
     if( typeof(newObj.next)=='undefined'){
       newObj.next=[]
     }
+    if (typeof(newObj.productClass)=='undefined') {
+      message.error('商品分类不能为空！');
+      return
+    }
+    // return;
+
     if(newObj.last.length>0){
       for (var i = 0; i < newObj.last.length; i++) {
-        let newobj={current:newObj.last[i],next:newObj.current};
+        let newobj={current:newObj.last[i],next:newObj.current,productClass:newObj.productClass};
         // Meteor.call('find.SameStatus',newobj,function(error,result){
         //   if (!error) {
         //     if(result=!0){
@@ -95,7 +101,7 @@ class OrderState extends Component {
 
     if(newObj.next.length>0){
       for (var i = 0; i < newObj.next.length; i++) {
-        let newobj={current:newObj.current,next:newObj.next[i]}
+        let newobj={current:newObj.current,next:newObj.next[i],productClass:newObj.productClass}
         Meteor.call('OrderStatus.insert',newobj,function(err,alt){
           if(!err){
             self.getDataSource();
