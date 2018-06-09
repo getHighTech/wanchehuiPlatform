@@ -34,8 +34,8 @@ Meteor.startup(() => {
   // prebuildAdmin();//建立超级管理员
   // buildSelfShop();
   // buildBlackCard();//建立黑卡
-  //
-  //
+  
+
   // ////循环加入测试店铺结束// 开始绑定黑卡和用户
   // let product = Products.findOne({name_zh: "万人车汇黑卡"});
   // let roleName = product.roleName;
@@ -46,7 +46,7 @@ Meteor.startup(() => {
   //   if(user.cards === null){
   //     console.log('此用户已经退卡了');
   //   }else{
-  //
+  
   //     if(!ProductOwners.findOne({userId: user._id})){
   //       ProductOwners.insert({
   //         productId: product._id,
@@ -68,8 +68,8 @@ Meteor.startup(() => {
   //   }
   // });
   //     let shop = Shops.findOne({name: "万人车汇自营店"});
-  //
-  //
+  
+
   //     let card = Products.findOne({name_zh: "万人车汇黑卡"});
   //     Products.update(card._id, {
   //       $set: {
@@ -77,7 +77,7 @@ Meteor.startup(() => {
   //       }
   //     });
   //     console.log("更改每个订单的productId");
-  //
+  
   //     Orders.find().forEach(order => {
   //       Orders.update(order._id, {
   //         $set: {
@@ -86,12 +86,12 @@ Meteor.startup(() => {
   //         }
   //       })
   //     })
-  //
+  
   //     console.log("为每个卡片持有者绑定其车牌");
-  //
+  
   //     ProductOwners.find().forEach(owner=>{
   //         console.log("owner get");
-  //
+  
   //         let order = Orders.findOne({createdBy: owner.userId, status: "paid"});
   //         let carNumber = null
   //         if(order){
@@ -105,12 +105,12 @@ Meteor.startup(() => {
   //           if(!carNumber){
   //             carNumber = order.realNote.carnumber;
   //           }
-  //
+  
   //         }else{
   //           carNumber = "川A12345";
   //           let user = Meteor.users.findOne({_id: owner.userId});
   //           let mobile = null;
-  //
+  
   //           if(user.profile){
   //             mobile = user.profile.mobile;
   //           }
@@ -130,7 +130,7 @@ Meteor.startup(() => {
   //           }
   //         )
   //         }
-  //
+  
   //         ProductOwners.update(owner._id, {
   //           $set: {
   //             additional: {
@@ -139,10 +139,10 @@ Meteor.startup(() => {
   //           }
   //         })
   //     });
-  //
+  
   //     console.log("end of script");
-  //
-  //
+
+
   //     Products.find({}).forEach(product => {
   //       if(!product.acl.copy){
   //         Products.update(product._id, {
@@ -158,5 +158,5 @@ Meteor.startup(() => {
   //     });
   //     let orderRmRlt = Orders.remove({totalAmount: {$exists: true}});
   //     console.log(orderRmRlt);
-  //
+      
 });

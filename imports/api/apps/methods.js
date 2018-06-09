@@ -20,7 +20,7 @@ import {
     createUserContact, getUserContacts, 
     deleteUserContact, setUserContactDefatult, 
     getNewestOneUserOrderByStatus, getIncomeWithinTime, 
-    getProductByShopId, agencyOneProduct } from './apps';
+    getProductByShopId, agencyOneProduct, getProductOwners } from './apps';
 
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
@@ -309,6 +309,14 @@ Meteor.methods({
             let rltObj = agencyOneProduct(stampedTokenObj, appName, product, userId);
             return Object.assign({}, rltObj, {
                 fromMethod: 'app.agency.one.product'
+            })
+        }, 
+
+        'app.get.product.owners'(loginToken, appName, userId){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getProductOwners(stampedTokenObj, appName, userId);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.get.product.owners'
             })
         }
 });
