@@ -810,7 +810,7 @@ class ProductFormWrap extends Component {
       })
     }
 
-  
+
     getDescription(){
       const setFieldsValue = this.props.form.setFieldsValue;
       let description=this.props.product.description;
@@ -828,7 +828,7 @@ class ProductFormWrap extends Component {
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             let  fileReader = new FileReader();
-            
+
             fileReader.onload = ( (file) =>  {
                 return (e) => {
                     document.getElementById("showUpload").src = e.target.result;
@@ -838,11 +838,43 @@ class ProductFormWrap extends Component {
                     const setFieldsValue = self.props.form.setFieldsValue;
                     setFieldsValue({cover:self.state.image_url})
                 }
-                
+
             })(file);
             fileReader.readAsDataURL(file);
     }
   }
+
+  handleTestFilesOnChange = (e) => {
+    let self = this;
+    let files = e.target.files;
+    var images_file = [];
+    var result =document.getElementById("result");
+      for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          let  fileReader = new FileReader();
+
+          fileReader.onload = ( (file) =>  {
+              return (e) => {
+
+                  // document.getElementById("showUploads").src = e.target.result;
+                  let images = e.target.result;
+                  result.innerHTML=result.innerHTML+'<img src="' + images +'" alt="" />';
+                  
+                  images_file.push(images)
+                  console.log(images_file);
+                  self.setState({
+                    images:images_file
+                  })
+                  const setFieldsValue = self.props.form.setFieldsValue;
+                  setFieldsValue({images:self.state.images})
+              }
+
+          })(file);
+
+          fileReader.readAsDataURL(file);
+  }
+
+}
 
     selectHandleChange(value){
       // console.log(`selected ${value}`);
@@ -899,7 +931,7 @@ class ProductFormWrap extends Component {
               },
             };
 
-
+           getFieldDecorator('cover')
            getFieldDecorator('parameterkeys',{initialValue:this.props.key_parameterarr});
             const parameterkeys = getFieldValue('parameterkeys');
             const parameterItems =parameterkeys.map((k, index) => {
@@ -1180,33 +1212,27 @@ class ProductFormWrap extends Component {
           <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品中文名称" />
       )}
       </FormItem>
+
       <FormItem
       {...formItemLayout}
       label="商品封面(测试base64)"
       hasFeedback
       >
-        <input type="file" onChange={(e)=>this.handleTestFileOnChange(e)} />
-        <img src="auto" alt="" className=""  id="showUpload" />
+        <input type="file" multiple onChange={(e)=>this.handleTestFileOnChange(e)} />
+        <img src={this.props.product.cover} alt="" className=""   id="showUpload"  style={{width:'30%'}}/>
 
       </FormItem>
+
+
       <FormItem
       {...formItemLayout}
-      label="商品封面"
+      label="商品多图(测试base64)"
       hasFeedback
       >
-      {getFieldDecorator('cover', {
-           initialValue: this.getCoverValue()
-          })(
-            <Input type="text"       placeholder="图片地址" />
-          )}
-            <Upload {...uploadProps}>
-                <Button disabled={this.props.editState}>
-                <Icon type="upload" /> 上传图片
-                </Button>
-            </Upload>
+        <input type="file" multiple onChange={(e)=>this.handleTestFilesOnChange(e)} />
+        <div id="result" name="result"></div>
 
       </FormItem>
-
 
         <FormItem
         {...formItemLayout}
