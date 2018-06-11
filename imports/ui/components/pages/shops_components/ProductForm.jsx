@@ -375,10 +375,8 @@ class ProductFormWrap extends Component {
       else{
         // console.log('removed');
       }
-      console.log(nextProps.coverState);
       if(nextProps.coverState!='removed'&&nextProps.coverState!='done'){
       if(nextProps.product.cover!=null){
-        console.log(nextProps.coverState);
         this.setState({
           fileList:[{uid:1,url:nextProps.product.cover}],
         })
@@ -463,7 +461,7 @@ class ProductFormWrap extends Component {
       let fileList = info.fileList;
       fileList = fileList.slice(-1);
       console.log("上传的链接", info);
-      
+
       let self = this
       if (info.file.status === 'uploading') {
           console.log("上传中。");
@@ -490,7 +488,7 @@ class ProductFormWrap extends Component {
       let fileList = info.fileList;
       fileList = fileList.slice(-1);
       console.log("上传的链接", info);
-      
+
       let self = this
       if (info.file.status === 'uploading') {
           console.log("上传中。");
@@ -523,7 +521,7 @@ class ProductFormWrap extends Component {
       let fileList = info.fileList;
       let self = this
       console.log("上传的链接", info);
-      
+
       if (info.file.status === 'uploading') {
           console.log("上传中。");
       }
@@ -1025,7 +1023,6 @@ class ProductFormWrap extends Component {
             getFieldDecorator('keys', { initialValue:this.props.key_arr});
             const keys = getFieldValue('keys');
             const formItems = keys.map((k, index) => {
-              console.log(aaa.length);
               if(this.props.modalState){
                 return (
                   <FormItem

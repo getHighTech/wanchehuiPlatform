@@ -34,6 +34,7 @@ import "antd/lib/select/style";
 import "antd/lib/upload/style";
 import 'antd/lib/modal/style';
 import 'antd/lib/message/style';
+import {Spin} from 'antd';
 import { Roles } from '/imports/api/roles/roles.js';
 import { showProduct, editProduct,addProduct,changePrice } from '/imports/ui/actions/products.js';
 import ProductModal from './shops_components/ProductModal.jsx';
@@ -63,12 +64,16 @@ class ShopDetails extends React.Component {
     productmodalVisible: false,  // modal是否可见
     productmodalTitle: '',
     spec_length:0,
-    product_id:''
+    product_id:'',
+    loading:false
   }
   componentDidMount(){
     console.log('1');
     let self = this;
     let id= this.props.params._id;
+    self.setState({
+      loading:true
+    })
     Meteor.call('shops.findShopById',id,function(err,alt){
       if(!err){
       self.setState({
@@ -80,7 +85,8 @@ class ShopDetails extends React.Component {
     Meteor.call('get.product.byShopId',id,function(error,result){
       console.log(result);
       self.setState({
-        product:result
+        product:result,
+        loading:false
       })
     })
   }
@@ -126,7 +132,10 @@ class ShopDetails extends React.Component {
   }
 
   hideModal = () => {
-    this.setState({productmodalVisible: false});
+    this.setState({
+      productmodalVisible: false,
+      loading:false
+    });
   };
   onAddProduct(){
     let self =this;
@@ -137,7 +146,8 @@ class ShopDetails extends React.Component {
 
     self.setState({
       productmodalVisible:true,
-      productmodalTitle:'增加商品'
+      productmodalTitle:'增加商品',
+      loading:true
     })
     dispatch(addProduct())
 
@@ -281,7 +291,8 @@ class ShopDetails extends React.Component {
         self.setState({
           productmodalVisible:true,
           productmodalTitle:'修改商品',
-          product_id:id
+          product_id:id,
+          loading:true
         })
         console.log("当前不可编辑" + self.props.editState)
         console.log("当前是否为新增商品" + self.props.modalState)
@@ -307,6 +318,11 @@ class ShopDetails extends React.Component {
       else{
         console.log(err);
       }
+    })
+  }
+  changeLoading(state){
+    this.setState({
+      loading:state
     })
   }
 
@@ -456,13 +472,15 @@ class ShopDetails extends React.Component {
      productmodalTitle={this.state.productmodalTitle}
      getproduct={this.state.spec_length}
      onCancel = { this.hideModal}
+     changeLoading= {this.changeLoading.bind(this)}
      getProducts={this.getProducts.bind(this)}
      ref = {(input) => { this.fromModal = input; }}
      id={this.props.params._id}
      />
 
-
+      <Spin spinning={this.state.loading}>
       <Table rowSelection={rowSelection} rowKey={record => record._id} dataSource={this.state.product} columns={Columns} />
+      </Spin>
       <Modal
           title="价格"
           visible={this.state.pricevisible}

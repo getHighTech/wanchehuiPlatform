@@ -209,6 +209,7 @@ class ProductModal extends React.Component{
       if(specName.length>1){
         for(var i = 0;i<specAllValue.length;i++){
           let aa = specAllValue[i];
+          console.log(aa);
           console.log(aa.length);
           var obj =''
           var index = 0;
@@ -218,10 +219,10 @@ class ProductModal extends React.Component{
           for (var j = 0; j < aa.length; j++) {
             var zsxzz =aa[j]
             var name = specName[j]
-            var index ={[name]:zsxzz}
+            var local ={[name]:zsxzz}
             var newIndexOne ={spec_name:name}
             var newIndexTwo ={spec_value:zsxzz}
-              obj =Object.assign(index)
+              obj =Object.assign(local)
               newSpecObj = Object.assign(newIndexOne,newIndexTwo)
               index++
               newSpecObjArray.push(newSpecObj)
@@ -243,10 +244,10 @@ class ProductModal extends React.Component{
         for(var i = 0;i<specAllValue.length;i++){
           var zsxzz=specAllValue[i];
           var name = specName[0];
-          var index ={[name]:zsxzz}
+          var local ={[name]:zsxzz}
           var newIndexOne ={spec_name:name}
           var newIndexTwo ={spec_value:zsxzz}
-          obj =Object.assign(index)
+          obj =Object.assign(local)
           newSpecObj = Object.assign(newIndexOne,newIndexTwo)
           index++
           newSpecObjArray.push(newSpecObj)
@@ -261,8 +262,10 @@ class ProductModal extends React.Component{
 
     }
     newObj.specifications=aaass;
-
+    console.log(newObj);
     let agencyPrice=newObj.agencyPrice;
+    // return;
+
     if (typeof(agencyPrice)!='undefined') {
       for(var i = 0; i<agencyPrice.length;i++){
         agencyPrice[i]=agencyPrice[i]*100
@@ -297,7 +300,6 @@ class ProductModal extends React.Component{
       message.error('商品简介不能为空！');
       return
     }
-    // return;
     self.hideModal();
     if(self.props.modalState){
       //新增店铺到数据库
@@ -328,6 +330,7 @@ class ProductModal extends React.Component{
                   coverState:'',
                   detailsState:''
                 })
+                self.props.changeLoading(false)
                 console.log(self.state.xx);
               }else{
                 console.log(error);
@@ -363,6 +366,7 @@ class ProductModal extends React.Component{
                   coverState:'',
                   detailsState:''
                 })
+                self.props.changeLoading(false)
                 console.log(self.state.xx);
               }else{
                 console.log(error);
@@ -394,6 +398,7 @@ class ProductModal extends React.Component{
               coverState:'',
               detailsState:''
             })
+            self.props.changeLoading(false)
             console.log(self.state.xx);
           }else{
             console.log(error);
@@ -418,6 +423,7 @@ class ProductModal extends React.Component{
             coverState:'',
             detailsState:''
           })
+          self.props.changeLoading(false)
           console.log(self.state.xx);
         }else{
           console.log(error);
