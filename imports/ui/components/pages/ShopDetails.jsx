@@ -335,9 +335,13 @@ class ShopDetails extends React.Component {
         dataIndex: 'cover',
         key: 'cover',
         width: 50,
-        render:(text, record) =>(
+        render:(text, record) =>{
+          
+          return (
             <img src={record.cover} style={{height:50,width:50}}/>
-        )
+            
+          )
+        }
       },
       {
         title: '价格',

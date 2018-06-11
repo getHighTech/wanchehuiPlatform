@@ -782,6 +782,8 @@ class ProductFormWrap extends Component {
         uuid:a
       })
     }
+
+  
     getDescription(){
       const setFieldsValue = this.props.form.setFieldsValue;
       let description=this.props.product.description;
@@ -792,6 +794,28 @@ class ProductFormWrap extends Component {
         return '<p>开始编辑<p>'
       }
     }
+
+    handleTestFileOnChange = (e) => {
+      let self = this;
+      let files = e.target.files;
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            let  fileReader = new FileReader();
+            
+            fileReader.onload = ( (file) =>  {
+                return (e) => {
+                    document.getElementById("showUpload").src = e.target.result;
+                    self.setState({
+                      image_url:e.target.result
+                    })
+                    const setFieldsValue = self.props.form.setFieldsValue;
+                    setFieldsValue({cover:self.state.image_url})
+                }
+                
+            })(file);
+            fileReader.readAsDataURL(file);
+    }
+  }
 
     selectHandleChange(value){
       // console.log(`selected ${value}`);
@@ -1093,6 +1117,15 @@ class ProductFormWrap extends Component {
 
           <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品中文名称" />
       )}
+      </FormItem>
+      <FormItem
+      {...formItemLayout}
+      label="商品封面(测试base64)"
+      hasFeedback
+      >
+        <input type="file" onChange={(e)=>this.handleTestFileOnChange(e)} />
+        <img src="auto" alt="" className=""  id="showUpload" />
+
       </FormItem>
       <FormItem
       {...formItemLayout}
