@@ -25,4 +25,5 @@ import '/imports/api/products/server/publications.js';
 import '/imports/api/fancyshop/methods.js';
 import '/imports/api/apps/methods.js';
 import '/imports/api/apps/http.js';
-import '/imports/api/shop_orders/methods.js'
+import '/imports/api/shop_orders/methods.js';
+import '/imports/api/product_class/methods.js'

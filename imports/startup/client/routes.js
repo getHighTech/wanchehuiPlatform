@@ -29,7 +29,8 @@ import CheckRoles from "/imports/ui/components/pages/tools/CheckRoles";
 import ShopDashBoard from '/imports/ui/components/pages/ShopDashBoard';
 import OrdersForShop from '/imports/ui/components/pages/OrdersForShop';
 import OrderState from '/imports/ui/components/pages/OrderState';
-import OrderDetails from '/imports/ui/components/pages/OrderDetails'
+import OrderDetails from '/imports/ui/components/pages/OrderDetails';
+import ProductClass from '/imports/ui/components/pages/ProductClass';
 
 
 const store = configureStore();
@@ -66,6 +67,7 @@ const Routes = ({ location }) =>
       <Route path="/settings" component={Settings}/>
       <Route path="/component_test" component={ComponentTest}/>
       <Route path="/orderstate" component={OrderState}/>
+      <Route path="/productclass" component={ProductClass}/>
     </Route>
     <Route path="/login" component={Login}/>
     <Route path="/login/forgot" component={LoginForgot}/>

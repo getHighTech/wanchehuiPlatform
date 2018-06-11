@@ -25,6 +25,16 @@ render(){
     };
   return(
     <Form>
+        <FormItem
+        {...formItemLayout}
+        label='商品分类'
+        >
+          {getFieldDecorator(`productClass`, {
+            initialValue:this.props.OrderStatus.productClass,
+          })(
+            <Input placeholder="商品分类" disabled={true} style={{ width: '60%'}} />
+          )}
+        </FormItem>
 
         <FormItem
             {...formItemLayout}
