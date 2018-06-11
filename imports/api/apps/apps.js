@@ -13,14 +13,10 @@ import {BalanceCharges} from '../balances/balance_charges.js';
 import {Agencies} from '/imports/api/agencies/agencies.js';
 import {Shops} from '/imports/api/shops/shops.js';
 import { ProductOwners } from '/imports/api/product_owners/product_owners.js';
-// <<<<<<< HEAD
-// =======
-// import { ShopOrders   } from '/imports/api/shop_orders/shop_orders.js';
-// >>>>>>> c6c65008871d81a55ab15af016ab77d340f1455e
+import { ShopOrders   } from '/imports/api/shop_orders/shop_orders.js';
 export const Apps = new Mongo.Collection('apps');
 export const AppCarts = new Mongo.Collection("app_carts");
 export const UserContacts = new Mongo.Collection("user_contacts");
-// export const ShopOrders = new Mongo.Collection("shop_orders");
 
 //需要用的工具类函数，
 function validUserLogin(token){
@@ -725,6 +721,24 @@ export function syncRemoteCartToLocal(loginToken, appName, userId, cartId){
             reason: "CART NOT FOUND"
         }
     })
+}
+
+
+export function getWithdrawals(loginToken, appName, userId,  page, pagesize){
+    return getUserInfo(loginToken, appName, "withdrawals", function(){
+        let withdrawals = BalanceCharges.find({userId}, {
+            skip: (page-1)* pagesize,
+            limit: pagesize,
+            sort: {
+                createdAt: -1
+            }
+        });
+        return {
+            type:  "withdrawals",
+            msg:  withdrawals.fetch(),
+        }
+    });
+    
 }
 
 
