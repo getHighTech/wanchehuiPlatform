@@ -163,7 +163,12 @@ class OrdersForShop extends React.Component{
           }
           alt[i].ProCount=productName.length/2;
           alt[i].ProName=productName;
-          alt[i].name=alt[i].contact.name;
+          if (typeof(alt[i].contact)!='undefined') {
+            alt[i].name=alt[i].contact.name;
+          }
+          else {
+            alt[i].name=alt[i].userId;
+          }
           alt[i].ProPrice=alt[i].totalAmount/100;
         }
         self.setState({
