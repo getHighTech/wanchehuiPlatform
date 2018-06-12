@@ -329,9 +329,12 @@ class ProductModal extends React.Component{
                   fileState:'',
                   coverState:'',
                   detailsState:''
-                })
+                }
+                // window.location.reload();
+                )
                 self.props.changeLoading(false)
                 console.log(self.state.xx);
+                window.location.reload();
               }else{
                 console.log(error);
               }
@@ -368,6 +371,7 @@ class ProductModal extends React.Component{
                 })
                 self.props.changeLoading(false)
                 console.log(self.state.xx);
+                window.location.reload();
               }else{
                 console.log(error);
               }
@@ -400,6 +404,7 @@ class ProductModal extends React.Component{
             })
             self.props.changeLoading(false)
             console.log(self.state.xx);
+            window.location.reload();
           }else{
             console.log(error);
           }
@@ -424,7 +429,7 @@ class ProductModal extends React.Component{
             detailsState:''
           })
           self.props.changeLoading(false)
-          console.log(self.state.xx);
+          window.location.reload();
         }else{
           console.log(error);
         }
@@ -449,6 +454,7 @@ class ProductModal extends React.Component{
       coverState:'',
       detailsState:''
     })
+    window.location.reload();
 
 
   }

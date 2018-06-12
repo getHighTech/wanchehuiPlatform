@@ -1070,7 +1070,10 @@ class ProductFormWrap extends Component {
 
               else {
                 const imagess= this.props.product.images
+                console.log(imagess);
                 const aaa =[];
+                console.log(aaa);
+
                 if (typeof(aaa)!='undefined') {
                   for (var i = 0; i < imagess.length; i++) {
                     aaa.push(<img src={imagess[i]} key={i} style={{width:'30%',margin:'5px'}}/>)
@@ -1132,7 +1135,13 @@ class ProductFormWrap extends Component {
                       initialValue:this.props.product.productClass,
                       rules: [{ required: true, message: '商品名称不能为空' }],
                     })(
-                      <Input placeholder="商品分类" disabled={!this.props.modalState} style={{ width: '20%'}} />
+                      <Select
+                      placeholder="选择商品分类"
+                      dropdownStyle={{zIndex:'99999' }}
+                      style={{ width: '20%' }}>
+                       {children}
+                     </Select>
+                      // <Input placeholder="商品分类" disabled={!this.props.modalState} style={{ width: '20%'}} />
                     )}
                   </FormItem>
                 )
