@@ -191,7 +191,8 @@ Meteor.methods({
         recommend:product.recommend,
         status:product.status,
         specifications:product.specifications,
-        agencyLevelPrices:product.agencyPrice
+        agencyLevelPrices:product.agencyPrice,
+        productClass:product.productClass
       }
     })
   },
