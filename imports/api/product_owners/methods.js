@@ -13,7 +13,7 @@ Meteor.methods({
         }
         if(validLoginToken(token)){
             let productIds = []
-            ProductOwners.find({userId}).forEach(item=>{
+            ProductOwners.find({userId}).forEach(item=>{ p
                 productIds.push(item.productId);
             });
             let product = Products.findOne({_id: {$in: productIds}, name_zh: "万人车汇黑卡"});

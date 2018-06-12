@@ -1005,6 +1005,75 @@ export function getIncomes(loginToken, appName, userId, page, pagesize){
     })
 }
 
+
+export function getOrders(loginToken, appName, userId, status, page, pagesize) {
+    return getUserInfo(loginToken, appName, "orders", function(){
+        let orders_confirmed = Orders.find({userId,status: "confirmed"}, {
+            skip: (page-1)*pagesize, limit: pagesize, 
+            sort: {createdAt: -1}}).fetch()
+        let orders_cancel = Orders.find({userId,status: "cancel"}, {
+            skip: (page-1)*pagesize, limit: pagesize, 
+            sort: {createdAt: -1}}).fetch()
+        let orders_paid = Orders.find({userId,status: "paid"}, {
+            skip: (page-1)*pagesize, limit: pagesize, 
+            sort: {createdAt: -1}}).fetch()
+        let orders_recevied = Orders.find({userId,status: "recevied"}, {
+            skip: (page-1)*pagesize, limit: pagesize, 
+            sort: {createdAt: -1}}).fetch()
+            return {
+                type: "orders",
+                msg: {
+                    orders_confirmed,
+                    orders_cancel,
+                    orders_paid,
+                    orders_recevied,
+                }
+            }
+    })
+}
+
+export function cancelOrder(loginToken, appName, orderId) {
+    return  getUserInfo(loginToken, appName, "orders", function(){
+        order = Orders.update(orderId,{
+            $set:{
+                status: 'cancel'
+            }
+        })
+        if(!order || order.lenght === 0){
+            return {
+                type: "error",
+                reason: "ORDER NOT FOUND",
+            }
+        }
+        return {
+            type: "order",
+            msg: order
+        }
+    })
+} 
+
+export function receviedOrder(loginToken, appName, orderId) {
+    return  getUserInfo(loginToken, appName, "orders", function(){
+        order = Orders.update(orderId,{
+            $set:{
+                status: 'recevied'
+            }
+        })
+        if(!order || order.lenght === 0){
+            return {
+                type: "error",
+                reason: "ORDER NOT FOUND",
+            }
+        }
+        return {
+            type: "order",
+            msg: order
+        }
+    })
+}
+
+
+
 export function getProductByShopId(appName, shopId, page, pagesize){
 
     if(!findOneAppByName(appName)){

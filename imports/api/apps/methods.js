@@ -16,7 +16,8 @@ import {
     removeBankcard,
     syncRemoteCartToLocal, 
     syncLocalCartToRemote, 
-    getUserDetailsById, updateOrder, 
+    getUserDetailsById,
+    updateOrder, 
     createUserContact, getUserContacts, 
     deleteUserContact, setUserContactDefatult, 
     getNewestOneUserOrderByStatus, getIncomeWithinTime, 
@@ -77,6 +78,7 @@ Meteor.methods({
     "app.get.one.product.id"(loginToken, appName, productId){
         //载入商品信息
         //创建新的订单
+        console.log("loginToken", loginToken)
         let stampedTokenObj = JSON.parse(loginToken);
         return Object.assign({}, getOneProduct(stampedTokenObj, appName, productId), {
             fromMethod:  "app.get.one.product.id"
@@ -293,6 +295,28 @@ Meteor.methods({
             
             return Object.assign({}, rltObj, {
                 fromMethod: "app.get.incomes.limit"
+            })
+        },
+        'app.get.orders.limit'(loginToken,appName,userId,status, page, pagesize) {
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getOrders(stampedTokenObj, appName, userId,status, page, pagesize);
+            return Object.assign({}, rltObj, {
+                fromMethod: "app.get.orders.limit"
+            })
+        },
+        'app.cancel.one.order'(loginToken,appName,orderId) {
+            console.log(orderId)
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = cancelOrder(stampedTokenObj, appName,orderId);
+            Object.assign({}, rltObj, {
+                fromMethod: "app.cancel.one.order"
+            })
+        },
+        'app.recevied.one.order'(loginToken,appName,orderId) {
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = receviedOrder(stampedTokenObj, appName,orderId);
+            Object.assign({}, rltObj, {
+                fromMethod: "app.recevied.one.order"
             })
         },
         //获取店铺商品
