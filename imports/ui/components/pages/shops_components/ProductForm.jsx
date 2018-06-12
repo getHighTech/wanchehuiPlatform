@@ -844,9 +844,32 @@ class ProductFormWrap extends Component {
     }
   }
 
+  handleTestFileDetailsOnChange= (e) => {
+    let self = this;
+    let files = e.target.files;
+      for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          let  fileReader = new FileReader();
+
+          fileReader.onload = ( (file) =>  {
+              return (e) => {
+                  document.getElementById("showUploadDetails").src = e.target.result;
+                  self.setState({
+                    image_details:e.target.result
+                  })
+                  const setFieldsValue = self.props.form.setFieldsValue;
+                  setFieldsValue({detailsImage:self.state.image_details})
+              }
+
+          })(file);
+          fileReader.readAsDataURL(file);
+  }
+}
+
   handleTestFilesOnChange = (e) => {
     let self = this;
     let files = e.target.files;
+    console.log(files);
     var images_file = [];
     var result =document.getElementById("result");
       for (let i = 0; i < files.length; i++) {
@@ -858,8 +881,8 @@ class ProductFormWrap extends Component {
 
                   // document.getElementById("showUploads").src = e.target.result;
                   let images = e.target.result;
-                  result.innerHTML=result.innerHTML+'<img src="' + images +'" alt="" />';
-                  
+                  result.innerHTML=result.innerHTML+'<img  src="' + images +'"  style="  width:30%;margin:5px" alt="" />';
+
                   images_file.push(images)
                   console.log(images_file);
                   self.setState({
@@ -1005,7 +1028,7 @@ class ProductFormWrap extends Component {
                       message: "请输入奖励.",
                     }],
                   })(
-                    <Input placeholder="奖励" style={{ width: '40%'}} />
+                    <Input placeholder="奖励" style={{ width: '30%'}} />
                   )}
                   {keyss.length > 1 ? (
                     <Icon
@@ -1027,6 +1050,47 @@ class ProductFormWrap extends Component {
             }
 
 
+
+            const productImageslength = [1];
+            const productImages=productImageslength.map((k,index) => {
+              if (this.props.modalState) {
+                return(
+                  <FormItem
+                  {...formItemLayout}
+                  label="商品多图(测试base64)"
+                  hasFeedback
+                  >
+                    <input type="file" multiple onChange={(e)=>this.handleTestFilesOnChange(e)} />
+                    <div id="result" name="result"></div>
+
+                  </FormItem>
+                )
+              }
+
+
+              else {
+                const imagess= this.props.product.images
+                const aaa =[];
+                if (typeof(aaa)!='undefined') {
+                  for (var i = 0; i < imagess.length; i++) {
+                    aaa.push(<img src={imagess[i]} key={i} style={{width:'30%',margin:'5px'}}/>)
+                  }
+                }
+
+                return(
+                  <FormItem
+                  {...formItemLayout}
+                  label="商品多图(测试base64)"
+                  hasFeedback
+                  >
+                    <input type="file" multiple onChange={(e)=>this.handleTestFilesOnChange(e)} />
+                    <div id="result" name="result" >
+                      {aaa}
+                    </div>
+                  </FormItem>
+                )
+              }
+            })
 
 
             const productClassLength = [1];
@@ -1219,55 +1283,23 @@ class ProductFormWrap extends Component {
       hasFeedback
       >
         <input type="file" multiple onChange={(e)=>this.handleTestFileOnChange(e)} />
-        <img src={this.props.product.cover} alt="" className=""   id="showUpload"  style={{width:'30%'}}/>
+        <img src={this.props.product.cover} alt="" className=""   id="showUpload"  style={{width:'10%'}}/>
 
       </FormItem>
 
 
+      {productImages}
       <FormItem
       {...formItemLayout}
-      label="商品多图(测试base64)"
+      label="商品详情图片(测试base64)"
       hasFeedback
       >
-        <input type="file" multiple onChange={(e)=>this.handleTestFilesOnChange(e)} />
-        <div id="result" name="result"></div>
+        <input type="file" multiple onChange={(e)=>this.handleTestFileDetailsOnChange(e)} />
+        <img src={this.props.product.detailsImage} alt="" className=""   id="showUploadDetails"  style={{width:'30%'}}/>
 
       </FormItem>
 
-        <FormItem
-        {...formItemLayout}
-        label="商品图片"
-        hasFeedback
-        >
-        {getFieldDecorator('images', {
-             initialValue: this.props.product.images,
-            })(
-              <Input type="text"   style={{display:'none'}}    placeholder="图片地址" />
-            )}
-            <Upload {...uploadPropsMore}>
-                <Button disabled={this.props.editState}>
-                <Icon type="upload" /> 上传多图片
-                </Button>
-            </Upload>
-        </FormItem>
-        <FormItem
-        {...formItemLayout}
 
-        label="商品详情图片"
-        hasFeedback
-        >
-        {getFieldDecorator('detailsImage',{
-          initialValue:this.props.product.detailsImage,
-        })(
-          <Input type="text"   style={{display:'none'}}    placeholder="图片地址" />
-        )}
-
-        <Upload {...uploadPropsDetails}>
-            <Button disabled={this.props.editState}>
-            <Icon type="upload" /> 上传详情图片
-            </Button>
-        </Upload>
-        </FormItem>
 
       <FormItem
       {...formItemLayout}
@@ -1403,6 +1435,9 @@ class ProductFormWrap extends Component {
           </FormItem>
         {getFieldDecorator('specifications', { initialValue:this.getInitialvalue()})}
         {getFieldDecorator('parameterlist', { initialValue:this.getInitialvalue()})}
+        {getFieldDecorator('images')}
+        {getFieldDecorator('detailsImage')}
+
 
       </Form>
       )

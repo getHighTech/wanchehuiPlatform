@@ -264,7 +264,7 @@ class ProductModal extends React.Component{
     newObj.specifications=aaass;
     console.log(newObj);
     let agencyPrice=newObj.agencyPrice;
-    return;
+    // return;
 
     if (typeof(agencyPrice)!='undefined') {
       for(var i = 0; i<agencyPrice.length;i++){
