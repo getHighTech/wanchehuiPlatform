@@ -21,7 +21,9 @@ import {
     createUserContact, getUserContacts, 
     deleteUserContact, setUserContactDefatult, 
     getNewestOneUserOrderByStatus, getIncomeWithinTime, 
-    getProductByShopId, agencyOneProduct, getProductOwners, getWithdrawals } from './apps';
+    getProductByShopId, agencyOneProduct, getProductOwners, getWithdrawals, 
+    cancelOrder,
+    getOrders } from './apps';
 
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
