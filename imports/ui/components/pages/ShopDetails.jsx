@@ -34,9 +34,11 @@ import "antd/lib/select/style";
 import "antd/lib/upload/style";
 import 'antd/lib/modal/style';
 import 'antd/lib/message/style';
+import {Spin} from 'antd';
 import { Roles } from '/imports/api/roles/roles.js';
-import { showProduct, editProduct,addProduct } from '/imports/ui/actions/products.js';
+import { showProduct, editProduct,addProduct,changePrice } from '/imports/ui/actions/products.js';
 import ProductModal from './shops_components/ProductModal.jsx';
+import ProductPriceForm from './shops_components/ProductPriceForm.jsx';
 import Product from './shops_components/Product.jsx';
 
 
@@ -57,15 +59,21 @@ class ShopDetails extends React.Component {
     editphoneVisible:false,
     editaddress:'',
     editphone:[],
+    pricevisible:false,
+    defaultprice:'',
     productmodalVisible: false,  // modal是否可见
     productmodalTitle: '',
     spec_length:0,
-    product_id:''
+    product_id:'',
+    loading:false
   }
   componentDidMount(){
     console.log('1');
     let self = this;
     let id= this.props.params._id;
+    self.setState({
+      loading:true
+    })
     Meteor.call('shops.findShopById',id,function(err,alt){
       if(!err){
       self.setState({
@@ -77,23 +85,39 @@ class ShopDetails extends React.Component {
     Meteor.call('get.product.byShopId',id,function(error,result){
       console.log(result);
       self.setState({
-        product:result
+        product:result,
+        loading:false
       })
     })
   }
   changeOnline(state,id) {
-
-        Meteor.call('product.isSale',id, function(error,result){
-          if(!error){
-              if (!result.isSale){
-                message.success('商品上架成功！')
-              }else{
-                message.success('商品下架成功！')
-              }
-          }else{
-            console.log("商品状态改变失败！")
+    let self =this;
+        Meteor.call('product.price',id,function(err,alt){
+          if (!err) {
+           let intprice = alt
+           if (intprice!=0) {
+             Meteor.call('product.isSale',id, function(error,result){
+               if(!error){
+                   if (!result.isSale){
+                     message.success('商品上架成功！')
+                   }else{
+                     message.success('商品下架成功！')
+                   }
+               }else{
+                 console.log("商品状态改变失败！")
+               }
+             })
+           }else {
+             Meteor.call('product.isSaleFalse',id,function(err,alt){
+               console.log(alt);
+               self.getProducts();
+             });
+             message.success('请先填写价格！！')
+           }
           }
         })
+
+
 
   }
   getProducts(){
@@ -108,7 +132,10 @@ class ShopDetails extends React.Component {
   }
 
   hideModal = () => {
-    this.setState({productmodalVisible: false});
+    this.setState({
+      productmodalVisible: false,
+      loading:false
+    });
   };
   onAddProduct(){
     let self =this;
@@ -119,11 +146,14 @@ class ShopDetails extends React.Component {
 
     self.setState({
       productmodalVisible:true,
-      productmodalTitle:'增加商品'
+      productmodalTitle:'增加商品',
+      loading:true
     })
     dispatch(addProduct())
 
   }
+
+
   onShowProduct = (id) => {
     let self =this;
     self.setState({
@@ -140,29 +170,129 @@ class ShopDetails extends React.Component {
       }
     })
   }
+  onChangePrice = (id) =>{
+    console.log(id);
+    let self = this;
+
+    Meteor.call('get.oneproduct.id',id,function(err,alt){
+      const {dispatch } = self.props;
+      if (!err) {
+        console.log(alt);
+        let price =alt.price;
+        let endPrice= alt.endPrice;
+        dispatch(changePrice(price,endPrice,id))
+        self.setState({
+          pricevisible:true
+        })
+      }
+
+    })
+
+  }
+  pricehandleCancel = (e) => {
+    let self = this;
+    self.setState({
+      pricevisible:false,
+    })
+    self.setFormData({});
+
+  }
+  priceinput(value){
+    this.setState({
+      defaultprice:value
+    })
+  }
+  pricehandleOk= (e) =>{
+    let self = this;
+    let validated = true;
+    this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated);
+    if (!validated) {
+      console.log('参数错误');
+      return;
+    }
+    const newObj = {};
+    const getFieldValue = this.formComponent.getFieldValue;
+    const setFieldsValue = this.formComponent.setFieldsValue;
+    const oldObj = this.formComponent.getFieldsValue();
+    for (const key in oldObj) {
+        newObj[key] = oldObj[key];
+    }
+    console.log(newObj);
+    let price =newObj.price*100;
+    let endPrice = newObj.endPrice*100;
+    let id = self.props.localproductid;
+    Meteor.call('product.updatePrice',id,price,endPrice,function(err,alt){
+      if (!err) {
+        self.setState({
+          pricevisible:false,
+          defaultprice:''
+        })
+        self.getProducts();
+        self.setFormData({});
+      }
+    })
+  }
+  setFormData(data) {
+    console.log(data);
+    if (this.formComponent) {
+      console.log(this.formComponent);
+      this.formComponent.resetFields();
+      if (data) {
+        this.formComponent.setFieldsValue(data);
+      }
+    } else {
+      this.formInitData = data;
+    }
+  }
   onEditProduct = (id) => {
     let self =this;
 
 
 
     Meteor.call('get.oneproduct.id',id,function(err,alt){
-      console.log(alt);
+      let spec_length = 0;
+
+      if (typeof(alt.specName)!='undefined') {
+        spec_length=alt.specName.length;
+      }
+      else {
+        spec_length = 0;
+
+      }
+
       self.setState({
-        spec_length:alt.specifications.length
+        spec_length:spec_length
       })
-      let spec_length =alt.specifications.length;
+      console.log(typeof(alt.parameterlist));
+      let parameter_length = 0
+      if(typeof(alt.parameterlist)!='undefined'){
+        parameter_length = alt.parameterlist.length;
+      }
+      else(
+        parameter_length = 0
+      )
+      var parameter_arr=new Array(parameter_length);
       var arr =new Array(spec_length);
+      let agency_length=alt.agencyLevelPrices.length;
+      var agency_arr = new Array(agency_length)
       for(var i=0;i<arr.length;i++){
           arr[i] = i;
+      }
+      for(var i = 0;i<agency_arr.length;i++){
+        agency_arr[i]=i;
+      }
+      for(var i = 0;i<parameter_arr.length;i++){
+        parameter_arr[i]=i;
       }
       const {dispatch } = self.props;
       if(!err){
         console.log(alt);
-        dispatch(editProduct(alt,spec_length,arr,id))
+        dispatch(editProduct(alt,spec_length,arr,agency_arr,parameter_arr,id))
         self.setState({
           productmodalVisible:true,
           productmodalTitle:'修改商品',
-          product_id:id
+          product_id:id,
+          loading:true
         })
         console.log("当前不可编辑" + self.props.editState)
         console.log("当前是否为新增商品" + self.props.modalState)
@@ -190,8 +320,14 @@ class ShopDetails extends React.Component {
       }
     })
   }
+  changeLoading(state){
+    this.setState({
+      loading:state
+    })
+  }
 
   render(){
+    console.log(this.state.defaultprice);
       const {singleProduct, modalState, editState,allState,length,key_arr,productId} = this.props
     const actionStyle = {
       fontSize: 16, color: '#08c'
@@ -215,9 +351,13 @@ class ShopDetails extends React.Component {
         dataIndex: 'cover',
         key: 'cover',
         width: 50,
-        render:(text, record) =>(
+        render:(text, record) =>{
+          
+          return (
             <img src={record.cover} style={{height:50,width:50}}/>
-        )
+            
+          )
+        }
       },
       {
         title: '价格',
@@ -251,12 +391,14 @@ class ShopDetails extends React.Component {
       render: (text, record) => {
         return(
           <span>
-          <Tooltip placement="topLeft" title="查看" arrowPointAtCenter>
-            <Button shape="circle" icon="eye"  onClick={ () => this.onShowProduct(record._id)}></Button>
-          </Tooltip>
-          <span className="ant-divider" />
+
           <Tooltip placement="topLeft" title="修改" arrowPointAtCenter>
             <Button shape="circle" icon="edit"  onClick={ () => this.onEditProduct(record._id)}></Button>
+          </Tooltip>
+
+          <span className="ant-divider" />
+          <Tooltip placement="topLeft" title="价格" arrowPointAtCenter>
+            <Button shape="circle" icon="pay-circle"  onClick={ () => this.onChangePrice(record._id)}></Button>
           </Tooltip>
           <span className="ant-divider" />
           <Tooltip placement="topLeft" title="商品上下架" arrowPointAtCenter>
@@ -311,7 +453,6 @@ class ShopDetails extends React.Component {
 
 
     return (
-
       <div>
       <Product id={this.props.params._id} onAddProduct={this.onAddProduct.bind(this)}/>
 
@@ -335,14 +476,23 @@ class ShopDetails extends React.Component {
      productmodalTitle={this.state.productmodalTitle}
      getproduct={this.state.spec_length}
      onCancel = { this.hideModal}
+     changeLoading= {this.changeLoading.bind(this)}
      getProducts={this.getProducts.bind(this)}
      ref = {(input) => { this.fromModal = input; }}
      id={this.props.params._id}
      />
 
-
+      <Spin spinning={this.state.loading}>
       <Table rowSelection={rowSelection} rowKey={record => record._id} dataSource={this.state.product} columns={Columns} />
-
+      </Spin>
+      <Modal
+          title="价格"
+          visible={this.state.pricevisible}
+          onOk={this.pricehandleOk}
+          onCancel={this.pricehandleCancel}
+        >
+        <ProductPriceForm productprice={this.props.productprice}  productendprice={this.props.productendprice}  ref = {(input) => { this.formComponent = input; }} />
+        </Modal>
       <div>
 
 
@@ -367,7 +517,11 @@ function mapStateToProps(state) {
     editState: !state.ProductsList.productmodalEditable,
     length:state.ProductsList.key_length,
     key_arr:state.ProductsList.key_arr,
-    productId:state.ProductsList.productId
+    key_agencyarr:state.ProductsList.key_agencyarr,
+    productId:state.ProductsList.productId,
+    productprice:state.ProductsList.productprice,
+    productendprice:state.ProductsList.productendprice,
+    localproductid:state.ProductsList.localproductid,
   };
 }
 

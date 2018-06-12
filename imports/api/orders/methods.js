@@ -91,6 +91,12 @@ Meteor.methods({
     formMethod: 'app.getOrderById'
    }
   },
+  'order.getById'(id){
+    return Orders.findOne({_id:id})
+  },
+  'order.updateByOrderCode'(orderCode){
+    return Orders.update({orderCode:orderCode},{$set:{status:'verification'}})
+  },
   'app.order.update'(params) {
     console.log(params)
       return Orders.update(
@@ -131,8 +137,6 @@ Meteor.methods({
     return ordersdata.fetch();
   },
   'orders.getShopId'(id){
-    console.log(id);
-    console.log(Orders.find({'products.shopId':id}).fetch());
     return Orders.find({'products.shopId':id}).fetch();
   },
   'orders.accouts'(ids) {

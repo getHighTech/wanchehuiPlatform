@@ -34,125 +34,8 @@ Meteor.startup(() => {
   // prebuildAdmin();//建立超级管理员
   // buildSelfShop();
   // buildBlackCard();//建立黑卡
-  //
-  // let tags = ["4s保养", "喷漆", "油卡", "机油超市", "新车"];
-  // for (var i = 0; i < tags.length; i++) {
-  //   if (Tags.find({name: tags[i]}).count() === 0) {
-  //     Tags.insert({
-  //       name: tags[i],
-  //       isHome: true,
-  //       createdAt: new Date()
-  //     });
-  //   }
-  //
-  // }
-  // for (var i = 0; i < 5; i++) {
-  //   if (Shops.findOne({name: "测试店铺"+i})) {
-  //     continue;
-  //   }
-  //   let shopId = Shops.insert({
-  //     name: "测试店铺"+i,
-  //     phone: "13012121212",
-  //     pictures: [],
-  //     description: '这是万人汇测试店',
-  //     tags: ["4S保养", "测试"],
-  //     cover: 'http://wanchehui.oss-cn-qingdao.aliyuncs.com/cover.png',
-  //     address:'成都滴滴车主俱乐部',
-  //     city: "成都市",
-  //     lntAndLat:[104.115038, 30.593608],
-  //     status: true,
-  //     createdAt: new Date(),
-  //     acl: {
-  //       own: {
-  //         roles: ["shop_owner"],
-  //         users: [],
-  //       },
-  //       read: {
-  //         roles: ['nobody', 'login_user']
-  //       },
-  //       write: {
-  //         roles: ["shop_owner","shop_manager"],
-  //         users: [],
-  //       }
-  //     }
-  //   });
-  //   let tag = Tags.findOne({name: "4s保养"});
-  //   for (var j = 0; j < 5; j++) {
-  //     let product = Products.findOne({name_zh: "测试商品"+j.toString()+i.toString() });
-  //
-  //
-  //     if (product) {
-  //       continue;
-  //     }
-  //     let params = {
-  //
-  //       isSale: true,
-  //
-  //       name_zh: "测试商品"+j.toString()+i.toString(),
-  //       name: "test product"+j.toString()+i.toString(),
-  //       price: 1,
-  //       description: '测试商品',
-  //       brief: '测试商品',
-  //       images:['http://localhost:3000/static/media/one.933843c7.jpg'],
-  //       cover: 'http://localhost:3000/static/media/one.933843c7.jpg',
-  //       shopId: shopId,
-  //       createdByUserId: null,
-  //       properties: [],
-  //       recommendLevel: 0,
-  //       specifications: [],//eg:[{"red": 100000, "red & heavy": 1500000}]
-  //       endPrice: 1, //最终价格
-  //       curency: 'cny', //cny
-  //       agencyLevelCount: 2,//eg: 2
-  //       agencyLevelPrices: [3880, 1280]
-  //     }
-  //     let productId = newProuct
-  //     (
-  //       false,
-  //       "nobody"+i,
-  //       "测试产品角色"+i,
-  //       params,
-  //       "测试",
-  //       ["4s保养", "喷漆", "油卡", "机油超市", "新车"],
-  //     );
-  //     product = Products.findOne({_id: productId});
-  //     let isThereMemberPermission = false;
-  //     for (var i = 0; i < product.acl.buy.roles.length; i++) {
-  //       if (product.acl.buy.roles[i]=="blackcard_holder") {
-  //         isThereMemberPermission = true;
-  //       }
-  //
-  //     }
-  //     console.log('是否有黑卡权限', isThereMemberPermission);
-  //     if (!isThereMemberPermission) {
-  //       let acl = product.acl;
-  //       acl.buy.roles.push('blackcard_holder');
-  //       Products.update(product._id, {
-  //         $set: {
-  //           acl
-  //         }
-  //       })
-  //     }
-  //   }
-  //   let shopIds = [];
-  //   let productIds = [];
-  //   if (tag) {
-  //     shopIds = tag.shopIds;
-  //     productIds = tag.productIds;
-  //   }else{
-  //     shopIds.push(shopId);
-  //     productIds.push(product._id)
-  //   }
-  //
-  //   Tags.update(tag._id, {
-  //     $set: {
-  //       shopIds,
-  //       productIds,
-  //       updatedAt: new Date()
-  //     }
-  //   })
-  //
-  //
-  // };
+  
+
   // ////循环加入测试店铺结束// 开始绑定黑卡和用户
   // let product = Products.findOne({name_zh: "万人车汇黑卡"});
   // let roleName = product.roleName;
@@ -163,7 +46,7 @@ Meteor.startup(() => {
   //   if(user.cards === null){
   //     console.log('此用户已经退卡了');
   //   }else{
-  //
+  
   //     if(!ProductOwners.findOne({userId: user._id})){
   //       ProductOwners.insert({
   //         productId: product._id,
@@ -185,45 +68,8 @@ Meteor.startup(() => {
   //   }
   // });
   //     let shop = Shops.findOne({name: "万人车汇自营店"});
-  //
-  //       let params = {
-  //
-  //       isSale: true,
-  //
-  //       name_zh: "VIRIDI",
-  //       name: "VIRIDI",
-  //       price: 1,
-  //       description: '驾驶员福音，超强德国进口缓释涂露',
-  //       descriptionImg: 'https://wanchehui.oss-cn-qingdao.aliyuncs.com/viridi/1930443389.jpg',
-  //       brief: '驾驶员福音，超强德国进口缓释涂露',
-  //       images:
-  //         [
-  //           'https://wanchehui.oss-cn-qingdao.aliyuncs.com/viridi/583542866.jpg',
-  //           'https://wanchehui.oss-cn-qingdao.aliyuncs.com/viridi/613049835.jpg',
-  //           'https://wanchehui.oss-cn-qingdao.aliyuncs.com/viridi/1136468872.jpg'
-  //
-  //         ],
-  //       cover: 'https://wanchehui.oss-cn-qingdao.aliyuncs.com/viridi/1136468872.jpg',
-  //       shopId: shop._id,
-  //       createdByUserId: null,
-  //       properties: [],
-  //       recommendLevel: 0,
-  //       specifications: [],//eg:[{"red": 100000, "red & heavy": 1500000}]
-  //       endPrice: 1, //最终价格
-  //       curency: 'cny', //cny
-  //       agencyLevelCount: 2,//eg: 2
-  //       agencyLevelPrices: [1000, 100]
-  //     }
-  //     let acl={
-  //       buy: {
-  //         roles: ['blackcard_holder']
-  //       }
-  //     }
-  //     let rlt = newProuct(
-  //       false, null, null, params,
-  //       ["保健品"], ["保健", "进口", "会员专区"], acl
-  //     );
-  //     console.log(rlt);
+  
+
   //     let card = Products.findOne({name_zh: "万人车汇黑卡"});
   //     Products.update(card._id, {
   //       $set: {
@@ -231,7 +77,7 @@ Meteor.startup(() => {
   //       }
   //     });
   //     console.log("更改每个订单的productId");
-  //
+  
   //     Orders.find().forEach(order => {
   //       Orders.update(order._id, {
   //         $set: {
@@ -240,12 +86,12 @@ Meteor.startup(() => {
   //         }
   //       })
   //     })
-  //
+  
   //     console.log("为每个卡片持有者绑定其车牌");
-  //
+  
   //     ProductOwners.find().forEach(owner=>{
   //         console.log("owner get");
-  //
+  
   //         let order = Orders.findOne({createdBy: owner.userId, status: "paid"});
   //         let carNumber = null
   //         if(order){
@@ -259,12 +105,12 @@ Meteor.startup(() => {
   //           if(!carNumber){
   //             carNumber = order.realNote.carnumber;
   //           }
-  //
+  
   //         }else{
   //           carNumber = "川A12345";
   //           let user = Meteor.users.findOne({_id: owner.userId});
   //           let mobile = null;
-  //
+  
   //           if(user.profile){
   //             mobile = user.profile.mobile;
   //           }
@@ -284,7 +130,7 @@ Meteor.startup(() => {
   //           }
   //         )
   //         }
-  //
+  
   //         ProductOwners.update(owner._id, {
   //           $set: {
   //             additional: {
@@ -293,7 +139,7 @@ Meteor.startup(() => {
   //           }
   //         })
   //     });
-  //
+  
   //     console.log("end of script");
 
 
@@ -304,7 +150,17 @@ Meteor.startup(() => {
       //         "acl.copy": {
       //           roles: ['blackcard_holder'],
       //           users: []
-      //         }
+      //         }, 
+      //       }
+      //     })
+      //   }
+      //   if(!product.acl.buy){
+      //     Products.update(product._id, {
+      //       $set: {
+      //         "acl.buy": {
+      //           roles: ['login_user'],
+      //           users: []
+      //         }, 
       //       }
       //     })
       //   }

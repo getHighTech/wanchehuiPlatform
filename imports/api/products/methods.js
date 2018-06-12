@@ -7,35 +7,39 @@ import { validLoginToken } from '../actions/validLoginToken.js'
 
 
 Meteor.methods({
-  "products.insert"(product,shopId,shopName,newSpec){
+  "products.insert"(product,shopId,shopName,newSpec,newSpecGroups,userId){
     if(product.isTool){
 
     }
     Products.insert({
       name: product.name,
       name_zh:product.name_zh,
-      price: product.price,
+      price: 0,
       description: product.description,
       brief:product.brief,
       cover:product.cover,
       detailsImage:product.detailsImage,
-      createdByUserId: product.createdByUserId,
-      endPrice:product.endPrice,
+      createdByUserId: userId,
+      endPrice:0,
       curency:product.curency,
       detailsImage:product.detailsImage,
       isTool:product.isTool,
+      isAppointment:product.isAppointment,
       roleName:product.roleName,
       categoryld:product.categoryld,
       images: product.images,
-      isSale: true,
+      isSale: false,
       shopId:shopId,
+      productClass:product.productClass,
       shopName:shopName,
+      parameterlist:product.parameterlist,
+      specName:product.spec_name,
       specifications:newSpec,
-      createdByUserId:"dadad",
+      newSpecGroups:newSpecGroups,
       curency:'cny',
       recommend:product.recommend,
       agencyLevelCount: 2,//eg: 2
-      agencyLevelPrices: [3880, 1280],
+      agencyLevelPrices: product.agencyPrice,
       createdAt : new Date(),
       acl: {
         own: {
@@ -52,6 +56,9 @@ Meteor.methods({
         copy:{
           roles:["blackcard_holder"],
           users:[]
+        },
+        buy:{
+          roles: ['login_user']
         }
       },
     },function (err,alt) {
@@ -89,6 +96,28 @@ Meteor.methods({
       }
     });
     return Product
+  },
+  'product.isSaleFalse'(_id){
+    let Product = Products.findOne({_id:_id})
+    Products.update(_id, {
+      $set: {
+        isSale: false,
+      }
+    });
+    return Product
+  },
+  'product.price'(_id){
+    let price = Products.findOne({_id:_id}).price;
+    console.log(price);
+    return price
+  },
+  'product.updatePrice'(id,price,endPrice){
+    Products.update(id,{
+      $set:{
+        price:price,
+        endPrice:endPrice
+      }
+    })
   },
   'product.offline'(id){
     Products.update(id, {
@@ -161,7 +190,9 @@ Meteor.methods({
         isTool:product.isTool,
         recommend:product.recommend,
         status:product.status,
-        specifications:product.specifications
+        specifications:product.specifications,
+        agencyLevelPrices:product.agencyPrice,
+        productClass:product.productClass
       }
     })
   },

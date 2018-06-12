@@ -4,9 +4,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { Form, Icon, Input, Button } from 'antd';
 const FormItem = Form.Item;
 
-
-
-class EditOrderStateFormWrap extends Component {
+class ProductPriceFormWrap extends Component {
     constructor(props){
       super(props);
     }
@@ -25,25 +23,15 @@ render(){
     };
   return(
     <Form>
-        <FormItem
-        {...formItemLayout}
-        label='商品分类'
-        >
-          {getFieldDecorator(`productClass`, {
-            initialValue:this.props.OrderStatus.productClass,
-          })(
-            <Input placeholder="商品分类" disabled={true} style={{ width: '60%'}} />
-          )}
-        </FormItem>
 
         <FormItem
             {...formItemLayout}
-            label="当前状态"
+            label="初始价格"
             hasFeedback
             >
-            {getFieldDecorator('current', {
-                initialValue: this.props.OrderStatus.sFrom,
-                rules: [{ required: true, message: '商品名称不能为空'},{validator: this.handleConfirmName}]
+            {getFieldDecorator('price', {
+                initialValue: this.props.productprice/100,
+                rules: [{ required: true, message: '商品价格不能为空'}]
             })(
 
                 <Input className="shop-name-input"   prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
@@ -51,12 +39,12 @@ render(){
         </FormItem>
         <FormItem
             {...formItemLayout}
-            label="后置状态"
+            label="最终价格"
             hasFeedback
             >
-            {getFieldDecorator('next', {
-                initialValue: this.props.OrderStatus.sTo,
-                rules: [{ required: true, message: '商品名称不能为空'},{validator: this.handleConfirmName}]
+            {getFieldDecorator('endPrice', {
+                initialValue: this.props.productendprice/100,
+                rules: [{ required: true, message: '商品价格不能为空'}]
             })(
 
                 <Input className="shop-name-input"   prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
@@ -69,6 +57,6 @@ render(){
 
 }
 
-const EditOrderStateForm = Form.create()(EditOrderStateFormWrap);
+const ProductPriceForm = Form.create()(ProductPriceFormWrap);
 
-export default EditOrderStateForm;
+export default ProductPriceForm;

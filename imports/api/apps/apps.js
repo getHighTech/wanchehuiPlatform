@@ -11,14 +11,16 @@ import {Bankcards} from '../bankcards/bankcards.js';
 import {BalanceIncomes} from '../balances/balance_incomes.js';
 import {BalanceCharges} from '../balances/balance_charges.js';
 import {Agencies} from '/imports/api/agencies/agencies.js';
+import {Shops} from '/imports/api/shops/shops.js';
+import { ProductOwners } from '/imports/api/product_owners/product_owners.js';
+import { ShopOrders   } from '/imports/api/shop_orders/shop_orders.js';
 export const Apps = new Mongo.Collection('apps');
 export const AppCarts = new Mongo.Collection("app_carts");
 export const UserContacts = new Mongo.Collection("user_contacts");
-export const ShopOrders = new Mongo.Collection("shop_orders");
 
-//需要用的工具类函数， 
+//需要用的工具类函数，
 function validUserLogin(token){
-   
+
     let hashStampedToken = Accounts._hashStampedToken(token);
     let hashedToken = hashStampedToken.hashedToken;
     let validToken = Accounts._hashLoginToken(token.token);
@@ -45,7 +47,7 @@ function getUserInfo(loginToken, appName, collectionType, callBack){
     }
     if(validUserLogin(loginToken)){
         return callBack();
-        
+
     }else{
         return {
             type: "error",
@@ -108,7 +110,7 @@ export function syncUser(userId, stampedToken, appName){
 
 
 export function findOneAppByName(name){
-    
+
     if (name === "wanrenchehui") {
         if(Apps.find(name).count()===0){
             Apps.insert({
@@ -134,7 +136,7 @@ export function appRegNewUser(userParams, appName){
     if(Meteor.users.findOne({'profile.mobile': userParams.mobile})){
         return {
             type: "error",
-            reason: "USER REG MOBILE EXISTS" 
+            reason: "USER REG MOBILE EXISTS"
         }
     }
 
@@ -156,7 +158,7 @@ export function appRegNewUser(userParams, appName){
     }else{
         return {
             type: "error",
-            reason: "USER REG USERNAME EXISTS" 
+            reason: "USER REG USERNAME EXISTS"
         }
     }
 }
@@ -233,14 +235,14 @@ export function appLoginUser(type, loginParams, appName){
                 });
             roles.push("login_user");
             let userContact = UserContacts.findOne({userId: user._id, default: true})
-            
-            return {type: "users", 
-            msg: 
+
+            return {type: "users",
+            msg:
             {stampedToken, userId: user._id, roles, user, userContact}};
           }else{
             return {type: "error", reason: "LOGIN PASS WRONG"};
           }
-          
+
         default:
           return {type: "error", reason: "INVALID LOGIN"};
       }
@@ -310,12 +312,12 @@ export function getOneProduct(loginToken, appName, productId){
             type: "products",
             msg: product
         }
-   
-   
+
+
 }
 export function updateShopOrders(orderId, orderParams){
     console.log("orderId on updateShopOrders", orderId);
-    
+
     if(!orderId){
         return {
             type: "error",
@@ -333,7 +335,7 @@ export function updateShopOrders(orderId, orderParams){
 }
 export function updateOrder(loginToken, appName, orderParams, orderId){
     console.log("orderId on confirmed", orderId);
-    
+
     return getUserInfo(loginToken, appName, "orders", function(){
         let updateRlt = Orders.update(orderId, {
             $set: {
@@ -344,7 +346,7 @@ export function updateOrder(loginToken, appName, orderParams, orderId){
         updateShopOrders(orderId, orderParams);
         if(updateRlt){
             return {
-                type: "orders", 
+                type: "orders",
                 msg: orderId,
             }
         }else{
@@ -382,7 +384,7 @@ export function createNewOrder(loginToken, appName, orderParams){
         }
         let shopProducts = orderParams.shopProducts;
         //分店铺建立订单
-        
+
         let orderParamsDealed = {
             ...orderParams,
             type: "card",
@@ -414,9 +416,9 @@ export function createNewOrder(loginToken, appName, orderParams){
                     products.push(orderParams.products[productIndex]);
                     productIds.push(orderParams.productIds[productIndex]);
                     totalAmount += orderParams.products[productIndex].endPrice;
-                    productCounts[productIds[productIndex]] = 
+                    productCounts[productIds[productIndex]] =
                     orderParams.productCounts[productIds[productIndex]];
-                    
+
                 }
                 shopOrder = {
                     products,
@@ -424,6 +426,8 @@ export function createNewOrder(loginToken, appName, orderParams){
                     productCounts,
                     totalAmount,
                     shopProducts,
+                    userId: orderParams.userId,
+                    contact: orderParams.contact,
                     orderId,
                     shopId
                 };
@@ -482,7 +486,7 @@ export function loadOneOrderById(loginToken, appName, orderId){
                 type: "error",
                 reason: "ORDER NOT FOUND"
             }
-            
+
         }else{
             return {
                 type: "orders",
@@ -503,11 +507,11 @@ export function loadMoneyPage(loginToken, appName, userId){
            })
 
            balance = Balances.findOne({_id: balanceId});
-            
+
         }
-        let balance_incomes = BalanceIncomes.find({userId}, 
+        let balance_incomes = BalanceIncomes.find({userId},
             {skip: 0, limit: 5, sort: {createdAt: -1}});
-        let balance_charges = BalanceCharges.find({userId}, 
+        let balance_charges = BalanceCharges.find({userId},
             {skip: 0, limit: 5, sort: {createdAt: -1}});
         //数据结构兼容，之后可以删除
         let incomeNeedToUpdate = false;
@@ -522,22 +526,22 @@ export function loadMoneyPage(loginToken, appName, userId){
                 })
                 incomeNeedToUpdate = true;
             }
-            
+
             if(income.userId){
                 users.push(Meteor.users.findOne({_id: income.userId}));
             }
             if(income.agency){
-                
+
                 let agency = Agencies.findOne({_id: income.agency});
                 agencies.push(agency);
                 let buyer = null;
                 if(!agency){
-                    return 
+                    return
                 }
                 if(agency.userId){
                     buyer= Meteor.users.findOne({_id: agency.userId});
                     users.push(buyer);
-                    
+
                 }else{
                     buyer = Meteor.users.fondOne({name: 'wanchehui'})
                 }
@@ -554,10 +558,10 @@ export function loadMoneyPage(loginToken, appName, userId){
             }
         })
         if(incomeNeedToUpdate){
-            balance_incomes = BalanceIncomes.find({balanceId}, 
+            balance_incomes = BalanceIncomes.find({balanceId},
                 {skip: 0, limit: 5, sort: {createdAt: -1}});
         }
-        
+
         //======================收入更新完毕
         //支出数据结构兼容
         let chargeNeedToUpdate = false;
@@ -572,7 +576,7 @@ export function loadMoneyPage(loginToken, appName, userId){
             }
         });
         if(chargeNeedToUpdate){
-            balance_charges = BalanceCharges.find({userId}, 
+            balance_charges = BalanceCharges.find({userId},
                 {skip: 0, limit: 5, sort: {createdAt: -1}});
         }
         //======================支出更新完毕
@@ -587,27 +591,46 @@ export function loadMoneyPage(loginToken, appName, userId){
                 users,
             }
         }
-        
-        
+
+
     });
 }
 
 
-export function withdrawMoney(loginToken, appName, userId, amount, bankId){
+export function withdrawMoney(loginToken, appName, userId, amount, bank, bankId){
     return getUserInfo(loginToken, appName, "balances", function(){
-        let incomeId = BalanceIncomes.insert({
-          userId, 
+        let balance  = Balances.findOne({userId});
+        if(!balance){
+            return {
+                type: "error",
+                reason: "BALANCE NOT FOUND"
+            }
+        }
+        let chargeId = BalanceCharges.insert({
+          userId,
           text: "提现金额",
-          money: amount, 
-          bankId, 
-          status: "revoke", 
-          reasonType: "withdrawals", 
+          money: amount*100,
+          bankId,
+          bank,
+          balanceId: balance._id,
+          status: "revoke",
+          reasonType: "withdrawals",
           createdAt: new Date()
          });
-         if(incomeId){
+
+         newTotalAmount = balance.amount;
+         newTotalAmount = newTotalAmount - amount*100;
+         Balances.update(balance._id, {
+             $set: {
+                 amount: newTotalAmount
+             }
+         })
+         console.log(newTotalAmount);
+
+         if(chargeId){
             return {
                 type: "balances",
-                msg: incomeId
+                msg: chargeId
             }
          }else{
              return {
@@ -619,8 +642,10 @@ export function withdrawMoney(loginToken, appName, userId, amount, bankId){
 }
 
 export function getUserBankcards(loginToken, appName, userId){
+    console.log(userId);
+
     return getUserInfo(loginToken, appName, "bankcards", function(){
-        let bankcards = Bankcards.find({userId});
+        let bankcards = Bankcards.find({userId},{sort: {createdAt: -1}});
         return {
             type: "bankcards",
             msg: bankcards.fetch()
@@ -629,15 +654,15 @@ export function getUserBankcards(loginToken, appName, userId){
 }
 
 export function createBankcard(
-    loginToken, 
+    loginToken,
     appName,
-    userId, 
+    userId,
     realName,
     accountNumber,
     bankAddress){
     return getUserInfo(loginToken, appName, "bankcards", function(){
         let bankId = Bankcards.insert({
-            userId, 
+            userId,
             realName,
             accountNumber,
             bankAddress,
@@ -654,7 +679,7 @@ export function createBankcard(
                 reason: "CREATE BANKCARD ERROR"
             }
         }
-        
+
     });
 }
 export function removeBankcard(
@@ -699,13 +724,31 @@ export function syncRemoteCartToLocal(loginToken, appName, userId, cartId){
 }
 
 
+export function getWithdrawals(loginToken, appName, userId,  page, pagesize){
+    return getUserInfo(loginToken, appName, "withdrawals", function(){
+        let withdrawals = BalanceCharges.find({userId}, {
+            skip: (page-1)* pagesize,
+            limit: pagesize,
+            sort: {
+                createdAt: -1
+            }
+        });
+        return {
+            type:  "withdrawals",
+            msg:  withdrawals.fetch(),
+        }
+    });
+    
+}
+
+
 
 export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
     console.log(cartId);
-    
+
     return getUserInfo(loginToken, appName, "app_carts", function(){
         let createNew = function(){
-            
+
             let newCartId = AppCarts.insert({
                 ...cartParams,
                 createdAt: new Date()
@@ -725,11 +768,11 @@ export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
         let updateRlt = null;
         if(cartId){
             let cart = AppCarts.findOne({_id: cartId, orderStatus: "notFinish"});
-            
+
             if(!cart){
                 return createNew();
             }
-            
+
             updateRlt = AppCarts.update(cartId, {
                 $set: {
                     ...cartParams,
@@ -748,8 +791,8 @@ export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
         }else{
           return createNew();
         }
-        
-       
+
+
     })
 }
 
@@ -772,7 +815,7 @@ export function getUserDetailsById(loginToken, appName, userId){
 
 export function createUserContact(loginToken, appName, userId, contactParams){
     return getUserInfo(loginToken, appName, "user_contacts", function(){
-        
+
         if(contactParams.default === true){
             //若是新的地址要社为默认，则用户其他地址就不是默认的
             let contacts = UserContacts.find({userId});
@@ -900,7 +943,7 @@ export function getNewestUserOrders(loginToken, appName, status, userId, page, p
 export function getIncomeWithinTime(loginToken, appName, rangeLength, userId, unit){
     return getUserInfo(loginToken, appName, "balances", function(){
         console.log('function in', unit);
-        
+
         let yestoday = moment().subtract(rangeLength, unit);
         yestoday = yestoday.toISOString();
         let yestodayInData = new Date(yestoday);
@@ -920,11 +963,12 @@ export function getIncomeWithinTime(loginToken, appName, rangeLength, userId, un
     })
 }
 
+
 export function getIncomes(loginToken, appName, userId, page, pagesize){
     return getUserInfo(loginToken, appName, "balances", function(){
-        
+
         let incomes = BalanceIncomes.find({userId}, {
-            skip: (page-1)*pagesize, limit: pagesize, 
+            skip: (page-1)*pagesize, limit: pagesize,
             sort: {createdAt: -1}});
 
         let users = [];
@@ -954,10 +998,10 @@ export function getIncomes(loginToken, appName, userId, page, pagesize){
                     users,
                 }
             }
-            
+
         }
-        
-        
+
+
     })
 }
 
@@ -1030,3 +1074,167 @@ export function receviedOrder(loginToken, appName, orderId) {
 
 
 
+export function getProductByShopId(appName, shopId, page, pagesize){
+
+    if(!findOneAppByName(appName)){
+        return {
+            type: "error",
+            reason: "invalid app"
+        }
+    }
+    let targetShopId = null;
+    if(shopId === "000"){
+        targetShopId = Shops.findOne({name: "万人车汇自营店"})._id;
+    }
+    console.log("targetShopId", targetShopId);
+
+    let products = Products.find({shopId: targetShopId}, {
+        skip: (page-1)*pagesize,
+        limit: pagesize,
+        sort: {
+            createdAt: -1
+        }
+    });
+
+    return {
+        type: "products",
+        msg: products.fetch()
+    }
+}
+
+export function agencyOneProduct(loginToken, appName, product, userId){
+    return getUserInfo(loginToken, appName, "shops", function(){
+        if(!product.shopId){
+            return {
+                type: "error",
+                reason: "SERVICE ERROR"
+            }
+        }
+
+        let shop = Shops.findOne({_id: product.shopId});
+        if(!shop){
+            return {
+                type: "error",
+                reason: "SERVICE ERROR"
+            }
+        }
+
+        let user = Meteor.users.findOne(userId);
+
+        if(!user){
+            return {
+                type: "error",
+                reason: "USER NOT FOUND"
+            }
+        }
+
+
+
+        let newShop = Shops.findOne({"acl.own.users": userId});
+        let newShopId = null;
+        if(!newShop){
+            newShopId = Shops.insert({
+                name: user.username+"的店铺",
+                phone: user.profile.mobile,
+                pictures: [],
+                description: '欢迎光临'+user.username+"的店铺",
+                tags: ["黑卡", "代理", "挣钱"],
+                cover: user.headurl,
+                address:'',
+                lntAndLat:[],
+                status: true,
+                createdAt: new Date(),
+                acl: {
+                  own: {
+                    roles: ["shop_owner"],
+                    users: userId,
+                  },
+                  read: {
+                    roles: ['nobody', 'login_user']
+                  },
+                  write: {
+                    roles: ["shop_owner","shop_manager"],
+                    users: [],
+                  }
+                }
+              });
+        }else{
+            newShopId = newShop._id;
+        }
+        newShop = Shops.findOne(newShopId);
+
+        let newProductParams = {};
+        newProductParams = product;
+        delete newProductParams._id;
+        newProductParams.shopId = newShopId;
+        newProductParams.createdAt = new Date();
+
+        console.log(newProductParams);
+
+        let newProductId = Products.insert({
+            ...newProductParams
+        });
+
+
+        //标记被代理的商品
+        let agencies = product.agencies;
+        if(!agencies){
+            agencies = [];
+        }
+        let agencyShops = product.agencyShops;
+        if(!agencyShops){
+            agencyShops = [];
+        }
+        if(!agencies.includes(userId)){
+            agencies.push(userId);
+        }
+        if(!agencyShops.includes(newShop._id)){
+            agencyShops.push(newShop._id);
+        }
+
+        let updateRlt = Products.update(product._id, {
+            $set: {
+                agencies,
+                agencyShops,
+            }
+        })
+        // console.log("new_product", Products.findOne(newProductId));
+
+        // console.log("updateRlt", updateRlt);
+        // console.log("newSHop", newShop);
+        // console.log("usreId", userId);
+
+        if(!newProductId){
+            return {
+                type: "error",
+                reason: "SERVICE ERROR"
+            }
+        }
+
+        return {
+            type: "shops",
+            msg: {
+                newProductId,
+                newShopId
+            }
+        }
+
+
+
+
+
+    });
+}
+
+
+export function getProductOwners(loginToken, appName, userId){
+    return getUserInfo(loginToken, appName, "product_owners", function(){
+        let cursor = ProductOwners.find({userId});
+        return {
+            type: "product_owners",
+            msg: cursor.fetch(),
+        }
+
+    });
+
+}

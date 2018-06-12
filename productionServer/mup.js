@@ -33,11 +33,11 @@ module.exports = {
     enableUploadProgressBar: true,
     deployCheckWaitTime: 600
   },
-  proxy: {
-    domains: 'p.10000cars.cn',
-    ssl: {
-      letsEncryptEmail: 'xsqfeather@126.com',
-    }
-  },
+  // proxy: {
+  //   domains: 'p.10000cars.cn',
+  //   ssl: {
+  //     letsEncryptEmail: 'xsqfeather@126.com',
+  //   }
+  // },
 
 };

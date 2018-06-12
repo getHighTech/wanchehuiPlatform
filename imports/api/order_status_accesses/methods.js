@@ -47,7 +47,8 @@ Meteor.methods({
     OrderStatusAccesses.insert({
       sFrom:newObj.current,
       sTo:newObj.next,
-      accessable:true
+      accessable:true,
+      productClass:newObj.productClass
     })
   },
   'find.SameStatus'(newobj){

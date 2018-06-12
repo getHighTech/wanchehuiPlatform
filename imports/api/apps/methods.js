@@ -16,18 +16,12 @@ import {
     removeBankcard,
     syncRemoteCartToLocal, 
     syncLocalCartToRemote, 
-    getUserDetailsById, 
+    getUserDetailsById,
     updateOrder, 
-    createUserContact, 
-    getUserContacts, 
-    deleteUserContact, 
-    setUserContactDefatult, 
-    getNewestOneUserOrderByStatus, 
-    getIncomeWithinTime,
-    getOrders,
-    cancelOrder,
-    receviedOrder,
-     } from './apps';
+    createUserContact, getUserContacts, 
+    deleteUserContact, setUserContactDefatult, 
+    getNewestOneUserOrderByStatus, getIncomeWithinTime, 
+    getProductByShopId, agencyOneProduct, getProductOwners, getWithdrawals } from './apps';
 
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
@@ -39,7 +33,7 @@ Meteor.methods({
                 reason: "invalid app"
             }
         }
-        let products = Products.find({name_zh: {$in: ["万人车汇黑卡", "VIRIDI"]}}).fetch();
+        let products = Products.find({isSale: true}).fetch();
         return {
             type: "products", 
             msg: products,
@@ -172,15 +166,17 @@ Meteor.methods({
             fromMethod: "app.load.money.page"
         });
     },
-    "app.withdraw.money"(loginToken, appName, userId, amount, bankId){
+    "app.withdraw.money"(loginToken, appName, userId, amount, bank, bankId){
         let stampedTokenObj = JSON.parse(loginToken);
-        let rltObj = withdrawMoney(stampedTokenObj, appName, userId, amount, bankId);
-        return Object.assign({}, state, {
+        let rltObj = withdrawMoney(stampedTokenObj, appName, userId, amount, bank, bankId);
+        return Object.assign({}, rltObj, {
             fromMethod: "app.withdraw.money"
         })
     },
     //获取银行卡列表
     "app.get.user.bankcards"(loginToken, appName, userId){
+        console.log(userId);
+        
         let stampedTokenObj = JSON.parse(loginToken);
         let rltObj = getUserBankcards(stampedTokenObj, appName, userId);
         return Object.assign({}, rltObj, {
@@ -323,4 +319,35 @@ Meteor.methods({
                 fromMethod: "app.recevied.one.order"
             })
         },
+        //获取店铺商品
+        'app.get.products.shop.limit'(loginToken, appName, shopId, page, pagesize){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getProductByShopId(appName, shopId, page, pagesize);
+            return Object.assign({}, rltObj, {
+                fromMethod: "app.get.products.shop.limit"
+            })
+
+        },
+        'app.agency.one.product'(loginToken, appName, product, userId){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = agencyOneProduct(stampedTokenObj, appName, product, userId);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.agency.one.product'
+            })
+        }, 
+
+        'app.get.product.owners'(loginToken, appName, userId){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getProductOwners(stampedTokenObj, appName, userId);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.get.product.owners'
+            })
+        },
+        "app.get.user.withdrawals.limit"(loginToken, appName, userId,  page,  pagesize){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getWithdrawals(stampedTokenObj, appName, userId, page, pagesize);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.get.user.withdrawals.limit',
+            })
+        }
 });
