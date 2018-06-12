@@ -77,6 +77,7 @@ Meteor.methods({
     "app.get.one.product.id"(loginToken, appName, productId){
         //载入商品信息
         //创建新的订单
+        console.log("loginToken", loginToken)
         let stampedTokenObj = JSON.parse(loginToken);
         return Object.assign({}, getOneProduct(stampedTokenObj, appName, productId), {
             fromMethod:  "app.get.one.product.id"

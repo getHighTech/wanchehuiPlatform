@@ -51,7 +51,7 @@ class OrderDetails extends React.Component{
   componentDidMount(){
     let self = this;
     let id = self.props.params._id;
-    let ref ='http://localhost:3000/orders/order_details/'+id;
+    let ref ='/orders/order_details/'+id;
     console.log(Meteor.userId());
     if (Meteor.userId()==null) {
       setStore('ref',ref)
