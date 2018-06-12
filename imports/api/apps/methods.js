@@ -16,12 +16,8 @@ import {
     removeBankcard,
     syncRemoteCartToLocal, 
     syncLocalCartToRemote, 
-<<<<<<< HEAD
-    getUserDetailsById, updateOrder, 
-=======
     getUserDetailsById,
     updateOrder, 
->>>>>>> f9095205b19424ae3c8f158d08da6e08b9d8c269
     createUserContact, getUserContacts, 
     deleteUserContact, setUserContactDefatult, 
     getNewestOneUserOrderByStatus, getIncomeWithinTime, 
