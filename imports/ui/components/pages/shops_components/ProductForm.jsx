@@ -881,7 +881,7 @@ class ProductFormWrap extends Component {
 
                   // document.getElementById("showUploads").src = e.target.result;
                   let images = e.target.result;
-                  result.innerHTML=result.innerHTML+'<img  src="' + images +'"  style="  width:30%;margin:5px" alt="" />';
+                  result.innerHTML=result.innerHTML+'<img  src="' + images +'"  style="  width:30%;margin:5px"  key={i}  alt="" />';
 
                   images_file.push(images)
                   console.log(images_file);
@@ -1076,7 +1076,7 @@ class ProductFormWrap extends Component {
 
                 if (typeof(imagess)!='undefined') {
                   for (var i = 0; i < imagess.length; i++) {
-                    aaa.push(<img src={imagess[i]} key={i} style={{width:'30%',margin:'5px'}}/>)
+                    aaa.push(<img src={imagess[i]} key={i*100} style={{width:'30%',margin:'5px'}}/>)
                   }
                 }
 
@@ -1312,7 +1312,7 @@ class ProductFormWrap extends Component {
       hasFeedback
       >
         <input type="file" multiple onChange={(e)=>this.handleTestFileOnChange(e)} />
-        <img src={this.props.product.cover} alt="" className=""   id="showUpload"  style={{width:'10%'}}/>
+        <img src={this.props.product.cover} alt="" className="" key={'cover'}  id="showUpload"  style={{width:'10%'}}/>
 
       </FormItem>
 
@@ -1354,7 +1354,7 @@ class ProductFormWrap extends Component {
       hasFeedback
       >
         <input type="file" multiple onChange={(e)=>this.handleTestFileDetailsOnChange(e)} />
-        <img src={this.props.product.detailsImage} alt="" className=""   id="showUploadDetails"  style={{width:'30%'}}/>
+        <img src={this.props.product.detailsImage} alt="" className=""  key={'detailsImage'} id="showUploadDetails"  style={{width:'30%'}}/>
 
       </FormItem>
 
