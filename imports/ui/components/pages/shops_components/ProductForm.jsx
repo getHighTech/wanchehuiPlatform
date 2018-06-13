@@ -881,7 +881,7 @@ class ProductFormWrap extends Component {
 
                   // document.getElementById("showUploads").src = e.target.result;
                   let images = e.target.result;
-                  result.innerHTML=result.innerHTML+'<img  src="' + images +'"  style="  width:30%;margin:5px" alt="" />';
+                  result.innerHTML=result.innerHTML+'<img  src="' + images +'"  style="  width:30%;margin:5px"  key={i}  alt="" />';
 
                   images_file.push(images)
                   console.log(images_file);
@@ -1022,11 +1022,11 @@ class ProductFormWrap extends Component {
                   {getFieldDecorator(`agencyPrice[${k}]`, {
                     initialValue:this.getAgency(k),
                     validateTrigger: ['onChange', 'onBlur'],
-                    rules: [{
-                      required: true,
-                      whitespace: true,
-                      message: "请输入奖励.",
-                    }],
+                    // rules: [{
+                    //   required: true,
+                    //   whitespace: true,
+                    //   message: "请输入奖励.",
+                    // }],
                   })(
                     <Input placeholder="奖励" style={{ width: '30%'}} />
                   )}
@@ -1074,9 +1074,9 @@ class ProductFormWrap extends Component {
                 const aaa =[];
                 console.log(aaa);
 
-                if (typeof(aaa)!='undefined') {
+                if (typeof(imagess)!='undefined') {
                   for (var i = 0; i < imagess.length; i++) {
-                    aaa.push(<img src={imagess[i]} key={i} style={{width:'30%',margin:'5px'}}/>)
+                    aaa.push(<img src={imagess[i]} key={i*100} style={{width:'30%',margin:'5px'}}/>)
                   }
                 }
 
@@ -1264,7 +1264,8 @@ class ProductFormWrap extends Component {
       >
       {getFieldDecorator('name', {
           initialValue: this.props.product.name,
-          rules: [{validator: this.handleConfirmName}]
+          // rules: [{validator: this.handleConfirmName}]
+          rules: [{ required: true, message: '商品名称不能为空' }],
       })(
 
           <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
@@ -1286,25 +1287,74 @@ class ProductFormWrap extends Component {
       )}
       </FormItem>
 
+
+
+      <FormItem
+      {...formItemLayout}
+      label="商品封面地址"
+      hasFeedback
+      >
+      {getFieldDecorator('cover', {
+          initialValue: this.props.product.cover,
+      })(
+
+          <Input className="shop-name-input"    placeholder="商品封面地址" />
+      )}
+      </FormItem>
+
+
+
+
+
       <FormItem
       {...formItemLayout}
       label="商品封面(测试base64)"
       hasFeedback
       >
         <input type="file" multiple onChange={(e)=>this.handleTestFileOnChange(e)} />
-        <img src={this.props.product.cover} alt="" className=""   id="showUpload"  style={{width:'10%'}}/>
+        <img src={this.props.product.cover} alt="" className="" key={'cover'}  id="showUpload"  style={{width:'10%'}}/>
 
       </FormItem>
 
+      <FormItem
+      {...formItemLayout}
+      label='商品多图地址'
+        required={false}
+      >
+        {getFieldDecorator(`images`, {
+          validateTrigger: ['onChange', 'onBlur'],
+          initialValue: this.props.product.images,
+          // rules: [{ validator: this.proClassCheck }],
 
+        })(
+          <Select
+          mode="tags"
+          placeholder="商品多图地址"
+          dropdownStyle={{zIndex:'99999' }}
+          style={{ width: '100%' }}>
+         </Select>
+        )}
+      </FormItem>
       {productImages}
+      <FormItem
+      {...formItemLayout}
+      label="商品详情地址"
+      hasFeedback
+      >
+      {getFieldDecorator('detailsImage', {
+          initialValue: this.props.product.detailsImage,
+      })(
+
+          <Input className="shop-name-input"    placeholder="商品详情地址" />
+      )}
+      </FormItem>
       <FormItem
       {...formItemLayout}
       label="商品详情图片(测试base64)"
       hasFeedback
       >
         <input type="file" multiple onChange={(e)=>this.handleTestFileDetailsOnChange(e)} />
-        <img src={this.props.product.detailsImage} alt="" className=""   id="showUploadDetails"  style={{width:'30%'}}/>
+        <img src={this.props.product.detailsImage} alt="" className=""  key={'detailsImage'} id="showUploadDetails"  style={{width:'30%'}}/>
 
       </FormItem>
 
