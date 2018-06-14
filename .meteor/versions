@@ -116,6 +116,7 @@ session@1.1.7
 sha@1.0.9
 shim-common@0.1.0
 simple:json-routes@2.1.0
+socialize:cloudinary@1.0.0
 socket-stream-client@0.1.0
 spacebars@1.0.15
 spacebars-compiler@1.1.3
