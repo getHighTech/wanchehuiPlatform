@@ -334,7 +334,7 @@ class ProductModal extends React.Component{
                 )
                 self.props.changeLoading(false)
                 console.log(self.state.xx);
-                window.location.reload();
+                // window.location.reload();
               }else{
                 console.log(error);
               }
@@ -371,7 +371,7 @@ class ProductModal extends React.Component{
                 })
                 self.props.changeLoading(false)
                 console.log(self.state.xx);
-                window.location.reload();
+                // window.location.reload();
               }else{
                 console.log(error);
               }
@@ -404,7 +404,7 @@ class ProductModal extends React.Component{
             })
             self.props.changeLoading(false)
             console.log(self.state.xx);
-            window.location.reload();
+            // window.location.reload();
           }else{
             console.log(error);
           }
@@ -429,7 +429,7 @@ class ProductModal extends React.Component{
             detailsState:''
           })
           self.props.changeLoading(false)
-          window.location.reload();
+          // window.location.reload();
         }else{
           console.log(error);
         }
@@ -454,7 +454,7 @@ class ProductModal extends React.Component{
       coverState:'',
       detailsState:''
     })
-    window.location.reload();
+    // window.location.reload();
 
 
   }
@@ -497,6 +497,8 @@ class ProductModal extends React.Component{
           onCancel={this.handleCancel.bind(this)}
           width={'80%'}
           style={{ top: 60 }}
+          okText="确认"
+          cancelText="取消"
         >
           <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} detailsState={this.state.detailsState} changedetailsState={this.changedetailsState.bind(this)} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr}  key_agencyarr={this.props.key_agencyarr} key_parameterarr={this.props.key_parameterarr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
 
