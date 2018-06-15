@@ -128,7 +128,7 @@ class UploadToCloudinary extends Component {
         //   }
         // }
     }
-
+    childMethod = () => alert('xiaohesong')
 
     componentWillReceiveProps(nextProps){
       console.log("走了WILL");

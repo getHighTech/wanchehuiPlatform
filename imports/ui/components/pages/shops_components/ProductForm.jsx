@@ -445,7 +445,9 @@ class ProductFormWrap extends Component {
           }
         }
     }
-
+   getDS=(e)=>{
+    this.refs.getSwordButton.childMethod();
+  }
 
 
   onEditorStateChange(editorState) {
@@ -1350,7 +1352,7 @@ getRemoteImages = (remoteUrls) => {
       label="商品多图(测试base64)"
       hasFeedback
       >
-          <UploadToCloudinary getRemoteImages={this.getRemoteImages} images={this.props.product.images}/>
+          <UploadToCloudinary getRemoteImages={this.getRemoteImages}  ref="getSwordButton"  images={this.props.product.images}/>
       </FormItem>
       {productImages}
       <FormItem
@@ -1513,7 +1515,7 @@ getRemoteImages = (remoteUrls) => {
         {getFieldDecorator('parameterlist', { initialValue:this.getInitialvalue()})}
         {getFieldDecorator('images')}
         {getFieldDecorator('detailsImage')}
-
+        <Button onClick={this.getDS}>aaa</Button>
 
       </Form>
       )
