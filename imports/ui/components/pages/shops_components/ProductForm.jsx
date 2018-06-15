@@ -36,6 +36,7 @@ const FormItem = Form.Item;
 const format = 'HH:mm';
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
+import UploadToCloudinary from '../../public/UploadToCloudinary';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
@@ -698,6 +699,7 @@ class ProductFormWrap extends Component {
     }
     }
 
+
     proClassCheck=(rule,value,callback) => {
       let self =this;
       const { getFieldValue } = this.props.form;
@@ -896,6 +898,14 @@ class ProductFormWrap extends Component {
 
           fileReader.readAsDataURL(file);
   }
+
+}
+
+getRemoteImages = (remoteUrls) => {
+  console.log(remoteUrls);
+  let self = this ;
+  const setFieldsValue = self.props.form.setFieldsValue;
+  setFieldsValue({images:remoteUrls})
 
 }
 
@@ -1334,6 +1344,13 @@ class ProductFormWrap extends Component {
           style={{ width: '100%' }}>
          </Select>
         )}
+      </FormItem>
+      <FormItem
+      {...formItemLayout}
+      label="商品多图(测试base64)"
+      hasFeedback
+      >
+          <UploadToCloudinary getRemoteImages={this.getRemoteImages} images={this.props.product.images}/>
       </FormItem>
       {productImages}
       <FormItem

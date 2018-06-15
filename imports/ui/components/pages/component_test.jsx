@@ -18,13 +18,15 @@ import UploadToCloudinary from '../public/UploadToCloudinary';
 
 class ComponentTest extends Component {
 
-
+getRemoteImages = (remoteUrls) => {
+  console.log(remoteUrls);
+}
 
   render() {
-    
+
      return (
        <Form>
-          <UploadToCloudinary />
+          <UploadToCloudinary getRemoteImages={this.getRemoteImages} />
        </Form>
      );
    }
