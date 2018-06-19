@@ -31,7 +31,7 @@ Meteor.startup(() => {
   // UserRoles.remove({});
   // ProductOwners.remove({});
   // Shops.remove({});
-  // prebuildAdmin();//建立超级管理员
+  prebuildAdmin();//建立超级管理员
   // buildSelfShop();
   // buildBlackCard();//建立黑卡
   
