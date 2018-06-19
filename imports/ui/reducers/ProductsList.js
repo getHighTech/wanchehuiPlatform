@@ -1,4 +1,4 @@
-import { SHOW_PRODUCT, EDIT_PRODUCT, ADD_PRODUCT,CHANGE_PRICE } from "../actions/products.js";
+import { SHOW_PRODUCT, EDIT_PRODUCT, ADD_PRODUCT,CHANGE_PRICE,CHANGE_IMAGE_STATE } from "../actions/products.js";
 
 
 const initialState = {
@@ -12,7 +12,8 @@ const initialState = {
     id:'',
     productprice:[],
     productendprice:[],
-    localproductid:''
+    localproductid:'',
+    images_state:false
   };
 
 
@@ -34,7 +35,8 @@ const initialState = {
           key_arr:action.arr,
           key_agencyarr:action.agency_arr,
           key_parameterarr:action.parameter_arr,
-          productId:action.id
+          productId:action.id,
+          images_state:false
         })
         case ADD_PRODUCT:
         return Object.assign({}, state,{
@@ -44,13 +46,18 @@ const initialState = {
           key_length:0,
           key_arr:[],
           key_agencyarr:[],
-          key_parameterarr:[]
+          key_parameterarr:[],
+          images_state:false
         })
         case CHANGE_PRICE:
         return Object.assign({},state,{
           productprice:action.price,
           productendprice:action.endPrice,
           localproductid:action.id
+        })
+        case CHANGE_IMAGE_STATE:
+        return Object.assign({},state,{
+          images_state:true
         })
 
 

@@ -36,6 +36,9 @@ const FormItem = Form.Item;
 const format = 'HH:mm';
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
+import UploadToCloudinary from '../../public/UploadToCloudinary';
+import UploadCoverToCloudinary from '../../public/UploadCoverToCloudinary';
+import UploadDetailsToCloudinary from '../../public/UploadDetailsToCloudinary';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
@@ -444,7 +447,9 @@ class ProductFormWrap extends Component {
           }
         }
     }
-
+   getDS=()=>{
+    this.refs.getSwordButton.childMethod();
+  }
 
 
   onEditorStateChange(editorState) {
@@ -698,6 +703,7 @@ class ProductFormWrap extends Component {
     }
     }
 
+
     proClassCheck=(rule,value,callback) => {
       let self =this;
       const { getFieldValue } = this.props.form;
@@ -896,6 +902,28 @@ class ProductFormWrap extends Component {
 
           fileReader.readAsDataURL(file);
   }
+
+}
+
+getRemoteImages = (remoteUrls) => {
+  console.log(remoteUrls);
+  let self = this ;
+  const setFieldsValue = self.props.form.setFieldsValue;
+  setFieldsValue({images:remoteUrls})
+
+}
+getRemoteCover = (cover) => {
+  console.log(cover);
+  let self = this ;
+  const setFieldsValue = self.props.form.setFieldsValue;
+  setFieldsValue({cover:cover})
+
+}
+getRemoteDetails=(detailsImage) => {
+  console.log(detailsImage);
+  let self = this ;
+  const setFieldsValue = self.props.form.setFieldsValue;
+  setFieldsValue({detailsImage:detailsImage})
 
 }
 
@@ -1301,20 +1329,16 @@ class ProductFormWrap extends Component {
           <Input className="shop-name-input"    placeholder="商品封面地址" />
       )}
       </FormItem>
-
-
-
-
-
       <FormItem
       {...formItemLayout}
-      label="商品封面(测试base64)"
+      label="商品封面预览"
       hasFeedback
       >
-        <input type="file" multiple onChange={(e)=>this.handleTestFileOnChange(e)} />
-        <img src={this.props.product.cover} alt="" className="" key={'cover'}  id="showUpload"  style={{width:'10%'}}/>
-
+          <UploadCoverToCloudinary getRemoteCover={this.getRemoteCover}  ref="getSwordButton"  cover={this.props.product.cover} images_state={this.props.images_state}/>
       </FormItem>
+
+
+
 
       <FormItem
       {...formItemLayout}
@@ -1335,7 +1359,13 @@ class ProductFormWrap extends Component {
          </Select>
         )}
       </FormItem>
-      {productImages}
+      <FormItem
+      {...formItemLayout}
+      label="商品多图预览"
+      hasFeedback
+      >
+          <UploadToCloudinary getRemoteImages={this.getRemoteImages}  ref="getSwordButton"  images={this.props.product.images} images_state={this.props.images_state}/>
+      </FormItem>
       <FormItem
       {...formItemLayout}
       label="商品详情地址"
@@ -1350,13 +1380,14 @@ class ProductFormWrap extends Component {
       </FormItem>
       <FormItem
       {...formItemLayout}
-      label="商品详情图片(测试base64)"
+      label="商品详情图片预览"
       hasFeedback
       >
-        <input type="file" multiple onChange={(e)=>this.handleTestFileDetailsOnChange(e)} />
-        <img src={this.props.product.detailsImage} alt="" className=""  key={'detailsImage'} id="showUploadDetails"  style={{width:'30%'}}/>
-
+          <UploadDetailsToCloudinary getRemoteDetails={this.getRemoteDetails}  ref="getSwordButton"  detailsImage={this.props.product.detailsImage} images_state={this.props.images_state}/>
       </FormItem>
+
+
+
 
 
 
@@ -1496,7 +1527,6 @@ class ProductFormWrap extends Component {
         {getFieldDecorator('parameterlist', { initialValue:this.getInitialvalue()})}
         {getFieldDecorator('images')}
         {getFieldDecorator('detailsImage')}
-
 
       </Form>
       )
