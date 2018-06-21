@@ -87,6 +87,15 @@ class OrdersForShop extends React.Component{
     this.setState({
       visible: false,
     });
+    console.log(self.props.id);
+    console.log(self.state.localStatus);
+    Meteor.call('shopOrder.findOne',self.props.id,function(error,result){
+      if (!error) {
+        let id = result.orderId;
+        console.log(id);
+        Meteor.call('Orders.updateStatus',id,self.state.localStatus)
+      }
+    })
     Meteor.call('shopOrders.updateStatus',self.props.id,self.state.localStatus,function(err,alt){
       if(!err){
         self.getProName();
@@ -253,7 +262,8 @@ class OrdersForShop extends React.Component{
       <Spin spinning={this.state.loading}>
         <Table columns={columns} dataSource={this.state.orderData} scroll={{ x: 1300 }} />
       </Spin>
-        <Modal  title="修改订单状态"  visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} >
+        <Modal  title="修改订单状态"  visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} okText="确认"
+        cancelText="取消">
           <RadioGroup options={this.props.getStatus}  onChange={this.onChangeOrderStatus}  value={this.state.localStatus}/>
         </Modal>
       </div>

@@ -54,13 +54,13 @@ class UploadDetailsToCloudinary extends Component {
         xhr.open('POST', url, true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-        // Reset the upload progress bar
-         document.getElementById('progress').style.width = 0;
+        // Reset the upload progressDetails bar
+         document.getElementById('progressDetails').style.width = 0;
 
-        // Update progress (can be used to show progress indicator)
-        xhr.upload.addEventListener("progress", function(e) {
-          var progress = Math.round((e.loaded * 100.0) / e.total);
-          document.getElementById('progress').style.width = progress + "%";
+        // Update progressDetails (can be used to show progressDetails indicator)
+        xhr.upload.addEventListener("progressDetails", function(e) {
+          var progressDetails = Math.round((e.loaded * 100.0) / e.total);
+          document.getElementById('progressDetails').style.width = progressDetails + "%";
 
           console.log(`fileuploadprogress data.loaded: ${e.loaded},
         data.total: ${e.total}`);
@@ -154,8 +154,8 @@ class UploadDetailsToCloudinary extends Component {
                         </div>
                         </div>
                     </form>
-                    <div className="progress-bar" id="progress-bar">
-                        <div className="progress" id="progress"></div>
+                    <div className="progressDetails-bar" id="progressDetails-bar">
+                        <div className="progressDetails" id="progressDetails"></div>
                     </div>
                     <div id="gallerydetails" >
                     <img src={this.state.detailsImage} />

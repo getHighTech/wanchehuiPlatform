@@ -59,12 +59,10 @@ class UploadToCloudinary extends Component {
 
         // Reset the upload progress bar
          document.getElementById('progress').style.width = 0;
-
         // Update progress (can be used to show progress indicator)
         xhr.upload.addEventListener("progress", function(e) {
           var progress = Math.round((e.loaded * 100.0) / e.total);
           document.getElementById('progress').style.width = progress + "%";
-
           console.log(`fileuploadprogress data.loaded: ${e.loaded},
         data.total: ${e.total}`);
         });
@@ -110,7 +108,11 @@ class UploadToCloudinary extends Component {
 
     handleFileChange=(e)=>{
         let files =  this.refs.fileElem.files;
-        this.uploadFile(files[0]);
+        console.log(files);
+        for (var i = 0; i < files.length; i++) {
+            this.uploadFile(files[i]); // call the function to upload the file
+          }
+
     }
 
     componentDidMount(){
