@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
-import {Link} from 'react-router';
-import { connect } from 'react-redux';
-import { createContainer } from 'meteor/react-meteor-data';
 import Modal from 'antd/lib/modal';
 import { Divider } from 'antd';
-import Tooltip from 'antd/lib/tooltip';
-import TimePicker from 'antd/lib/time-picker';
 import Checkbox from 'antd/lib/checkbox';
 import Button from 'antd/lib/button';
 import Input from 'antd/lib/input';
@@ -71,9 +66,6 @@ function handleChangeSpec(value) {
 }
 
 
-let dudu=0;
-let agencyLength = 0;
-let parameterLength =0
 class ProductFormWrap extends Component {
 
 

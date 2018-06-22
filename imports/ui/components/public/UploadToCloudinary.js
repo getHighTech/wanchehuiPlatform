@@ -76,6 +76,8 @@ class UploadToCloudinary extends Component {
             // https://res.cloudinary.com/cloudName/image/upload/v1483481128/public_id.jpg
             var url = response.secure_url;
             // Create a thumbnail of the uploaded image, with 150px width
+            console.log(url);
+            
             var tokens = url.split('/');
             tokens.splice(-2, 0, 'w_150,c_scale');
             var img = new Image(); // HTML5 Constructor
@@ -89,7 +91,7 @@ class UploadToCloudinary extends Component {
             })
             img.src = tokens.join('/');
             if(typeof this.props.getRemoteImages === 'function'){
-              this.props.getRemoteImages(this.state.remoteUrls);
+              this.props.getRemoteImages(url);
 
             }
             // img.alt = response.public_id;
