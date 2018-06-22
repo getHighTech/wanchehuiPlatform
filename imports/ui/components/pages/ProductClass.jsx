@@ -97,6 +97,8 @@ class ProductClass extends Component {
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
+          okText="确认"
+          cancelText="取消"
         >
         <Select
           mode="tags"

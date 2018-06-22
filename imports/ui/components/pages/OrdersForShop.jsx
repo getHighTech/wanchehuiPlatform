@@ -92,7 +92,6 @@ class OrdersForShop extends React.Component{
     Meteor.call('shopOrder.findOne',self.props.id,function(error,result){
       if (!error) {
         let id = result.orderId;
-        console.log(id);
         Meteor.call('Orders.updateStatus',id,self.state.localStatus)
       }
     })
@@ -135,7 +134,7 @@ class OrdersForShop extends React.Component{
           shopData:rlt,
           defaultShopName:rlt[0].name
         })
-
+        console.log('拉取数据');
         self.getProName();
 
       }
@@ -162,6 +161,7 @@ class OrdersForShop extends React.Component{
     let self =this;
     Meteor.call('get.byShopId',shopId,function(err,alt){
       if (!err) {
+        console.log('开始给表单填值');
         for (var i = 0; i < alt.length; i++) {
           let productName=[];
           let OneOrderPro = alt[i].products;
