@@ -73,14 +73,14 @@ class UploadDetailsToCloudinary extends Component {
             // https://res.cloudinary.com/cloudName/image/upload/v1483481128/public_id.jpg
             var url = response.secure_url;
             // Create a thumbnail of the uploaded image, with 150px width
-            var tokens = url.split('/');
-            tokens.splice(-2, 0, 'w_150,c_scale');
+            // var tokens = url.split('/');
+            // tokens.splice(-2, 0, 'w_150,c_scale');
             var img = new Image(); // HTML5 Constructor
 
-            let remoteUrl = tokens.join('/');
+            let remoteUrl = url;
             console.log(remoteUrl);
 
-            img.src = tokens.join('/');
+            img.src = url;
             this.setState({
               detailsImage:img.src,
               status:true

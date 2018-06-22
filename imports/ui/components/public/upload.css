@@ -9,6 +9,19 @@
     margin: 10px;
   }
   #gallery img {
+    width: 150px;
+    margin-left: 16px;
+    padding: 10px;
+    margin-top: 10px
+  }
+  #gallerys img {
+    width: 150px;
+    margin-left: 16px;
+    padding: 10px;
+    margin-top: 10px
+  }
+  #gallerydetails img {
+    width: 150px;
     margin-left: 16px;
     padding: 10px;
     margin-top: 10px

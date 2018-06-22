@@ -77,21 +77,20 @@ class UploadToCloudinary extends Component {
             var url = response.secure_url;
             // Create a thumbnail of the uploaded image, with 150px width
             console.log(url);
-            
-            var tokens = url.split('/');
-            tokens.splice(-2, 0, 'w_150,c_scale');
+
+            // var tokens = url.split('/');
+            // tokens.splice(-2, 0, 'w_150,c_scale');
             var img = new Image(); // HTML5 Constructor
 
-            let remoteUrl = tokens.join('/');
-            // console.log(remoteUrl);
+            let remoteUrl = url;
             let remoteUrls = this.state.remoteUrls;
             remoteUrls.push(remoteUrl);
             this.setState({
               remoteUrls
             })
-            img.src = tokens.join('/');
+            img.src = url;
             if(typeof this.props.getRemoteImages === 'function'){
-              this.props.getRemoteImages(url);
+              this.props.getRemoteImages(remoteUrls);
 
             }
             // img.alt = response.public_id;
