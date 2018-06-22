@@ -87,6 +87,14 @@ class OrdersForShop extends React.Component{
     this.setState({
       visible: false,
     });
+    console.log(self.props.id);
+    console.log(self.state.localStatus);
+    Meteor.call('shopOrder.findOne',self.props.id,function(error,result){
+      if (!error) {
+        let id = result.orderId;
+        Meteor.call('Orders.updateStatus',id,self.state.localStatus)
+      }
+    })
     Meteor.call('shopOrders.updateStatus',self.props.id,self.state.localStatus,function(err,alt){
       if(!err){
         self.getProName();
@@ -126,7 +134,7 @@ class OrdersForShop extends React.Component{
           shopData:rlt,
           defaultShopName:rlt[0].name
         })
-
+        console.log('拉取数据');
         self.getProName();
 
       }
@@ -153,6 +161,7 @@ class OrdersForShop extends React.Component{
     let self =this;
     Meteor.call('get.byShopId',shopId,function(err,alt){
       if (!err) {
+        console.log('开始给表单填值');
         for (var i = 0; i < alt.length; i++) {
           let productName=[];
           let OneOrderPro = alt[i].products;
@@ -253,7 +262,8 @@ class OrdersForShop extends React.Component{
       <Spin spinning={this.state.loading}>
         <Table columns={columns} dataSource={this.state.orderData} scroll={{ x: 1300 }} />
       </Spin>
-        <Modal  title="修改订单状态"  visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} >
+        <Modal  title="修改订单状态"  visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} okText="确认"
+        cancelText="取消">
           <RadioGroup options={this.props.getStatus}  onChange={this.onChangeOrderStatus}  value={this.state.localStatus}/>
         </Modal>
       </div>

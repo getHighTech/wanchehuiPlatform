@@ -59,12 +59,10 @@ class UploadToCloudinary extends Component {
 
         // Reset the upload progress bar
          document.getElementById('progress').style.width = 0;
-
         // Update progress (can be used to show progress indicator)
         xhr.upload.addEventListener("progress", function(e) {
           var progress = Math.round((e.loaded * 100.0) / e.total);
           document.getElementById('progress').style.width = progress + "%";
-
           console.log(`fileuploadprogress data.loaded: ${e.loaded},
         data.total: ${e.total}`);
         });
@@ -79,21 +77,20 @@ class UploadToCloudinary extends Component {
             var url = response.secure_url;
             // Create a thumbnail of the uploaded image, with 150px width
             console.log(url);
-            
-            var tokens = url.split('/');
-            tokens.splice(-2, 0, 'w_150,c_scale');
+
+            // var tokens = url.split('/');
+            // tokens.splice(-2, 0, 'w_150,c_scale');
             var img = new Image(); // HTML5 Constructor
 
-            let remoteUrl = tokens.join('/');
-            // console.log(remoteUrl);
+            let remoteUrl = url;
             let remoteUrls = this.state.remoteUrls;
             remoteUrls.push(remoteUrl);
             this.setState({
               remoteUrls
             })
-            img.src = tokens.join('/');
+            img.src = url;
             if(typeof this.props.getRemoteImages === 'function'){
-              this.props.getRemoteImages(url);
+              this.props.getRemoteImages(remoteUrls);
 
             }
             // img.alt = response.public_id;
@@ -112,7 +109,11 @@ class UploadToCloudinary extends Component {
 
     handleFileChange=(e)=>{
         let files =  this.refs.fileElem.files;
-        this.uploadFile(files[0]);
+        console.log(files);
+        for (var i = 0; i < files.length; i++) {
+            this.uploadFile(files[i]); // call the function to upload the file
+          }
+
     }
 
     componentDidMount(){

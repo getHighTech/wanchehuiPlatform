@@ -9,6 +9,19 @@
     margin: 10px;
   }
   #gallery img {
+    width: 150px;
+    margin-left: 16px;
+    padding: 10px;
+    margin-top: 10px
+  }
+  #gallerys img {
+    width: 150px;
+    margin-left: 16px;
+    padding: 10px;
+    margin-top: 10px
+  }
+  #gallerydetails img {
+    width: 150px;
     margin-left: 16px;
     padding: 10px;
     margin-top: 10px
@@ -20,6 +33,28 @@
     margin-top: 4px;
   }
   .progress-bar .progress{
+    height: 8px;
+    background-color: rgba(119, 113, 113, 0.27);
+    width: 0;
+  }
+  .progressDetails-bar{
+    width: 200px;
+    position: relative;
+    height: 8px;
+    margin-top: 4px;
+  }
+  .progressDetails-bar .progressDetails{
+    height: 8px;
+    background-color: rgba(119, 113, 113, 0.27);
+    width: 0;
+  }
+  .progressCover-bar{
+    width: 200px;
+    position: relative;
+    height: 8px;
+    margin-top: 4px;
+  }
+  .progressCover-bar-bar .progressCover{
     height: 8px;
     background-color: rgba(119, 113, 113, 0.27);
     width: 0;

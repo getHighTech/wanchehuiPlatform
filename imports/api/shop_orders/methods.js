@@ -33,6 +33,17 @@ Meteor.methods({
   'get.byShopId'(shopId){
     return ShopOrders.find({shopId:shopId}).fetch();
   },
+  "shopOrders.updateStatus"(_id,status){
+    return ShopOrders.update(_id,{
+      $set:{
+        status:status
+      }
+    })
+
+  },
+  'shopOrder.findOne'(id){
+    return ShopOrders.findOne({_id:id})
+  },
   'shopOrder.getById'(id){
     let aaa= ShopOrders.findOne({orderId:id});
     console.log('aaa'+aaa);

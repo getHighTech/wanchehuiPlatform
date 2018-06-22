@@ -225,6 +225,8 @@ class ProductWrap extends React.Component {
         visible={this.state.editaddressVisible}
         onOk={this.handleOkaddress}
         onCancel={this.handleCancel}
+        okText="确认"
+        cancelText="取消"
       >
       <TextArea rows={4} defaultValue={this.state.shopdetails.address} onInput={input => this.addressInput(input.target.value) }/>
       </Modal>
@@ -233,6 +235,8 @@ class ProductWrap extends React.Component {
         visible={this.state.editphoneVisible}
         onOk={this.handleOkphone}
         onCancel={this.handleCancel}
+        okText="确认"
+        cancelText="取消"
       >
       <Input  defaultValue={this.state.shopdetails.phone} onInput={input => this.phoneInput(input.target.value) }/>
       </Modal>

@@ -153,7 +153,7 @@ Meteor.methods({
     })
 
   },
-  "shopOrders.updateStatus"(_id,status){
+  "Orders.updateStatus"(_id,status){
     return Orders.update(_id,{
       $set:{
         status:status
