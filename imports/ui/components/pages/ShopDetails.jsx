@@ -112,7 +112,7 @@ class ShopDetails extends React.Component {
                console.log(alt);
                self.getProducts();
              });
-             message.success('请先填写价格！！')
+             message.error('请先填写价格！！')
            }
           }
         })
@@ -352,10 +352,10 @@ class ShopDetails extends React.Component {
         key: 'cover',
         width: 50,
         render:(text, record) =>{
-          
+
           return (
             <img src={record.cover} style={{height:50,width:50}}/>
-            
+
           )
         }
       },
@@ -490,6 +490,8 @@ class ShopDetails extends React.Component {
           visible={this.state.pricevisible}
           onOk={this.pricehandleOk}
           onCancel={this.pricehandleCancel}
+          okText="确认"
+          cancelText="取消"
         >
         <ProductPriceForm productprice={this.props.productprice}  productendprice={this.props.productendprice}  ref = {(input) => { this.formComponent = input; }} />
         </Modal>

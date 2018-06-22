@@ -271,15 +271,16 @@ class OrderState extends Component {
            <br /><br />
 
 
-          <Modal title="添加状态" visible={this.state.addvisible} onCancel={this.handleAddCancel} footer={[
-            <Button key="back" onClick={this.handleAddCancel}>Return</Button>,
+          <Modal title="添加状态" visible={this.state.addvisible} onCancel={this.handleAddCancel}  footer={[
+            <Button key="back" onClick={this.handleAddCancel}>取消</Button>,
             <Button key="submit" type="primary"  disabled={this.state.ButtonState} onClick={this.handleAddOk}>
-              Submit
+              确认
             </Button>,
           ]} >
           <OrderStateForm OrderStatus={this.props.OrderStatus}  changebutton={this.changebutton.bind(this)}  modalState={this.props.modalState} getStatus={this.props.getStatus} ref = {(input) => { this.formComponent = input; }} />
           </Modal>
-          <Modal title="编辑状态" visible={this.state.editvisible} onOk={this.handleEditOk} onCancel={this.handleEditCancel}  >
+          <Modal title="编辑状态" visible={this.state.editvisible} onOk={this.handleEditOk} onCancel={this.handleEditCancel}  okText="确认"
+          cancelText="取消">
           <EditOrderStateForm OrderStatus={this.props.OrderStatus} modalState={this.props.modalState} getStatus={this.props.getStatus} ref = {(input) => { this.formComponent = input; }} />
           </Modal>
           <Table columns={columns}  dataSource={this.state.dataSource} />

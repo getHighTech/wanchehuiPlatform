@@ -54,15 +54,15 @@ class UploadCoverToCloudinary extends Component {
         xhr.open('POST', url, true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-        // Reset the upload progress bar
-         document.getElementById('progress').style.width = 0;
+        // Reset the upload progressCover bar
+         document.getElementById('progressCover').style.width = 0;
 
-        // Update progress (can be used to show progress indicator)
-        xhr.upload.addEventListener("progress", function(e) {
-          var progress = Math.round((e.loaded * 100.0) / e.total);
-          document.getElementById('progress').style.width = progress + "%";
+        // Update progressCover (can be used to show progressCover indicator)
+        xhr.upload.addEventListener("progressCover", function(e) {
+          var progressCover = Math.round((e.loaded * 100.0) / e.total);
+          document.getElementById('progressCover').style.width = progressCover + "%";
 
-          console.log(`fileuploadprogress data.loaded: ${e.loaded},
+          console.log(`fileuploadprogressCover data.loaded: ${e.loaded},
         data.total: ${e.total}`);
         });
 
@@ -73,14 +73,14 @@ class UploadCoverToCloudinary extends Component {
             // https://res.cloudinary.com/cloudName/image/upload/v1483481128/public_id.jpg
             var url = response.secure_url;
             // Create a thumbnail of the uploaded image, with 150px width
-            var tokens = url.split('/');
-            tokens.splice(-2, 0, 'w_150,c_scale');
+            // var tokens = url.split('/');
+            // tokens.splice(-2, 0, 'w_150,c_scale');
             var img = new Image(); // HTML5 Constructor
 
-            let remoteUrl = tokens.join('/');
+            let remoteUrl = url;
             console.log(remoteUrl);
 
-            img.src = tokens.join('/');
+            img.src = url;
             this.setState({
               cover:img.src,
               status:true
@@ -154,8 +154,8 @@ class UploadCoverToCloudinary extends Component {
                         </div>
                         </div>
                     </form>
-                    <div className="progress-bar" id="progress-bar">
-                        <div className="progress" id="progress"></div>
+                    <div className="progressCover-bar" id="progressCover-bar">
+                        <div className="progressCover" id="progressCover"></div>
                     </div>
                     <div id="gallerys" >
                     <img src={this.state.cover} />
