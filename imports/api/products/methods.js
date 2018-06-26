@@ -192,7 +192,8 @@ Meteor.methods({
         status:product.status,
         specifications:product.specifications,
         agencyLevelPrices:product.agencyPrice,
-        productClass:product.productClass
+        productClass:product.productClass,
+        isAppointment:product.isAppointment
       }
     })
   },

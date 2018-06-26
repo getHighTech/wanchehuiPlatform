@@ -61,7 +61,7 @@ class AMapComplete extends Component {
                 zoom:15,
                 center: self.state.mapCenter,
             });
-    }   
+    }
 
     // drawMap(city, inputId){
     //     let self = this
@@ -90,7 +90,7 @@ class AMapComplete extends Component {
     //       });
     //     });
     // // }
-    
+
     componentDidMount(){
         this.initAmap()
         // this.drawMap();
@@ -114,12 +114,12 @@ function mapStateToProps(state) {
     return {
       allState: state.ShopsList,
       singleShop: state.ShopsList.singleShop,
-      modalState: state.ShopsList.modalInsert,    
+      modalState: state.ShopsList.modalInsert,
       editState: !state.ShopsList.modalEditable,
       shopAddress: state.ShopsList.shopAddress
     };
   }
-  
+
   export default createContainer(() => {
     if (Meteor.userId()) {
       Meteor.subscribe('roles.current');
@@ -128,4 +128,3 @@ function mapStateToProps(state) {
       current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
     };
   }, connect(mapStateToProps)(AMapComplete));
-  
