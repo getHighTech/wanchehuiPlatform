@@ -52,6 +52,7 @@ class AMapComplete extends Component {
     }
 
     initAmap(){
+
       let map = new AMap.Map("AMapContainer", {
         mapCenter: [104.115262, 30.593927],
         zoom: 15,//地图显示的缩放级别
@@ -60,7 +61,7 @@ class AMapComplete extends Component {
         map: map
       }) 
     }   
-    
+
     componentDidMount(){
       this.initAmap()
     }
@@ -80,12 +81,12 @@ function mapStateToProps(state) {
     return {
       allState: state.ShopsList,
       singleShop: state.ShopsList.singleShop,
-      modalState: state.ShopsList.modalInsert,    
+      modalState: state.ShopsList.modalInsert,
       editState: !state.ShopsList.modalEditable,
       shopAddress: state.ShopsList.shopAddress
     };
   }
-  
+
   export default createContainer(() => {
     if (Meteor.userId()) {
       Meteor.subscribe('roles.current');
@@ -94,4 +95,3 @@ function mapStateToProps(state) {
       current_role: Roles.findOne({users: {$all: [Meteor.userId()]}})
     };
   }, connect(mapStateToProps)(AMapComplete));
-  
