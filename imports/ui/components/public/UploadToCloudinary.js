@@ -46,6 +46,7 @@ class UploadToCloudinary extends Component {
     }
 
     uploadFile = (file) => {
+      let self = this
       document.getElementById('gallery').innerHTML='';
       this.setState({
         remoteUrls:[]
@@ -77,6 +78,7 @@ class UploadToCloudinary extends Component {
             var url = response.secure_url;
             // Create a thumbnail of the uploaded image, with 150px width
             console.log(url);
+            self.props.setUrl(url)
 
             // var tokens = url.split('/');
             // tokens.splice(-2, 0, 'w_150,c_scale');
