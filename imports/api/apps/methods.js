@@ -23,7 +23,9 @@ import {
     getNewestOneUserOrderByStatus, getIncomeWithinTime, 
     getProductByShopId, agencyOneProduct, getProductOwners, getWithdrawals, 
     cancelOrder,
-    getOrders } from './apps';
+    getOrders,
+    getShopProducts,
+} from './apps';
 
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
@@ -351,5 +353,12 @@ Meteor.methods({
             return Object.assign({}, rltObj, {
                 fromMethod: 'app.get.user.withdrawals.limit',
             })
-        }
+        },
+        "app.get.shop.products.limit"(loginToken, appName, shopId,  page,  pagesize){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getShopProducts(stampedTokenObj, appName, shopId, page, pagesize);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.get.shop.products.limit',
+            })
+        },
 });

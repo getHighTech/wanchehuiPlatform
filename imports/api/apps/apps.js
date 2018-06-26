@@ -1238,3 +1238,33 @@ export function getProductOwners(loginToken, appName, userId){
     });
 
 }
+
+
+
+export function getShopProducts(loginToken,appName, shopId, page, pagesize){
+console.log('appName:'+appName)
+console.log('shopId'+ shopId)
+    if(!findOneAppByName(appName)){
+        return {
+            type: "error",
+            reason: "invalid app"
+        }
+    }
+
+    let shop = Shops.findOne({_id: shopId})
+    let products = Products.find({shopId: shopId}, {
+        skip: (page-1)*pagesize,
+        limit: pagesize,
+        sort: {
+            createdAt: -1
+        }
+    }).fetch();
+
+    return {
+        type: "shops",
+        msg: {
+            shop,
+            products
+        }
+    }
+}
