@@ -121,7 +121,18 @@ export function findOneAppByName(name){
                 breif: "专注网约车创业"
             });
         }
-    }Products
+    }
+    if (name === "xianzhi") {
+        if (Apps.find(name).count() === 0) {
+            Apps.insert({
+                name,
+                name_zh: "鲜至",
+                domain: "xianzhi.10000cars.cn",
+                // testDomain: "test1.10000cars.cn",
+                breif: "专注卖农产品"
+            });
+        }
+    }
     return Apps.findOne({name});
 }
 

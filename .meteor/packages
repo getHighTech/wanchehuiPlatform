@@ -41,3 +41,4 @@ deanius:promise
 meteorhacks:aggregate
 fongandrew:find-and-modify
 underscore@1.0.10
+npm-bcrypt

@@ -321,7 +321,7 @@ class ProductFormWrap extends Component {
       })
     }
     let self =this;
-    Meteor.call('get.productclass',function(err,alt){
+    Meteor.call('get.all_product_classes',function(err,alt){
       if (!err) {
         self.setState({
           initialProductClass:alt
@@ -897,11 +897,11 @@ class ProductFormWrap extends Component {
 
 }
 
-getRemoteImages = (remoteUrls) => {
-  console.log(remoteUrls);
+setUrl = (urls) => {
+  console.log(urls);
   let self = this ;
   const setFieldsValue = self.props.form.setFieldsValue;
-  setFieldsValue({images:remoteUrls})
+  setFieldsValue({ images: urls})
 
 }
 getRemoteCover = (cover) => {
@@ -1066,11 +1066,9 @@ getRemoteDetails=(detailsImage) => {
             const type=this.state.initialProductClass;
             const children=[];
             for (var i = 0; i < type.length; i++) {
-              children.push(<Option key={type[i]}>{type[i]}</Option>)
+              children.push(<Option key={type[i].name}>{type[i].name_zh}</Option>)
             }
-
-
-
+            
             const productImageslength = [1];
             const productImages=productImageslength.map((k,index) => {
               if (this.props.modalState) {
@@ -1356,7 +1354,7 @@ getRemoteDetails=(detailsImage) => {
       label="商品多图预览"
       hasFeedback
       >
-          <UploadToCloudinary getRemoteImages={this.getRemoteImages}  ref="getSwordButton"  images={this.props.product.images} images_state={this.props.images_state}/>
+            <UploadToCloudinary setUrl={this.setUrl.bind(this)}  ref="getSwordButton"  images={this.props.product.images} images_state={this.props.images_state}/>
       </FormItem>
       <FormItem
       {...formItemLayout}

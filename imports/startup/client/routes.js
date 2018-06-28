@@ -26,11 +26,14 @@ import PermissionAuth from "/imports/ui/components/pages/tools/PermissionAuth";
 import NotFoundPage from '/imports/ui/components/pages/NotFoundPage';
 import PermissonDenied from '/imports/ui/components/pages/PermissonDenied';
 import CheckRoles from "/imports/ui/components/pages/tools/CheckRoles";
-import ShopDashBoard from '/imports/ui/components/pages/ShopDashBoard';
-import OrdersForShop from '/imports/ui/components/pages/OrdersForShop';
+import ShopDashBoard from '/imports/ui/components/pages/shop_owner_components/dashboard';
 import OrderState from '/imports/ui/components/pages/OrderState';
 import OrderDetails from '/imports/ui/components/pages/OrderDetails';
 import ProductClass from '/imports/ui/components/pages/ProductClass';
+import Cards from '../../ui/components/pages/shop_owner_components/cards';
+import UsersForShop from '../../ui/components/pages/shop_owner_components/users';
+import OrdersForShop from '../../ui/components/pages/shop_owner_components/orders';
+import Vips from '../../ui/components/pages/shop_owner_components/vips';
 
 
 const store = configureStore();
@@ -51,6 +54,7 @@ const Routes = ({ location }) =>
       <Route component={CheckRoles}>
         <Route path="/shops" component={{superAdmin:Shops,commonUser:SingleShop}}/>
         <Route path="/orders" component={{superAdmin:Orders,commonUser:OrdersForShop}} />
+        <Route path="/users" component={{ superAdmin: Users, commonUser: UsersForShop }} />
         <IndexRoute component={{superAdmin:DashBoard,commonUser:ShopDashBoard}} />
       </Route>
       {/* 以下一组路由为需要验证超级管理员之后才能访问 */}
@@ -68,6 +72,9 @@ const Routes = ({ location }) =>
       <Route path="/component_test" component={ComponentTest}/>
       <Route path="/orderstate" component={OrderState}/>
       <Route path="/productclass" component={ProductClass}/>
+      <Route path="/cards" component={Cards}/>
+      <Route path="/vips" component={Vips} />
+
     </Route>
     <Route path="/login" component={Login}/>
     <Route path="/login/forgot" component={LoginForgot}/>

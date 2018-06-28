@@ -24,7 +24,7 @@ Meteor.startup(() => {
   // // 测试用户模块权限
   //
   //
-  // Meteor.users.remove({username: "superAdmin"});CheckRolesAccess
+  // Meteor.users.remove({username: "superAdmin"});
   // Tags.remove({});
   // Products.remove({});
   // Roles.remove({});
