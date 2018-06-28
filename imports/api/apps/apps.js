@@ -682,25 +682,21 @@ export function createBankcard(
 
     });
 }
-export function removeBankcard(
-    loginToken,
-    appName,
-    bankcardId
-){
+export function removeBankcard(loginToken,appName,userId,bankcardId){
     return getUserInfo(loginToken, appName, "bankcards", function(){
-        Bankcards.remove(bankcardId,function(err,rlt){
-            if(!err){
-                return {
-                    type: "bankcards",
-                    msg: "REMOVE BANKCARD SUCCESS"
-                }
-            }else{
-                return {
-                    type: "error",
-                    reason: "CREATE BANKCARD ERROR"
-                }
+        let bankcard = Bankcards.remove({_id: bankcardId})
+        if(bankcard){
+            let bankcards = Bankcards.find({userId}).fetch()
+            return {
+                type: "bankcards",
+                msg: bankcards
             }
-        })
+        }else {
+            return {
+                type: "error",
+                reason: "CREATE BANKCARD ERROR"
+            }
+        }
     });
 }
 
@@ -1198,12 +1194,6 @@ export function agencyOneProduct(loginToken, appName, product, userId){
                 agencyShops,
             }
         })
-        // console.log("new_product", Products.findOne(newProductId));
-
-        // console.log("updateRlt", updateRlt);
-        // console.log("newSHop", newShop);
-        // console.log("usreId", userId);
-
         if(!newProductId){
             return {
                 type: "error",
@@ -1237,4 +1227,32 @@ export function getProductOwners(loginToken, appName, userId){
 
     });
 
+}
+
+
+
+export function getShopProducts(loginToken,appName, shopId, page, pagesize){
+    if(!findOneAppByName(appName)){
+        return {
+            type: "error",
+            reason: "invalid app"
+        }
+    }
+
+    let shop = Shops.findOne({_id: shopId})
+    let products = Products.find({shopId: shopId}, {
+        skip: (page-1)*pagesize,
+        limit: pagesize,
+        sort: {
+            createdAt: -1
+        }
+    }).fetch();
+
+    return {
+        type: "shops",
+        msg: {
+            shop,
+            products
+        }
+    }
 }
