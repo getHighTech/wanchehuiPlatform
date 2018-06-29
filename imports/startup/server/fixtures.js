@@ -168,5 +168,12 @@ Meteor.startup(() => {
       // });
       // let orderRmRlt = Orders.remove({totalAmount: {$exists: true}});
       // console.log(orderRmRlt);
+      Meteor.users.find().forEach(user => {
+        Meteor.users.update(user._id, {
+          $set: {
+            fromApp: "wanrenchehui"
+          }
+        })
+      });
       
 });

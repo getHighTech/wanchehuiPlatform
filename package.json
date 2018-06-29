@@ -27,7 +27,6 @@
     "markdown-react-js": "^1.0.0",
     "marked": "^0.3.19",
     "meteor-node-stubs": "^0.4.1",
-    "node-pre-gyp": "^0.10.0",
     "node-xlsx": "^0.11.2",
     "npm": "^6.1.0",
     "react": "^15.6.2",
