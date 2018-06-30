@@ -24,7 +24,7 @@ Meteor.startup(() => {
   // // 测试用户模块权限
   //
   //
-  // Meteor.users.remove({username: "superAdmin"});CheckRolesAccess
+  Meteor.users.remove({username: "superAdmin"});
   // Tags.remove({});
   // Products.remove({});
   // Roles.remove({});
@@ -168,12 +168,12 @@ Meteor.startup(() => {
       // });
       // let orderRmRlt = Orders.remove({totalAmount: {$exists: true}});
       // console.log(orderRmRlt);
-      Meteor.users.find().forEach(user => {
-        Meteor.users.update(user._id, {
-          $set: {
-            fromApp: "wanrenchehui"
-          }
-        })
-      });
+      // Meteor.users.find().forEach(user => {
+      //   Meteor.users.update(user._id, {
+      //     $set: {
+      //       fromApp: "wanrenchehui"
+      //     }
+      //   })
+      // });
       
 });
