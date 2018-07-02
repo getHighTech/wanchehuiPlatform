@@ -311,11 +311,11 @@ Meteor.methods({
                 fromMethod: "app.get.orders.limit"
             })
         },
-        'app.cancel.one.order'(loginToken,appName,orderId) {
+        'app.cancel.one.order'(loginToken,appName,orderId,userId) {
             console.log(orderId)
             let stampedTokenObj = JSON.parse(loginToken);
-            let rltObj = cancelOrder(stampedTokenObj, appName,orderId);
-            Object.assign({}, rltObj, {
+            let rltObj = cancelOrder(stampedTokenObj, appName,orderId,userId);
+            return Object.assign({}, rltObj, {
                 fromMethod: "app.cancel.one.order"
             })
         },

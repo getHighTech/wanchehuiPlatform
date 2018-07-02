@@ -1028,7 +1028,7 @@ export function getOrders(loginToken, appName, userId, status, page, pagesize) {
     })
 }
 
-export function cancelOrder(loginToken, appName, orderId) {
+export function cancelOrder(loginToken, appName, orderId,userId) {
     return  getUserInfo(loginToken, appName, "orders", function(){
         order = Orders.update(orderId,{
             $set:{
@@ -1036,15 +1036,22 @@ export function cancelOrder(loginToken, appName, orderId) {
             }
         })
         if(!order || order.lenght === 0){
+            console.log(1111)
             return {
                 type: "error",
                 reason: "ORDER NOT FOUND",
             }
+        }else{
+            orders_confirmed = Orders.find({userId,status: "confirmed"}).fetch()
+            return {
+                type: "orders",
+                msg: {
+                    orders_confirmed
+                }
+            }
         }
-        return {
-            type: "order",
-            msg: order
-        }
+        
+       
     })
 } 
 
