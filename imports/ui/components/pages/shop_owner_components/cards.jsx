@@ -11,7 +11,7 @@ class Cards extends Component {
     }
     componentWillMount(){
         let userId = Meteor.userId()
-        console.log(userId)
+        // console.log(userId)
         let shopId = ''
         Meteor.call('shops.getByCurrentUser', userId,function(err,rlt){
             if(!err){
