@@ -227,8 +227,6 @@ class Users extends React.Component{
       currentPage: 1,
     });
     console.log(this.state.condition);
-
-
   }
   handlePageChange(page, pageSize){
     $(document).scrollTop(0);

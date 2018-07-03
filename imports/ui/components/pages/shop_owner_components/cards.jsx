@@ -10,23 +10,23 @@ class Cards extends Component {
          }
     }
     componentWillMount(){
+        let self = this
         let userId = Meteor.userId()
-        // console.log(userId)
+        console.log(userId)
         let shopId = ''
         Meteor.call('shops.getByCurrentUser', userId,function(err,rlt){
             if(!err){
                 console.log(rlt)
                 shopId = rlt[0]._id
                 console.log(shopId)
-            }
-        })
-        let condition = { shopId: shopId, productClass:'advanced_card'}
-        let self = this
-        Meteor.call('get.product.byShopIdOr',condition,function(err,rlt){
-            if(!err){
-                console.log(rlt)
-                self.setState({
-                    cards:rlt
+                let condition = { shopId: shopId, $or: [{ productClass: 'advanced_card' }, { productClass: 'common_card' }] }
+                Meteor.call('get.product.byShopIdOr', condition, function (err, rlt) {
+                    if (!err) {
+                        console.log(rlt)
+                        self.setState({
+                            cards: rlt
+                        })
+                    }
                 })
             }
         })
@@ -40,9 +40,12 @@ class Cards extends Component {
             dataIndex: 'name_zh',
             key: 'name_zh',
         }, {
-            title: '会员卡价钱',
+            title: '会员卡价格',
             dataIndex: 'endPrice',
             key: 'endPrice',
+            render: (text, record) => {
+                return (record.endPrice / 100 + '元')
+            }
         }, {
             title: '会员卡分类',
             dataIndex: 'productClass',
@@ -63,26 +66,10 @@ class Cards extends Component {
         ),
         }];
 
-        const data = [{
-            key: '1',
-            name: 'John Brown',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
-        }, {
-            key: '2',
-            name: 'Jim Green',
-            age: 42,
-            address: 'London No. 1 Lake Park',
-        }, {
-            key: '3',
-            name: 'Joe Black',
-            age: 32,
-            address: 'Sidney No. 1 Lake Park',
-        }];
-
+        const data = this.state.cards
         return (
         <div>
-            <Table columns={columns} dataSource={data} />
+                <Table columns={columns} dataSource={data} rowKey='_id' />
         </div> )
     }
 }
