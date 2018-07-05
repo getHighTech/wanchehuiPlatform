@@ -1,7 +1,6 @@
 //用来判断系统权限的组件
 import React from 'react'
 import {connect} from 'react-redux'
-import { go,push, replace, goBack } from 'react-router-redux';
 import { getCurrentRoles } from '/imports/ui/actions/roles.js';
 
 

@@ -40,5 +40,10 @@ ostrio:meteor-root
 deanius:promise
 meteorhacks:aggregate
 fongandrew:find-and-modify
+<<<<<<< HEAD
 lamatyus:async
 webpack:react
+=======
+underscore@1.0.10
+npm-bcrypt
+>>>>>>> 95daab88c95a93ee471a8308d2e35cc4ba4aa716
