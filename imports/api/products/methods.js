@@ -2,14 +2,18 @@ import { Meteor } from 'meteor/meteor';
 import {Roles} from '../roles/roles.js'
 import { Products } from './products.js';
 import { Shops } from '../shops/shops.js';
+import {ProductOwners} from '../product_owners/product_owners';
 import {getProductTypeById, getProductByZhName} from './actions.js';
-import { validLoginToken } from '../actions/validLoginToken.js'
 
 
 Meteor.methods({
   "products.insert"(product,shopId,shopName,newSpec,newSpecGroups,userId){
-    if(product.isTool){
-
+    let copy_roles = []
+    cards = Products.find({shopId: shopId, $or: [{ productClass: 'advanced_card' },{ productClass: 'common_card' }]}).fetch()
+    for(var i=0;i < cards.length;i++){
+      if(cards[i].name){
+        copy_roles.push(cards[i].name + '_holder')
+      }
     }
     Products.insert({
       name: product.name,
@@ -54,7 +58,7 @@ Meteor.methods({
           users: [],
         },
         copy:{
-          roles:["blackcard_holder"],
+          roles: copy_roles,
           users:[]
         },
         buy:{
@@ -196,6 +200,29 @@ Meteor.methods({
         productClass:product.productClass,
         isAppointment:product.isAppointment
       }
+    },function(err,alt){
+      if (!err) {
+        if (product.isTool) {
+          console.log('yesyes');
+          let roles_name_count = Roles.find({ name: product.name + '_holder' }).count();
+          if (roles_name_count === 0) {
+            Roles.insert({
+              name: product.name + '_holder',
+              name_zh: product.name_zh,
+              time_limit: -1,
+              permissions: {},
+              state: true,
+              weight: 0,
+              createdAt: new Date(),
+              isSuper: false,
+              users: []
+            })
+          }
+        }
+        else {
+          console.log('nono');
+        }
+      }
     })
   },
   'app.get.recommend.products'(page,pagesize){
@@ -274,8 +301,47 @@ Meteor.methods({
       product,
       fromMethod: 'fancyshop.getProductByZhName',
     }
-  }
+  },
+  'product.cardBindToUser'(cardId,username){
+    let user = Meteor.users.findOne({username:username})
+    console.log(user._id)
 
+
+    let product = Products.findOne({'_id': cardId})
+    console.log(product)
+    if(user){
+      let productOwener = ProductOwners.findOne({ userId: user._id, productId: cardId })
+      if (productOwener){
+        console.log('记录已经存在')
+        throw new Meteor.Error("该用户已经是高级会员卡用户，请勿重复添加");
+      }else{
+        ProductOwners.insert({
+          userId: user._id, 
+          productId: cardId,
+          createdAt: new Date(),
+        },function(err,alt){
+          //如果授卡成功，给该用户相应的角色
+          if(!err){
+            let roleName = product.name + '_holder'
+            console.log(roleName)
+            let role = Roles.findOne({ 'name': roleName})
+            console.log(role._id)
+            console.log(role.name)
+            if(!UserRoles.findOne({ 'roleName': roleName, 'userId': user._id})){
+              console.log('插入角色用户表')
+              UserRoles.insert({
+                roleName: role.name,
+                userId: user._id, 
+                roleId: role._id,
+                createdAt: new Date(),
+                status: true
+              })
+            }
+          }
+        })
+      }
+    }
+  }
 
 
 });

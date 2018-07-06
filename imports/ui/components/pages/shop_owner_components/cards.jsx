@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 
-import { Table, Icon, Divider, Tooltip,Button } from 'antd';
+import { Table, Select, Tooltip,Button,Modal } from 'antd';
+import { getMeteorUsersLimit } from '../../../services/users';
 
 class Cards extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-            cards:[]
+            cards:[],
+            visible:false,
+            data:[],
+            cardId:''
          }
     }
     componentWillMount(){
@@ -31,8 +35,56 @@ class Cards extends Component {
             }
         })
     }
-    giveItToUser(){
+    giveItToUser = (cardId) => {
+        console.log(cardId)
+        this.setState({
+            visible:true,
+            cardId: cardId
+        })
+    }
 
+    getPageUsers(page, pageSize, condition) {
+        let self = this;
+        getMeteorUsersLimit(condition, page, pageSize, function (err, rlt) {
+            if (!err) {
+                console.log(rlt)
+                self.setState({ data: rlt, fetching: false });
+
+            }
+        })
+    }
+    handleUserChange = (value) => {
+        this.setState({ data: [], fetching: true, confirmLoading: false });
+        let condition = {
+            $or: [
+                { username: eval("/" + value + "/") }
+            ]
+        };
+        this.getPageUsers(1, 20, condition);
+        this.setState({ value: value })
+        console.log(`selected ${value}`);
+    }
+    hideModal = () => {
+        this.setState({
+            visible: false,
+        });
+    }
+
+    handleModalOk = () => {
+        console.log(this.state.value)
+        console.log(this.state.cardId)
+        let cardId = this.state.cardId
+        let username = this.state.value
+        Meteor.call('product.cardBindToUser',cardId,username,function(err,alt){
+            if(!err){
+                console.log('授卡成功')
+            }else{
+                console.log(err.error)
+            }
+        })
+        this.setState({
+            visible: false,
+        });
     }
     render() { 
         const columns = [{
@@ -52,8 +104,8 @@ class Cards extends Component {
             key: 'productClass',
         }, {
             title: '会员卡描述',
-            dataIndex: 'description',
-            key: 'description',
+            dataIndex: 'brief',
+            key: 'brief',
         }, {
         title: '授卡',
         key: 'action',
@@ -66,10 +118,35 @@ class Cards extends Component {
         ),
         }];
 
-        const data = this.state.cards
+        const cards = this.state.cards
+        const data = this.state.data
+
         return (
         <div>
-                <Table columns={columns} dataSource={data} rowKey='_id' />
+                <Table columns={columns} dataSource={cards} rowKey='_id' />
+            <Modal
+                title="选择用户"
+                visible={this.state.visible}
+                onOk={this.handleModalOk.bind(this)}
+                onCancel={this.hideModal}
+                confirmLoading={this.state.hideModal}
+            >
+                <Select
+                    mode="combobox"
+                    value={this.state.value}
+                    placeholder={this.props.placeholder}
+                    style={this.props.style}
+                    defaultActiveFirstOption={false}
+                    dropdownStyle={{ zIndex: '99999' }}
+                    style={{ width: '100%' }}
+                    showArrow={false}
+                    filterOption={false}
+                    onChange={this.handleUserChange}
+                >
+                        {data.map(d => <Select.Option key={d.username}>{d.username}</Select.Option>)}
+                </Select>
+            </Modal>
+
         </div> )
     }
 }
