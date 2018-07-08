@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import {Roles} from '../roles/roles.js'
 import { Products } from './products.js';
+import { UserRoles } from '../user_roles/user_roles.js';
 import { Shops } from '../shops/shops.js';
 import {ProductOwners} from '../product_owners/product_owners';
 import {getProductTypeById, getProductByZhName} from './actions.js';
-
 
 Meteor.methods({
   "products.insert"(product,shopId,shopName,newSpec,newSpecGroups,userId){
@@ -92,6 +92,7 @@ Meteor.methods({
 
     });
   },
+
   'product.isSale'(_id){
     let Product = Products.findOne({_id:_id})
     Products.update(_id, {
@@ -101,6 +102,7 @@ Meteor.methods({
     });
     return Product
   },
+
   'product.isSaleFalse'(_id){
     let Product = Products.findOne({_id:_id})
     Products.update(_id, {
@@ -110,11 +112,13 @@ Meteor.methods({
     });
     return Product
   },
+
   'product.price'(_id){
     let price = Products.findOne({_id:_id}).price;
     console.log(price);
     return price
   },
+
   'product.updatePrice'(id,price,endPrice){
     Products.update(id,{
       $set:{
@@ -123,6 +127,7 @@ Meteor.methods({
       }
     })
   },
+
   'product.offline'(id){
     Products.update(id, {
       $set: {
@@ -130,6 +135,7 @@ Meteor.methods({
       }
     });
   },
+
   'product.descount'(id, discount){
     Products.update(id, {
       $set: {
@@ -137,6 +143,7 @@ Meteor.methods({
       }
     });
   },
+
   'product.edit'(product){
     Products.update({
       $set: {
@@ -150,16 +157,20 @@ Meteor.methods({
       }
     });
   },
+
   'get.product.id'(productId){
     return getProductTypeById(productId);
   },
+
   'get.product.byShopId'(id){
     return Products.find({shopId:id}).fetch();
   },
+
   'get.product.byShopIdOr'(condition){
     console.log(condition)
     return Products.find(condition).fetch();
   },
+
   'get.oneproduct.id'(id,token){
     console.log(`打印token`)
     console.log(token)
@@ -178,6 +189,7 @@ Meteor.methods({
 
     // Object.assign(product,{shop_name: shop.name})
   },
+
   'product.update'(old,product){
     Products.update({_id:old._id},{
       $set:{
@@ -225,6 +237,7 @@ Meteor.methods({
       }
     })
   },
+
   'app.get.recommend.products'(page,pagesize){
     let products =  Products.find(
       {
@@ -255,6 +268,7 @@ Meteor.methods({
     }
 
   },
+
   'app.get.shop.products'(shopId) {
     let products = Products.find(
       {
@@ -267,6 +281,7 @@ Meteor.methods({
       formMethod: 'app.get.shop.products'
     }
   },
+
   'home.top.products'(page, pagesize) {
    let  products = Products.find(
       {recommendLevel: {$lte: 0}},
@@ -295,6 +310,7 @@ Meteor.methods({
       formMethod: 'app.product.search'
     }
   },
+
   'fancyshop.getProductByZhName'(zhName){
     let product = getProductByZhName(zhName);
     return {
@@ -302,11 +318,9 @@ Meteor.methods({
       fromMethod: 'fancyshop.getProductByZhName',
     }
   },
+  
   'product.cardBindToUser'(cardId,username){
     let user = Meteor.users.findOne({username:username})
-    console.log(user._id)
-
-
     let product = Products.findOne({'_id': cardId})
     console.log(product)
     if(user){
@@ -323,15 +337,21 @@ Meteor.methods({
           //如果授卡成功，给该用户相应的角色
           if(!err){
             let roleName = product.name + '_holder'
-            console.log(roleName)
+            console.log(roleName) 
             let role = Roles.findOne({ 'name': roleName})
             console.log(role._id)
             console.log(role.name)
-            if(!UserRoles.findOne({ 'roleName': roleName, 'userId': user._id})){
+            let user_role = UserRoles.findOne({ 'roleName': roleName, 'userId': user._id })
+            if (user_role){
+              console.log('更新角色用户表')
+              UserRoles.update(user_role,{
+                status: true
+              })
+            }else{
               console.log('插入角色用户表')
               UserRoles.insert({
                 roleName: role.name,
-                userId: user._id, 
+                userId: user._id,
                 roleId: role._id,
                 createdAt: new Date(),
                 status: true
@@ -340,8 +360,11 @@ Meteor.methods({
           }
         })
       }
+    }else{
+      throw new Meteor.Error("授卡失败,请检查用户名是否存在");
     }
+  },
+  'product.cardUnbindUser'(){
+    console.log('解绑用户')
   }
-
-
 });
