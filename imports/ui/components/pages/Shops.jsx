@@ -19,7 +19,6 @@ import Modal from 'antd/lib/modal';
 import 'antd/lib/modal/style';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
-import Avatar from 'antd/lib/avatar';
 import Select from 'antd/lib/select';
 import 'antd/lib/select/style';
 import Spin from 'antd/lib/spin';

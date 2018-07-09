@@ -58,6 +58,12 @@ const PageHeader = (path) => {
       case "/agencies_relations":
         return "分销关系管理";
         break;
+      case "/cards":
+        return "会员卡管理";
+        break;
+      case "/vips":
+        return "会员管理";
+        break;
       default:
         return "未定义页面";
         break;
