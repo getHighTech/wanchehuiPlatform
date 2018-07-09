@@ -17,6 +17,13 @@ import { ShopOrders   } from '/imports/api/shop_orders/shop_orders.js';
 export const Apps = new Mongo.Collection('apps');
 export const AppCarts = new Mongo.Collection("app_carts");
 export const UserContacts = new Mongo.Collection("user_contacts");
+//添加visited
+
+function getUserShop(appName) {
+   let shop = Shops.findOne({appName})
+   console.log(shop)
+   return shop
+}
 
 //需要用的工具类函数，
 function validUserLogin(token){
@@ -199,7 +206,14 @@ export function appLoginUser(type, loginParams, appName){
                 "regCity": loginParams.city,
                 });
                 mobileUser = Meteor.users.findOne({_id: newUserId});
-                return {type: 'users',msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: true}};
+                return {
+                        type: 'users',msg: 
+                            {
+                                stampedToken: stampedTokenMobile,
+                                userId: mobileUser._id, 
+                                needToResetPassword: true
+                            }
+                        };
             }
             }
             if(mobileUser){
@@ -213,6 +227,37 @@ export function appLoginUser(type, loginParams, appName){
                     "logCity": loginParams.city,
                 }}
             );
+            let shop = getUserShop(appName)
+            let visited = mobileUser.visited
+            let shopId = shop._id
+            Meteor.users.update(mobileUser._id,
+                {
+                    $addToSet: {
+                        'visited': shopId
+                    }
+                }
+            )
+            // if(visited===undefined){
+            //     console.log(`人呢`)
+            //    let rel =  Meteor.users.update(mobileUser._id,
+            //         {
+            //             $push: {
+            //                 "visited": shopId
+            //             }
+            //         }
+            //     )
+            //     console.log(rel)
+            // }else if (!visited.includes(shopId)){
+            //     Meteor.users.update(mobileUser._id,
+            //         {
+            //             $push: {
+            //                 "visited": shopId
+            //             }
+            //         }
+            //     )
+            // }else {
+            //     console.log(`不操作`)
+            // }
             return {type: "users", msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false}};
             }
 
@@ -230,15 +275,17 @@ export function appLoginUser(type, loginParams, appName){
             let stampedToken = Accounts._generateStampedLoginToken();
             let hashStampedToken = Accounts._hashStampedToken(stampedToken);
             Meteor.users.update(user._id,
-                {$push: {
-                    'services.resume.loginTokens': hashStampedToken,
-                    'services.resume.loginLocation': {
-                        "logPosition": loginParams.position,
-                        "logAddress": loginParams.address,
-                        "logCity": loginParams.city,
-                        "loginedAt": new Date(),
-                    },
-                }}
+                    {
+                        $push: {
+                            'services.resume.loginTokens': hashStampedToken,
+                            'services.resume.loginLocation': {
+                                "logPosition": loginParams.position,
+                                "logAddress": loginParams.address,
+                                "logCity": loginParams.city,
+                                "loginedAt": new Date(),
+                            },
+                        }
+                    }
             );
             let roles = [];
                 UserRoles.find({userId: user._id}).forEach((item)=>{
@@ -246,6 +293,16 @@ export function appLoginUser(type, loginParams, appName){
                 });
             roles.push("login_user");
             let userContact = UserContacts.findOne({userId: user._id, default: true})
+            let shop = getUserShop(appName)
+            let visited = shop.visited
+            let shopId = shop.shopId
+            Meteor.users.update(user._id,
+                {
+                    $addToSet: {
+                        'visited': shopId
+                    }
+                }
+            )
 
             return {type: "users",
             msg:
@@ -691,7 +748,7 @@ export function createBankcard(
             }
         }
 
-    });
+    }); 
 }
 export function removeBankcard(loginToken,appName,userId,bankcardId){
     return getUserInfo(loginToken, appName, "bankcards", function(){
@@ -1039,7 +1096,7 @@ export function getOrders(loginToken, appName, userId, status, page, pagesize) {
     })
 }
 
-export function cancelOrder(loginToken, appName, orderId) {
+export function cancelOrder(loginToken, appName, orderId,userId) {
     return  getUserInfo(loginToken, appName, "orders", function(){
         order = Orders.update(orderId,{
             $set:{
@@ -1047,15 +1104,22 @@ export function cancelOrder(loginToken, appName, orderId) {
             }
         })
         if(!order || order.lenght === 0){
+            console.log(1111)
             return {
                 type: "error",
                 reason: "ORDER NOT FOUND",
             }
+        }else{
+            orders_confirmed = Orders.find({userId,status: "confirmed"}).fetch()
+            return {
+                type: "orders",
+                msg: {
+                    orders_confirmed
+                }
+            }
         }
-        return {
-            type: "order",
-            msg: order
-        }
+        
+       
     })
 } 
 
