@@ -211,10 +211,7 @@ Meteor.methods({
         },
     //删除银行卡
     'app.user.remove.bankcardpp.user.remove.bankcard'(loginToken,appName,userId,bankcardId){
-        console.log('bacardId'+bankcardId)
-        console.log(`删除银行卡`)
         let stampedTokenObj = JSON.parse(loginToken);
-        console.log(`token`+ stampedTokenObj )
         let rltObj = removeBankcard(stampedTokenObj,appName,userId,bankcardId)
         return Object.assign({},rltObj,{
             fromMethod:"app.user.remove.bankcardpp.user.remove.bankcard"

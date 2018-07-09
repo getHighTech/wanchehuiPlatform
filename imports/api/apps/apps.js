@@ -680,7 +680,7 @@ export function createBankcard(
             }
         }
 
-    });
+    }); 
 }
 export function removeBankcard(loginToken,appName,userId,bankcardId){
     return getUserInfo(loginToken, appName, "bankcards", function(){
