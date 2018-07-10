@@ -68,7 +68,6 @@ Meteor.methods({
     },function (err,alt) {
       if(!err){
         if(product.isTool){
-          console.log('yesyes');
           let roles_name_count =Roles.find({name:product.name+'_holder'}).count();
           if(roles_name_count===0){
             Roles.insert({
@@ -85,7 +84,6 @@ Meteor.methods({
           }
         }
         else {
-          console.log('nono');
         }
 
       }
@@ -115,7 +113,6 @@ Meteor.methods({
 
   'product.price'(_id){
     let price = Products.findOne({_id:_id}).price;
-    console.log(price);
     return price
   },
 
@@ -167,18 +164,16 @@ Meteor.methods({
   },
 
   'get.product.byShopIdOr'(condition){
-    console.log(condition)
-    return Products.find(condition).fetch();
+    let products =  Products.find(condition).fetch();
+    return products
   },
-
+  'get.product.vipcard.byShopId'(condition) {
+    let card = Products.findOne(condition)
+    return card
+  },
   'get.oneproduct.id'(id,token){
-    console.log(`打印token`)
-    console.log(token)
       let product =  Products.findOne({_id:id});
-      console.log(`产品`)
-      console.log(product)
       let shop = Shops.findOne({_id: product.shopId});
-      console.log(shop.name)
       return {
         ...product,
         shop_name: shop.name,
@@ -215,7 +210,6 @@ Meteor.methods({
     },function(err,alt){
       if (!err) {
         if (product.isTool) {
-          console.log('yesyes');
           let roles_name_count = Roles.find({ name: product.name + '_holder' }).count();
           if (roles_name_count === 0) {
             Roles.insert({
@@ -232,7 +226,6 @@ Meteor.methods({
           }
         }
         else {
-          console.log('nono');
         }
       }
     })
@@ -304,7 +297,6 @@ Meteor.methods({
           }
         }
       ])
-    console.log(products);
     return {
       products,
       formMethod: 'app.product.search'
@@ -322,11 +314,9 @@ Meteor.methods({
   'product.cardBindToUser'(cardId,username){
     let user = Meteor.users.findOne({username:username})
     let product = Products.findOne({'_id': cardId})
-    console.log(product)
     if(user){
       let productOwener = ProductOwners.findOne({ userId: user._id, productId: cardId })
       if (productOwener){
-        console.log('记录已经存在')
         throw new Meteor.Error("该用户已经是高级会员卡用户，请勿重复添加");
       }else{
         ProductOwners.insert({
@@ -337,18 +327,16 @@ Meteor.methods({
           //如果授卡成功，给该用户相应的角色
           if(!err){
             let roleName = product.name + '_holder'
-            console.log(roleName) 
             let role = Roles.findOne({ 'name': roleName})
-            console.log(role._id)
-            console.log(role.name)
+            if(role===undefined){
+              throw new Meteor.Error("会员卡没有标记为道具类商品");
+            }
             let user_role = UserRoles.findOne({ 'roleName': roleName, 'userId': user._id })
             if (user_role){
-              console.log('更新角色用户表')
               UserRoles.update(user_role,{
                 status: true
               })
             }else{
-              console.log('插入角色用户表')
               UserRoles.insert({
                 roleName: role.name,
                 userId: user._id,
@@ -356,6 +344,37 @@ Meteor.methods({
                 createdAt: new Date(),
                 status: true
               })
+            }
+          //如果授卡成功，给该用户相应的角色
+          //如果授卡成功，给该高级会员用户生成相应的店铺
+            let shop = Shops.findOne({ 'acl.own.users': user._id })
+            if(!shop){
+              Shops.insert({
+                name: user.username + "的店铺",
+                phone: user.profile.mobile,
+                pictures: [],
+                description: '欢迎光临' + user.username + "的店铺",
+                tags: ["高级会员", "代理", "挣钱"],
+                cover: user.headurl,
+                address: '',
+                lntAndLat: [],
+                isAdvanced:true,
+                status: true,
+                createdAt: new Date(),
+                acl: {
+                  own: {
+                    roles: ["shop_owner"],
+                    users: user._id,
+                  },
+                  read: {
+                    roles: ['nobody', 'login_user']
+                  },
+                  write: {
+                    roles: ["shop_owner", "shop_manager"],
+                    users: [],
+                  }
+                }
+              });
             }
           }
         })

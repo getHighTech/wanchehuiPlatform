@@ -4,25 +4,21 @@ import React from "react";
 
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
-import Card from 'antd/lib/card/';
 import 'antd/lib/card/style';
 import { Table } from 'antd';
-import Icon from 'antd/lib/icon';
 import "antd/lib/icon/style";
 import { Select } from 'antd';
 import { Modal } from 'antd';
 import Button from 'antd/lib/button';
 import "antd/lib/button/style";
 import { Roles } from '/imports/api/roles/roles.js';
-import Tooltip from 'antd/lib/tooltip';
-import "antd/lib/tooltip/style";
 const Option = Select.Option;
 import { Radio } from 'antd';
 import { editOrderStatus } from '/imports/ui/actions/order_status.js';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 import { Spin } from 'antd';
-import { push, replace, goBack } from 'react-router-redux';
+import { push } from 'react-router-redux';
 const RadioGroup = Radio.Group;
 
 class OrdersForShop extends React.Component {
@@ -128,11 +124,11 @@ class OrdersForShop extends React.Component {
         let shopId = '';
         Meteor.call('shops.getByCurrentUser', currentUserId, function (err, rlt) {
             if (!err) {
-                shopId = rlt[0]._id;
+                shopId = rlt._id;
                 self.setState({
                     shopId: shopId,
                     shopData: rlt,
-                    defaultShopName: rlt[0].name
+                    defaultShopName: rlt.name
                 })
                 console.log('拉取数据');
                 self.getProName();

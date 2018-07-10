@@ -13,15 +13,14 @@ class Cards extends Component {
             cardId:''
          }
     }
-    componentWillMount(){
+    componentDidMount(){
         let self = this
         let userId = Meteor.userId()
         console.log(userId)
         let shopId = ''
         Meteor.call('shops.getByCurrentUser', userId,function(err,rlt){
             if(!err){
-                console.log(rlt)
-                shopId = rlt[0]._id
+                shopId = rlt._id
                 console.log(shopId)
                 let condition = { shopId: shopId, $or: [{ productClass: 'advanced_card' }, { productClass: 'common_card' }] }
                 Meteor.call('get.product.byShopIdOr', condition, function (err, rlt) {
