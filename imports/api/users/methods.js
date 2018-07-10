@@ -407,4 +407,26 @@ Meteor.methods({
     }
 
   },
+  'user.get.by.appName'(shopId,page,pageSize){
+    let users = Meteor.users.find({ visited: { $in: [shopId] }}, {
+      skip: (page - 1) * pageSize, limit: pageSize,
+      sort: { "createdAt": -1 },
+    }).fetch();
+    return users;
+  }, 
+  'user.get.by.dimSearch'(condition,shopId, page, pageSize) {
+    let users = Meteor.users.find(
+      {
+        visited: { $in: [shopId] },
+        ...condition
+      }, 
+    
+      {
+      skip: (page - 1) * pageSize, limit: pageSize,
+      sort: { "createdAt": -1 },
+        }
+      ).fetch();
+    console.log(users)
+    return users;
+  } 
 });

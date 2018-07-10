@@ -22,7 +22,8 @@ class MainLayout extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      menuActiveKey: "dashboard"
+      menuActiveKey: "dashboard",
+      shopId:'',
     }
 
   }
@@ -42,7 +43,7 @@ class MainLayout extends Component {
     ]
     let ShopOwnerMenu = [
       {"key": "dashboard", "name": "控制面板", "IconType": "bars"},
-      {"key": "shops", "name": "我的店铺", "IconType": "shop"},
+      {"key": "shop", "name": "我的店铺", "IconType": "shop"},
       {"key": "orders", "name": "订单管理", "IconType": "book"},
       { "key": "vips", "name": "会员管理", "IconType": "user" },
       { "key": "cards", "name": "卡片管理", "IconType": "credit-card" },
@@ -70,8 +71,15 @@ class MainLayout extends Component {
 
         console.log(self.props)
 
-
-
+      })
+      Meteor.call('shops.getByCurrentUser',userId,function(err,rlt){
+        console.log(userId)
+        console.log(rlt)
+        if(!err){
+          self.setState({
+            shopId:rlt._id
+          })
+        }
       })
     }
     const pathname = this.props.routing.locationBeforeTransitions.pathname;
@@ -90,12 +98,12 @@ class MainLayout extends Component {
         }
       });
     });
-
-
   }
   handleMenuItemClicked(item){
     const key = item.key;
     const { dispatch } = this.props;
+    const shopId = this.state.shopId
+    console.log(shopId)
     switch (key) {
       case 'dashboard':
         dispatch(push('/'));
@@ -136,6 +144,9 @@ class MainLayout extends Component {
       case "vips":
         dispatch(push('/vips'));
         break;
+      case "shop":
+        dispatch(push(`/shops/single_shop/shop_details/${shopId}`));
+        break;
       default:
         dispatch(push('/'));
         break;
@@ -145,6 +156,8 @@ class MainLayout extends Component {
 
   render() {
     const { LeftMenuList } = this.props;
+    
+    console.log(this.state)
 
     return(  <Layout>
         <Sider
@@ -202,6 +215,7 @@ class MainLayout extends Component {
 
 function mapStateToProps(state) {
   return {
+    state: state,
     routing: state.routing,
     currentRoles:state.RolesList.currentRoles,
     LeftMenuList:state.RolesList.LeftMenuList,

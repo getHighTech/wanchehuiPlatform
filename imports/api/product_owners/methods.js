@@ -13,7 +13,7 @@ Meteor.methods({
         }
         if(validLoginToken(token)){
             let productIds = []
-            ProductOwners.find({userId}).forEach(item=>{ p
+            ProductOwners.find({userId}).forEach(item=>{ 
                 productIds.push(item.productId);
             });
             let product = Products.findOne({_id: {$in: productIds}, name_zh: "万人车汇黑卡"});
@@ -21,8 +21,17 @@ Meteor.methods({
         }else{
             return "ACCESS DENY";
         }
+    },
+    "get.card.product.users"(productId, page = 1, pageSize = 5){
+        let userIds = []
+        ProductOwners.find({ productId }).forEach(item => {
+            userIds.push(item.userId);
+        });
+        let users = Meteor.users.find({ _id: { $in: userIds } }, {
+            skip: (page - 1) * pageSize, limit: pageSize,
+            sort: { "createdAt": -1 },
+        }).fetch();
+        return users;
     }
-
     
-
 });

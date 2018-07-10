@@ -201,45 +201,12 @@ class ProductWrap extends React.Component {
         <Col span={8}>
         <Card style={{width:'100%'}} bordered={false}>
         <Meta
-
             description={[<Button key='1' onClick={this.onAddProduct.bind(this)}>发布商品</Button>,<Button key='2' onClick={this.showModal}  style={{marginLeft:20}}>修改店铺</Button>,<Button key='3' style={{marginLeft:20}}>指派管理员</Button>]} />
-
         </Card>
         </Col>
-
         </Row>
-      <div style={{ background: '#ECECEC', padding: '30px' }}>
-        <Row gutter={8}>
-          <Col span={6}><Card title="店长" bordered={false}>张三</Card></Col>
-          <Col span={6}><Card title="店铺地址" onClick={this.editaddress.bind(this)} extra={<Icon type="edit" />} bordered={false}>{this.state.shopdetails.address}</Card></Col>
-          <Col span={6}><Card title="店铺电话" onClick={this.editphone.bind(this)} extra={<Icon type="edit" />} bordered={false}>{this.state.shopdetails.phone}</Card></Col>
-          <Col span={6}><Card title="商品数量" bordered={false}>10000</Card></Col>
-        </Row>
-      </div>
-
-
-
       <div>
-      <Modal
-        title="修改店铺地址"
-        visible={this.state.editaddressVisible}
-        onOk={this.handleOkaddress}
-        onCancel={this.handleCancel}
-        okText="确认"
-        cancelText="取消"
-      >
-      <TextArea rows={4} defaultValue={this.state.shopdetails.address} onInput={input => this.addressInput(input.target.value) }/>
-      </Modal>
-      <Modal
-        title="修改店铺电话"
-        visible={this.state.editphoneVisible}
-        onOk={this.handleOkphone}
-        onCancel={this.handleCancel}
-        okText="确认"
-        cancelText="取消"
-      >
-      <Input  defaultValue={this.state.shopdetails.phone} onInput={input => this.phoneInput(input.target.value) }/>
-      </Modal>
+
 
 
 

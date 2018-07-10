@@ -14,7 +14,7 @@ import {Agencies} from '/imports/api/agencies/agencies.js';
 import {Shops} from '/imports/api/shops/shops.js';
 import { ProductOwners } from '/imports/api/product_owners/product_owners.js';
 import { ShopOrders   } from '/imports/api/shop_orders/shop_orders.js';
-import { Agency } from '/imports/api/agency/agency.js';
+import { AgencyRelation } from '/imports/api/agency_relation/agency_relation.js';
 export const Apps = new Mongo.Collection('apps');
 export const AppCarts = new Mongo.Collection("app_carts");
 export const UserContacts = new Mongo.Collection("user_contacts");
@@ -27,6 +27,26 @@ export function getHomePageProducts(appName) {
         type: "products", 
         msg: products,
     }
+}
+
+//get member
+function getMember(shopId) {
+    let shop = Shops.findOne({_id: shopId})
+    console.log('~~~')
+    console.log(shop)
+    console.log('~~~')
+      if (shop.isAdvanced===true){
+          return true
+      }else {
+          return false
+      }
+      
+}
+
+//
+function getUserShopById(shopId) {
+    let shop = Shops.findOne({_id: shopId})
+    return shop
 }
 //添加visited
 
@@ -414,6 +434,7 @@ export function updateOrder(loginToken, appName, orderParams, orderId){
 }
 
 export function createNewOrder(loginToken, appName, orderParams){
+    let  relation;
     if(orderParams.cartId){
         AppCarts.update(orderParams.cartId, {
             $set: {
@@ -438,10 +459,32 @@ export function createNewOrder(loginToken, appName, orderParams){
             }
         }
         let shopProducts = orderParams.shopProducts;
+        //判断代理
+        for(let i = 0; i < orderParams.products.length;i++){
+           if(orderParams.products[i].productClass==="common_card"){
+              let shop = getUserShopById(orderParams.products[i].shopId)
+              if(shop.isAdvanced===true){
+                let  agencyRelation = AgencyRelation.findOne({userId: orderParams.products[i].userId})
+                if(!agencyRelation){
+                relation =  AgencyRelation.insert({
+                        appName,
+                        shopId: null,
+                        SshopId: shop._id,
+                        userId: orderParams.products[i].userId,
+                        SuserId: shop.acl.own.users,
+                        status: false,
+                    })
+                }else{
+                    relation =  AgencyRelation.findOne({userId: orderParams.products[i].userId})
+                }
+              }
+           }else{
+              relation =  AgencyRelation.findOne({userId: orderParams.products[i].userId})
+              break;
+           }
+        }
         //分店铺建立订单
-        console.log('-----')
-        console.log(orderParams)
-        console.log('-----')
+
         let orderParamsDealed = {
             ...orderParams,
             type: "card",
@@ -458,7 +501,8 @@ export function createNewOrder(loginToken, appName, orderParams){
             orderCode,
             status: "unconfirmed",
             createdAt: new Date(),
-            appName
+            appName,
+            agencyRelationId:  relation._id,
         }
         let orderId = Orders.insert(orderParamsDealed);
         for(const shopId in shopProducts){//把这个订单拆分给各个店铺
@@ -487,7 +531,7 @@ export function createNewOrder(loginToken, appName, orderParams){
                     userId: orderParams.userId,
                     contact: orderParams.contact,
                     orderId,
-                    shopId
+                    shopId,
                 };
                 ShopOrders.insert({
                     ...shopOrder,

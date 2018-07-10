@@ -52,7 +52,7 @@ const Routes = ({ location }) =>
       {/* <IndexRoute component={DashBoard} /> */}
       {/* 以下一组路由不同的角色访问不同的组件 */}
       <Route component={CheckRoles}>
-        <Route path="/shops" component={{superAdmin:Shops,commonUser:SingleShop}}/>
+     
         <Route path="/orders" component={{superAdmin:Orders,commonUser:OrdersForShop}} />
         <Route path="/users" component={{ superAdmin: Users, commonUser: UsersForShop }} />
         <IndexRoute component={{superAdmin:DashBoard,commonUser:ShopDashBoard}} />
@@ -64,6 +64,7 @@ const Routes = ({ location }) =>
         <Route path="/roles" component={Roles}/>
         <Route path="/give_card_to_users" component={GiveCardToUsers}/>
         <Route path="/agencies_relations" component={AgenciesRelations}/>
+        <Route path="/shops" component={ Shops} />
       </Route>
       <Route path="/shops/single_shop/shop_details/:_id" component={ShopDetails}/>
       <Route path="/orders/order_details/:_id" component={OrderDetails}/>

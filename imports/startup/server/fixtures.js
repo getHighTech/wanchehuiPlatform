@@ -15,7 +15,7 @@ import { ProductOwners } from '/imports/api/product_owners/product_owners.js';
 import { Tags } from '/imports/api/tags/tags.js';
 import { Orders } from '/imports/api/orders/orders.js';
 import { newProuct } from '../../core/new_product';
-import { Agency } from '/imports/api/agency/agency.js';
+import { AgencyRelation } from '/imports/api/agency_relation/agency_relation.js';
 
 Meteor.startup(() => {
   // checkAgencies();

@@ -2,4 +2,4 @@
 
 import { Mongo } from 'meteor/mongo';
 
-export const Agency = new Mongo.Collection('agency');
+export const AgencyRelation = new Mongo.Collection('agency_relation');
