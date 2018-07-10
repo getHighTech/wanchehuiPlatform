@@ -25,6 +25,7 @@ import {
     cancelOrder,
     getOrders,
     getShopProducts,
+    getHomePageProducts,
 } from './apps';
 
 Meteor.methods({
@@ -37,12 +38,10 @@ Meteor.methods({
                 reason: "invalid app"
             }
         }
-        let products = Products.find({isSale: true}).fetch();
-        return {
-            type: "products", 
-            msg: products,
-            fromMethod: "wanrenchehui.temp.home",
-        }
+        let rltObj = getHomePageProducts(appName);
+        return Object.assign({}, rltObj, {
+            fromMethod: 'wanrenchehui.temp.home',
+        })
     },
 
     "app.syncRemote.user"(loginToken, appName, userId){
@@ -56,6 +55,7 @@ Meteor.methods({
     "app.user.login"(loginToken, appName, type, loginParams){
         //用户登陆
         let rlt = appLoginUser(type, loginParams, appName);
+        
         return Object.assign({}, rlt, {
             fromMethod: "app.user.login"
         })
