@@ -14,14 +14,44 @@ import {Agencies} from '/imports/api/agencies/agencies.js';
 import {Shops} from '/imports/api/shops/shops.js';
 import { ProductOwners } from '/imports/api/product_owners/product_owners.js';
 import { ShopOrders   } from '/imports/api/shop_orders/shop_orders.js';
+import { AgencyRelation } from '/imports/api/agency_relation/agency_relation.js';
 export const Apps = new Mongo.Collection('apps');
 export const AppCarts = new Mongo.Collection("app_carts");
 export const UserContacts = new Mongo.Collection("user_contacts");
+
+//home page products
+export function getHomePageProducts(appName) {
+    let shop = getUserShop(appName)
+    let products = Products.find({isSale: true, shopId: shop._id}).fetch();
+    return {
+        type: "products", 
+        msg: products,
+    }
+}
+
+//get member
+function getMember(shopId) {
+    let shop = Shops.findOne({_id: shopId})
+    console.log('~~~')
+    console.log(shop)
+    console.log('~~~')
+      if (shop.isAdvanced===true){
+          return true
+      }else {
+          return false
+      }
+      
+}
+
+//
+function getUserShopById(shopId) {
+    let shop = Shops.findOne({_id: shopId})
+    return shop
+}
 //添加visited
 
 function getUserShop(appName) {
    let shop = Shops.findOne({appName})
-   console.log(shop)
    return shop
 }
 
@@ -228,7 +258,6 @@ export function appLoginUser(type, loginParams, appName){
                 }}
             );
             let shop = getUserShop(appName)
-            let visited = mobileUser.visited
             let shopId = shop._id
             Meteor.users.update(mobileUser._id,
                 {
@@ -237,28 +266,7 @@ export function appLoginUser(type, loginParams, appName){
                     }
                 }
             )
-            // if(visited===undefined){
-            //     console.log(`人呢`)
-            //    let rel =  Meteor.users.update(mobileUser._id,
-            //         {
-            //             $push: {
-            //                 "visited": shopId
-            //             }
-            //         }
-            //     )
-            //     console.log(rel)
-            // }else if (!visited.includes(shopId)){
-            //     Meteor.users.update(mobileUser._id,
-            //         {
-            //             $push: {
-            //                 "visited": shopId
-            //             }
-            //         }
-            //     )
-            // }else {
-            //     console.log(`不操作`)
-            // }
-            return {type: "users", msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false}};
+            return {type: "users", msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false,shopId}};
             }
 
         case 'password':
@@ -294,7 +302,6 @@ export function appLoginUser(type, loginParams, appName){
             roles.push("login_user");
             let userContact = UserContacts.findOne({userId: user._id, default: true})
             let shop = getUserShop(appName)
-            // let visited = shop.visited
             let shopId = shop._id
             Meteor.users.update(user._id,
                 {
@@ -306,7 +313,7 @@ export function appLoginUser(type, loginParams, appName){
 
             return {type: "users",
             msg:
-            {stampedToken, userId: user._id, roles, user, userContact}};
+            {stampedToken, userId: user._id, roles, user, userContact,shopId}};
           }else{
             return {type: "error", reason: "LOGIN PASS WRONG"};
           }
@@ -427,6 +434,7 @@ export function updateOrder(loginToken, appName, orderParams, orderId){
 }
 
 export function createNewOrder(loginToken, appName, orderParams){
+    let  relation;
     if(orderParams.cartId){
         AppCarts.update(orderParams.cartId, {
             $set: {
@@ -451,6 +459,30 @@ export function createNewOrder(loginToken, appName, orderParams){
             }
         }
         let shopProducts = orderParams.shopProducts;
+        //判断代理
+        for(let i = 0; i < orderParams.products.length;i++){
+           if(orderParams.products[i].productClass==="common_card"){
+              let shop = getUserShopById(orderParams.products[i].shopId)
+              if(shop.isAdvanced===true){
+                let  agencyRelation = AgencyRelation.findOne({userId: orderParams.products[i].userId})
+                if(!agencyRelation){
+                relation =  AgencyRelation.insert({
+                        appName,
+                        shopId: null,
+                        SshopId: shop._id,
+                        userId: orderParams.products[i].userId,
+                        SuserId: shop.acl.own.users,
+                        status: false,
+                    })
+                }else{
+                    relation =  AgencyRelation.findOne({userId: orderParams.products[i].userId})
+                }
+              }
+           }else{
+              relation =  AgencyRelation.findOne({userId: orderParams.products[i].userId})
+              break;
+           }
+        }
         //分店铺建立订单
 
         let orderParamsDealed = {
@@ -468,7 +500,9 @@ export function createNewOrder(loginToken, appName, orderParams){
             count: 1, //兼容1.0
             orderCode,
             status: "unconfirmed",
-            createdAt: new Date()
+            createdAt: new Date(),
+            appName,
+            agencyRelationId:  relation._id,
         }
         let orderId = Orders.insert(orderParamsDealed);
         for(const shopId in shopProducts){//把这个订单拆分给各个店铺
@@ -497,7 +531,7 @@ export function createNewOrder(loginToken, appName, orderParams){
                     userId: orderParams.userId,
                     contact: orderParams.contact,
                     orderId,
-                    shopId
+                    shopId,
                 };
                 ShopOrders.insert({
                     ...shopOrder,
@@ -505,6 +539,8 @@ export function createNewOrder(loginToken, appName, orderParams){
                     orderCode: new Date().getTime().toString()+generateRondom(10).toString(),
                     status: "unconfirmed"
                 });
+
+                
             }
         }
         return {
