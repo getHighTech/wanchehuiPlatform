@@ -439,7 +439,9 @@ export function createNewOrder(loginToken, appName, orderParams){
         }
         let shopProducts = orderParams.shopProducts;
         //分店铺建立订单
-
+        console.log('-----')
+        console.log(orderParams)
+        console.log('-----')
         let orderParamsDealed = {
             ...orderParams,
             type: "card",
@@ -455,7 +457,8 @@ export function createNewOrder(loginToken, appName, orderParams){
             count: 1, //兼容1.0
             orderCode,
             status: "unconfirmed",
-            createdAt: new Date()
+            createdAt: new Date(),
+            appName
         }
         let orderId = Orders.insert(orderParamsDealed);
         for(const shopId in shopProducts){//把这个订单拆分给各个店铺
