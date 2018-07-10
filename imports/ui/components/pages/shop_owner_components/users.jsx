@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Input } from 'antd';
-import { Table, Icon, Divider,Tooltip,Button } from 'antd';
+import { Table, Divider,Tooltip,Button } from 'antd';
 
 
 class UsersForShop extends Component {
@@ -8,18 +8,48 @@ class UsersForShop extends Component {
         super(props);
         this.state = { 
             users: [],
-            condition:{},
             currentPage:1,
-            appName:''
+            appName:'',
+            shopId:'',
+            totalCount:100
          }
     }
+    componentDidMount(){
+        let self = this
+        let userId = Meteor.userId()
+        console.log(userId)
+        Meteor.call('shops.getByCurrentUser', userId, function (err, rlt) {
+            if (!err) {
+                console.log(rlt.appName)
+                self.setState({
+                    appName:rlt.appName,
+                    shopId: rlt._id,
+                })
+                self.getUsersByAppName(rlt._id, 1, 20, condition = {})
+            }
+        })
+    }
 
+    handlePageChange(page,pageSize){
+        console.log(page),
+        console.log(pageSize),
+            this.getUsersByAppName(this.state.shopId, page, pageSize, condition = {})
+    }
+    getUsersByAppName(shopId, page, pageSize,condition={}){
+        let self = this
+        Meteor.call('user.get.by.appName', shopId, page, pageSize,condition,function(err,rlt){
+            self.setState({
+                users:rlt,
+                currentPage: page
+            })
+        })
+    }
     forbiddenUser(){
         console.log('禁用')
     }
     handleSearchInput(str) {
+        let self = this
         let condition = { 
-            reqApp:appName,
             $or: [
                 { 'profile.mobile': eval("/" + str + "/") },
                 { username: eval("/" + str + "/") },
@@ -27,12 +57,12 @@ class UsersForShop extends Component {
             ]
         };
         console.log(str)
-        this.getPageUsers(1, 20, condition);
-        this.setState({
-            condition,
-            currentPage: 1,
-        });
-        console.log(this.state.condition);
+        Meteor.call('user.get.by.dimSearch', condition, this.state.shopId, 1, 20, function (err, rlt) {
+            self.setState({
+                users: rlt,
+                currentPage: 1
+            })
+        })
     }
     render() { 
         const columns = [{
@@ -51,7 +81,7 @@ class UsersForShop extends Component {
                 return (<span>{moment(record.createdAt).format("YYYY-MM-DD HH:mm:ss")}</span>);
             }
         }, {
-            title: '注册APP',
+            title: '首次注册APP',
             dataIndex: 'regApp',
             key: 'regApp',
         }, {
@@ -65,23 +95,10 @@ class UsersForShop extends Component {
                 </span>
             ),
         }];
-        const data = [{
-            key: '1',
-            name: 'John Brown',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
-        }, {
-            key: '2',
-            name: 'Jim Green',
-            age: 42,
-            address: 'London No. 1 Lake Park',
-        }, {
-            key: '3',
-            name: 'Joe Black',
-            age: 32,
-            address: 'Sidney No. 1 Lake Park',
-        }];
+        const users = this.state.users
+        console.log(users)
         return ( 
+            
             <div>
                 <Input.Search
                     placeholder="用户名｜电话｜昵称"
@@ -89,7 +106,14 @@ class UsersForShop extends Component {
                     onInput={input => this.handleSearchInput(input.target.value)}
                 />
                 <Divider />
-                <Table columns={columns} dataSource={data} rowKey='_id' />
+                <Table columns={columns} 
+                dataSource={users} 
+                rowKey='_id' 
+                pagination={{
+                    defaultPageSize: 20, total: this.state.totalCount,
+                    onChange: (page, pageSize) => this.handlePageChange(page, pageSize),
+                    showQuickJumper: true, current: this.state.currentPage
+                }}/>
 
             </div>
          )

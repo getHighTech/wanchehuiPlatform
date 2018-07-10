@@ -6,6 +6,7 @@ Meteor.methods({
       console.log(params)
         return Shops.insert({
             name: params.name,
+            appName: params.appName,  
             phone: params.phone,
             pictures:params.pictures,
             description: params.description,
@@ -17,14 +18,14 @@ Meteor.methods({
             acl: {
               own: {
                 roles: ["shop_owner"],
-                users: [],
+                users: '',
               },
               read: {
                 roles: ['nobody', 'login_user']
               },
               write: {
                 roles: ["shop_owner","shop_manager"],
-                users: [],
+                users: '',
               }
             },
             createdAt : new Date(),
@@ -94,6 +95,7 @@ Meteor.methods({
     'shops.update'(shop, params){
       Shops.update(shop, {
         $set: {
+          appName: params.appName,
           name: params.name,
           phone: params.phone,
           pictures:params.pictures,
@@ -133,11 +135,9 @@ Meteor.methods({
 
     },
     'shops.getByCurrentUser'(currentUserId){
-      let shops = Shops.find({'acl.own.users': currentUserId}).fetch()
-      if(shops.length ===0){
-        return []
-      }else{
-        return shops
-      }
+      let shop = Shops.findOne({'acl.own.users': currentUserId})
+      if (shop){
+        return shop
     }
+  }
 })

@@ -294,8 +294,8 @@ export function appLoginUser(type, loginParams, appName){
             roles.push("login_user");
             let userContact = UserContacts.findOne({userId: user._id, default: true})
             let shop = getUserShop(appName)
-            let visited = shop.visited
-            let shopId = shop.shopId
+            // let visited = shop.visited
+            let shopId = shop._id
             Meteor.users.update(user._id,
                 {
                     $addToSet: {
