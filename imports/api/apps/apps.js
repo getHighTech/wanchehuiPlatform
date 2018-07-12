@@ -28,11 +28,6 @@ export function getHomePageProducts(appName) {
             type: "products", 
             msg: products,
         }
-    }else{
-        return {
-            type: "error",
-            reason: "invalid app" 
-        }
     }
 }
 
@@ -160,10 +155,12 @@ export function syncUser(userId, stampedToken, appName){
       let userContact = UserContacts.findOne({userId, default: true})
       roles.push("login_user");
       let shop = getUserShopPerminssion(userId)
+      let shopId = shop? shop._id : null
       let platfrom = getUserShop(appName)
+      let platfromId = platfrom? platfrom._id: null
       return {
           type: "users",
-          msg: {roles, user, userId: user._id, userContact,shopId: shop._id,appNameShopId: platfrom._id},
+          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId },
       }
 }
 
@@ -279,15 +276,20 @@ export function appLoginUser(type, loginParams, appName){
                     "logCity": loginParams.city,
                 }}
             );
+
             let shop = getUserShop(appName)
-            let shopId = shop._id
-            Meteor.users.update(mobileUser._id,
-                {
-                    $addToSet: {
-                        'visited': shopId
+            let shopId;
+            if(shop){
+                shopId = shop._id
+                Meteor.users.update(mobileUser._id,
+                    {
+                        $addToSet: {
+                            'visited': shopId
+                        }
                     }
-                }
-            )
+                )
+            }
+          
             return {type: "users", msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false,shopId}};
             }
 
@@ -554,6 +556,7 @@ export function createNewOrder(loginToken, appName, orderParams){
                     contact: orderParams.contact,
                     orderId,
                     shopId,
+                    appName
                 };
                 ShopOrders.insert({
                     ...shopOrder,
@@ -1406,3 +1409,8 @@ export function getUserShopPerminssion(userId) {
     let shop = Shops.findOne({"acl.own.users": userId})
     return shop
 }
+
+// export function cancelAgencyProduct(loginToken,appName, productId,shopId){
+    
+    
+// }
