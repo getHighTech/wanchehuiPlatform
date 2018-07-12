@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Table, Select, Tooltip,Button,Modal } from 'antd';
+import { Table, Select, Tooltip, Button, Modal, message } from 'antd';
 import { getMeteorUsersLimit } from '../../../services/users';
 
 class Cards extends Component {
@@ -76,9 +76,9 @@ class Cards extends Component {
         let username = this.state.value
         Meteor.call('product.cardBindToUser',cardId,username,function(err,alt){
             if(!err){
-                console.log('授卡成功')
+                message.success('授卡成功');
             }else{
-                console.log(err.error)
+                message.error(err.error)
             }
         })
         this.setState({

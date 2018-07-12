@@ -17,7 +17,7 @@ import ShopsList from '/imports/ui/reducers/ShopsList.js'
 import RolesList from '/imports/ui/reducers/RolesList.js'
 import ProductsList from '/imports/ui/reducers/ProductsList.js'
 import OrderStatus from '/imports/ui/reducers/OrderStatus.js'
-
+import VipCards from '/imports/ui/reducers/VipCards.js'
 
 const rmiddleware = routerMiddleware(browserHistory)
 const sagaMiddleware = createSagaMiddleware(mySaga)
@@ -40,7 +40,8 @@ export default function configureStore(initialState) {
       ShopsList,
       ProductsList,
       RolesList,
-      OrderStatus
+      OrderStatus,
+      VipCards
     }),
     initialState,
     enhancer

@@ -339,7 +339,7 @@ class ProductModal extends React.Component{
                 console.log(self.state.xx);
                 // window.location.reload();
               }else{
-                console.log(error);
+                message.error(error.error)
               }
             })
           }
@@ -377,7 +377,7 @@ class ProductModal extends React.Component{
                 console.log(self.state.xx);
                 // window.location.reload();
               }else{
-                console.log(error);
+                message.error(error.error)
               }
             })
           }
@@ -411,7 +411,7 @@ class ProductModal extends React.Component{
             console.log(self.state.xx);
             // window.location.reload();
           }else{
-            console.log(error);
+            message.error(error.error)
           }
         })
       }
@@ -437,7 +437,7 @@ class ProductModal extends React.Component{
           self.props.changeLoading(false)
           // window.location.reload();
         }else{
-          console.log(error);
+          message.error(error.error)
         }
       })
 

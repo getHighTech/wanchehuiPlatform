@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Table, Tooltip, Button, } from 'antd';
+import { Table, Tooltip, Button, message, Modal, Popconfirm } from 'antd';
+import { connect } from 'react-redux';
+import { setAdvancedCard, setCommonCard } from '../../../actions/vips';
+
 class Vips extends Component {
     constructor(props) {
         super(props);
@@ -15,11 +18,16 @@ class Vips extends Component {
             AtotalCount:1000,
             CtotalCount: 1000,
             AcurrentPage:1,
-            CcurrentPage:1.
+            CcurrentPage:1,
+            members:[],
+            showModal:false,
+            memberCount:0,
+            joinTime:''
         }
     }
     componentDidMount() {
         let self = this
+        const { dispatch } = this.props;
         let userId = Meteor.userId()
         console.log(userId)
         let shopId = ''
@@ -31,7 +39,7 @@ class Vips extends Component {
                 let condition2 = { shopId: shopId, productClass: 'common_card' }
                 Meteor.call('get.product.vipcard.byShopId', condition1, function (err, rlt) {
                     if (!err) {
-                        console.log(rlt)
+                        dispatch(setAdvancedCard(rlt))
                         self.setState({
                             advanced_card_name: rlt.name_zh,
                             advance_card_id: rlt._id
@@ -43,6 +51,7 @@ class Vips extends Component {
                 })
                 Meteor.call('get.product.vipcard.byShopId', condition2, function (err, rlt) {
                     if (!err) {
+                        dispatch(setCommonCard(rlt))
                         self.setState({
                             common_card_name: rlt.name_zh,
                             common_card_id: rlt._id
@@ -87,7 +96,100 @@ class Vips extends Component {
         $(document).scrollTop(0);
         this.getPageCommonVips(this.state.common_card_id, page, pageSize);
     }
+    showMyTeam(userId){
+        let self =  this
+        self.showMyTeamMemberCount(userId)
+        self.showJoinTime(userId)
+        self.showMyTeamDetails(userId)
+    }
+    handleOk = (e) => {
+        console.log(e);
+        this.setState({
+            showModal: false,
+        });
+    }
+
+    handleCancel = (e) => {
+        console.log(e);
+        this.setState({
+            showModal: false,
+        });
+    }
+    showMyTeamMemberCount(userId){
+        let self = this
+        console.log('统计人数')
+        Meteor.call('get.my.team.member.count', userId, function (err, alt) {
+            if (!err) {
+                console.log(alt)
+                self.setState({
+                    memberCount:alt,
+                     showModal: true
+                })
+            }
+        })
+    }
+    showJoinTime(userId){
+        let self = this
+        Meteor.call('get.procductOwner.record.byUserId', userId,self.props.advancedCard, function (err, alt) {
+            console.log(alt)
+            if (!err) {
+                self.setState({
+                    joinTime: moment(alt.createdAt).format("YYYY-MM-DD HH:mm:ss")
+                })
+            }
+        })
+    }
+    showMyTeamDetails(userId){
+        let self = this
+        Meteor.call('get.agency_relation.my.team',userId,function(err,alt){
+            if(!err){
+                self.setState({
+                    members:alt,
+                })
+            }else{
+                message.error(err.error)
+            }
+        })
+    }
+
+
+
+    cancel(e) {
+        console.log(e);
+        message.error('操作取消');
+    }
+    banUserCard(userId){
+        let self = this
+        console.log(self.props.advancedCard)
+        console.log(userId)
+        Meteor.call('product.cardUnbindUser', userId, self.props.advancedCard,function(err,alt){
+            if(!err){
+                message.success('解除绑定成功')
+            }else{
+                message.error(err.error)
+            }
+        })
+    }
     render() {
+        const { advancedCard,commonCard} = this.props
+        const columns = [
+            {
+                title: '用户角色',
+                key: 'action',
+                render:()=>{
+                    <span>{commonCard.name_zh}会员</span>
+                }
+            },
+            {
+            title: '用户名',
+            dataIndex: 'username',
+            key: 'username',},
+            {
+                title: '手机号码',
+                dataIndex: 'profile.mobile',
+                key: 'profile.mobile',
+            }
+        ]
         const advanced_columns = [{
             title: '用户名',
             dataIndex: 'username',
@@ -96,21 +198,13 @@ class Vips extends Component {
             title: '手机号码',
             dataIndex: 'profile.mobile',
             key: 'profile.mobile',
-        }, {
-            title: '加入时间',
-            dataIndex: 'time',
-            key: 'time',
-        }, {
-            title: '团队人数',
-            dataIndex: 'members',
-                key: 'members',
-        }, {
-            title: '查看团队',
+        },  {
+            title: '查看详情',
             key: 'show',
             render: (text, record) => (
                 <span>
                     <Tooltip placement="topLeft" title="授卡" arrowPointAtCenter>
-                        <Button shape="circle" onClick={() => this.giveItToUser(record._id)} icon="user-add" />
+                        <Button shape="circle" onClick={() => this.showMyTeam(record._id)} icon="eye" />
                     </Tooltip>
                 </span>
             ),
@@ -119,9 +213,11 @@ class Vips extends Component {
         key: 'action',
         render: (text, record) => (
             <span>
-                <Tooltip placement="topLeft" title="授卡" arrowPointAtCenter>
-                    <Button shape="circle" onClick={() => this.giveItToUser(record._id)} icon="user-add" />
-                </Tooltip>
+                <Popconfirm title="确定要取消该用户的高级代理资格，请谨慎操作!" onConfirm={() => this.banUserCard(record._id)} onCancel={this.cancel} okText="Yes" cancelText="No">
+                    <Button>
+                        <span>禁卡</span>
+                    </Button>
+                </Popconfirm>
             </span>
         ),
         }];
@@ -178,6 +274,19 @@ class Vips extends Component {
                     onChange: (page, pageSize) => this.handlePageChangeAdvancedVips(page, pageSize),
                     showQuickJumper: true, current: this.state.AcurrentPage
                 }}/>
+                <Modal
+                    title="我的团队"
+                    visible={this.state.showModal}
+                    onOk={this.handleOk}
+                    onCancel={this.handleCancel}
+                >
+                    <div>加入时间：{this.state.joinTime}</div>
+                    <p>团队人数：{this.state.memberCount}</p>
+                    <Table
+                        columns={columns}
+                        dataSource={this.state.members} 
+                        rowKey='_id' />
+                </Modal>
                 <h2>{this.state.common_card_name}会员</h2>
                 <Table 
                 columns={common_columns} 
@@ -191,4 +300,13 @@ class Vips extends Component {
             </div>)
     }
 } 
-export default Vips;
+
+function mapStateToProps(state) {
+    return {
+        advancedCard: state.VipCards.advancedCard,
+        commonCard: state.VipCards.commonCard,
+        CurrentDealUser: state.CurrentDealUser
+    };
+}
+
+export default connect(mapStateToProps)(Vips);

@@ -8,87 +8,238 @@ import {getProductTypeById, getProductByZhName} from './actions.js';
 
 Meteor.methods({
   "products.insert"(product,shopId,shopName,newSpec,newSpecGroups,userId){
+    console.log('---------------------------------')
     let copy_roles = []
-    cards = Products.find({shopId: shopId, $or: [{ productClass: 'advanced_card' },{ productClass: 'common_card' }]}).fetch()
-    for(var i=0;i < cards.length;i++){
-      if(cards[i].name){
-        copy_roles.push(cards[i].name + '_holder')
-      }
-    }
-    Products.insert({
-      name: product.name,
-      name_zh:product.name_zh,
-      price: 0,
-      description: product.description,
-      brief:product.brief,
-      cover:product.cover,
-      detailsImage:product.detailsImage,
-      createdByUserId: userId,
-      endPrice:0,
-      curency:product.curency,
-      detailsImage:product.detailsImage,
-      isTool:product.isTool,
-      isAppointment:product.isAppointment,
-      roleName:product.roleName,
-      categoryld:product.categoryld,
-      images: product.images,
-      isSale: false,
-      shopId:shopId,
-      productClass:product.productClass,
-      shopName:shopName,
-      parameterlist:product.parameterlist,
-      specName:product.spec_name,
-      specifications:newSpec,
-      newSpecGroups:newSpecGroups,
-      curency:'cny',
-      recommend:product.recommend,
-      agencyLevelCount: 2,//eg: 2
-      agencyLevelPrices: product.agencyPrice,
-      createdAt : new Date(),
-      acl: {
-        own: {
-          roles: ["shop_owner"],
-          users: [],
-        },
-        read: {
-          roles: ['nobody', 'login_user']
-        },
-        write: {
-          roles: ["shop_owner","shop_manager"],
-          users: [],
-        },
-        copy:{
-          roles: copy_roles,
-          users:[]
-        },
-        buy:{
-          roles: ['login_user']
-        }
-      },
-    },function (err,alt) {
-      if(!err){
-        if(product.isTool){
-          let roles_name_count =Roles.find({name:product.name+'_holder'}).count();
-          if(roles_name_count===0){
-            Roles.insert({
-              name:product.name+'_holder',
-              name_zh:product.name_zh,
-              time_limit:-1,
-              permissions:{},
-              state:true,
-              weight:0,
-              createdAt : new Date(),
-              isSuper: false,
-              users:[]
-            })
+    console.log(product.productClass)
+    let advanced_card = Products.find({ shopId: shopId, productClass: 'advanced_card'})
+    let common_card = Products.find({ shopId: shopId, productClass: 'common_card' })
+    copy_roles.push(advanced_card.name+'_holder')
+    copy_roles.push(common_card.name + '_holder')
+    if (product.productClass === 'common_card') {
+      if (common_card) {
+        throw new Meteor.Error('普通会员卡已经存在，不允许重复添加')
+      } else {
+        Products.insert({
+          name: product.name,
+          name_zh: product.name_zh,
+          price: 0,
+          description: product.description,
+          brief: product.brief,
+          cover: product.cover,
+          detailsImage: product.detailsImage,
+          createdByUserId: userId,
+          endPrice: 0,
+          curency: product.curency,
+          detailsImage: product.detailsImage,
+          isTool: product.isTool,
+          isAppointment: product.isAppointment,
+          roleName: product.roleName,
+          categoryld: product.categoryld,
+          images: product.images,
+          isSale: false,
+          shopId: shopId,
+          productClass: product.productClass,
+          shopName: shopName,
+          parameterlist: product.parameterlist,
+          specName: product.spec_name,
+          specifications: newSpec,
+          newSpecGroups: newSpecGroups,
+          curency: 'cny',
+          recommend: product.recommend,
+          agencyLevelCount: 2,//eg: 2
+          agencyLevelPrices: product.agencyPrice,
+          createdAt: new Date(),
+          acl: {
+            own: {
+              roles: ["shop_owner"],
+              users: [],
+            },
+            read: {
+              roles: ['nobody', 'login_user']
+            },
+            write: {
+              roles: ["shop_owner", "shop_manager"],
+              users: [],
+            },
+            copy: {
+              roles: copy_roles,
+              users: []
+            },
+            buy: {
+              roles: ['login_user']
+            }
+          },
+        }, function (err, alt) {
+          if (!err) {
+            if (product.isTool) {
+              let roles_name_count = Roles.find({ name: product.name + '_holder' }).count();
+              if (roles_name_count === 0) {
+                Roles.insert({
+                  name: product.name + '_holder',
+                  name_zh: product.name_zh,
+                  time_limit: -1,
+                  permissions: {},
+                  state: true,
+                  weight: 0,
+                  createdAt: new Date(),
+                  isSuper: false,
+                  users: []
+                })
+              }
+            }
           }
-        }
-        else {
-        }
-
+        });
       }
+    } else if (product.productClass === 'advanced_card') {
+      if (advanced_card) {
+        throw new Meteor.Error('高级会员卡已经存在，不允许重复添加')
+      } else {
+        Products.insert({
+          name: product.name,
+          name_zh: product.name_zh,
+          price: 0,
+          description: product.description,
+          brief: product.brief,
+          cover: product.cover,
+          detailsImage: product.detailsImage,
+          createdByUserId: userId,
+          endPrice: 0,
+          curency: product.curency,
+          detailsImage: product.detailsImage,
+          isTool: product.isTool,
+          isAppointment: product.isAppointment,
+          roleName: product.roleName,
+          categoryld: product.categoryld,
+          images: product.images,
+          isSale: false,
+          shopId: shopId,
+          productClass: product.productClass,
+          shopName: shopName,
+          parameterlist: product.parameterlist,
+          specName: product.spec_name,
+          specifications: newSpec,
+          newSpecGroups: newSpecGroups,
+          curency: 'cny',
+          recommend: product.recommend,
+          agencyLevelCount: 2,//eg: 2
+          agencyLevelPrices: product.agencyPrice,
+          createdAt: new Date(),
+          acl: {
+            own: {
+              roles: ["shop_owner"],
+              users: [],
+            },
+            read: {
+              roles: ['nobody', 'login_user']
+            },
+            write: {
+              roles: ["shop_owner", "shop_manager"],
+              users: [],
+            },
+            copy: {
+              roles: copy_roles,
+              users: []
+            },
+            buy: {
+              roles: ['login_user']
+            }
+          },
+        }, function (err, alt) {
+          if (!err) {
+            if (product.isTool) {
+              let roles_name_count = Roles.find({ name: product.name + '_holder' }).count();
+              if (roles_name_count === 0) {
+                Roles.insert({
+                  name: product.name + '_holder',
+                  name_zh: product.name_zh,
+                  time_limit: -1,
+                  permissions: {},
+                  state: true,
+                  weight: 0,
+                  createdAt: new Date(),
+                  isSuper: false,
+                  users: []
+                })
+              }
+            }
+          }
+        });
+      }
+    } else {
+      Products.insert({
+        name: product.name,
+        name_zh: product.name_zh,
+        price: 0,
+        description: product.description,
+        brief: product.brief,
+        cover: product.cover,
+        detailsImage: product.detailsImage,
+        createdByUserId: userId,
+        endPrice: 0,
+        curency: product.curency,
+        detailsImage: product.detailsImage,
+        isTool: product.isTool,
+        isAppointment: product.isAppointment,
+        roleName: product.roleName,
+        categoryld: product.categoryld,
+        images: product.images,
+        isSale: false,
+        shopId: shopId,
+        productClass: product.productClass,
+        shopName: shopName,
+        parameterlist: product.parameterlist,
+        specName: product.spec_name,
+        specifications: newSpec,
+        newSpecGroups: newSpecGroups,
+        curency: 'cny',
+        recommend: product.recommend,
+        agencyLevelCount: 2,//eg: 2
+        agencyLevelPrices: product.agencyPrice,
+        createdAt: new Date(),
+        acl: {
+          own: {
+            roles: ["shop_owner"],
+            users: [],
+          },
+          read: {
+            roles: ['nobody', 'login_user']
+          },
+          write: {
+            roles: ["shop_owner", "shop_manager"],
+            users: [],
+          },
+          copy: {
+            roles: copy_roles,
+            users: []
+          },
+          buy: {
+            roles: ['login_user']
+          }
+        },
+      }, function (err, alt) {
+        if (!err) {
+          if (product.isTool) {
+            let roles_name_count = Roles.find({ name: product.name + '_holder' }).count();
+            if (roles_name_count === 0) {
+              Roles.insert({
+                name: product.name + '_holder',
+                name_zh: product.name_zh,
+                time_limit: -1,
+                permissions: {},
+                state: true,
+                weight: 0,
+                createdAt: new Date(),
+                isSuper: false,
+                users: []
+              })
+            }
+          }
+          else {
+          }
 
-    });
+        }
+      });
+    }
   },
 
   'product.isSale'(_id){
@@ -186,49 +337,146 @@ Meteor.methods({
   },
 
   'product.update'(old,product){
-    Products.update({_id:old._id},{
-      $set:{
-        name: product.name,
-        name_zh:product.name_zh,
-        price: product.price,
-        description: product.description,
-        brief:product.brief,
-        image_des: product.image_des,
-        images: product.images,
-        detailsImage:product.detailsImage,
-        cover:product.cover,
-        detailsImage:product.detailsImage,
-        endPrice:product.endPrice,
-        isTool:product.isTool,
-        recommend:product.recommend,
-        status:product.status,
-        specifications:product.specifications,
-        agencyLevelPrices:product.agencyPrice,
-        productClass:product.productClass,
-        isAppointment:product.isAppointment
+    let advanced_card = Products.find({ shopId: old.shopId, productClass: 'advanced_card' })
+    let common_card = Products.find({ shopId: old.shopId, productClass: 'common_card' })
+    if (product.productClass === 'advanced_card') {
+      if (advanced_card){
+        console.log('高级会员卡已经存在，不允许重复添加')
+        throw new Meteor.Error('高级会员卡已经存在，不允许重复添加')
+      }else{
+        Products.update({ _id: old._id }, {
+          $set: {
+            name: product.name,
+            name_zh: product.name_zh,
+            price: product.price,
+            description: product.description,
+            brief: product.brief,
+            image_des: product.image_des,
+            images: product.images,
+            detailsImage: product.detailsImage,
+            cover: product.cover,
+            detailsImage: product.detailsImage,
+            endPrice: product.endPrice,
+            isTool: product.isTool,
+            recommend: product.recommend,
+            status: product.status,
+            specifications: product.specifications,
+            agencyLevelPrices: product.agencyPrice,
+            productClass: product.productClass,
+            isAppointment: product.isAppointment
+          }
+        }, function (err, alt) {
+          if (!err) {
+            if (product.isTool) {
+              let roles_name_count = Roles.find({ name: product.name + '_holder' }).count();
+              if (roles_name_count === 0) {
+                Roles.insert({
+                  name: product.name + '_holder',
+                  name_zh: product.name_zh,
+                  time_limit: -1,
+                  permissions: {},
+                  state: true,
+                  weight: 0,
+                  createdAt: new Date(),
+                  isSuper: false,
+                  users: []
+                })
+              }
+            }
+          }
+        })
       }
-    },function(err,alt){
-      if (!err) {
-        if (product.isTool) {
-          let roles_name_count = Roles.find({ name: product.name + '_holder' }).count();
-          if (roles_name_count === 0) {
-            Roles.insert({
-              name: product.name + '_holder',
-              name_zh: product.name_zh,
-              time_limit: -1,
-              permissions: {},
-              state: true,
-              weight: 0,
-              createdAt: new Date(),
-              isSuper: false,
-              users: []
-            })
+    } else if (product.productClass === 'common_card'){
+      if (common_card) {
+        console.log('普通会员卡已经存在，不允许重复添加')
+        throw new Meteor.Error('普通会员卡已经存在，不允许重复添加')
+      } else {
+        Products.update({ _id: old._id }, {
+          $set: {
+            name: product.name,
+            name_zh: product.name_zh,
+            price: product.price,
+            description: product.description,
+            brief: product.brief,
+            image_des: product.image_des,
+            images: product.images,
+            detailsImage: product.detailsImage,
+            cover: product.cover,
+            detailsImage: product.detailsImage,
+            endPrice: product.endPrice,
+            isTool: product.isTool,
+            recommend: product.recommend,
+            status: product.status,
+            specifications: product.specifications,
+            agencyLevelPrices: product.agencyPrice,
+            productClass: product.productClass,
+            isAppointment: product.isAppointment
+          }
+        }, function (err, alt) {
+          if (!err) {
+            if (product.isTool) {
+              let roles_name_count = Roles.find({ name: product.name + '_holder' }).count();
+              if (roles_name_count === 0) {
+                Roles.insert({
+                  name: product.name + '_holder',
+                  name_zh: product.name_zh,
+                  time_limit: -1,
+                  permissions: {},
+                  state: true,
+                  weight: 0,
+                  createdAt: new Date(),
+                  isSuper: false,
+                  users: []
+                })
+              }
+            }
+          }
+        })
+      }
+    }else{
+      Products.update({ _id: old._id }, {
+        $set: {
+          name: product.name,
+          name_zh: product.name_zh,
+          price: product.price,
+          description: product.description,
+          brief: product.brief,
+          image_des: product.image_des,
+          images: product.images,
+          detailsImage: product.detailsImage,
+          cover: product.cover,
+          detailsImage: product.detailsImage,
+          endPrice: product.endPrice,
+          isTool: product.isTool,
+          recommend: product.recommend,
+          status: product.status,
+          specifications: product.specifications,
+          agencyLevelPrices: product.agencyPrice,
+          productClass: product.productClass,
+          isAppointment: product.isAppointment
+        }
+      }, function (err, alt) {
+        if (!err) {
+          if (product.isTool) {
+            let roles_name_count = Roles.find({ name: product.name + '_holder' }).count();
+            if (roles_name_count === 0) {
+              Roles.insert({
+                name: product.name + '_holder',
+                name_zh: product.name_zh,
+                time_limit: -1,
+                permissions: {},
+                state: true,
+                weight: 0,
+                createdAt: new Date(),
+                isSuper: false,
+                users: []
+              })
+            }
           }
         }
-        else {
-        }
-      }
-    })
+      })
+    }
+
   },
 
   'app.get.recommend.products'(page,pagesize){
@@ -310,10 +558,15 @@ Meteor.methods({
       fromMethod: 'fancyshop.getProductByZhName',
     }
   },
-  
+  //授卡功能
   'product.cardBindToUser'(cardId,username){
     let user = Meteor.users.findOne({username:username})
     let product = Products.findOne({'_id': cardId})
+    let roleName = product.name + '_holder'
+    let role = Roles.findOne({ 'name': roleName })
+    if (role === undefined) {
+      throw new Meteor.Error("会员卡没有标记为道具类商品");
+    }
     if(user){
       let productOwener = ProductOwners.findOne({ userId: user._id, productId: cardId })
       if (productOwener){
@@ -326,11 +579,6 @@ Meteor.methods({
         },function(err,alt){
           //如果授卡成功，给该用户相应的角色
           if(!err){
-            let roleName = product.name + '_holder'
-            let role = Roles.findOne({ 'name': roleName})
-            if(role===undefined){
-              throw new Meteor.Error("会员卡没有标记为道具类商品");
-            }
             let user_role = UserRoles.findOne({ 'roleName': roleName, 'userId': user._id })
             if (user_role){
               UserRoles.update(user_role,{
@@ -375,6 +623,12 @@ Meteor.methods({
                   }
                 }
               });
+            }else{
+              Shops.update(shop,{
+                $set:{
+                  status: true
+                }
+              })
             }
           }
         })
@@ -383,7 +637,40 @@ Meteor.methods({
       throw new Meteor.Error("授卡失败,请检查用户名是否存在");
     }
   },
-  'product.cardUnbindUser'(){
+  'product.cardUnbindUser'(userId,product){
     console.log('解绑用户')
+    let roleName = product.name + '_holder'
+    let role = Roles.findOne({ 'name': roleName })
+
+    ProductOwners.remove({ userId: userId,productId:product._id},function(err){
+      if(!err){
+        console.log('解绑成功')
+
+        //关闭该用户的店铺
+        //取消该用户的角色
+        let user_role = UserRoles.findOne({ 'roleName': roleName, 'userId': userId })
+        if (user_role) {
+          UserRoles.update(user_role, {
+            $set:{
+              status: false
+            }
+          },function () {
+            console.log('取消该用户角色成功')
+          })
+        }
+       
+        let shop = Shops.findOne({ 'acl.own.users': userId })
+        if (shop) {
+          Shops.update(shop, {
+            $set:{
+              status: false
+            }
+          }, function () {
+            console.log('关闭该用户店铺成功')
+          })
+        }
+
+      }
+    })
   }
 });
