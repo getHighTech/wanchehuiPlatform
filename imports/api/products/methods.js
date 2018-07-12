@@ -8,13 +8,15 @@ import {getProductTypeById, getProductByZhName} from './actions.js';
 
 Meteor.methods({
   "products.insert"(product,shopId,shopName,newSpec,newSpecGroups,userId){
-    console.log('---------------------------------')
     let copy_roles = []
-    console.log(product.productClass)
     let advanced_card = Products.findOne({ shopId: shopId, productClass: 'advanced_card'})
     let common_card = Products.findOne({ shopId: shopId, productClass: 'common_card' })
-    copy_roles.push(advanced_card.name+'_holder')
-    copy_roles.push(common_card.name + '_holder')
+    if (advanced_card){
+      copy_roles.push(advanced_card.name + '_holder')
+    }
+    if (common_card) {
+      copy_roles.push(common_card.name + '_holder')
+    }
     if (product.productClass === 'common_card') {
       if (common_card) {
         throw new Meteor.Error('普通会员卡已经存在，不允许重复添加')
@@ -338,14 +340,6 @@ Meteor.methods({
   },
 
   'product.update'(old,product){
-    let advanced_card = Products.findOne({ shopId: old.shopId, productClass: 'advanced_card' })
-    let common_card = Products.findOne({ shopId: old.shopId, productClass: 'common_card' })
-    if (product.productClass === 'advanced_card') {
-      if (advanced_card){
-        console.log(advanced_card)
-        console.log('高级会员卡已经存在，不允许重复添加')
-        throw new Meteor.Error('高级会员卡已经存在，不允许重复添加')
-      }else{
         Products.update({ _id: old._id }, {
           $set: {
             name: product.name,
@@ -387,98 +381,6 @@ Meteor.methods({
             }
           }
         })
-      }
-    } else if (product.productClass === 'common_card'){
-      if (common_card) {
-        console.log('普通会员卡已经存在，不允许重复添加')
-        throw new Meteor.Error('普通会员卡已经存在，不允许重复添加')
-      } else {
-        Products.update({ _id: old._id }, {
-          $set: {
-            name: product.name,
-            name_zh: product.name_zh,
-            price: product.price,
-            description: product.description,
-            brief: product.brief,
-            image_des: product.image_des,
-            images: product.images,
-            detailsImage: product.detailsImage,
-            cover: product.cover,
-            detailsImage: product.detailsImage,
-            endPrice: product.endPrice,
-            isTool: product.isTool,
-            recommend: product.recommend,
-            status: product.status,
-            specifications: product.specifications,
-            agencyLevelPrices: product.agencyPrice,
-            productClass: product.productClass,
-            isAppointment: product.isAppointment
-          }
-        }, function (err, alt) {
-          if (!err) {
-            if (product.isTool) {
-              let roles_name_count = Roles.find({ name: product.name + '_holder' }).count();
-              if (roles_name_count === 0) {
-                Roles.insert({
-                  name: product.name + '_holder',
-                  name_zh: product.name_zh,
-                  time_limit: -1,
-                  permissions: {},
-                  state: true,
-                  weight: 0,
-                  createdAt: new Date(),
-                  isSuper: false,
-                  users: []
-                })
-              }
-            }
-          }
-        })
-      }
-    }else{
-      Products.update({ _id: old._id }, {
-        $set: {
-          name: product.name,
-          name_zh: product.name_zh,
-          price: product.price,
-          description: product.description,
-          brief: product.brief,
-          image_des: product.image_des,
-          images: product.images,
-          detailsImage: product.detailsImage,
-          cover: product.cover,
-          detailsImage: product.detailsImage,
-          endPrice: product.endPrice,
-          isTool: product.isTool,
-          recommend: product.recommend,
-          status: product.status,
-          specifications: product.specifications,
-          agencyLevelPrices: product.agencyPrice,
-          productClass: product.productClass,
-          isAppointment: product.isAppointment
-        }
-      }, function (err, alt) {
-        if (!err) {
-          if (product.isTool) {
-            let roles_name_count = Roles.find({ name: product.name + '_holder' }).count();
-            if (roles_name_count === 0) {
-              Roles.insert({
-                name: product.name + '_holder',
-                name_zh: product.name_zh,
-                time_limit: -1,
-                permissions: {},
-                state: true,
-                weight: 0,
-                createdAt: new Date(),
-                isSuper: false,
-                users: []
-              })
-            }
-          }
-        }
-      })
-    }
-
   },
 
   'app.get.recommend.products'(page,pagesize){

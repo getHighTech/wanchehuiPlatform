@@ -65,7 +65,7 @@ class Vips extends Component {
 
     getPageAdvancedVips(productId,page, pageSize) {
         let self = this;
-        Meteor.call("get.card.product.users", productId, page, pageSize, function (error, result) {
+        Meteor.call("get.advancedCard.product.users", productId, page, pageSize, function (error, result) {
             if (!error) {
                 console.log(result)
                 self.setState({
@@ -77,7 +77,7 @@ class Vips extends Component {
     }
     getPageCommonVips(productId, page, pageSize) {
         let self = this;
-        Meteor.call("get.card.product.users", productId, page, pageSize, function (error, result) {
+        Meteor.call("get.commonCard.product.users", productId, page, pageSize, function (error, result) {
             if (!error) {
                 console.log(result)
                 self.setState({
@@ -231,24 +231,34 @@ class Vips extends Component {
             key: 'profile.mobile',
         }, {
             title: '上级',
-            dataIndex: 'productClass',
-            key: 'productClass',
-        }, {
-            title: '总销售金额',
-            dataIndex: 'brief',
-            key: 'brief',
-        }, {
-            title: '总收入',
-            dataIndex: 'aaa',
-            key: 'aaa',
+            dataIndex: 'superior',
+            key: 'superior',
         }, {
             title: '总订单数量',
-            dataIndex: 'bbb',
-            key: 'bbbb',
-        }, {
-            title: '提现金额',
-            dataIndex: 'ccc',
-            key: 'ccc',
+            dataIndex: 'orders_count',
+            key: 'orders_count',
+        },{
+            title: '总收入',
+            dataIndex: 'all_income',
+            key: 'all_income',
+            render: (text,record) =>{
+                return (record.all_income / 100)
+            }
+        }, 
+        {
+            title: '已提现',
+            dataIndex: 'withdraw_count',
+            key: 'withdraw_count',
+            render: (text, record) => {
+                return (record.withdraw_count / 100)
+            }
+        },  {
+            title: '账户余额',
+            dataIndex: 'balance',
+            key: 'balance',
+            render: (text, record) => {
+                return (record.balance / 100)
+            }
         }, {
             title: '操作',
             key: 'show',
