@@ -246,17 +246,9 @@ class OrdersForShop extends React.Component {
 
         ];
 
-        const shopOption = [];
-        const shop = this.state.shopData;
-        for (let i = 0; i < shop.length; i++) {
-            shopOption.push(<Option key={i}>{shop[i].name}</Option>)
-        }
 
         return (
             <div>
-                <Select value={this.state.defaultShopName} style={{ width: 160 }} onChange={this.handleChange.bind(this)}>
-                    {shopOption}
-                </Select>
                 <Spin spinning={this.state.loading}>
                     <Table columns={columns} dataSource={this.state.orderData} scroll={{ x: 1300 }} />
                 </Spin>
