@@ -26,6 +26,7 @@ import {
     getOrders,
     getShopProducts,
     getHomePageProducts,
+    getAppNameProducts,
 } from './apps';
 
 Meteor.methods({
@@ -324,9 +325,9 @@ Meteor.methods({
             })
         },
         //获取店铺商品
-        'app.get.products.shop.limit'(loginToken, appName, shopId, page, pagesize){
+        'app.get.products.shop.limit'(loginToken, appName){
             let stampedTokenObj = JSON.parse(loginToken);
-            let rltObj = getProductByShopId(appName, shopId, page, pagesize);
+            let rltObj = getAppNameProducts(appName);
             return Object.assign({}, rltObj, {
                 fromMethod: "app.get.products.shop.limit"
             })
@@ -359,6 +360,13 @@ Meteor.methods({
             let rltObj = getShopProducts(stampedTokenObj, appName, shopId, page, pagesize);
             return Object.assign({}, rltObj, {
                 fromMethod: 'app.get.shop.products.limit',
+            })
+        },
+        "app.get.user.shop.perminssion"(loginToken, appName, userId){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getUserShopPerminssion(stampedTokenObj, appName, userId);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.get.user.shop.perminssion'
             })
         },
 });

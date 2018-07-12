@@ -22,7 +22,30 @@ export const UserContacts = new Mongo.Collection("user_contacts");
 //home page products
 export function getHomePageProducts(appName) {
     let shop = getUserShop(appName)
-    let products = Products.find({isSale: true, shopId: shop._id}).fetch();
+    if(shop){
+        let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id}).fetch();
+        return {
+            type: "products", 
+            msg: products,
+        }
+    }else{
+        return {
+            type: "error",
+            reason: "invalid app" 
+        }
+    }
+}
+
+// get appName products
+export function getAppNameProducts(appName) {
+    if(!findOneAppByName(appName)){
+        return {
+            type: "error",
+            reason: "invalid app"
+        }
+    }
+    let shop = getUserShop(appName);
+    let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id}).fetch();
     return {
         type: "products", 
         msg: products,
@@ -32,9 +55,6 @@ export function getHomePageProducts(appName) {
 //get member
 function getMember(shopId) {
     let shop = Shops.findOne({_id: shopId})
-    console.log('~~~')
-    console.log(shop)
-    console.log('~~~')
       if (shop.isAdvanced===true){
           return true
       }else {
@@ -139,9 +159,11 @@ export function syncUser(userId, stampedToken, appName){
       }
       let userContact = UserContacts.findOne({userId, default: true})
       roles.push("login_user");
+      let shop = getUserShopPerminssion(userId)
+      let platfrom = getUserShop(appName)
       return {
           type: "users",
-          msg: {roles, user, userId: user._id, userContact},
+          msg: {roles, user, userId: user._id, userContact,shopId: shop._id,appNameShopId: platfrom._id},
       }
 }
 
@@ -391,8 +413,6 @@ export function getOneProduct(loginToken, appName, productId){
 
 }
 export function updateShopOrders(orderId, orderParams){
-    console.log("orderId on updateShopOrders", orderId);
-
     if(!orderId){
         return {
             type: "error",
@@ -409,8 +429,6 @@ export function updateShopOrders(orderId, orderParams){
 
 }
 export function updateOrder(loginToken, appName, orderParams, orderId){
-    console.log("orderId on confirmed", orderId);
-
     return getUserInfo(loginToken, appName, "orders", function(){
         let updateRlt = Orders.update(orderId, {
             $set: {
@@ -434,7 +452,7 @@ export function updateOrder(loginToken, appName, orderParams, orderId){
 }
 
 export function createNewOrder(loginToken, appName, orderParams){
-    let  relation;
+    let   relation;
     if(orderParams.cartId){
         AppCarts.update(orderParams.cartId, {
             $set: {
@@ -464,27 +482,26 @@ export function createNewOrder(loginToken, appName, orderParams){
            if(orderParams.products[i].productClass==="common_card"){
               let shop = getUserShopById(orderParams.products[i].shopId)
               if(shop.isAdvanced===true){
-                let  agencyRelation = AgencyRelation.findOne({userId: orderParams.products[i].userId})
+                let  agencyRelation = AgencyRelation.findOne({userId: orderParams.userId})
                 if(!agencyRelation){
                 relation =  AgencyRelation.insert({
                         appName,
                         shopId: null,
                         SshopId: shop._id,
-                        userId: orderParams.products[i].userId,
+                        userId: orderParams.userId,
                         SuserId: shop.acl.own.users,
                         status: false,
                     })
                 }else{
-                    relation =  AgencyRelation.findOne({userId: orderParams.products[i].userId})
+                    relation =  AgencyRelation.findOne({userId: orderParams.userId})
                 }
               }
            }else{
-              relation =  AgencyRelation.findOne({userId: orderParams.products[i].userId})
+              relation =  AgencyRelation.findOne({userId: orderParams.userId})
               break;
            }
         }
         //分店铺建立订单
-
         let orderParamsDealed = {
             ...orderParams,
             type: "card",
@@ -502,7 +519,7 @@ export function createNewOrder(loginToken, appName, orderParams){
             status: "unconfirmed",
             createdAt: new Date(),
             appName,
-            agencyRelationId:  relation._id,
+            // agencyRelationId:  relation._id,
         }
         let orderId = Orders.insert(orderParamsDealed);
         for(const shopId in shopProducts){//把这个订单拆分给各个店铺
@@ -729,7 +746,6 @@ export function withdrawMoney(loginToken, appName, userId, amount, bank, bankId)
                  amount: newTotalAmount
              }
          })
-         console.log(newTotalAmount);
 
          if(chargeId){
             return {
@@ -746,8 +762,6 @@ export function withdrawMoney(loginToken, appName, userId, amount, bank, bankId)
 }
 
 export function getUserBankcards(loginToken, appName, userId){
-    console.log(userId);
-
     return getUserInfo(loginToken, appName, "bankcards", function(){
         let bankcards = Bankcards.find({userId},{sort: {createdAt: -1}});
         return {
@@ -844,8 +858,6 @@ export function getWithdrawals(loginToken, appName, userId,  page, pagesize){
 
 
 export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
-    console.log(cartId);
-
     return getUserInfo(loginToken, appName, "app_carts", function(){
         let createNew = function(){
 
@@ -1042,8 +1054,6 @@ export function getNewestUserOrders(loginToken, appName, status, userId, page, p
 
 export function getIncomeWithinTime(loginToken, appName, rangeLength, userId, unit){
     return getUserInfo(loginToken, appName, "balances", function(){
-        console.log('function in', unit);
-
         let yestoday = moment().subtract(rangeLength, unit);
         yestoday = yestoday.toISOString();
         let yestodayInData = new Date(yestoday);
@@ -1140,7 +1150,6 @@ export function cancelOrder(loginToken, appName, orderId,userId) {
             }
         })
         if(!order || order.lenght === 0){
-            console.log(1111)
             return {
                 type: "error",
                 reason: "ORDER NOT FOUND",
@@ -1193,7 +1202,6 @@ export function getProductByShopId(appName, shopId, page, pagesize){
     if(shopId === "000"){
         targetShopId = Shops.findOne({name: "万人车汇自营店"})._id;
     }
-    console.log("targetShopId", targetShopId);
 
     let products = Products.find({shopId: targetShopId}, {
         skip: (page-1)*pagesize,
@@ -1276,7 +1284,6 @@ export function agencyOneProduct(loginToken, appName, product, userId){
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
 
-        console.log(newProductParams);
 
         let newProductId = Products.insert({
             ...newProductParams
@@ -1366,4 +1373,10 @@ export function getShopProducts(loginToken,appName, shopId, page, pagesize){
             products
         }
     }
+}
+
+export function getUserShopPerminssion(userId) {
+  
+    let shop = Shops.findOne({"acl.own.users": userId})
+    return shop
 }
