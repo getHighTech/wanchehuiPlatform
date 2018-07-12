@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import {ShopOrders} from './shop_orders';
-
+import {Shops} from '../shops/shops.js'
 Meteor.methods({
   'get.shoporder'(id){
 
@@ -31,7 +31,12 @@ Meteor.methods({
     }
   },
   'get.byShopId'(shopId){
-    return ShopOrders.find({shopId:shopId}).fetch();
+    let shop = Shops.findOne({ _id: shopId})
+    if (shop.name ==='万人车汇自营店'){
+      return ShopOrders.find({ shopId: shopId, appName: { $exists: false } }).fetch();
+    }else{
+      return ShopOrders.find({ shopId: shopId}).fetch();
+    }
   },
   "shopOrders.updateStatus"(_id,status){
     return ShopOrders.update(_id,{
