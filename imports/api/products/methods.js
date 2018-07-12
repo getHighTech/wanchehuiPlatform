@@ -11,8 +11,8 @@ Meteor.methods({
     console.log('---------------------------------')
     let copy_roles = []
     console.log(product.productClass)
-    let advanced_card = Products.find({ shopId: shopId, productClass: 'advanced_card'})
-    let common_card = Products.find({ shopId: shopId, productClass: 'common_card' })
+    let advanced_card = Products.findOne({ shopId: shopId, productClass: 'advanced_card'})
+    let common_card = Products.findOne({ shopId: shopId, productClass: 'common_card' })
     copy_roles.push(advanced_card.name+'_holder')
     copy_roles.push(common_card.name + '_holder')
     if (product.productClass === 'common_card') {
@@ -92,6 +92,7 @@ Meteor.methods({
       }
     } else if (product.productClass === 'advanced_card') {
       if (advanced_card) {
+        console.log(advanced_card)
         throw new Meteor.Error('高级会员卡已经存在，不允许重复添加')
       } else {
         Products.insert({
@@ -337,10 +338,11 @@ Meteor.methods({
   },
 
   'product.update'(old,product){
-    let advanced_card = Products.find({ shopId: old.shopId, productClass: 'advanced_card' })
-    let common_card = Products.find({ shopId: old.shopId, productClass: 'common_card' })
+    let advanced_card = Products.findOne({ shopId: old.shopId, productClass: 'advanced_card' })
+    let common_card = Products.findOne({ shopId: old.shopId, productClass: 'common_card' })
     if (product.productClass === 'advanced_card') {
       if (advanced_card){
+        console.log(advanced_card)
         console.log('高级会员卡已经存在，不允许重复添加')
         throw new Meteor.Error('高级会员卡已经存在，不允许重复添加')
       }else{
