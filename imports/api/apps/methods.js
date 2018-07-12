@@ -28,6 +28,7 @@ import {
     getHomePageProducts,
     getAppNameProducts,
     agencyProducts,
+    cancelAgencyProduct,
 } from './apps';
 
 Meteor.methods({
@@ -375,4 +376,11 @@ Meteor.methods({
                 fromMethod: 'app.get.user.shop.perminssion'
             })
         },
+        // "app.cancel.agency.product"(loginToken, appName, productId,shopId){
+        //     let stampedTokenObj = JSON.parse(loginToken);
+        //     let rltObj = cancelAgencyProduct(stampedTokenObj, appName, productId,shopId);
+        //     return Object.assign({}, rltObj, {
+        //         fromMethod: 'app.cancel.agency.product'
+        //     })
+        // },
 });
