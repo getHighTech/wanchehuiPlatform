@@ -63,6 +63,15 @@ class MainLayout extends Component {
         if(rlt.indexOf('superAdmin') == -1){
           console.log("不是超级管理员")
           dispatch(createMeunList(ShopOwnerMenu))
+          Meteor.call('shops.getByCurrentUser', userId, function (err, rlt) {
+            console.log(userId)
+            console.log(rlt)
+            if (!err) {
+              self.setState({
+                shopId: rlt._id
+              })
+            }
+          })
         }else{
           console.log("超级管理员")
           dispatch(createMeunList(SuperAdminMenu))
@@ -72,15 +81,7 @@ class MainLayout extends Component {
         console.log(self.props)
 
       })
-      Meteor.call('shops.getByCurrentUser',userId,function(err,rlt){
-        console.log(userId)
-        console.log(rlt)
-        if(!err){
-          self.setState({
-            shopId:rlt._id
-          })
-        }
-      })
+
     }
     const pathname = this.props.routing.locationBeforeTransitions.pathname;
     switch (pathname) {

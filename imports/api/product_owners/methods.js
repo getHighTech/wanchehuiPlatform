@@ -32,6 +32,14 @@ Meteor.methods({
             sort: { "createdAt": -1 },
         }).fetch();
         return users;
+    },
+    'get.procductOwner.record.byUserId'(userId,product){
+        let record = ProductOwners.findOne({ 'userId': userId, 'productId': product._id})
+        if (record){
+            return record
+        }
+        else{
+            throw new Meteor.Error("未知错误");
+        }
     }
-    
 });
