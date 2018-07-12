@@ -524,7 +524,7 @@ export function createNewOrder(loginToken, appName, orderParams){
             status: "unconfirmed",
             createdAt: new Date(),
             appName,
-            // agencyRelationId:  relation._id,
+            agencyRelationId:  relation._id,
         }
         let orderId = Orders.insert(orderParamsDealed);
         for(const shopId in shopProducts){//把这个订单拆分给各个店铺
