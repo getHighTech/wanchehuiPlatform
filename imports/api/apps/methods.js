@@ -26,6 +26,8 @@ import {
     getOrders,
     getShopProducts,
     getHomePageProducts,
+    getAppNameProducts,
+    agencyProducts,
 } from './apps';
 
 Meteor.methods({
@@ -82,7 +84,6 @@ Meteor.methods({
     "app.get.one.product.id"(loginToken, appName, productId){
         //载入商品信息
         //创建新的订单
-        console.log("loginToken", loginToken)
         let stampedTokenObj = JSON.parse(loginToken);
         return Object.assign({}, getOneProduct(stampedTokenObj, appName, productId), {
             fromMethod:  "app.get.one.product.id"
@@ -179,7 +180,6 @@ Meteor.methods({
     },
     //获取银行卡列表
     "app.get.user.bankcards"(loginToken, appName, userId){
-        console.log(userId);
         
         let stampedTokenObj = JSON.parse(loginToken);
         let rltObj = getUserBankcards(stampedTokenObj, appName, userId);
@@ -309,7 +309,6 @@ Meteor.methods({
             })
         },
         'app.cancel.one.order'(loginToken,appName,orderId,userId) {
-            console.log(orderId)
             let stampedTokenObj = JSON.parse(loginToken);
             let rltObj = cancelOrder(stampedTokenObj, appName,orderId,userId);
             return Object.assign({}, rltObj, {
@@ -324,21 +323,29 @@ Meteor.methods({
             })
         },
         //获取店铺商品
-        'app.get.products.shop.limit'(loginToken, appName, shopId, page, pagesize){
+        'app.get.products.shop.limit'(loginToken, appName){
             let stampedTokenObj = JSON.parse(loginToken);
-            let rltObj = getProductByShopId(appName, shopId, page, pagesize);
+            let rltObj = getAppNameProducts(appName);
             return Object.assign({}, rltObj, {
                 fromMethod: "app.get.products.shop.limit"
             })
 
         },
-        'app.agency.one.product'(loginToken, appName, product, userId){
+        'app.agency.one.product'(loginToken, appName, product, userId,appNameShopId,shopId){
             let stampedTokenObj = JSON.parse(loginToken);
-            let rltObj = agencyOneProduct(stampedTokenObj, appName, product, userId);
+            let rltObj = agencyOneProduct(stampedTokenObj, appName, product, userId,appNameShopId,shopId);
             return Object.assign({}, rltObj, {
                 fromMethod: 'app.agency.one.product'
             })
         }, 
+        'app.agency.products'(loginToken, appName, shopId){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = agencyProducts(stampedTokenObj, appName,shopId);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.agency.products'
+            })
+        }, 
+        
 
         'app.get.product.owners'(loginToken, appName, userId){
             let stampedTokenObj = JSON.parse(loginToken);
@@ -359,6 +366,13 @@ Meteor.methods({
             let rltObj = getShopProducts(stampedTokenObj, appName, shopId, page, pagesize);
             return Object.assign({}, rltObj, {
                 fromMethod: 'app.get.shop.products.limit',
+            })
+        },
+        "app.get.user.shop.perminssion"(loginToken, appName, userId){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getUserShopPerminssion(stampedTokenObj, appName, userId);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.get.user.shop.perminssion'
             })
         },
 });
