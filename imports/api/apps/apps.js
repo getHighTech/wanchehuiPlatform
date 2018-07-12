@@ -395,7 +395,12 @@ export function appNewOrder(cartParams, appName){
 }
 
 export function getOneProduct(loginToken, appName, productId){
+    console.log("productId")
+    console.log(productId)
+    console.log(productId)
         let product = Products.findOne({_id: productId});
+        // console.log("product")
+        // console.log(product)
         if(!product){
             product = Products.findOne({roleName: productId});
         }
@@ -1217,7 +1222,7 @@ export function getProductByShopId(appName, shopId, page, pagesize){
     }
 }
 
-export function agencyOneProduct(loginToken, appName, product, userId){
+export function agencyOneProduct(loginToken, appName, product, userId, appNameShopId,shopId){
     return getUserInfo(loginToken, appName, "shops", function(){
         if(!product.shopId){
             return {
@@ -1242,7 +1247,6 @@ export function agencyOneProduct(loginToken, appName, product, userId){
                 reason: "USER NOT FOUND"
             }
         }
-
 
 
         let newShop = Shops.findOne({"acl.own.users": userId});
@@ -1283,13 +1287,22 @@ export function agencyOneProduct(loginToken, appName, product, userId){
         delete newProductParams._id;
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
-
-
-        let newProductId = Products.insert({
-            ...newProductParams
-        });
-
-
+        let newProductId
+        let agencyProducts = Products.findOne({ name: newProductParams.name,shopId: newShopId})
+        if(!agencyProducts){
+            newProductId = Products.insert({
+                ...newProductParams
+            });
+        }
+        if(agencyProducts.isSale===false){
+            newProductId = Products.update({"_id": agencyProducts._id},
+                {
+                    $set: {
+                        "isSale": true
+                    }
+                }
+            )
+        }
         //标记被代理的商品
         let agencies = product.agencies;
         if(!agencies){
@@ -1315,7 +1328,7 @@ export function agencyOneProduct(loginToken, appName, product, userId){
         if(!newProductId){
             return {
                 type: "error",
-                reason: "SERVICE ERROR"
+                reason: "product existed"
             }
         }
 
@@ -1345,6 +1358,19 @@ export function getProductOwners(loginToken, appName, userId){
 
     });
 
+}
+
+export function agencyProducts(loginToken, appName, shopId) {
+    return getUserInfo(loginToken, appName,shopId, function(){
+        let products = Products.find({ shopId }).fetch()
+        return {
+            type: "products",
+            msg: {
+                products
+            }
+        }
+
+    });
 }
 
 
