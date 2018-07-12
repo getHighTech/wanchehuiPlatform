@@ -22,7 +22,7 @@ class Cards extends Component {
             if(!err){
                 shopId = rlt._id
                 console.log(shopId)
-                let condition = { shopId: shopId, $or: [{ productClass: 'advanced_card' }, { productClass: 'common_card' }] }
+                let condition = { shopId: shopId, isSale:true,$or: [{ productClass: 'advanced_card' }, { productClass: 'common_card' }] }
                 Meteor.call('get.product.byShopIdOr', condition, function (err, rlt) {
                     if (!err) {
                         console.log(rlt)
