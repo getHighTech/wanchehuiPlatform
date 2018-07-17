@@ -36,7 +36,9 @@ class OrdersForShop extends React.Component {
         visible: false,
         changeStatus: [],
         localStatus: '',
-        loading: false
+        loading: false,
+        totalCount:1,
+        currentPage:1,
     }
 
     showModal = (status, _id) => {
@@ -122,6 +124,7 @@ class OrdersForShop extends React.Component {
             loading: true
         })
         let shopId = '';
+        let condition = {};
         Meteor.call('shops.getByCurrentUser', currentUserId, function (err, rlt) {
             if (!err) {
                 shopId = rlt._id;
@@ -130,11 +133,20 @@ class OrdersForShop extends React.Component {
                     shopData: rlt,
                     defaultShopName: rlt.name
                 })
+                Meteor.call('get.orders.count',shopId,function(error,result){
+                  if (!error) {
+                    console.log(result);
+                    self.setState({
+                      totalCount:result
+                    })
+                  }
+                })
                 console.log('拉取数据');
-                self.getProName();
+                self.getProName(1,20);
 
             }
         })
+
 
     }
     onChangeOrderStatus = (e) => {
@@ -150,14 +162,20 @@ class OrdersForShop extends React.Component {
         console.log(_id);
         dispatch(push(`/orders/order_details/${_id}`));
     }
+    handlePageChange(page,pageSize){
+        console.log(page),
+        console.log(pageSize),
+            this.getProName( page, pageSize)
+    }
 
-    getProName() {
+    getProName(page,pageSize) {
         let shopId = this.state.shopId;
         console.log(shopId);
         let self = this;
-        Meteor.call('get.byShopId', shopId, function (err, alt) {
+        Meteor.call('get.byShopId', shopId, page,pageSize,function (err, alt) {
             if (!err) {
                 console.log('开始给表单填值');
+                console.log(alt);
                 for (var i = 0; i < alt.length; i++) {
                     let productName = [];
                     let OneOrderPro = alt[i].products;
@@ -178,6 +196,7 @@ class OrdersForShop extends React.Component {
                 }
                 self.setState({
                     orderData: alt,
+                    currentPage: page,
                     loading: false
                 })
             }
@@ -250,7 +269,11 @@ class OrdersForShop extends React.Component {
         return (
             <div>
                 <Spin spinning={this.state.loading}>
-                    <Table columns={columns} dataSource={this.state.orderData} scroll={{ x: 1300 }} />
+                    <Table columns={columns} dataSource={this.state.orderData} scroll={{ x: 1300 }}  pagination={{
+                        defaultPageSize: 20, total: this.state.totalCount,
+                        onChange: (page, pageSize) => this.handlePageChange(page, pageSize),
+                        showQuickJumper: true, current: this.state.currentPage
+                    }}  />
                 </Spin>
                 <Modal title="修改订单状态" visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} okText="确认"
                     cancelText="取消">
