@@ -182,25 +182,6 @@ class OrdersForShop extends React.Component {
                 })
             }
         })
-        // Meteor.call('orders.getShopId',shopId,function(erroy,result){
-        //   if(!erroy){
-        //     for(var i = 0;i<result.length;i++){
-        //       let productName=[];
-        //       let productPrice=0;
-        //       let OneOrderPro = result[i].products;
-        //       for(var j = 0; j < OneOrderPro.length; j++){
-        //         if(OneOrderPro[j].shopId==shopId){
-        //           productPrice=productPrice+OneOrderPro[j].price;
-        //           productName.push(OneOrderPro[j].name_zh,<br key={j}/>);
-        //         }
-        //       }
-        //       result[i].ProCount=productName.length/2;
-        //       result[i].ProName=productName;
-        //       result[i].ProPrice=productPrice/100
-        //     }
-        //
-        //   }
-        // })
     }
 
 

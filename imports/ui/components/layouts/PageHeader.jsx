@@ -61,8 +61,10 @@ const PageHeader = (path) => {
       case "/cards":
         return "会员卡管理";
         break;
-      case "/vips":
-        return "会员管理";
+      case "/svips":
+        return "高级会员管理";
+      case "/cvips":
+        return "普通会员管理";
         break;
       default:
         return "未定义页面";
