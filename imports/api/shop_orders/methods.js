@@ -3,7 +3,6 @@ import {ShopOrders} from './shop_orders';
 import {Shops} from '../shops/shops.js'
 Meteor.methods({
   'get.shoporder'(id){
-
     let aaa= ShopOrders.findOne({orderId:id});
     console.log('aaa'+aaa);
     if (typeof(aaa)!='undefined') {

@@ -91,9 +91,10 @@ class UploadToCloudinary extends Component {
               remoteUrls
             })
             img.src = url;
+            // self.props.setUrl(remoteUrls)
             if(typeof this.props.getRemoteImages === 'function'){
               this.props.getRemoteImages(remoteUrls);
-
+              
             }
             // img.alt = response.public_id;
             // document.getElementById('gallery').innerHTML='';
