@@ -41,6 +41,7 @@ import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 const Option =Select.Option;
 const SubMenu = Menu.SubMenu;
+const CarouselUrl = []
 function uploadImageCallBack(file) {
 
   return new Promise(
@@ -61,10 +62,10 @@ function uploadImageCallBack(file) {
     }
   );
 }
+
 function handleChangeSpec(value) {
   console.log(`selected ${value}`);
 }
-
 
 class ProductFormWrap extends Component {
 
@@ -275,7 +276,43 @@ class ProductFormWrap extends Component {
     });
 
   }
+  setCoverUrl(url){
+    let self = this
+    console.log('上传图片成功')
+    console.log(url)
+    this.setState({
+      image_url:url
+    })
+    const setFieldsValue = this.props.form.setFieldsValue;
+    setFieldsValue({ cover: self.state.image_url })
+  }
+  setCarouselUrl(url) {
+    let self = this
+    console.log('上传轮播图成功')
+    CarouselUrl.push(url)
+    console.log(CarouselUrl)
+    this.setState({
+      images: CarouselUrl
+    })
+    const setFieldsValue = this.props.form.setFieldsValue;
+    setFieldsValue({ images: self.state.images })
+  }
+  setDetailsImageUrl(url){
+    let self = this
+    console.log('上传商品详情成功')
+    console.log(url)
+    this.setState({
+      image_details:url
+    })
+    const setFieldsValue = this.props.form.setFieldsValue;
+    setFieldsValue({ detailsImage: self.state.image_details })
+  }
   componentDidMount(){
+    let self = this;
+    if (this.props.product){
+      console.log('编辑单店')
+      console.log(self.props.product)
+    }
     let images=this.props.product.images;
     let fileListImages=[];
     if(images!=null){
@@ -320,7 +357,6 @@ class ProductFormWrap extends Component {
         fileListDetails:[{uid:1,url:''}]
       })
     }
-    let self =this;
     Meteor.call('get.all_product_classes',function(err,alt){
       if (!err) {
         self.setState({
@@ -897,13 +933,7 @@ class ProductFormWrap extends Component {
 
 }
 
-setUrl = (urls) => {
-  console.log(urls);
-  let self = this ;
-  const setFieldsValue = self.props.form.setFieldsValue;
-  setFieldsValue({ images: urls})
 
-}
 getRemoteCover = (cover) => {
   console.log(cover);
   let self = this ;
@@ -1306,31 +1336,44 @@ getRemoteDetails=(detailsImage) => {
       </FormItem>
 
 
-
       <FormItem
-      {...formItemLayout}
-      label="商品封面地址"
-      hasFeedback
+        {...formItemLayout}
+        label="商品封面"
+        hasFeedback
       >
-      {getFieldDecorator('cover', {
+        {getFieldDecorator('cover', {
           initialValue: this.props.product.cover,
-      })(
-
-          <Input className="shop-name-input"    placeholder="商品封面地址" />
-      )}
+        })(
+          <Input type="text" style={{ display: 'none' }} placeholder="图片地址" />
+        )}
+            <UploadToCloudinary setUrl={this.setCoverUrl.bind(this)} single={true} />
       </FormItem>
+
       <FormItem
-      {...formItemLayout}
-      label="商品封面预览"
-      hasFeedback
+        {...formItemLayout}
+        label="轮播图"
+        hasFeedback
       >
-          <UploadCoverToCloudinary getRemoteCover={this.getRemoteCover}  ref="getSwordButton"  cover={this.props.product.cover} images_state={this.props.images_state}/>
+            {getFieldDecorator('images', {
+              initialValue: this.props.product.images,
+        })(
+          <Input type="text" style={{ display: 'none' }} placeholder="轮播图地址" />
+        )}
+        <UploadToCloudinary setUrl={this.setCarouselUrl.bind(this)} />
       </FormItem>
-
-
-
-
       <FormItem
+        {...formItemLayout}
+        label="商品封面"
+        hasFeedback
+      >
+            {getFieldDecorator('detailsImage', {
+              initialValue: this.props.product.detailsImage,
+        })(
+          <Input type="text" style={{ display: 'none' }} placeholder="图片地址" />
+        )}
+            <UploadToCloudinary setUrl={this.setDetailsImageUrl.bind(this)} single={true} />
+      </FormItem>
+      {/* <FormItem
       {...formItemLayout}
       label='商品多图地址'
         required={false}
@@ -1348,15 +1391,15 @@ getRemoteDetails=(detailsImage) => {
           style={{ width: '100%' }}>
          </Select>
         )}
-      </FormItem>
-      <FormItem
+      </FormItem> */}
+      {/* <FormItem
       {...formItemLayout}
-      label="商品多图预览"
+      label="商品轮播图"
       hasFeedback
       >
             <UploadToCloudinary setUrl={this.setUrl.bind(this)}  ref="getSwordButton"  images={this.props.product.images} images_state={this.props.images_state}/>
-      </FormItem>
-      <FormItem
+      </FormItem> */}
+      {/* <FormItem
       {...formItemLayout}
       label="商品详情地址"
       hasFeedback
@@ -1367,19 +1410,14 @@ getRemoteDetails=(detailsImage) => {
 
           <Input className="shop-name-input"    placeholder="商品详情地址" />
       )}
-      </FormItem>
-      <FormItem
+      </FormItem> */}
+      {/* <FormItem
       {...formItemLayout}
       label="商品详情图片预览"
       hasFeedback
       >
           <UploadDetailsToCloudinary getRemoteDetails={this.getRemoteDetails}  ref="getSwordButton"  detailsImage={this.props.product.detailsImage} images_state={this.props.images_state}/>
-      </FormItem>
-
-
-
-
-
+      </FormItem> */}
 
       <FormItem
       {...formItemLayout}
@@ -1421,7 +1459,7 @@ getRemoteDetails=(detailsImage) => {
       </FormItem>
       <FormItem
       {...formItemLayout}
-      label="商品推荐"
+            label="商品推荐"
       >
       {getFieldDecorator('recommend', {
         valuePropName:'checked',

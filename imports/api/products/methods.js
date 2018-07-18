@@ -32,7 +32,6 @@ Meteor.methods({
           createdByUserId: userId,
           endPrice: 0,
           curency: product.curency,
-          detailsImage: product.detailsImage,
           isTool: product.isTool,
           isAppointment: product.isAppointment,
           roleName: product.roleName,

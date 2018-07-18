@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Table, Tooltip, Button, message, Modal, Popconfirm } from 'antd';
 import { connect } from 'react-redux';
-import { setAdvancedCard, setCommonCard } from '../../../actions/vips';
+import { setAdvancedCard } from '../../../actions/vips';
 
 class Svips extends Component {
     constructor(props) {
@@ -68,7 +68,6 @@ class Svips extends Component {
     }
 
     handlePageChangeAdvancedVips(page, pageSize) {
-
         $(document).scrollTop(0);
         this.getPageAdvancedVips(this.state.advance_card_id, page, pageSize);
     }
