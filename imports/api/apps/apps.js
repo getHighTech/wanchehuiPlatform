@@ -21,6 +21,8 @@ export const UserContacts = new Mongo.Collection("user_contacts");
 
 //home page products
 export function getHomePageProducts(appName) {
+    console.log(`啥呢`)
+    console.log(appName)
     let shop = getUserShop(appName)
     if(shop){
         let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id}).fetch();
@@ -157,10 +159,18 @@ export function syncUser(userId, stampedToken, appName){
       let shop = getUserShopPerminssion(userId)
       let shopId = shop? shop._id : null
       let platfrom = getUserShop(appName)
+      let product, advencedRole, commonRole, role;
+      if(shopId){
+         product = Products.findOne({shopId, productClass: {
+             "$in": ['common_card','advanced_card']
+         }})
+         role = UserRoles.findOne({name: `${product.name}+holder`})
+      }
       let platfromId = platfrom? platfrom._id: null
+      role !==undefined?  role :  false
       return {
           type: "users",
-          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId },
+          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId,agencyRole: role  },
       }
 }
 
@@ -500,15 +510,21 @@ export function createNewOrder(loginToken, appName, orderParams){
                         status: false,
                     })
                 }else{
+                    console.log(`过了过了`)
                     relation =  AgencyRelation.findOne({userId: orderParams.userId})
                 }
               }
            }else{
+               console.log(`进来这里了`)
               relation =  AgencyRelation.findOne({userId: orderParams.userId})
               break;
            }
         }
+        
         //分店铺建立订单
+        console.log('~~~~')
+        console.log(relation)
+        console.log(`~~~~`)
         let orderParamsDealed = {
             ...orderParams,
             type: "card",
@@ -526,7 +542,7 @@ export function createNewOrder(loginToken, appName, orderParams){
             status: "unconfirmed",
             createdAt: new Date(),
             appName,
-            agencyRelationId:  relation._id,
+            agencyRelationId:  relation===undefined? null : relation._id,
         }
         let orderId = Orders.insert(orderParamsDealed);
         for(const shopId in shopProducts){//把这个订单拆分给各个店铺

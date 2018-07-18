@@ -34,7 +34,7 @@ import {
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
         //临时的万人车汇项目首页，以后此接口将会被废止
-
+        console.log(appName)
         if(!findOneAppByName(appName)){
             return {
                 type: "error",
