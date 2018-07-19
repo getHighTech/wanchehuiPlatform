@@ -21,8 +21,6 @@ export const UserContacts = new Mongo.Collection("user_contacts");
 
 //home page products
 export function getHomePageProducts(appName) {
-    console.log(`啥呢`)
-    console.log(appName)
     let shop = getUserShop(appName)
     if(shop){
         let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id}).fetch();
@@ -160,12 +158,15 @@ export function syncUser(userId, stampedToken, appName){
       let shopId = shop? shop._id : null
       let platfrom = getUserShop(appName)
       let product, advencedRole, commonRole, role;
-      if(shopId){
-         product = Products.findOne({shopId, productClass: {
+      let platfromId = platfrom? platfrom._id: null
+      if(platfromId){
+         product = Products.findOne({shopId: platfromId, productClass: {
              "$in": ['common_card','advanced_card']
          }})
+         if(product) {
+             role = UserRoles.findOne({userId,roleName: `${product.name}_holder`})
+         }
       }
-      let platfromId = platfrom? platfrom._id: null
       role !==undefined?  role :  false
       return {
           type: "users",
