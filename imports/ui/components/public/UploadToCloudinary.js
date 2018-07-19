@@ -72,7 +72,7 @@ class UploadToCloudinary extends Component {
           if (xhr.readyState == 4 && xhr.status == 200) {
             var response = JSON.parse(xhr.responseText);
             let url = response.secure_url;
-            var img = new Image(); // HTML5 Constructor
+            let img = new Image(); // HTML5 Constructor
             img.src = url;
             img.width = 250
             console.log(url)
@@ -100,19 +100,19 @@ class UploadToCloudinary extends Component {
 
     }
 
-    componentDidMount(){
-      console.log("走了这DID");
-        let fileElem = this.refs.fileElem;
-        // console.log(this.props.images);
-        // let images = this.props.images;
-        // if (typeof(images)!='undefined') {
-        //   for (var i = 0; i < images.length; i++) {
-        //     var img =new Image();
-        //     img.src  = images[i];
-        //     console.log(img);
-        //     document.getElementById('gallery').appendChild(img);
-        //   }
-        // }
+    // componentDidMount(){
+    //   console.log("打印出初始值");
+    //   console.log(this.props.initUrl)
+    
+    // }
+    componentWillReceiveProps(nextProps){
+        console.log("打印出初始值");
+        console.log(nextProps)
+        // console.log(nextProps.initUrl)
+        let img = new Image(); // HTML5 Constructor
+        img.src = nextProps.initUrl;
+        img.width = 250
+
     }
     childMethod = () => alert('xiaohesong')
 
@@ -178,6 +178,5 @@ class UploadToCloudinary extends Component {
         );
     }
 }
-
 
 export default UploadToCloudinary;
