@@ -167,7 +167,11 @@ export function syncUser(userId, stampedToken, appName){
              role = UserRoles.findOne({userId,roleName: `${product.name}_holder`})
          }
       }
-      role !==undefined?  role :  false
+      if(role!==undefined){
+      }else{
+          role = false
+      }
+      console.log(role)
       return {
           type: "users",
           msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId,agencyRole: role  },
