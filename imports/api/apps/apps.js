@@ -164,7 +164,6 @@ export function syncUser(userId, stampedToken, appName){
          product = Products.findOne({shopId, productClass: {
              "$in": ['common_card','advanced_card']
          }})
-         role = UserRoles.findOne({name: `${product.name}+holder`})
       }
       let platfromId = platfrom? platfrom._id: null
       role !==undefined?  role :  false
@@ -250,6 +249,7 @@ export function appLoginUser(type, loginParams, appName){
     switch (type) {
         case 'mobileSMS':
         //短线验证码登陆
+        console.log(loginParams)
             let mobileUser = Meteor.users.findOne({username: loginParams.mobile});
             if(mobileUser === undefined){
             mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.username});
