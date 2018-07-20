@@ -171,10 +171,15 @@ export function syncUser(userId, stampedToken, appName){
       }else{
           role = false
       }
+      let senior = shop.hasOwnProperty("isAdvanced") === true ? true : false
+      console.log(`111`)
+      console.log(shop.hasOwnProperty("isAdvanced"))
+      console.log(senior)
+      console.log(`111`)
       console.log(role)
       return {
           type: "users",
-          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId,agencyRole: role  },
+          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId,agencyRole: role,senior  },
       }
 }
 
