@@ -103,6 +103,18 @@ class ShopFormWrap extends Component {
             };
       return (
         <Form onSubmit={this.handleSubmit}>
+          <FormItem
+            {...formItemLayout}
+            label="APP名称"
+            hasFeedback
+          >
+            {getFieldDecorator('appName', {
+              initialValue: this.props.shop.appName,
+            })(
+
+              <Input className="shop-name-input" disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="公众号名称" />
+            )}
+          </FormItem>
         <FormItem
         {...formItemLayout}
         label="店铺名称"

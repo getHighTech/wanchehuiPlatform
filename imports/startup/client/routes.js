@@ -34,6 +34,8 @@ import Cards from '../../ui/components/pages/shop_owner_components/cards';
 import UsersForShop from '../../ui/components/pages/shop_owner_components/users';
 import OrdersForShop from '../../ui/components/pages/shop_owner_components/orders';
 import Vips from '../../ui/components/pages/shop_owner_components/vips';
+import Svips from '../../ui/components/pages/shop_owner_components/svips';
+import Cvips from '../../ui/components/pages/shop_owner_components/cvips';
 
 
 const store = configureStore();
@@ -52,7 +54,7 @@ const Routes = ({ location }) =>
       {/* <IndexRoute component={DashBoard} /> */}
       {/* 以下一组路由不同的角色访问不同的组件 */}
       <Route component={CheckRoles}>
-        <Route path="/shops" component={{superAdmin:Shops,commonUser:SingleShop}}/>
+     
         <Route path="/orders" component={{superAdmin:Orders,commonUser:OrdersForShop}} />
         <Route path="/users" component={{ superAdmin: Users, commonUser: UsersForShop }} />
         <IndexRoute component={{superAdmin:DashBoard,commonUser:ShopDashBoard}} />
@@ -64,6 +66,7 @@ const Routes = ({ location }) =>
         <Route path="/roles" component={Roles}/>
         <Route path="/give_card_to_users" component={GiveCardToUsers}/>
         <Route path="/agencies_relations" component={AgenciesRelations}/>
+        <Route path="/shops" component={ Shops} />
       </Route>
       <Route path="/shops/single_shop/shop_details/:_id" component={ShopDetails}/>
       <Route path="/orders/order_details/:_id" component={OrderDetails}/>
@@ -74,7 +77,8 @@ const Routes = ({ location }) =>
       <Route path="/productclass" component={ProductClass}/>
       <Route path="/cards" component={Cards}/>
       <Route path="/vips" component={Vips} />
-
+      <Route path="/svips" component={Svips} /> 
+      <Route path="/cvips" component={Cvips} />
     </Route>
     <Route path="/login" component={Login}/>
     <Route path="/login/forgot" component={LoginForgot}/>
