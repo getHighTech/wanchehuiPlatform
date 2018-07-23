@@ -157,7 +157,7 @@ export function syncUser(userId, stampedToken, appName){
       let shop = getUserShopPerminssion(userId)
       let shopId = shop? shop._id : null
       let platfrom = getUserShop(appName)
-      let product, advencedRole, commonRole, role;
+      let product, role, senior;
       let platfromId = platfrom? platfrom._id: null
       if(platfromId){
          product = Products.findOne({shopId: platfromId, productClass: {
@@ -171,9 +171,10 @@ export function syncUser(userId, stampedToken, appName){
       }else{
           role = false
       }
-      let senior = shop.hasOwnProperty("isAdvanced") === true ? true : false
+      if(shop){
+        senior = shop.hasOwnProperty("isAdvanced") === true ? true : false
+      }
       console.log(`111`)
-      console.log(shop.hasOwnProperty("isAdvanced"))
       console.log(senior)
       console.log(`111`)
       console.log(role)
