@@ -157,10 +157,33 @@ export function syncUser(userId, stampedToken, appName){
       let shop = getUserShopPerminssion(userId)
       let shopId = shop? shop._id : null
       let platfrom = getUserShop(appName)
+      let product, role, senior;
       let platfromId = platfrom? platfrom._id: null
+      if(platfromId){
+         product = Products.findOne({shopId: platfromId, productClass: {
+             "$in": ['common_card','advanced_card']
+         }})
+         console.log(`~~~`)
+         console.log(product)
+         console.log(`~~~`)
+         if(product) {
+             role = UserRoles.findOne({userId,roleName: `${product.name}_holder`,status: true})
+         }
+      }
+      if(role!==undefined){
+      }else{
+          role = false
+      }
+      if(shop){
+        senior = shop.hasOwnProperty("isAdvanced") === true ? true : false
+      }
+      console.log(`111`)
+      console.log(senior)
+      console.log(`111`)
+      console.log(role)
       return {
           type: "users",
-          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId },
+          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId,agencyRole: role,senior  },
       }
 }
 
@@ -240,6 +263,7 @@ export function appLoginUser(type, loginParams, appName){
     switch (type) {
         case 'mobileSMS':
         //短线验证码登陆
+        console.log(loginParams)
             let mobileUser = Meteor.users.findOne({username: loginParams.mobile});
             if(mobileUser === undefined){
             mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.username});
@@ -500,15 +524,21 @@ export function createNewOrder(loginToken, appName, orderParams){
                         status: false,
                     })
                 }else{
+                    console.log(`过了过了`)
                     relation =  AgencyRelation.findOne({userId: orderParams.userId})
                 }
               }
            }else{
+               console.log(`进来这里了`)
               relation =  AgencyRelation.findOne({userId: orderParams.userId})
               break;
            }
         }
+        
         //分店铺建立订单
+        console.log('~~~~')
+        console.log(relation)
+        console.log(`~~~~`)
         let orderParamsDealed = {
             ...orderParams,
             type: "card",
@@ -526,7 +556,7 @@ export function createNewOrder(loginToken, appName, orderParams){
             status: "unconfirmed",
             createdAt: new Date(),
             appName,
-            agencyRelationId:  relation._id,
+            agencyRelationId:  relation===undefined? null : relation._id,
         }
         let orderId = Orders.insert(orderParamsDealed);
         for(const shopId in shopProducts){//把这个订单拆分给各个店铺
