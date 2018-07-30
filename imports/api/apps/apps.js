@@ -1417,7 +1417,7 @@ export function getShopProducts(loginToken,appName, shopId, page, pagesize){
     }
 
     let shop = Shops.findOne({_id: shopId})
-    let products = Products.find({shopId: shopId}, {
+    let products = Products.find({$nor: [{productClass: "advanced_card"}],shopId: shopId,isSale: true}, {
         skip: (page-1)*pagesize,
         limit: pagesize,
         sort: {
@@ -1425,11 +1425,14 @@ export function getShopProducts(loginToken,appName, shopId, page, pagesize){
         }
     }).fetch();
 
+  
+
     return {
         type: "shops",
         msg: {
             shop,
-            products
+            products,
+            page
         }
     }
 }
