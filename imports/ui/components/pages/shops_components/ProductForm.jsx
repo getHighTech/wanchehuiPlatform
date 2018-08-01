@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Modal from 'antd/lib/modal';
 import { Divider } from 'antd';
 import Checkbox from 'antd/lib/checkbox';
+import { connect } from 'react-redux';
+import {createForm} from 'rc-form'
 import Button from 'antd/lib/button';
 import Input from 'antd/lib/input';
 import Icon from 'antd/lib/icon';
@@ -85,7 +87,7 @@ class ProductFormWrap extends Component {
         image_details:this.props.product.detailsImage,
         value: false,
         status:false,
-        images:[],
+        images: this.props.product.images,
         key_arr:[],
         key_length:0,
         agencykey_arr:[],
@@ -283,7 +285,7 @@ class ProductFormWrap extends Component {
   setCarouselUrl(url) {
     let self = this
     console.log('上传轮播图成功')
-    if(this.props.product.images){
+    if (this.props.product.images){
       let CarouselUrl = this.props.product.images
     }else{
       let CarouselUrl = []
@@ -612,7 +614,8 @@ class ProductFormWrap extends Component {
 
     render() {
       const { contentState,cover ,fileList,fileListMore,fileListDetails} = this.state;
-      const  { product,editState,modalState } = this.props;
+      const  { singleProduct } = this.props;
+      console.log(singleProduct)
 
       const { getFieldDecorator, getFieldValue } = this.props.form;
           const formItemLayout = {
@@ -1105,6 +1108,21 @@ class ProductFormWrap extends Component {
     }
   }
 
-  const ProductForm = Form.create()(ProductFormWrap);
 
-  export default ProductForm;
+const ProductForm = Form.create()(ProductFormWrap);
+
+export default ProductForm;
+
+
+
+// const ProductForm = createForm()(ProductFormWrap);
+
+// function mapStateToProps(state) {
+//   console.log(state)
+//   return {
+//     singleProduct: state.ProductsList.singleProduct,
+//   };
+// }
+// export default connect(mapStateToProps)(ProductForm);
+
+
