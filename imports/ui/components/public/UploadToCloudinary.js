@@ -9,6 +9,10 @@ const unsignedUploadPreset = 'rq6jvg1m';
 class UploadToCloudinary extends Component {
     constructor(props){
       super(props);
+      status={
+          url:'',
+          single:false
+      }
 
     }
     handleClick=(e)=>{
@@ -48,6 +52,10 @@ class UploadToCloudinary extends Component {
       }
     }
 
+    // clearImg(){
+    //     this.refs.gallery.innerHTML = '';
+    // }
+
     uploadFile = (file) => {
       let self = this
       // document.getElementById('gallery').innerHTML='';
@@ -72,15 +80,18 @@ class UploadToCloudinary extends Component {
           if (xhr.readyState == 4 && xhr.status == 200) {
             var response = JSON.parse(xhr.responseText);
             let url = response.secure_url;
-            let img = new Image(); // HTML5 Constructor
-            img.src = url;
-            img.width = 250
+            // let img = new Image(); // HTML5 Constructor
+            // img.src = url;
+            // img.width = 250
             console.log(url)
             self.props.setUrl(url)
             if (this.props.single) {
               this.refs.gallery.innerHTML = '';
+              this.refs.gallery.appendChild(img);
+            }else{
+                this.refs.gallery.appendChild(img);
             }
-            this.refs.gallery.appendChild(img);
+           
           }
         };
         fd.append('upload_preset', unsignedUploadPreset);
@@ -103,17 +114,40 @@ class UploadToCloudinary extends Component {
     // componentDidMount(){
     //   console.log("打印出初始值");
     //   console.log(this.props.initUrl)
-    
     // }
-    componentWillReceiveProps(nextProps){
-        console.log("打印出初始值");
-        console.log(nextProps)
-        // console.log(nextProps.initUrl)
-        let img = new Image(); // HTML5 Constructor
-        img.src = nextProps.initUrl;
-        img.width = 250
 
+    componentWillReceiveProps(nextProps){
+        console.log("打印出图片链接");
+        console.log(this.props.initUrl)
+        // console.log('111')
+        // if(nextProps.single){
+        //     this.refs.gallery.innerHTML = '';
+        //     console.log('单图链接')
+        //     // console.log(nextProps.initUrl)
+        //     // if(nextProps.initUrl===undefined){
+        //     //     return
+        //     // }else{
+        //     //     let img = new Image(); 
+        //     //     img.src = nextProps.initUrl;
+        //     //     img.width = 250
+        //     //     this.refs.gallery.appendChild(img);
+        //     // }
+
+        // }else{
+        //     console.log('多图链接')
+        //     console.log(nextProps.initUrl)
+        //     // if(nextProps.initUrl){
+        //     //     for (var i =0;i<nextProps.initUrl.length; i++){
+        //     //     let img = new Image(); 
+        //     //     img.src = nextProps.initUrl[i];
+        //     //     img.width = 250
+        //     //     this.refs.gallery.appendChild(img);
+        //     //     }
+        //     // }
+        // }
     }
+
+    
     childMethod = () => alert('xiaohesong')
 
     // componentWillReceiveProps(nextProps){
@@ -147,9 +181,31 @@ class UploadToCloudinary extends Component {
     //     }
     //   }
 
+    click(e){
+        this.props.deteleImage(e.target.src)
+    }
 
     // }
     render() {
+        const {single,initUrl } = this.props
+        let images=[]
+        console.log('-------------------------')
+        console.log(initUrl)
+        let self = this
+        if (single) {
+        console.log('单图')
+        images = <img src={initUrl} width={250}/>;
+        } 
+        else if(initUrl!==undefined&&initUrl.length>0){
+        console.log('插入2次')
+        console.log('多图显示')
+        console.log(initUrl)
+        for (let i = 0; i < initUrl.length; i++) {
+            images.push(<img src={initUrl[i]}   onClick={(e)=> self.click(e)}  width={250} />)
+            }
+        console.log(images)
+        // return (<div>{images}</div>)
+        }
         return (
             <div id="dropbox"
             onDragEnter={(e)=>this.handleDrapenter(e)}
@@ -164,7 +220,6 @@ class UploadToCloudinary extends Component {
                         <div className="form_controls">
                             <div className="upload_button_holder">
                             <input onChange={(e)=>this.handleFileChange(e)} ref="fileElem" type="file" id="fileElem" multiple accept="image/*" style={{display: "none"}} />
-
                             </div>
                         </div>
                         </div>
@@ -173,6 +228,7 @@ class UploadToCloudinary extends Component {
                         <div className="progress" id="progress"></div>
                     </div>
                     <div ref="gallery" >
+                        {images}
                     </div>
             </div>
         );

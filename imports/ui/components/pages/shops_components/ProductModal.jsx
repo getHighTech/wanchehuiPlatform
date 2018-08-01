@@ -1,5 +1,4 @@
 import React from "react";
-
 import Form from 'antd/lib/form';
 import Checkbox from 'antd/lib/checkbox';
 
@@ -35,9 +34,7 @@ class ProductModal extends React.Component{
   }
   state={
     xx:[],
-    fileState:'',
-    coverState:'',
-    detailsState:'',
+    init_images_url:'',
     spec : '',
     spec_length:0,
     descriptionKey:[],
@@ -65,7 +62,9 @@ class ProductModal extends React.Component{
    /**
    * 设置表单要显示的数据
    */
+
   setFormData(data) {
+    let self  = this
     console.log(data);
     // 注意这里, 由于antd modal的特殊性, this.formComponent可能是undefined, 要判断一下
     if (this.formComponent) {
@@ -372,6 +371,7 @@ class ProductModal extends React.Component{
                   xx:[],
                   fileState:'',
                   coverState:'',
+                  init_images_url:'',
                   detailsState:''
                 })
                 self.props.changeLoading(false)
@@ -406,7 +406,8 @@ class ProductModal extends React.Component{
               xx:[],
               fileState:'',
               coverState:'',
-              detailsState:''
+              detailsState:'',
+              init_images_url:''
             })
             self.props.changeLoading(false)
             console.log(self.state.xx);
@@ -433,7 +434,8 @@ class ProductModal extends React.Component{
             xx:[],
             fileState:'',
             coverState:'',
-            detailsState:''
+            detailsState:'',
+            init_images_url:''
           })
           self.props.changeLoading(false)
           // window.location.reload();
@@ -451,7 +453,7 @@ class ProductModal extends React.Component{
 
 
   handleCancel = (e) => {
-    console.log('走了这');
+    console.log('关闭Modal');
     const {dispatch } = this.props;
     dispatch(changeimagestate())
 
@@ -460,9 +462,7 @@ class ProductModal extends React.Component{
     this.setState({
       descriptionKey:[],
       xx:[],
-      fileState:'',
-      coverState:'',
-      detailsState:''
+      init_images_url:''
     })
     // window.location.reload();
 
@@ -512,12 +512,10 @@ class ProductModal extends React.Component{
         >
           <ProductForm 
             id={this.props.id} 
-            coverUrl={singleProduct.cover} 
-            detailsImageUrl={singleProduct.detailsImage}
-            carouselImageUrl={singleProduct.images}
             fileState={this.state.fileState} 
             changefileState={this.changefileState.bind(this)} 
             coverState={this.state.coverState} 
+            init_images_url={this.state.init_images_url}
             detailsState={this.state.detailsState} 
             changedetailsState={this.changedetailsState.bind(this)} 
             changecoverState={this.changecoverState.bind(this)} 

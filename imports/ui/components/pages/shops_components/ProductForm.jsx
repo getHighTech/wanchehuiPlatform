@@ -283,6 +283,11 @@ class ProductFormWrap extends Component {
   setCarouselUrl(url) {
     let self = this
     console.log('上传轮播图成功')
+    if(this.props.product.images){
+      let CarouselUrl = this.props.product.images
+    }else{
+      let CarouselUrl = []
+    }
     CarouselUrl.push(url)
     console.log(CarouselUrl)
     this.setState({
@@ -290,6 +295,28 @@ class ProductFormWrap extends Component {
     })
     const setFieldsValue = this.props.form.setFieldsValue;
     setFieldsValue({ images: self.state.images })
+  }
+  removeByValue(arr, val) {
+    for(var i=0; i<arr.length; i++) {
+      if(arr[i] == val) {
+        arr.splice(i, 1);
+        break;
+      }
+    }
+  }
+  deteleImage(url){
+    console.log('删除轮播图单图')
+    console.log(url)
+    console.log(this.props.product.images)
+    let CarouselUrl = this.props.product.images
+    this.removeByValue(CarouselUrl,url)
+    console.log(CarouselUrl)
+    this.setState({
+      images: CarouselUrl
+    })
+    const setFieldsValue = this.props.form.setFieldsValue;
+    setFieldsValue({ images: self.state.images })
+
   }
   setDetailsImageUrl(url){
     let self = this
@@ -908,7 +935,7 @@ class ProductFormWrap extends Component {
         })(
           <Input type="text" style={{ display: 'none' }} placeholder="图片地址" />
         )}
-            <UploadToCloudinary initUrl={this.props.coverUrl} setUrl={this.setCoverUrl.bind(this)} single={true} />
+            <UploadToCloudinary initUrl={this.props.product.cover} setUrl={this.setCoverUrl.bind(this)} single={true} />
       </FormItem>
 
       <FormItem
@@ -921,11 +948,11 @@ class ProductFormWrap extends Component {
         })(
           <Input type="text" style={{ display: 'none' }} placeholder="轮播图地址" />
         )}
-            <UploadToCloudinary initUrl={this.props.carouselImageUrl} setUrl={this.setCarouselUrl.bind(this)} />
+            <UploadToCloudinary initUrl={this.props.product.images} setUrl={this.setCarouselUrl.bind(this)} deteleImage={this.deteleImage.bind(this)} />
       </FormItem>
       <FormItem
         {...formItemLayout}
-        label="商品封面"
+        label="商品详情图"
         hasFeedback
       >
             {getFieldDecorator('detailsImage', {
@@ -933,7 +960,7 @@ class ProductFormWrap extends Component {
         })(
           <Input type="text" style={{ display: 'none' }} placeholder="图片地址" />
         )}
-            <UploadToCloudinary initUrl={this.props.detailsImageUrl} setUrl={this.setDetailsImageUrl.bind(this)} single={true} />
+            <UploadToCloudinary initUrl={this.props.product.detailsImage} setUrl={this.setDetailsImageUrl.bind(this)} single={true} />
       </FormItem>
 
       <FormItem
