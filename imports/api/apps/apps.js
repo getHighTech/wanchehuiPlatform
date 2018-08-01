@@ -1437,7 +1437,22 @@ export function getUserShopPerminssion(userId) {
     return shop
 }
 
-// export function cancelAgencyProduct(loginToken,appName, productId,shopId){
+export function cancelAgencyProduct(loginToken,appName,shopId, productId){
+    return getUserInfo(loginToken, appName,shopId, function(){
+        let product = Products.update({_id: productId},{
+            $set: {
+                isSale: false
+            }
+        })
+        let products = Products.find({shopId,isSale: true}).fetch();
+      
+        return {
+            type: "products",
+            msg: {
+                products
+            }
+        }
+
+    });
     
-    
-// }
+}
