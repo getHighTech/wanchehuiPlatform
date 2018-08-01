@@ -173,7 +173,7 @@ class Svips extends Component {
             key: 'show',
             render: (text, record) => (
                 <span>
-                    <Tooltip placement="topLeft" title="授卡" arrowPointAtCenter>
+                    <Tooltip placement="topLeft" title="我的团队" arrowPointAtCenter>
                         <Button shape="circle" onClick={() => this.showMyTeam(record._id)} icon="eye" />
                     </Tooltip>
                 </span>
