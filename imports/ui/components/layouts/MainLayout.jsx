@@ -142,7 +142,7 @@ class MainLayout extends Component {
         dispatch(push('/productclass'));
         break;
       case "orderstate":
-        dispatch(push('/orderstate'));
+        dispatch(push('/order_state'));
         break;
       case "cards":
         dispatch(push('/cards'));

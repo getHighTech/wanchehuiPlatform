@@ -48,7 +48,6 @@ Meteor.methods({
       sFrom:newObj.current,
       sTo:newObj.next,
       accessable:true,
-      productClass:newObj.productClass
     })
   },
   'find.SameStatus'(newobj){

@@ -1,4 +1,3 @@
-//此组件用于测试
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
@@ -74,15 +73,12 @@ class OrderState extends Component {
     if( typeof(newObj.next)=='undefined'){
       newObj.next=[]
     }
-    if (typeof(newObj.productClass)=='undefined') {
-      message.error('商品分类不能为空！');
-      return
-    }
+
     // return;
 
     if(newObj.last.length>0){
       for (var i = 0; i < newObj.last.length; i++) {
-        let newobj={current:newObj.last[i],next:newObj.current,productClass:newObj.productClass};
+        let newobj={current:newObj.last[i],next:newObj.current};
         // Meteor.call('find.SameStatus',newobj,function(error,result){
         //   if (!error) {
         //     if(result=!0){
@@ -101,7 +97,7 @@ class OrderState extends Component {
 
     if(newObj.next.length>0){
       for (var i = 0; i < newObj.next.length; i++) {
-        let newobj={current:newObj.current,next:newObj.next[i],productClass:newObj.productClass}
+        let newobj={current:newObj.current,next:newObj.next[i]}
         Meteor.call('OrderStatus.insert',newobj,function(err,alt){
           if(!err){
             self.getDataSource();
@@ -277,12 +273,26 @@ class OrderState extends Component {
               确认
             </Button>,
           ]} >
-          <OrderStateForm OrderStatus={this.props.OrderStatus}  changebutton={this.changebutton.bind(this)}  modalState={this.props.modalState} getStatus={this.props.getStatus} ref = {(input) => { this.formComponent = input; }} />
+          <OrderStateForm 
+          OrderStatus={this.props.OrderStatus}  
+          changebutton={this.changebutton.bind(this)}  
+          modalState={this.props.modalState} 
+          getStatus={this.props.getStatus} 
+          ref = {(input) => { this.formComponent = input; }} />
           </Modal>
-          <Modal title="编辑状态" visible={this.state.editvisible} onOk={this.handleEditOk} onCancel={this.handleEditCancel}  okText="确认"
+          <Modal title="编辑状态" 
+          visible={this.state.editvisible} 
+          onOk={this.handleEditOk} 
+          onCancel={this.handleEditCancel}  
+          okText="确认"
           cancelText="取消">
-          <EditOrderStateForm OrderStatus={this.props.OrderStatus} modalState={this.props.modalState} getStatus={this.props.getStatus} ref = {(input) => { this.formComponent = input; }} />
+
+          <EditOrderStateForm OrderStatus={this.props.OrderStatus} 
+          modalState={this.props.modalState} 
+          getStatus={this.props.getStatus} 
+          ref = {(input) => { this.formComponent = input; }} />
           </Modal>
+
           <Table columns={columns}  dataSource={this.state.dataSource} />
      </div>
    );

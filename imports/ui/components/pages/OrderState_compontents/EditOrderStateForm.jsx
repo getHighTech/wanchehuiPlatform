@@ -25,43 +25,32 @@ render(){
     };
   return(
     <Form>
-        <FormItem
-        {...formItemLayout}
-        label='商品分类'
-        >
-          {getFieldDecorator(`productClass`, {
-            initialValue:this.props.OrderStatus.productClass,
+      <FormItem
+          {...formItemLayout}
+          label="当前状态"
+          hasFeedback
+          >
+          {getFieldDecorator('current', {
+              initialValue: this.props.OrderStatus.sFrom,
+              rules: [{ required: true, message: '商品名称不能为空'},{validator: this.handleConfirmName}]
           })(
-            <Input placeholder="商品分类" disabled={true} style={{ width: '60%'}} />
+
+              <Input className="shop-name-input"   prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
           )}
-        </FormItem>
+      </FormItem>
+      <FormItem
+          {...formItemLayout}
+          label="后置状态"
+          hasFeedback
+          >
+          {getFieldDecorator('next', {
+              initialValue: this.props.OrderStatus.sTo,
+              rules: [{ required: true, message: '商品名称不能为空'},{validator: this.handleConfirmName}]
+          })(
 
-        <FormItem
-            {...formItemLayout}
-            label="当前状态"
-            hasFeedback
-            >
-            {getFieldDecorator('current', {
-                initialValue: this.props.OrderStatus.sFrom,
-                rules: [{ required: true, message: '商品名称不能为空'},{validator: this.handleConfirmName}]
-            })(
-
-                <Input className="shop-name-input"   prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
-            )}
-        </FormItem>
-        <FormItem
-            {...formItemLayout}
-            label="后置状态"
-            hasFeedback
-            >
-            {getFieldDecorator('next', {
-                initialValue: this.props.OrderStatus.sTo,
-                rules: [{ required: true, message: '商品名称不能为空'},{validator: this.handleConfirmName}]
-            })(
-
-                <Input className="shop-name-input"   prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
-            )}
-        </FormItem>
+              <Input className="shop-name-input"   prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品名称" />
+          )}
+      </FormItem>
     </Form>
   )
 }

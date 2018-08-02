@@ -36,6 +36,8 @@ import OrdersForShop from '../../ui/components/pages/shop_owner_components/order
 import Vips from '../../ui/components/pages/shop_owner_components/vips';
 import Svips from '../../ui/components/pages/shop_owner_components/svips';
 import Cvips from '../../ui/components/pages/shop_owner_components/cvips';
+import OrderStates from '/imports/ui/components/pages/OrderStates';
+
 
 
 const store = configureStore();
@@ -74,6 +76,7 @@ const Routes = ({ location }) =>
       <Route path="/settings" component={Settings}/>
       <Route path="/component_test" component={ComponentTest}/>
       <Route path="/orderstate" component={OrderState}/>
+      <Route path="/order_state" component={OrderStates}/>
       <Route path="/productclass" component={ProductClass}/>
       <Route path="/cards" component={Cards}/>
       <Route path="/vips" component={Vips} />
