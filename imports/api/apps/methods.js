@@ -34,7 +34,6 @@ import {
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
         //临时的万人车汇项目首页，以后此接口将会被废止
-        console.log(appName)
         if(!findOneAppByName(appName)){
             return {
                 type: "error",
@@ -376,11 +375,12 @@ Meteor.methods({
                 fromMethod: 'app.get.user.shop.perminssion'
             })
         },
-        // "app.cancel.agency.product"(loginToken, appName, productId,shopId){
-        //     let stampedTokenObj = JSON.parse(loginToken);
-        //     let rltObj = cancelAgencyProduct(stampedTokenObj, appName, productId,shopId);
-        //     return Object.assign({}, rltObj, {
-        //         fromMethod: 'app.cancel.agency.product'
-        //     })
-        // },
+        "app.cancel.agency.product"(loginToken, appName, productId,shopId){
+            console.log(`来取消了`)
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = cancelAgencyProduct(stampedTokenObj, appName, productId,shopId);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.cancel.agency.product'
+            })
+        },
 });
