@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Modal from 'antd/lib/modal';
 import { Divider } from 'antd';
 import Checkbox from 'antd/lib/checkbox';
+import { connect } from 'react-redux';
+import {createForm} from 'rc-form'
 import Button from 'antd/lib/button';
 import Input from 'antd/lib/input';
 import Icon from 'antd/lib/icon';
@@ -32,8 +34,6 @@ const format = 'HH:mm';
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
 import UploadToCloudinary from '../../public/UploadToCloudinary';
-import UploadCoverToCloudinary from '../../public/UploadCoverToCloudinary';
-import UploadDetailsToCloudinary from '../../public/UploadDetailsToCloudinary';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
@@ -41,8 +41,9 @@ import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 const Option =Select.Option;
 const SubMenu = Menu.SubMenu;
-function uploadImageCallBack(file) {
+const CarouselUrl = []
 
+function uploadImageCallBack(file) {
   return new Promise(
     (resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -61,10 +62,6 @@ function uploadImageCallBack(file) {
     }
   );
 }
-function handleChangeSpec(value) {
-  console.log(`selected ${value}`);
-}
-
 
 class ProductFormWrap extends Component {
 
@@ -90,7 +87,7 @@ class ProductFormWrap extends Component {
         image_details:this.props.product.detailsImage,
         value: false,
         status:false,
-        images:[],
+        images: this.props.product.images,
         key_arr:[],
         key_length:0,
         agencykey_arr:[],
@@ -275,52 +272,70 @@ class ProductFormWrap extends Component {
     });
 
   }
-  componentDidMount(){
-    let images=this.props.product.images;
-    let fileListImages=[];
-    if(images!=null){
-      for(var i=0;i<images.length;i++){
-        var url=images[i];
-        var first={uid:i};
-        var end={url:url}
-        var obj =Object.assign(first,end);
-        fileListImages.push(obj)
+  setCoverUrl(url){
+    let self = this
+    console.log('上传图片成功')
+    console.log(url)
+    this.setState({
+      image_url:url
+    })
+    const setFieldsValue = this.props.form.setFieldsValue;
+    setFieldsValue({ cover: self.state.image_url })
+  }
+  setCarouselUrl(url) {
+    let self = this
+    console.log('上传轮播图成功')
+    if (this.props.product.images){
+      let CarouselUrl = this.props.product.images
+    }else{
+      let CarouselUrl = []
+    }
+    CarouselUrl.push(url)
+    console.log(CarouselUrl)
+    this.setState({
+      images: CarouselUrl
+    })
+    const setFieldsValue = this.props.form.setFieldsValue;
+    setFieldsValue({ images: self.state.images })
+  }
+  removeByValue(arr, val) {
+    for(var i=0; i<arr.length; i++) {
+      if(arr[i] == val) {
+        arr.splice(i, 1);
+        break;
       }
-      this.setState({
-        images:this.props.product.images,
-        fileListMore:fileListImages
-      })
     }
-    else{
-      // console.log('did 插入商品');
-      this.setState({
-        fileListMore:[],
-        images:[],
-      })
-    }
-    if(this.props.product.cover!=null){
-      this.setState({
-        fileList:[{uid:1,url:this.props.product.cover}],
+  }
+  deteleImage(url){
+    console.log('删除轮播图单图')
+    console.log(url)
+    console.log(this.props.product.images)
+    let CarouselUrl = this.props.product.images
+    this.removeByValue(CarouselUrl,url)
+    console.log(CarouselUrl)
+    this.setState({
+      images: CarouselUrl
+    })
+    const setFieldsValue = this.props.form.setFieldsValue;
+    setFieldsValue({ images: self.state.images })
 
-      })
+  }
+  setDetailsImageUrl(url){
+    let self = this
+    console.log('上传商品详情成功')
+    console.log(url)
+    this.setState({
+      image_details:url
+    })
+    const setFieldsValue = this.props.form.setFieldsValue;
+    setFieldsValue({ detailsImage: self.state.image_details })
+  }
+  componentDidMount(){
+    let self = this;
+    if (this.props.product){
+      console.log('编辑单店')
+      console.log(self.props.product)
     }
-    else{
-      this.setState({
-        fileList:[{uid:1,url:''}],
-
-      })
-    }
-    if(this.props.product.detailsImage!=null){
-      this.setState({
-        fileListDetails:[{uid:1,url:this.props.product.detailsImage}]
-      })
-    }
-    else{
-      this.setState({
-        fileListDetails:[{uid:1,url:''}]
-      })
-    }
-    let self =this;
     Meteor.call('get.all_product_classes',function(err,alt){
       if (!err) {
         self.setState({
@@ -331,257 +346,37 @@ class ProductFormWrap extends Component {
         console.log(err);
       }
     })
-
     self.setState({
       openKeys: self.props.descriptionKey,
       cover:self.props.product.cover,
     })
   }
-  componentWillReceiveProps(nextProps){
-    if(!nextProps.modalState){
-      // console.log(nextProps);
-      // console.log('will',nextProps.product.images);
-      // console.log(this.state.images);
-      // console.log(nextProps.fileState);
 
-      if(nextProps.product.images==null){
-        nextProps.product.images=[];
-        // console.log(nextProps.product.images);
-      }
 
-      let images=nextProps.product.images;
-      let fileListImages=[];
-      if(images!=null){
-        for(var i=0;i<images.length;i++){
-          var url=images[i];
-          var first={uid:i};
-          var end={url:url}
-          var obj =Object.assign(first,end);
-          fileListImages.push(obj)
-        }
-      }
-      if(nextProps.fileState!='removed'&&nextProps.fileState!='done'){
-        // console.log('add');
+
+
+      onEditorStateChange(editorState) {
         this.setState({
-          fileListMore:fileListImages,
-          images:nextProps.product.images,
-        })
+          contentState: editorState,
+        });
+        let htmlcontent=draftToHtml(convertToRaw(this.state.contentState.getCurrentContent()));
+        const setFieldsValue = this.props.form.setFieldsValue;
+        setFieldsValue({description:htmlcontent})
       }
-      else{
-        // console.log('removed');
-      }
-      if(nextProps.coverState!='removed'&&nextProps.coverState!='done'){
-      if(nextProps.product.cover!=null){
-        this.setState({
-          fileList:[{uid:1,url:nextProps.product.cover}],
-        })
-      }
-      else{
-        this.setState({
-          fileList:[{uid:1,url:''}],
-        })
-      }
-    }
-          // this.setState({
-          //   cover: nextProps.product.cover,
-          // })
-        if(nextProps.detailsState!='removed'&&nextProps.detailsState!='done'){
-        if(nextProps.product.detailsImage!=null){
-          this.setState({
-            fileListDetails:[{uid:2,url:nextProps.product.detailsImage}],
-          })
-        }
-        else{
-          console.log('nsadasdasd');
-          this.setState({
-            fileListDetails:[{uid:2,url:''}]
-          })
-        }
-      }
-        // this.setState({
-        //   detailsImage:nextProps.product.detailsImage
-        // })
-        }
-        else {
-          // console.log(nextProps);
-          if(nextProps.coverState!='done'){
-            this.setState({
-              fileList:[{uid:1,url:''}],
-            })
-          }
-          // console.log(nextProps.detailsState);
-          if(nextProps.detailsState!='done'){
-            this.setState({
-              fileListDetails:[{uid:1,url:''}],
-            })
-          }
 
-          let file =nextProps.xx;
-          let newfile=[];
-          for(var i=0;i<file.length;i++){
-            if (file[i].url==undefined) {
-              newfile.push(file[i].response.data.link)
-            }
-            else{
-              newfile.push(file[i].url)
-            }
-          }
-          // console.log(newfile);
-          if(nextProps.fileState!='removed'&&nextProps.fileState!='done'){
-            // console.log('add');
-            this.setState({
-              fileListMore:nextProps.xx,
-              images:newfile
-            })
-          }
-          else{
-            // console.log('removed');
-          }
-        }
-    }
-   getDS=()=>{
-    this.refs.getSwordButton.childMethod();
-  }
-
-
-  onEditorStateChange(editorState) {
-    this.setState({
-      contentState: editorState,
-    });
-    let htmlcontent=draftToHtml(convertToRaw(this.state.contentState.getCurrentContent()));
-    const setFieldsValue = this.props.form.setFieldsValue;
-    setFieldsValue({description:htmlcontent})
-  }
-
-
-    handleChange(info) {
-      let fileList = info.fileList;
-      fileList = fileList.slice(-1);
-      console.log("上传的链接", info);
-
-      let self = this
-      if (info.file.status === 'uploading') {
-          console.log("上传中。");
-      }
-      if (info.file.status === 'done') {
-          console.log("上传成功。");
-          // console.log(info.file.response.data.link)
-          // console.log(self.state.image_url);
-          self.setState({
-            image_url:info.file.response.data.link
-          })
-          self.props.changecoverState(info.file.status)
-          const setFieldsValue = this.props.form.setFieldsValue;
-          setFieldsValue({cover:self.state.image_url})
-
-      } else if (info.file.status === 'error') {
-          console.log("上传失败。");
-      }
-      self.setState({
-        fileList:fileList
-      })
-    }
-    handleChangeDetails(info) {
-      let fileList = info.fileList;
-      fileList = fileList.slice(-1);
-      console.log("上传的链接", info);
-
-      let self = this
-      if (info.file.status === 'uploading') {
-          console.log("上传中。");
-      }
-      if (info.file.status === 'done') {
-          console.log("上传成功。");
-          // console.log(info.file.response.data.link)
-          // console.log(self.state.image_url);
-          self.setState({
-            image_details:info.file.response.data.link
-          })
-          self.props.changedetailsState(info.file.status)
-          const setFieldsValue = this.props.form.setFieldsValue;
-
-          setFieldsValue({detailsImage:self.state.image_details})
-
-      } else if (info.file.status === 'error') {
-          console.log("上传失败。");
-      }
-      self.setState({
-        fileListDetails:fileList
-      })
-    }
     changeOpenState(){
       this.setState({
         openKeys:[]
       })
     }
-    handleChangeMore(info) {
-      let fileList = info.fileList;
-      let self = this
-      console.log("上传的链接", info);
 
-      if (info.file.status === 'uploading') {
-          console.log("上传中。");
-      }
-      if (info.file.status === 'done') {
-          console.log("上传成功。");
-          // console.log(info.file.response.data.link)
-          // console.log(self.state.images);
-          // console.log(self.state.fileListMore);
-          let old_images = self.state.images;
-          console.log(old_images);
-          // if(old_images==null){
-          //   console.log('null');
-          //   old_images=[];
-          // }
-          old_images.push(info.file.response.data.link);
-          self.setState({
-            images:old_images,
-          })
-          // console.log(this.state.images);
-          // console.log(this.state.fileListMore);
-          let v =this.state.fileListMore;
-          let state=info.file.status;
-          self.props.changeXX(v)
-          self.props.changefileState(state)
-          const setFieldsValue = this.props.form.setFieldsValue;
-          setFieldsValue({images:self.state.images})
-      } else if (info.file.status === 'error') {
-          console.log("上传失败。");
-      }
-      self.setState({
-        fileListMore:fileList
-      })
-      if(info.file.status === 'removed'){
-        // console.log(this.state.fileListMore);
-        // console.log(this.state.images);
-        let file=this.state.fileListMore;
-        let newfile=[];
-        for(var i=0;i<file.length;i++){
-          if (file[i].url==undefined) {
-            newfile.push(file[i].response.data.link)
-          }
-          else{
-            newfile.push(file[i].url)
-          }
-        }
-        // console.log(newfile);
-        this.setState({
-          images:newfile,
-        })
-        let state=info.file.status;
-        this.props.changefileState(state)
-        const setFieldsValue = this.props.form.setFieldsValue;
-        setFieldsValue({images:newfile})
-      }
-
-    }
 
     getInitialvalue(){
       let spec_length=this.props.product.specifications;
       if(spec_length!=undefined)
       {
+        return
       }
-
     }
     handleConfirmName = (rule,value,callback ) => {
       let id= this.props.id;
@@ -611,13 +406,6 @@ class ProductFormWrap extends Component {
           }
 
         })
-
-
-
-    }
-    getdesValue(){
-
-
     }
     getProductPrice(){
       let price=this.props.product.price
@@ -820,135 +608,14 @@ class ProductFormWrap extends Component {
       }
     }
 
-    handleTestFileOnChange = (e) => {
-      let self = this;
-      let files = e.target.files;
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            let  fileReader = new FileReader();
+ 
 
-            fileReader.onload = ( (file) =>  {
-                return (e) => {
-                    document.getElementById("showUpload").src = e.target.result;
-                    self.setState({
-                      image_url:e.target.result
-                    })
-                    const setFieldsValue = self.props.form.setFieldsValue;
-                    setFieldsValue({cover:self.state.image_url})
-                }
 
-            })(file);
-            fileReader.readAsDataURL(file);
-    }
-  }
-
-  handleTestFileDetailsOnChange= (e) => {
-    let self = this;
-    let files = e.target.files;
-      for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          let  fileReader = new FileReader();
-
-          fileReader.onload = ( (file) =>  {
-              return (e) => {
-                  document.getElementById("showUploadDetails").src = e.target.result;
-                  self.setState({
-                    image_details:e.target.result
-                  })
-                  const setFieldsValue = self.props.form.setFieldsValue;
-                  setFieldsValue({detailsImage:self.state.image_details})
-              }
-
-          })(file);
-          fileReader.readAsDataURL(file);
-  }
-}
-
-  handleTestFilesOnChange = (e) => {
-    let self = this;
-    let files = e.target.files;
-    console.log(files);
-    var images_file = [];
-    var result =document.getElementById("result");
-      for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          let  fileReader = new FileReader();
-
-          fileReader.onload = ( (file) =>  {
-              return (e) => {
-
-                  // document.getElementById("showUploads").src = e.target.result;
-                  let images = e.target.result;
-                  result.innerHTML=result.innerHTML+'<img  src="' + images +'"  style="  width:30%;margin:5px"  key={i}  alt="" />';
-
-                  images_file.push(images)
-                  console.log(images_file);
-                  self.setState({
-                    images:images_file
-                  })
-                  const setFieldsValue = self.props.form.setFieldsValue;
-                  setFieldsValue({images:self.state.images})
-              }
-
-          })(file);
-
-          fileReader.readAsDataURL(file);
-  }
-
-}
-
-setUrl = (urls) => {
-  console.log(urls);
-  let self = this ;
-  const setFieldsValue = self.props.form.setFieldsValue;
-  setFieldsValue({ images: urls})
-
-}
-getRemoteCover = (cover) => {
-  console.log(cover);
-  let self = this ;
-  const setFieldsValue = self.props.form.setFieldsValue;
-  setFieldsValue({cover:cover})
-
-}
-getRemoteDetails=(detailsImage) => {
-  console.log(detailsImage);
-  let self = this ;
-  const setFieldsValue = self.props.form.setFieldsValue;
-  setFieldsValue({detailsImage:detailsImage})
-
-}
-
-    selectHandleChange(value){
-      // console.log(`selected ${value}`);
-    }
-    //初次挂载去获取数据
-    changeholeder(){
-      // console.log(this.props.product.holder);
-    }
 
     render() {
       const { contentState,cover ,fileList,fileListMore,fileListDetails} = this.state;
-      const  { product,editState,modalState } = this.props;
-        let uploadProps = {
-          action: '/images/upload',
-          onChange: this.handleChange.bind(this),
-          listType: 'picture',
-          fileList:fileList
-        };
-
-      const uploadPropsMore = {
-        action: '/images/upload',
-        onChange: this.handleChangeMore.bind(this),
-        listType: 'picture',
-        fileList:fileListMore
-      };
-      const uploadPropsDetails={
-        action: '/images/upload',
-        onChange:this.handleChangeDetails.bind(this),
-        listType:'picture',
-        fileList:fileListDetails
-      }
+      const  { singleProduct } = this.props;
+      console.log(singleProduct)
 
       const { getFieldDecorator, getFieldValue } = this.props.form;
           const formItemLayout = {
@@ -1069,50 +736,6 @@ getRemoteDetails=(detailsImage) => {
               children.push(<Option key={type[i].name}>{type[i].name_zh}</Option>)
             }
             
-            const productImageslength = [1];
-            const productImages=productImageslength.map((k,index) => {
-              if (this.props.modalState) {
-                return(
-                  <FormItem
-                  {...formItemLayout}
-                  label="商品多图(测试base64)"
-                  hasFeedback
-                  >
-                    <input type="file" multiple onChange={(e)=>this.handleTestFilesOnChange(e)} />
-                    <div id="result" name="result"></div>
-
-                  </FormItem>
-                )
-              }
-
-
-              else {
-                const imagess= this.props.product.images
-                console.log(imagess);
-                const aaa =[];
-                console.log(aaa);
-
-                if (typeof(imagess)!='undefined') {
-                  for (var i = 0; i < imagess.length; i++) {
-                    aaa.push(<img src={imagess[i]} key={i*100} style={{width:'30%',margin:'5px'}}/>)
-                  }
-                }
-
-                return(
-                  <FormItem
-                  {...formItemLayout}
-                  label="商品多图(测试base64)"
-                  hasFeedback
-                  >
-                    <input type="file" multiple onChange={(e)=>this.handleTestFilesOnChange(e)} />
-                    <div id="result" name="result" >
-                      {aaa}
-                    </div>
-                  </FormItem>
-                )
-              }
-            })
-
 
             const productClassLength = [1];
             const productClass = productClassLength.map((k,index) => {
@@ -1282,7 +905,6 @@ getRemoteDetails=(detailsImage) => {
       >
       {getFieldDecorator('name', {
           initialValue: this.props.product.name,
-          // rules: [{validator: this.handleConfirmName}]
           rules: [{ required: true, message: '商品名称不能为空' }],
       })(
 
@@ -1306,80 +928,43 @@ getRemoteDetails=(detailsImage) => {
       </FormItem>
 
 
-
       <FormItem
-      {...formItemLayout}
-      label="商品封面地址"
-      hasFeedback
+        {...formItemLayout}
+        label="商品封面"
+        hasFeedback
       >
-      {getFieldDecorator('cover', {
+        {getFieldDecorator('cover', {
           initialValue: this.props.product.cover,
-      })(
-
-          <Input className="shop-name-input"    placeholder="商品封面地址" />
-      )}
-      </FormItem>
-      <FormItem
-      {...formItemLayout}
-      label="商品封面预览"
-      hasFeedback
-      >
-          <UploadCoverToCloudinary getRemoteCover={this.getRemoteCover}  ref="getSwordButton"  cover={this.props.product.cover} images_state={this.props.images_state}/>
-      </FormItem>
-
-
-
-
-      <FormItem
-      {...formItemLayout}
-      label='商品多图地址'
-        required={false}
-      >
-        {getFieldDecorator(`images`, {
-          validateTrigger: ['onChange', 'onBlur'],
-          initialValue: this.props.product.images,
-          // rules: [{ validator: this.proClassCheck }],
-
         })(
-          <Select
-          mode="tags"
-          placeholder="商品多图地址"
-          dropdownStyle={{zIndex:'99999' }}
-          style={{ width: '100%' }}>
-         </Select>
+          <Input type="text" style={{ display: 'none' }} placeholder="图片地址" />
         )}
+            <UploadToCloudinary initUrl={this.props.product.cover} setUrl={this.setCoverUrl.bind(this)} single={true} />
+      </FormItem>
+
+      <FormItem
+        {...formItemLayout}
+        label="轮播图"
+        hasFeedback
+      >
+            {getFieldDecorator('images', {
+              initialValue: this.props.product.images,
+        })(
+          <Input type="text" style={{ display: 'none' }} placeholder="轮播图地址" />
+        )}
+            <UploadToCloudinary initUrl={this.props.product.images} setUrl={this.setCarouselUrl.bind(this)} deteleImage={this.deteleImage.bind(this)} />
       </FormItem>
       <FormItem
-      {...formItemLayout}
-      label="商品多图预览"
-      hasFeedback
+        {...formItemLayout}
+        label="商品详情图"
+        hasFeedback
       >
-            <UploadToCloudinary setUrl={this.setUrl.bind(this)}  ref="getSwordButton"  images={this.props.product.images} images_state={this.props.images_state}/>
+            {getFieldDecorator('detailsImage', {
+              initialValue: this.props.product.detailsImage,
+        })(
+          <Input type="text" style={{ display: 'none' }} placeholder="图片地址" />
+        )}
+            <UploadToCloudinary initUrl={this.props.product.detailsImage} setUrl={this.setDetailsImageUrl.bind(this)} single={true} />
       </FormItem>
-      <FormItem
-      {...formItemLayout}
-      label="商品详情地址"
-      hasFeedback
-      >
-      {getFieldDecorator('detailsImage', {
-          initialValue: this.props.product.detailsImage,
-      })(
-
-          <Input className="shop-name-input"    placeholder="商品详情地址" />
-      )}
-      </FormItem>
-      <FormItem
-      {...formItemLayout}
-      label="商品详情图片预览"
-      hasFeedback
-      >
-          <UploadDetailsToCloudinary getRemoteDetails={this.getRemoteDetails}  ref="getSwordButton"  detailsImage={this.props.product.detailsImage} images_state={this.props.images_state}/>
-      </FormItem>
-
-
-
-
-
 
       <FormItem
       {...formItemLayout}
@@ -1421,7 +1006,7 @@ getRemoteDetails=(detailsImage) => {
       </FormItem>
       <FormItem
       {...formItemLayout}
-      label="商品推荐"
+            label="商品推荐"
       >
       {getFieldDecorator('recommend', {
         valuePropName:'checked',
@@ -1523,6 +1108,21 @@ getRemoteDetails=(detailsImage) => {
     }
   }
 
-  const ProductForm = Form.create()(ProductFormWrap);
 
-  export default ProductForm;
+const ProductForm = Form.create()(ProductFormWrap);
+
+export default ProductForm;
+
+
+
+// const ProductForm = createForm()(ProductFormWrap);
+
+// function mapStateToProps(state) {
+//   console.log(state)
+//   return {
+//     singleProduct: state.ProductsList.singleProduct,
+//   };
+// }
+// export default connect(mapStateToProps)(ProductForm);
+
+
