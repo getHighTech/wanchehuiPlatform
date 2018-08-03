@@ -13,5 +13,8 @@ Meteor.methods({
         createdAt : new Date(),
       })
     }
+  },
+  'get.all_status'(){
+    return OrderStatus.find({}).fetch()
   }
 })

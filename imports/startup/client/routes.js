@@ -27,7 +27,6 @@ import NotFoundPage from '/imports/ui/components/pages/NotFoundPage';
 import PermissonDenied from '/imports/ui/components/pages/PermissonDenied';
 import CheckRoles from "/imports/ui/components/pages/tools/CheckRoles";
 import ShopDashBoard from '/imports/ui/components/pages/shop_owner_components/dashboard';
-import OrderState from '/imports/ui/components/pages/OrderState';
 import OrderDetails from '/imports/ui/components/pages/OrderDetails';
 import ProductClass from '/imports/ui/components/pages/ProductClass';
 import Cards from '../../ui/components/pages/shop_owner_components/cards';
@@ -75,7 +74,6 @@ const Routes = ({ location }) =>
       <Route path="/shops/shop_item" component={ShopItem}/>
       <Route path="/settings" component={Settings}/>
       <Route path="/component_test" component={ComponentTest}/>
-      <Route path="/orderstate" component={OrderState}/>
       <Route path="/order_state" component={OrderStates}/>
       <Route path="/productclass" component={ProductClass}/>
       <Route path="/cards" component={Cards}/>
