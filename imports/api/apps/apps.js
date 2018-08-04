@@ -416,6 +416,8 @@ export function appNewOrder(cartParams, appName){
 }
 
 export function getOneProduct(loginToken, appName, productId){
+    console.log(`productId`)
+    console.log
         let product = Products.findOne({_id: productId});
         if(!product){
             product = Products.findOne({roleName: productId});
@@ -1309,7 +1311,7 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
         let newProductId
-        let agencyProducts = Products.findOne({ name: newProductParams.name,shopId: newShopId})
+        let agencyProducts = Products.findOne({ name_zh: newProductParams.name_zh,shopId: newShopId})
         if(!agencyProducts){
             newProductId = Products.insert({
                 ...newProductParams
