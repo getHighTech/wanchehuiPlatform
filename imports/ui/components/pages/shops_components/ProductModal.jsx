@@ -1,5 +1,4 @@
 import React from "react";
-
 import Form from 'antd/lib/form';
 import Checkbox from 'antd/lib/checkbox';
 
@@ -35,9 +34,7 @@ class ProductModal extends React.Component{
   }
   state={
     xx:[],
-    fileState:'',
-    coverState:'',
-    detailsState:'',
+    init_images_url:'',
     spec : '',
     spec_length:0,
     descriptionKey:[],
@@ -65,7 +62,9 @@ class ProductModal extends React.Component{
    /**
    * 设置表单要显示的数据
    */
+
   setFormData(data) {
+    let self  = this
     console.log(data);
     // 注意这里, 由于antd modal的特殊性, this.formComponent可能是undefined, 要判断一下
     if (this.formComponent) {
@@ -86,6 +85,7 @@ class ProductModal extends React.Component{
   }
   componentDidMount(){
     // console.log(this.props.singleProduct);
+    const product = this.props.singleProduct
     let shopId=this.props.id;
     let self =this;
     Meteor.call('shops.findShopById',shopId,function(err,alt){
@@ -371,6 +371,7 @@ class ProductModal extends React.Component{
                   xx:[],
                   fileState:'',
                   coverState:'',
+                  init_images_url:'',
                   detailsState:''
                 })
                 self.props.changeLoading(false)
@@ -405,7 +406,8 @@ class ProductModal extends React.Component{
               xx:[],
               fileState:'',
               coverState:'',
-              detailsState:''
+              detailsState:'',
+              init_images_url:''
             })
             self.props.changeLoading(false)
             console.log(self.state.xx);
@@ -432,7 +434,8 @@ class ProductModal extends React.Component{
             xx:[],
             fileState:'',
             coverState:'',
-            detailsState:''
+            detailsState:'',
+            init_images_url:''
           })
           self.props.changeLoading(false)
           // window.location.reload();
@@ -450,7 +453,7 @@ class ProductModal extends React.Component{
 
 
   handleCancel = (e) => {
-    console.log('走了这');
+    console.log('关闭Modal');
     const {dispatch } = this.props;
     dispatch(changeimagestate())
 
@@ -459,9 +462,7 @@ class ProductModal extends React.Component{
     this.setState({
       descriptionKey:[],
       xx:[],
-      fileState:'',
-      coverState:'',
-      detailsState:''
+      init_images_url:''
     })
     // window.location.reload();
 
@@ -509,7 +510,29 @@ class ProductModal extends React.Component{
           okText="确认"
           cancelText="取消"
         >
-          <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} detailsState={this.state.detailsState} changedetailsState={this.changedetailsState.bind(this)} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} images_state ={this.props.images_state}   modalState={this.props.modalState} key_arr={this.props.key_arr}  key_agencyarr={this.props.key_agencyarr} key_parameterarr={this.props.key_parameterarr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
+          <ProductForm 
+            id={this.props.id} 
+            fileState={this.state.fileState} 
+            changefileState={this.changefileState.bind(this)} 
+            coverState={this.state.coverState} 
+            init_images_url={this.state.init_images_url}
+            detailsState={this.state.detailsState} 
+            changedetailsState={this.changedetailsState.bind(this)} 
+            changecoverState={this.changecoverState.bind(this)} 
+            spec={this.state.spec} 
+            descriptionKey={this.state.descriptionKey}  
+            getSpec={this.getSpec.bind(this)}  
+            product= {this.props.singleProduct} 
+            images_state ={this.props.images_state}   
+            modalState={this.props.modalState} 
+            key_arr={this.props.key_arr}  
+            key_agencyarr={this.props.key_agencyarr} 
+            key_parameterarr={this.props.key_parameterarr} 
+            productId={this.props.productId} 
+            kay_length={this.props.length}  
+            editState = {this.props.editState} 
+            ref = {(input) => { this.formComponent = input; }} 
+          />
 
         </Modal>
       </div>
