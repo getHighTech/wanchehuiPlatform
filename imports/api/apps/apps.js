@@ -438,12 +438,11 @@ export function appNewOrder(cartParams, appName){
     }
 }
 
-export function getOneProduct(loginToken, appName, productId){
-    // console.log(`productId`)
-    // console.log
+
+export function getOneProduct(loginToken, appName, productId,shopId){
         let product = Products.findOne({_id: productId});
         if(!product){
-            product = Products.findOne({roleName: productId});
+            product = Products.findOne({productClass: "common_card",isSale: true, shopId})
         }
         if (!product) {
             return {
