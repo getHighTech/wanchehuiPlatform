@@ -19,8 +19,6 @@ class Login extends React.Component{
         password: "unknown",
       },
     }
-
-
   }
   handleSubmit = (e) => {
 

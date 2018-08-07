@@ -51,7 +51,16 @@ Meteor.methods({
   //   let OrderStatusAccesses.find().fetch
   // }
   'get.OrderState.byCondition'(condition){
-    return OrderStatusAccesses.find(condition).fetch()
+    let obj =  OrderStatusAccesses.find(condition).fetch()
+    obj.forEach((item) => {
+      if(OrderStatus.findOne({name:item.sFrom})){
+        item.sFrom = OrderStatus.findOne({name:item.sFrom}).name_zh
+      }
+      if(OrderStatus.findOne({name:item.sTo})){
+        item.sTo = OrderStatus.findOne({name:item.sTo}).name_zh
+      }
+    })
+    return obj
   },
   'get.OrderState.byId'(id){
     return OrderStatusAccesses.findOne({_id:id})
