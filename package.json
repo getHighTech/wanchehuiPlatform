@@ -5,10 +5,11 @@
     "start": "meteor run"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0-beta.54",
+    "@babel/runtime": "^7.0.0-beta.55",
     "antd": "3.0.2",
     "autoprefixer": "^8.6.5",
-    "bizcharts": "^3.1.10",
+    "babel-runtime": "^6.26.0",
+    "bizcharts": "^3.2.0",
     "cloudinary": "^1.11.0",
     "cloudinary-core": "^2.5.0",
     "draft-js": "^0.10.5",

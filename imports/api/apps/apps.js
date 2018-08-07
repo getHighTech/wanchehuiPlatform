@@ -249,6 +249,10 @@ export function appRegNewUser(userParams, appName){
 }
 
 export function appLoginUser(type, loginParams, appName){
+    // console.log(type);
+    // console.log(loginParams);
+    
+    
     if(!findOneAppByName(appName)){
         return {
             type: "error",
@@ -260,26 +264,43 @@ export function appLoginUser(type, loginParams, appName){
         //短线验证码登陆
         
             let mobileUser = Meteor.users.findOne({username: loginParams.mobile});
+            // console.log({mobileUser});
+            
             if(mobileUser === undefined){
-            mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.username});
+            mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.mobile});
             if(mobileUser===undefined){
                 let newUserId =Accounts.createUser({
                 username: loginParams.mobile,
                 password: loginParams.mobile
                 })
-                Meteor.update(mobileUser._id, {
+                Meteor.users.update(newUserId, {
                 "profile.mobile": loginParams.mobile,
                 "regPosition": loginParams.position,
                 "regAddress": loginParams.address,
                 "regCity": loginParams.city,
                 });
                 mobileUser = Meteor.users.findOne({_id: newUserId});
-                return {
+                let shop = getUserShop(appName)
+                let shopId;
+                if(shop){
+                    shopId = shop._id
+                    Meteor.users.update(mobileUser._id,
+                        {
+                            $addToSet: {
+                                'visited': shopId
+                            }
+                        }
+                    )
+                }
+          
+                    
+                    return {
                         type: 'users',msg: 
                             {
                                 stampedToken: stampedTokenMobile,
                                 userId: mobileUser._id, 
-                                needToResetPassword: true
+                                needToResetPassword: true,
+                                shopId
                             }
                         };
             }
@@ -309,7 +330,9 @@ export function appLoginUser(type, loginParams, appName){
                 )
             }
           
-            return {type: "users", msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false,shopId}};
+            return {
+                type: "users", msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false,shopId}
+            };
             }
 
         case 'password':
@@ -416,8 +439,8 @@ export function appNewOrder(cartParams, appName){
 }
 
 export function getOneProduct(loginToken, appName, productId){
-    console.log(`productId`)
-    console.log
+    // console.log(`productId`)
+    // console.log
         let product = Products.findOne({_id: productId});
         if(!product){
             product = Products.findOne({roleName: productId});
