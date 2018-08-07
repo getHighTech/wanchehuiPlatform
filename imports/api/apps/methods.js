@@ -90,10 +90,10 @@ Meteor.methods({
         })
        
     },
-    'app.get.one.product.rolename'(loginToken, appName, roleName){
+    'app.get.one.product.rolename'(loginToken, appName, roleName,shopId){
         //载入道具类别商品
         let stampedTokenObj = JSON.parse(loginToken);
-        return Object.assign({}, getOneProduct(stampedTokenObj, appName, roleName), {
+        return Object.assign({}, getOneProduct(stampedTokenObj, appName, roleName,shopId), {
             fromMethod:  "app.get.one.product.rolename"
         })
     },

@@ -415,10 +415,15 @@ export function appNewOrder(cartParams, appName){
     }
 }
 
-export function getOneProduct(loginToken, appName, productId){
+export function getOneProduct(loginToken, appName, productId,shopId){
+    console.log(`来了`)
+    console.log(shopId)
         let product = Products.findOne({_id: productId});
         if(!product){
-            product = Products.findOne({roleName: productId});
+            console.log(`~~~~`)
+            console.log(shopId)
+            console.log(`~~~~`)
+            product = Products.findOne({productClass: "common_card",isSale: true, shopId})
         }
         if (!product) {
             return {
