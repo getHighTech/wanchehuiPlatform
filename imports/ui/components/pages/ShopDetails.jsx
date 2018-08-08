@@ -302,10 +302,29 @@ class ShopDetails extends React.Component {
 
 
   }
+  deleteProduct(id,isSale){
+    let self = this
+    console.log(id)
+    console.log(isSale)
+    console.log('删除商品')
+    if(isSale){
+      message.error('未下架的商品不允许被删除')
+    }else{
+      Meteor.call('product.delete',id,function(err,alt){
+        if(!err){
+          message.success('商品删除成功')
+          self.getProducts();
+        }else{
+          message.error(err.error)
+        }
+      })
+    }
+  }
   handleSearchInput(str){
     let self= this;
     let id= this.props.params._id;
-    let condition = {shopId:id,$or: [{name_zh: eval("/"+str+"/")},{name: eval("/"+str+"/")},{brief:eval("/"+str+"/")}]
+    let condition = {
+      shopId: id, $or: [{ name_zh: eval("/" + str + "/") }, { name: eval("/" + str + "/") }, { brief: eval("/" + str + "/") }], isDelete: { $exists: false }
     };
     console.log(condition);
     Meteor.call('get.product.byShopIdOr',condition,function(err,alt){
@@ -404,7 +423,10 @@ class ShopDetails extends React.Component {
           <Tooltip placement="topLeft" title="商品上下架" arrowPointAtCenter>
             <Switch checkedChildren="上架" unCheckedChildren="下架"  defaultChecked={record.isSale} onChange={() => this.changeOnline(record.isSale,record._id)}  />
           </Tooltip>
-
+            <span className="ant-divider" />
+            <Tooltip placement="topLeft" title="删除商品" arrowPointAtCenter>
+              <Button shape="circle" icon="delete" onClick={() => this.deleteProduct(record._id,record.isSale)}></Button>
+            </Tooltip>
         </span>)
     },
     }

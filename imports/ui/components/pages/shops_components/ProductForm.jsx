@@ -850,7 +850,7 @@ class ProductFormWrap extends Component {
                       mode="tags"
                       style={{ width: '80%' }}
                       placeholder="Please select"
-                      onChange={handleChangeSpec}
+                      onChange={this.handleChangeSpec}
                       disabled={!this.props.modalState}
                       dropdownStyle={{zIndex:'99999' }}
                       ></Select>
@@ -1021,7 +1021,7 @@ class ProductFormWrap extends Component {
       label="商品参数"
       hasFeedback
       >
-      <Button type="dashed" onClick={this.parameteradd} disabled={!this.props.modalState} >
+      <Button type="dashed" onClick={this.parameteradd}  >
         <Icon type="plus" />添加参数
       </Button>
       </FormItem>
@@ -1037,7 +1037,7 @@ class ProductFormWrap extends Component {
       label="商品分销奖励"
       hasFeedback
       >
-      <Button type="dashed" onClick={this.agencyadd} disabled={!this.props.modalState} >
+      <Button type="dashed" onClick={this.agencyadd}  >
         <Icon type="plus" />添加等级
       </Button>
       </FormItem>
@@ -1050,6 +1050,19 @@ class ProductFormWrap extends Component {
           <Icon type="plus" />添加规格
         </Button>
 
+      </FormItem>
+      <FormItem
+        {...formItemLayout}
+        label="商品销量"
+        hasFeedback
+      >
+            {getFieldDecorator('sales_volume', {
+              initialValue: this.props.product.sales_volume,
+              rules: [{ required: true, message: '商品销量不能为空' }],
+        })(
+
+          <Input className="shop-name-input" disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请填写数字" />
+        )}
       </FormItem>
       <Row>
         <Col span={4}></Col>

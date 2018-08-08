@@ -5,7 +5,7 @@ import React from "react";
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import 'antd/lib/card/style';
-import { Table } from 'antd';
+import { Table ,Divider,Input} from 'antd';
 import "antd/lib/icon/style";
 import { Select } from 'antd';
 import { Modal } from 'antd';
@@ -39,6 +39,14 @@ class OrdersForShop extends React.Component {
         loading: false,
         totalCount:1,
         currentPage:1,
+        detailsVisible:false,
+        products:[],
+        contact:'',
+        productCounts:'',
+        totalAmount:'',
+        children:[],
+        trackingNumber:'',
+        shopOrderId:''
     }
 
     showModal = (status, _id) => {
@@ -47,12 +55,12 @@ class OrdersForShop extends React.Component {
         Meteor.call('rolesAcl.find_by_user_id', currentUserId, function (error, rlt) {
             console.log(rlt);
             if (!error) {
-                if (rlt.indexOf('true') == -1) {
+                if (!rlt) {
                     console.log('不能进行状态修改');
                     message.error('该用户不能进行状态修改');
                 }
                 else {
-                    let id = _id;
+
                     self.setState({
                         loading: true,
                         visible: true,
@@ -60,6 +68,7 @@ class OrdersForShop extends React.Component {
                     });
                     const { dispatch } = self.props;
                     Meteor.call('get.OrderState.byStatus', status, function (err, alt) {
+                        console.log(status)
                         let getStatus = [];
                         for (var i = 0; i < alt.length; i++) {
                             getStatus.push(alt[i].sTo)
@@ -67,7 +76,7 @@ class OrdersForShop extends React.Component {
                         self.setState({
                             changeStatus: getStatus
                         })
-                        dispatch(editOrderStatus(getStatus, id))
+                        dispatch(editOrderStatus(getStatus, _id))
 
                     })
                 }
@@ -75,35 +84,27 @@ class OrdersForShop extends React.Component {
 
             }
         })
-
-
-
-
     }
     handleOk = (e) => {
         let self = this;
-        this.setState({
-            visible: false,
-        });
-        console.log(self.props.id);
-        console.log(self.state.localStatus);
-        Meteor.call('shopOrder.findOne', self.props.id, function (error, result) {
-            if (!error) {
-                let id = result.orderId;
-                Meteor.call('Orders.updateStatus', id, self.state.localStatus)
+        Meteor.call('shopOrder.updateTrackingnumber',self.state.shopOrderId,self.state.trackingNumber,function(err,alt){
+            console.log(self.state.shopOrderId)
+            console.log(self.state.trackingNumber)
+            if(!err){
+                self.setState({
+                    visible: false,
+                    trackingNumber: ''
+                });
+                self.getProName(1, 20);
             }
         })
-        Meteor.call('shopOrders.updateStatus', self.props.id, self.state.localStatus, function (err, alt) {
-            if (!err) {
-                self.getProName();
-            }
-        })
-
     }
     handleCancel = (e) => {
         this.setState({
             visible: false,
-            loading: false
+            loading: false,
+            trackingNumber: ''
+
         });
     }
 
@@ -115,6 +116,17 @@ class OrdersForShop extends React.Component {
     }
     changeState(value) {
         console.log(this.state.shopData);
+    }
+    onFocus(arr){
+        console.log('获取焦点')
+        let self = this
+        let newStatus = []
+        for (var i = 0; i < arr.length; i++) {
+            newStatus.push(<Option key={arr[i].name}>{arr[i].name_zh}</Option>)
+          }
+        self.setState({
+            children: newStatus
+        })
     }
 
     componentDidMount() {
@@ -172,28 +184,10 @@ class OrdersForShop extends React.Component {
         let shopId = this.state.shopId;
         console.log(shopId);
         let self = this;
-        Meteor.call('get.byShopId', shopId, page,pageSize,function (err, alt) {
+        Meteor.call('get.orders.byShopId', shopId, page,pageSize,function (err, alt) {
             if (!err) {
-                console.log('开始给表单填值');
-                console.log(alt);
-                for (var i = 0; i < alt.length; i++) {
-                    let productName = [];
-                    let OneOrderPro = alt[i].products;
-                    for (var j = 0; j < OneOrderPro.length; j++) {
-                        if (OneOrderPro[j].shopId == shopId) {
-                            productName.push(OneOrderPro[j].name_zh, <br key={j} />);
-                        }
-                    }
-                    alt[i].ProCount = productName.length / 2;
-                    alt[i].ProName = productName;
-                    if (typeof (alt[i].contact) != 'undefined') {
-                        alt[i].name = alt[i].contact.name;
-                    }
-                    else {
-                        alt[i].name = alt[i].userId;
-                    }
-                    alt[i].ProPrice = alt[i].totalAmount / 100;
-                }
+                console.log('最终数据结构')
+                console.log(alt)
                 self.setState({
                     orderData: alt,
                     currentPage: page,
@@ -202,46 +196,180 @@ class OrdersForShop extends React.Component {
             }
         })
     }
+    hideDetailsModal(){
+        this.setState({
+            detailsVisible: false,
+        });
+    }
+    showDetails(record){
+        console.log(record)
+        this.setState({
+            detailsVisible: true,
+            products:record.products,
+            contact:record.contact,
+            productCounts:record.productCounts,
+            totalAmount:record.totalAmount
+        });
+    }
+    handleStatusChange(value,record) {
+        console.log(value.key)
+        console.log(record._id)
+        console.log(record.orderId)
+        let currentUserId = Meteor.userId();
+        let self = this;
+        Meteor.call('rolesAcl.find_by_user_id', currentUserId, function (error, rlt) {
+            console.log(rlt);
+            if (!error) {
+                if (!rlt) {
+                    console.log('不能进行状态修改');
+                    message.error('该用户不能进行状态修改');
+                }
+                else{
+                    Meteor.call('shopOrders.updateStatus',record._id,record.orderId,value.key,function(err,alt){
+                        if(!err){
+                            message.success('状态修改成功！')
+                        }else{
+                            message.error(err.error);
+                        }
+                    })
+
+                }
 
 
+            }
+        })
+
+      }
+    sendGood(id){
+        console.log(id)
+        this.setState({
+            visible:true,
+            shopOrderId:id
+        })
+    }
+    updateTrackingNumber(id,number) {
+        console.log(id)
+        this.setState({
+            visible: true,
+            shopOrderId: id,
+            trackingNumber: number
+        })
+    }
+    onChangeTrackingNumber(e){
+        console.log(e.target.value)
+        this.setState({
+            trackingNumber: e.target.value
+        })
+    }
+    
     render() {
         const { getStatus } = this.props
+        const {products,contact,productCounts,totalAmount,children} = this.state
+        console.log(products)
+        console.log(contact)
+        console.log(productCounts)
+        console.log(totalAmount)
+        let productsDom = []
+        let concactDom =  []
+        if(products.length>0){
+            for (let i = 0; i < products.length; i++) {
+                productsDom.push(
+                <div>
+                    <p>商品名称：{products[i].name_zh}</p>
+                    <p>商品数量：{productCounts[products[i]._id]}</p>
+                    <Divider/>
+                </div>
+                ) 
+            }
+        }
+        if(contact){
+                productsDom.push(
+                <div>
+                    <h4>收货地址</h4>
+                    <p>收货人：{contact.name}</p>
+                    <p>电话：{contact.mobile}</p>
+                    <p>地址：{contact.address}</p>
+                </div>
+                ) 
+        }
         const columns = [
+            { title: '下单账号', width: 100, dataIndex: 'username', key: 'username' },
             { title: '订单号', width: 200, dataIndex: 'orderCode', key: 'orderCode' },
-            { title: '用户名', width: 100, dataIndex: 'name', key: 'name' },
-            { title: '商品名', width: 200, dataIndex: 'ProName', key: 'ProName' },
-            { title: '数量', dataIndex: 'ProCount', key: 'ProCount' },
-            { title: '价格', dataIndex: 'ProPrice', key: 'ProPrice' },
+            // { title: '用户名', width: 100, dataIndex: 'name', key: 'name' },
+            // { title: '商品名', width: 200, dataIndex: 'ProName', key: 'ProName' },
+            // { title: '数量', dataIndex: 'ProCount', key: 'ProCount' },
+            { title: '付款金额',width: 100, dataIndex: 'ProPrice', key: 'totalAmount',
+            render: (text, record) => {
+                return (<span>{record.totalAmount}元</span>);
+            } 
+            },
             {
-                title: '交易时间',
+                title: '下单时间',
                 dataIndex: 'createdAt',
                 key: 'createdAt',
                 width: 150,
                 render: (text, record) => {
-                    return (<span>{moment(record.createdAt).format("YYYY-MM-DD HH:mm:ss")}</span>);
+                    return (<span>{moment(record.createdAt).format("YYYY-MM-DD HH:mm")}</span>);
                 }
             },
-            // { title: '订单地址', dataIndex: 'address', key: 'address' },
-            { title: '订单状态', dataIndex: 'status', key: 'status' },
+            { title: '状态', dataIndex: 'allStatus', key: 'allStatus',
+            width: 100,
+            render: (text, record) => {
+                // return (<span>{record.status_zh}</span>);
+                return (
+                    <Select labelInValue defaultValue={{ key: record.status, label: record.status_zh, }} style={{ width: 120 }} onChange={(value)=>this.handleStatusChange(value,record)} onFocus={()=>this.onFocus(record.allStatus)} notFoundContent="没有转移状态">
+                    {children}
+                </Select>
+                )
+            }  },
             {
-                title: '订单状态操作',
+                title: '操作',
                 key: 'operation',
                 // fixed: 'right',
-                width: 100,
+                width: 200,
                 render: (text, record) => {
                     return (
-                        <Button type="primary" onClick={() => this.showModal(record.status, record._id)}>修改</Button>
-
+                        // <Button type="primary" onClick={() => this.showModal(record.status, record._id)}>修改</Button>
+                    <span>
+                        <a href="javascript:;" onClick={()=>this.showDetails(record)}>查看详情</a>
+                    </span>
+                        
                     )
                 },
             },
             {
-                title: '订单详情', key: 'details', render: (text, record) => {
+                title: '快递单号',
+                key: 'action',
+                // fixed: 'right',
+                width: 200,
+                render: (text, record) => {
+                    const sended = record.tracking_number
                     return (
-                        <Button type="primary" onClick={() => this.changeDetails(record._id)}>核销订单</Button>
+                        <div>   
+                            {sended?(
+                            <span>
+                                <span>{record.tracking_number}</span>
+                                <Divider type="vertical" />
+                                    <a href="javascript:;" onClick={() => this.updateTrackingNumber(record._id, record.tracking_number)}>修改</a>
+                                <Divider type="vertical" />
+                              </span>
+                            ):(
+                            <span>
+                                <a href="javascript:;" onClick={()=>this.sendGood(record._id)}>发货</a>
+                            </span>     
+                            )}
+                        </div>
+                        
                     )
-                }
-            }
+                },
+            },
+            // {
+            //     title: '订单详情', key: 'details', render: (text, record) => {
+            //         return (
+            //             <Button type="primary" onClick={() => this.changeDetails(record._id)}>核销订单</Button>
+            //         )
+            //     }
+            // }
 
 
         ];
@@ -256,9 +384,29 @@ class OrdersForShop extends React.Component {
                         showQuickJumper: true, current: this.state.currentPage
                     }}  />
                 </Spin>
-                <Modal title="修改订单状态" visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} okText="确认"
-                    cancelText="取消">
-                    <RadioGroup options={this.props.getStatus} onChange={this.onChangeOrderStatus} value={this.state.localStatus} />
+                <Modal
+                    title="订单详情"
+                    visible={this.state.detailsVisible}
+                    onOk={this.hideDetailsModal.bind(this)}
+                    onCancel={this.hideDetailsModal.bind(this)}
+                    okText="确认"
+                    cancelText="取消"
+                    >
+                    {productsDom}
+                    {concactDom}
+                    <Divider/>
+                    总金额：{totalAmount}元
+                </Modal>
+                <Modal
+                    title="填写快递单号"
+                    visible={this.state.visible}
+                    onOk={this.handleOk}
+                    onCancel={this.handleCancel}
+                    okText="确认"
+                    cancelText="取消"
+                    
+                >
+                    <Input placeholder="请输入快递单号" value={this.state.trackingNumber} onChange={this.onChangeTrackingNumber.bind(this)}/>
                 </Modal>
             </div>
         )
