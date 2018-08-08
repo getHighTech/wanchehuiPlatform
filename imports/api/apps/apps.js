@@ -23,7 +23,7 @@ export const UserContacts = new Mongo.Collection("user_contacts");
 export function getHomePageProducts(appName) {
     let shop = getUserShop(appName)
     if(shop){
-        let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id}).fetch();
+        let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id,recommend: true},{sort: {createdAt: -1}}).fetch();
         return {
             type: "products", 
             msg: products,
@@ -160,12 +160,14 @@ export function syncUser(userId, stampedToken, appName){
       let product, role, senior;
       let platfromId = platfrom? platfrom._id: null
       if(platfromId){
-         product = Products.findOne({shopId: platfromId, productClass: {
+         product = Products.find({shopId: platfromId,isSale: true, productClass: {
              "$in": ['common_card','advanced_card']
-         }})
-        
+         }}).fetch()
          if(product) {
-             role = UserRoles.findOne({userId,roleName: `${product.name}_holder`,status: true})
+             role = UserRoles.findOne({userId,roleName: `${product[0].name}_holder`,status: true})
+             if(!role){
+                role = UserRoles.findOne({userId,roleName: `${product[1].name}_holder`,status: true})
+             }
          }
       }
       if(role!==undefined){
@@ -178,7 +180,7 @@ export function syncUser(userId, stampedToken, appName){
       
       return {
           type: "users",
-          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId,agencyRole: role,senior  },
+          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId,agencyRole: role,senior,product },
       }
 }
 
