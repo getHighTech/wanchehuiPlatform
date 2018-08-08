@@ -992,8 +992,6 @@ class ProductFormWrap extends Component {
       )}
       </FormItem>
 
-
-
       <FormItem
       {...formItemLayout}
       label="商品类型"
