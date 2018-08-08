@@ -19,7 +19,6 @@ import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 import { Spin } from 'antd';
 import { push } from 'react-router-redux';
-import { fromValues } from "gl-matrix/src/gl-matrix/mat2d";
 const RadioGroup = Radio.Group;
 
 class OrdersForShop extends React.Component {
@@ -40,7 +39,12 @@ class OrdersForShop extends React.Component {
         loading: false,
         totalCount:1,
         currentPage:1,
-        detailsVisible:false
+        detailsVisible:false,
+        products:[],
+        contact:'',
+        productCounts:'',
+        totalAmount:'',
+        children:[]
     }
 
     showModal = (status, _id) => {
@@ -118,6 +122,17 @@ class OrdersForShop extends React.Component {
     changeState(value) {
         console.log(this.state.shopData);
     }
+    onFocus(arr){
+        console.log('获取焦点')
+        let self = this
+        let newStatus = []
+        for (var i = 0; i < arr.length; i++) {
+            newStatus.push(<Option key={arr[i].name}>{arr[i].name_zh}</Option>)
+          }
+        self.setState({
+            children: newStatus
+        })
+    }
 
     componentDidMount() {
         let currentUserId = Meteor.userId();
@@ -174,7 +189,7 @@ class OrdersForShop extends React.Component {
         let shopId = this.state.shopId;
         console.log(shopId);
         let self = this;
-        Meteor.call('get.byShopId', shopId, page,pageSize,function (err, alt) {
+        Meteor.call('get.orders.byShopId', shopId, page,pageSize,function (err, alt) {
             if (!err) {
                 // for (let i = 0; i < alt.length; i++) {
                 //     let uI = i
@@ -214,14 +229,52 @@ class OrdersForShop extends React.Component {
             detailsVisible: false,
         });
     }
-    showDetails(){
+    showDetails(record){
+        console.log(record)
         this.setState({
             detailsVisible: true,
+            products:record.products,
+            contact:record.contact,
+            productCounts:record.productCounts,
+            totalAmount:record.totalAmount
         });
     }
-
+    handleStatusChange(value) {
+        console.log(value)
+        this.getProName(1,20)
+        
+      }
+      
     render() {
         const { getStatus } = this.props
+        const {products,contact,productCounts,totalAmount,children} = this.state
+        console.log(products)
+        console.log(contact)
+        console.log(productCounts)
+        console.log(totalAmount)
+        let productsDom = []
+        let concactDom =  []
+        if(products.length>0){
+            for (let i = 0; i < products.length; i++) {
+                productsDom.push(
+                <div>
+                    <p>商品名称：{products[i].name_zh}</p>
+                    <p>商品数量：{productCounts[products[i]._id]}</p>
+                    <Divider/>
+                </div>
+                ) 
+            }
+        }
+        if(contact){
+                productsDom.push(
+                <div>
+                    <h4>收货地址</h4>
+                    <p>收货人：{contact.name}</p>
+                    <p>电话：{contact.mobile}</p>
+                    <p>地址：{contact.address}</p>
+                </div>
+                ) 
+        }
         const columns = [
             { title: '下单账号', width: 100, dataIndex: 'username', key: 'username' },
             { title: '订单号', width: 200, dataIndex: 'orderCode', key: 'orderCode' },
@@ -242,10 +295,15 @@ class OrdersForShop extends React.Component {
                     return (<span>{moment(record.createdAt).format("YYYY-MM-DD HH:mm")}</span>);
                 }
             },
-            { title: '状态', dataIndex: 'status_zh', key: 'status_zh',
+            { title: '状态', dataIndex: 'allStatus', key: 'allStatus',
             width: 100,
             render: (text, record) => {
-                return (<span>{record.status_zh}</span>);
+                // return (<span>{record.status_zh}</span>);
+                return (
+                <Select labelInValue defaultValue={{ key: record.status,label:record.status_zh, }} style={{ width: 120 }} onChange={this.handleStatusChange.bind(this)}   onFocus={()=>this.onFocus(record.allStatus)} notFoundContent="没有转移状态">
+                    {children}
+                </Select>
+                )
             }  },
             {
                 title: '操作',
@@ -255,12 +313,9 @@ class OrdersForShop extends React.Component {
                 render: (text, record) => {
                     return (
                         // <Button type="primary" onClick={() => this.showModal(record.status, record._id)}>修改</Button>
-                        <span>
-                        <a href="javascript:;">修改状态</a>
-                        <Divider type="vertical" />
+                    <span>
                         <a href="javascript:;" onClick={()=>this.showDetails(record)}>查看详情</a>
-                        <Divider type="vertical" />
-                      </span>
+                    </span>
                         
                     )
                 },
@@ -315,21 +370,22 @@ class OrdersForShop extends React.Component {
                         showQuickJumper: true, current: this.state.currentPage
                     }}  />
                 </Spin>
-                <Modal title="修改订单状态" visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} okText="确认"
+                {/* <Modal title="修改订单状态" visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} okText="确认"
                     cancelText="取消">
                     <RadioGroup options={this.props.getStatus} onChange={this.onChangeOrderStatus} value={this.state.localStatus} />
-                </Modal>
+                </Modal> */}
                 <Modal
-                    title="Modal"
+                    title="订单详情"
                     visible={this.state.detailsVisible}
-                    onOk={this.hideDetailsModal}
-                    onCancel={this.hideDetailsModal}
+                    onOk={this.hideDetailsModal.bind(this)}
+                    onCancel={this.hideDetailsModal.bind(this)}
                     okText="确认"
                     cancelText="取消"
                     >
-                    <p>Bla bla ...</p>
-                    <p>Bla bla ...</p>
-                    <p>Bla bla ...</p>
+                    {productsDom}
+                    {concactDom}
+                    <Divider/>
+                    总金额：{totalAmount}元
                 </Modal>
             </div>
         )

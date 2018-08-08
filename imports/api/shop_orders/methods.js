@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import {ShopOrders} from './shop_orders';
 import {Shops} from '../shops/shops.js'
 import { OrderStatus } from '../order_status/order_status'
+import {OrderStatusAccesses} from '../order_status_accesses/order_status_accesses'
 Meteor.methods({
   'get.shoporder'(id){
     let aaa= ShopOrders.findOne({orderId:id});
@@ -30,7 +31,7 @@ Meteor.methods({
       }
     }
   },
-  'get.byShopId'(shopId,page,pageSize){
+  'get.orders.byShopId'(shopId,page,pageSize){
     let shop = Shops.findOne({ _id: shopId})
     if (shop.name ==='万人车汇自营店'){
       let result =  ShopOrders.find({ shopId: shopId, appName: { $exists: false } },{skip: (page - 1) * pageSize, limit: pageSize,
@@ -60,9 +61,23 @@ Meteor.methods({
         }else{
           item.username = '未知用户'
         }
+
+         //--------查询可到达的所有状态--------//
+
+        let accessStatus = OrderStatusAccesses.find({sFrom:item.status,accessable:true}).fetch()
+        let arr = []
+        if(accessStatus.length>0){
+          accessStatus.forEach((obj)=>{
+            console.log(obj.sTo)
+            let status = OrderStatus.findOne({name:obj.sTo})
+            if(status){
+              arr.push({'name':obj.sTo,'name_zh':status.name_zh})
+            }
+          })
+        }
+        item.allStatus = arr
       })
-      
-      console.log(result)
+     
       return result
     }
   },
