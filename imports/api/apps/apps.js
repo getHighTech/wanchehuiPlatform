@@ -23,7 +23,7 @@ export const UserContacts = new Mongo.Collection("user_contacts");
 export function getHomePageProducts(appName) {
     let shop = getUserShop(appName)
     if(shop){
-        let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id}).fetch();
+        let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id,recommend: true},{sort: {createdAt: -1}}).fetch();
         return {
             type: "products", 
             msg: products,
