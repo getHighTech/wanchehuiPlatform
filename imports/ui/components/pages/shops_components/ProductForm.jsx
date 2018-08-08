@@ -926,7 +926,19 @@ class ProductFormWrap extends Component {
           <Input className="shop-name-input"  disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="商品中文名称" />
       )}
       </FormItem>
+      <FormItem
+        {...formItemLayout}
+        label="商品销量"
+        hasFeedback
+      >
+        {getFieldDecorator('sales_volume', {
+          initialValue: this.props.product.sales_volume,
+          rules: [{ required: true, message: '商品销量不能为空' }],
+        })(
 
+          <Input className="shop-name-input" disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请填写数字" />
+        )}
+      </FormItem>
 
       <FormItem
         {...formItemLayout}
@@ -1051,19 +1063,7 @@ class ProductFormWrap extends Component {
         </Button>
 
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="商品销量"
-        hasFeedback
-      >
-            {getFieldDecorator('sales_volume', {
-              initialValue: this.props.product.sales_volume,
-              rules: [{ required: true, message: '商品销量不能为空' }],
-        })(
 
-          <Input className="shop-name-input" disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请填写数字" />
-        )}
-      </FormItem>
       <Row>
         <Col span={4}></Col>
         <Col span={6}>{formItems}</Col>
