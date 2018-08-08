@@ -3,6 +3,7 @@ import {ShopOrders} from './shop_orders';
 import {Shops} from '../shops/shops.js'
 import { OrderStatus } from '../order_status/order_status'
 import {OrderStatusAccesses} from '../order_status_accesses/order_status_accesses'
+import {Orders} from '../orders/orders'
 Meteor.methods({
   'get.shoporder'(id){
     let aaa= ShopOrders.findOne({orderId:id});
@@ -68,7 +69,6 @@ Meteor.methods({
         let arr = []
         if(accessStatus.length>0){
           accessStatus.forEach((obj)=>{
-            console.log(obj.sTo)
             let status = OrderStatus.findOne({name:obj.sTo})
             if(status){
               arr.push({'name':obj.sTo,'name_zh':status.name_zh})
@@ -84,13 +84,44 @@ Meteor.methods({
   'get.orders.count'(shopId){
     return ShopOrders.find({shopId:shopId}).count()
   },
-  "shopOrders.updateStatus"(_id,status){
-    return ShopOrders.update(_id,{
+  "shopOrders.updateStatus"(_id,orderId,status){
+    //同步更改orders和ShopOrders的状态
+
+     ShopOrders.update(_id,{
       $set:{
         status:status
       }
+    },function(err,alt){
+      if(!err){
+        Orders.update(orderId, {
+          $set: {
+            status: status
+          }
+        },function(err,rlt){
+          if(!err){
+          console.log('更新订单状态成功')
+          }else{
+            throw new Meteor.Error("更新订单状态Orders失败")
+          }
+        })
+      }else{
+        throw new Meteor.Error("更新订单状态ShopOrders失败")
+      }
     })
+  },
+  'shopOrder.updateTrackingnumber'(_id,number){
+    ShopOrders.update(_id,{
+      $set:{
+      tracking_number:number
+    }
+    },function(err,alt){
+      if(!err){
+        console.log('更新快递单号成功')
+      }else{
+        throw new Meteor.Error("更新快递单号失败")
 
+      }
+    })
   },
   'shopOrder.findOne'(id){
     return ShopOrders.findOne({_id:id})

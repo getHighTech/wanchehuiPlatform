@@ -5,7 +5,7 @@ import React from "react";
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import 'antd/lib/card/style';
-import { Table ,Divider} from 'antd';
+import { Table ,Divider,Input} from 'antd';
 import "antd/lib/icon/style";
 import { Select } from 'antd';
 import { Modal } from 'antd';
@@ -44,7 +44,9 @@ class OrdersForShop extends React.Component {
         contact:'',
         productCounts:'',
         totalAmount:'',
-        children:[]
+        children:[],
+        trackingNumber:'',
+        shopOrderId:''
     }
 
     showModal = (status, _id) => {
@@ -85,31 +87,24 @@ class OrdersForShop extends React.Component {
     }
     handleOk = (e) => {
         let self = this;
-        this.setState({
-            visible: false,
-        });
-        console.log(self.props.id);
-        console.log(self.state.localStatus);
-        Meteor.call('shopOrder.findOne', self.props.id, function (error, result) {
-            if (!error) {
-                let id = result.orderId;
-                Meteor.call('Orders.updateStatus', id, self.state.localStatus)
+        Meteor.call('shopOrder.updateTrackingnumber',self.state.shopOrderId,self.state.trackingNumber,function(err,alt){
+            console.log(self.state.shopOrderId)
+            console.log(self.state.trackingNumber)
+            if(!err){
                 self.setState({
-                    loading: false
+                    visible: false,
+                    trackingNumber: ''
                 });
+                self.getProName(1, 20);
             }
         })
-        Meteor.call('shopOrders.updateStatus', self.props.id, self.state.localStatus, function (err, alt) {
-            if (!err) {
-                self.getProName();
-            }
-        })
-
     }
     handleCancel = (e) => {
         this.setState({
             visible: false,
-            loading: false
+            loading: false,
+            trackingNumber: ''
+
         });
     }
 
@@ -191,29 +186,6 @@ class OrdersForShop extends React.Component {
         let self = this;
         Meteor.call('get.orders.byShopId', shopId, page,pageSize,function (err, alt) {
             if (!err) {
-                // for (let i = 0; i < alt.length; i++) {
-                //     let uI = i
-                //     Meteor.call('get.order_status.name_zh.by_name',alt[i].status,function(err,rlt){
-                //         alt[uI].status_zh = rlt
-                //     })
-                //     let productName = [];
-                //     let OneOrderPro = alt[i].products;
-                //     for (var j = 0; j < OneOrderPro.length; j++) {
-                //         if (OneOrderPro[j].shopId == shopId) {
-                //             productName.push(OneOrderPro[j].name_zh, <br key={j} />);
-                //         }
-                //     }
-                    
-                //     alt[i].ProCount = productName.length / 2;
-                //     alt[i].ProName = productName;
-                //     if (typeof (alt[i].contact) != 'undefined') {
-                //         alt[i].name = alt[i].contact.name;
-                //     }
-                //     else {
-                //         alt[i].name = alt[i].userId;
-                //     }
-                //     alt[i].ProPrice = alt[i].totalAmount / 100;
-                // }
                 console.log('最终数据结构')
                 console.log(alt)
                 self.setState({
@@ -239,12 +211,57 @@ class OrdersForShop extends React.Component {
             totalAmount:record.totalAmount
         });
     }
-    handleStatusChange(value) {
-        console.log(value)
-        this.getProName(1,20)
-        
+    handleStatusChange(value,record) {
+        console.log(value.key)
+        console.log(record._id)
+        console.log(record.orderId)
+        let currentUserId = Meteor.userId();
+        let self = this;
+        Meteor.call('rolesAcl.find_by_user_id', currentUserId, function (error, rlt) {
+            console.log(rlt);
+            if (!error) {
+                if (!rlt) {
+                    console.log('不能进行状态修改');
+                    message.error('该用户不能进行状态修改');
+                }
+                else{
+                    Meteor.call('shopOrders.updateStatus',record._id,record.orderId,value.key,function(err,alt){
+                        if(!err){
+                            message.success('状态修改成功！')
+                        }else{
+                            message.error(err.error);
+                        }
+                    })
+
+                }
+
+
+            }
+        })
+
       }
-      
+    sendGood(id){
+        console.log(id)
+        this.setState({
+            visible:true,
+            shopOrderId:id
+        })
+    }
+    updateTrackingNumber(id,number) {
+        console.log(id)
+        this.setState({
+            visible: true,
+            shopOrderId: id,
+            trackingNumber: number
+        })
+    }
+    onChangeTrackingNumber(e){
+        console.log(e.target.value)
+        this.setState({
+            trackingNumber: e.target.value
+        })
+    }
+    
     render() {
         const { getStatus } = this.props
         const {products,contact,productCounts,totalAmount,children} = this.state
@@ -300,7 +317,7 @@ class OrdersForShop extends React.Component {
             render: (text, record) => {
                 // return (<span>{record.status_zh}</span>);
                 return (
-                <Select labelInValue defaultValue={{ key: record.status,label:record.status_zh, }} style={{ width: 120 }} onChange={this.handleStatusChange.bind(this)}   onFocus={()=>this.onFocus(record.allStatus)} notFoundContent="没有转移状态">
+                    <Select labelInValue defaultValue={{ key: record.status, label: record.status_zh, }} style={{ width: 120 }} onChange={(value)=>this.handleStatusChange(value,record)} onFocus={()=>this.onFocus(record.allStatus)} notFoundContent="没有转移状态">
                     {children}
                 </Select>
                 )
@@ -331,20 +348,17 @@ class OrdersForShop extends React.Component {
                         <div>   
                             {sended?(
                             <span>
-                                <span>1202029039230238109212</span>
+                                <span>{record.tracking_number}</span>
                                 <Divider type="vertical" />
-                                <a href="javascript:;">修改</a>
+                                    <a href="javascript:;" onClick={() => this.updateTrackingNumber(record._id, record.tracking_number)}>修改</a>
                                 <Divider type="vertical" />
                               </span>
                             ):(
                             <span>
-                                <a href="javascript:;">发货</a>
+                                <a href="javascript:;" onClick={()=>this.sendGood(record._id)}>发货</a>
                             </span>     
                             )}
                         </div>
-                        
-                        // <Button type="primary" onClick={() => this.showModal(record.status, record._id)}>修改</Button>
-
                         
                     )
                 },
@@ -370,10 +384,6 @@ class OrdersForShop extends React.Component {
                         showQuickJumper: true, current: this.state.currentPage
                     }}  />
                 </Spin>
-                {/* <Modal title="修改订单状态" visible={this.state.visible} onOk={this.handleOk} onCancel={this.handleCancel} okText="确认"
-                    cancelText="取消">
-                    <RadioGroup options={this.props.getStatus} onChange={this.onChangeOrderStatus} value={this.state.localStatus} />
-                </Modal> */}
                 <Modal
                     title="订单详情"
                     visible={this.state.detailsVisible}
@@ -386,6 +396,17 @@ class OrdersForShop extends React.Component {
                     {concactDom}
                     <Divider/>
                     总金额：{totalAmount}元
+                </Modal>
+                <Modal
+                    title="填写快递单号"
+                    visible={this.state.visible}
+                    onOk={this.handleOk}
+                    onCancel={this.handleCancel}
+                    okText="确认"
+                    cancelText="取消"
+                    
+                >
+                    <Input placeholder="请输入快递单号" value={this.state.trackingNumber} onChange={this.onChangeTrackingNumber.bind(this)}/>
                 </Modal>
             </div>
         )
