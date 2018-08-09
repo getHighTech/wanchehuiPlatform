@@ -114,5 +114,8 @@ Meteor.methods({
         else{
             throw new Meteor.Error("未知错误");
         }
-    }
+    },
+    "get.vips.count"(productId){
+        return ProductOwners.find({ productId }).count()
+    },
 });

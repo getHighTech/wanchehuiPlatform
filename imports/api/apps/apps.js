@@ -23,7 +23,7 @@ export const UserContacts = new Mongo.Collection("user_contacts");
 export function getHomePageProducts(appName) {
     let shop = getUserShop(appName)
     if(shop){
-        let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id}).fetch();
+        let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id,recommend: true},{sort: {createdAt: -1}}).fetch();
         return {
             type: "products",
             msg: products,
@@ -157,10 +157,30 @@ export function syncUser(userId, stampedToken, appName){
       let shop = getUserShopPerminssion(userId)
       let shopId = shop? shop._id : null
       let platfrom = getUserShop(appName)
+      let product, role, senior;
       let platfromId = platfrom? platfrom._id: null
+      if(platfromId){
+         product = Products.find({shopId: platfromId,isSale: true, productClass: {
+             "$in": ['common_card','advanced_card']
+         }}).fetch()
+         if(product) {
+             role = UserRoles.findOne({userId,roleName: `${product[0].name}_holder`,status: true})
+             if(!role){
+                role = UserRoles.findOne({userId,roleName: `${product[1].name}_holder`,status: true})
+             }
+         }
+      }
+      if(role!==undefined){
+      }else{
+          role = false
+      }
+      if(shop){
+        senior = shop.hasOwnProperty("isAdvanced") === true ? true : false
+      }
+
       return {
           type: "users",
-          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId },
+          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId,agencyRole: role,senior,product },
       }
 }
 
@@ -231,6 +251,10 @@ export function appRegNewUser(userParams, appName){
 }
 
 export function appLoginUser(type, loginParams, appName){
+    // console.log(type);
+    // console.log(loginParams);
+
+
     if(!findOneAppByName(appName)){
         return {
             type: "error",
@@ -240,27 +264,46 @@ export function appLoginUser(type, loginParams, appName){
     switch (type) {
         case 'mobileSMS':
         //短线验证码登陆
+
             let mobileUser = Meteor.users.findOne({username: loginParams.mobile});
+            // console.log({mobileUser});
+
             if(mobileUser === undefined){
-            mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.username});
+            mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.mobile});
             if(mobileUser===undefined){
                 let newUserId =Accounts.createUser({
                 username: loginParams.mobile,
                 password: loginParams.mobile
                 })
-                Meteor.update(mobileUser._id, {
+                Meteor.users.update(newUserId, {
                 "profile.mobile": loginParams.mobile,
                 "regPosition": loginParams.position,
                 "regAddress": loginParams.address,
                 "regCity": loginParams.city,
                 });
                 mobileUser = Meteor.users.findOne({_id: newUserId});
-                return {
+
+                let shop = getUserShop(appName)
+                let shopId;
+                if(shop){
+                    shopId = shop._id
+                    Meteor.users.update(mobileUser._id,
+                        {
+                            $addToSet: {
+                                'visited': shopId
+                            }
+                        }
+                    )
+                }
+
+
+                    return {
                         type: 'users',msg:
                             {
                                 stampedToken: stampedTokenMobile,
                                 userId: mobileUser._id,
-                                needToResetPassword: true
+                                needToResetPassword: true,
+                                shopId
                             }
                         };
             }
@@ -290,7 +333,10 @@ export function appLoginUser(type, loginParams, appName){
                 )
             }
 
-            return {type: "users", msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false,shopId}};
+
+            return {
+                type: "users", msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false,shopId}
+            };
             }
 
         case 'password':
@@ -396,15 +442,11 @@ export function appNewOrder(cartParams, appName){
     }
 }
 
-export function getOneProduct(loginToken, appName, productId){
-    console.log("productId")
-    console.log(productId)
-    console.log(productId)
+
+export function getOneProduct(loginToken, appName, productId,shopId){
         let product = Products.findOne({_id: productId});
-        // console.log("product")
-        // console.log(product)
         if(!product){
-            product = Products.findOne({roleName: productId});
+            product = Products.findOne({productClass: "common_card",isSale: true, shopId})
         }
         if (!product) {
             return {
@@ -500,15 +542,19 @@ export function createNewOrder(loginToken, appName, orderParams){
                         status: false,
                     })
                 }else{
+
                     relation =  AgencyRelation.findOne({userId: orderParams.userId})
                 }
               }
            }else{
+
               relation =  AgencyRelation.findOne({userId: orderParams.userId})
               break;
            }
         }
+
         //分店铺建立订单
+
         let orderParamsDealed = {
             ...orderParams,
             type: "card",
@@ -526,7 +572,7 @@ export function createNewOrder(loginToken, appName, orderParams){
             status: "unconfirmed",
             createdAt: new Date(),
             appName,
-            agencyRelationId:  relation._id,
+            agencyRelationId:  relation===undefined? null : relation._id,
         }
         let orderId = Orders.insert(orderParamsDealed);
         for(const shopId in shopProducts){//把这个订单拆分给各个店铺
@@ -1318,7 +1364,7 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
         let newProductId
-        let agencyProducts = Products.findOne({ name: newProductParams.name,shopId: newShopId})
+        let agencyProducts = Products.findOne({ name_zh: newProductParams.name_zh,shopId: newShopId})
         if(!agencyProducts){
             newProductId = Products.insert({
                 ...newProductParams
@@ -1392,7 +1438,13 @@ export function getProductOwners(loginToken, appName, userId){
 
 export function agencyProducts(loginToken, appName, shopId) {
     return getUserInfo(loginToken, appName,shopId, function(){
-        let products = Products.find({ shopId }).fetch()
+        let products;
+        if(shopId!==undefined){
+            products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId}).fetch();
+
+        }else{
+            products = []
+        }
         return {
             type: "products",
             msg: {
@@ -1414,7 +1466,7 @@ export function getShopProducts(loginToken,appName, shopId, page, pagesize){
     }
 
     let shop = Shops.findOne({_id: shopId})
-    let products = Products.find({shopId: shopId}, {
+    let products = Products.find({$nor: [{productClass: "advanced_card"}],shopId: shopId,isSale: true}, {
         skip: (page-1)*pagesize,
         limit: pagesize,
         sort: {
@@ -1422,11 +1474,14 @@ export function getShopProducts(loginToken,appName, shopId, page, pagesize){
         }
     }).fetch();
 
+
+
     return {
         type: "shops",
         msg: {
             shop,
-            products
+            products,
+            page
         }
     }
 }
@@ -1437,7 +1492,23 @@ export function getUserShopPerminssion(userId) {
     return shop
 }
 
-// export function cancelAgencyProduct(loginToken,appName, productId,shopId){
 
+export function cancelAgencyProduct(loginToken,appName,shopId, productId){
+    return getUserInfo(loginToken, appName,shopId, function(){
+        let product = Products.update({_id: productId},{
+            $set: {
+                isSale: false
+            }
+        })
+        let products = Products.find({shopId,isSale: true}).fetch();
 
-// }
+        return {
+            type: "products",
+            msg: {
+                products
+            }
+        }
+
+    });
+
+}

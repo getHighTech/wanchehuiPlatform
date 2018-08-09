@@ -35,7 +35,6 @@ import {
 Meteor.methods({
     'wanrenchehui.temp.home'(loginToken, appName){
         //临时的万人车汇项目首页，以后此接口将会被废止
-
         if(!findOneAppByName(appName)){
             return {
                 type: "error",
@@ -92,10 +91,10 @@ Meteor.methods({
         })
 
     },
-    'app.get.one.product.rolename'(loginToken, appName, roleName){
+    'app.get.one.product.rolename'(loginToken, appName, roleName,shopId){
         //载入道具类别商品
         let stampedTokenObj = JSON.parse(loginToken);
-        return Object.assign({}, getOneProduct(stampedTokenObj, appName, roleName), {
+        return Object.assign({}, getOneProduct(stampedTokenObj, appName, roleName,shopId), {
             fromMethod:  "app.get.one.product.rolename"
         })
     },
@@ -384,11 +383,13 @@ Meteor.methods({
                 fromMethod: 'app.get.user.shop.perminssion'
             })
         },
-        // "app.cancel.agency.product"(loginToken, appName, productId,shopId){
-        //     let stampedTokenObj = JSON.parse(loginToken);
-        //     let rltObj = cancelAgencyProduct(stampedTokenObj, appName, productId,shopId);
-        //     return Object.assign({}, rltObj, {
-        //         fromMethod: 'app.cancel.agency.product'
-        //     })
-        // },
+
+        "app.cancel.agency.product"(loginToken, appName, productId,shopId){
+            console.log(`来取消了`)
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = cancelAgencyProduct(stampedTokenObj, appName, productId,shopId);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.cancel.agency.product'
+            })
+        },
 });

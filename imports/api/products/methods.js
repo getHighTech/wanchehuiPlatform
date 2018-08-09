@@ -9,8 +9,8 @@ import {getProductTypeById, getProductByZhName} from './actions.js';
 Meteor.methods({
   "products.insert"(product,shopId,shopName,newSpec,newSpecGroups,userId){
     let copy_roles = []
-    let advanced_card = Products.findOne({ shopId: shopId, productClass: 'advanced_card'})
-    let common_card = Products.findOne({ shopId: shopId, productClass: 'common_card' })
+    let advanced_card = Products.findOne({ shopId: shopId, productClass: 'advanced_card', isDelete: { $exists: false }})
+    let common_card = Products.findOne({ shopId: shopId, productClass: 'common_card',isDelete: { $exists: false } })
     if (advanced_card){
       copy_roles.push(advanced_card.name + '_holder')
     }
@@ -24,6 +24,7 @@ Meteor.methods({
         Products.insert({
           name: product.name,
           name_zh: product.name_zh,
+          sales_volume: product.sales_volume,
           price: 0,
           description: product.description,
           brief: product.brief,
@@ -32,7 +33,6 @@ Meteor.methods({
           createdByUserId: userId,
           endPrice: 0,
           curency: product.curency,
-          detailsImage: product.detailsImage,
           isTool: product.isTool,
           isAppointment: product.isAppointment,
           roleName: product.roleName,
@@ -100,6 +100,7 @@ Meteor.methods({
         Products.insert({
           name: product.name,
           name_zh: product.name_zh,
+          sales_volume: product.sales_volume,
           price: 0,
           description: product.description,
           brief: product.brief,
@@ -172,6 +173,7 @@ Meteor.methods({
       Products.insert({
         name: product.name,
         name_zh: product.name_zh,
+        sales_volume: product.sales_volume,
         price: 0,
         description: product.description,
         brief: product.brief,
@@ -300,6 +302,7 @@ Meteor.methods({
       $set: {
         name: product.name,
         price: product.price,
+        sales_volume: product.sales_volume,
         discount: product.discount,
         descirption: product.descirption,
         image_des: product.image_des,
@@ -314,9 +317,21 @@ Meteor.methods({
   },
 
   'get.product.byShopId'(id){
-    return Products.find({shopId:id}).fetch();
+    return Products.find({ shopId: id, isDelete: { $exists: false } }).fetch();
   },
-
+  'product.delete'(id){
+    Products.update(id,{
+      $set: {
+        isDelete:true
+      }
+    },function(err,rlt){
+      if(!err){
+        return
+      }else{
+        throw new Meteor.Error("删除失败，请联系管理员")
+      }
+    });
+  },
   'get.product.byShopIdOr'(condition){
     let products =  Products.find(condition).fetch();
     return products
@@ -345,6 +360,7 @@ Meteor.methods({
             name: product.name,
             name_zh: product.name_zh,
             price: product.price,
+            sales_volume: product.sales_volume,
             description: product.description,
             brief: product.brief,
             image_des: product.image_des,

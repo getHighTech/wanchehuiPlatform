@@ -9,13 +9,14 @@ const unsignedUploadPreset = 'rq6jvg1m';
 class UploadToCloudinary extends Component {
     constructor(props){
       super(props);
-      this.state = {
-        remoteUrls: []
-      }
+    //   this.state={
+    //     urls:this.props.initUrl
+    //   }
+
     }
     handleClick=(e)=>{
         if(this.refs.fileElem){
-            fileElem.click();
+          this.refs.fileElem.click();
         }
         e.preventDefault();
         return false;
@@ -39,19 +40,20 @@ class UploadToCloudinary extends Component {
         this.handleFiles(files);
     }
 
+
     handleFiles = (files) => {
-        for (var i = 0; i < files.length; i++) {
-            this.uploadFile(files[i]); // call the function to upload the file
-          }
+      if (this.props.single) {
+        this.uploadFile(files[0]);
+        return false;
+      }
+      for (var i = 0; i < files.length; i++) {
+        this.uploadFile(files[i]); // call the function to upload the file
+      }
     }
+
 
     uploadFile = (file) => {
       let self = this
-      document.getElementById('gallery').innerHTML='';
-      this.setState({
-        remoteUrls:[]
-      })
-        console.log(file);
         var url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
         var xhr = new XMLHttpRequest();
         var fd = new FormData();
@@ -69,39 +71,23 @@ class UploadToCloudinary extends Component {
         });
 
         xhr.onreadystatechange = (e) => {
-
-
           if (xhr.readyState == 4 && xhr.status == 200) {
-            // File uploaded successfully
             var response = JSON.parse(xhr.responseText);
-            // https://res.cloudinary.com/cloudName/image/upload/v1483481128/public_id.jpg
-            var url = response.secure_url;
-            // Create a thumbnail of the uploaded image, with 150px width
-            console.log(url);
-            self.props.setUrl(url)
-
-            // var tokens = url.split('/');
-            // tokens.splice(-2, 0, 'w_150,c_scale');
-            var img = new Image(); // HTML5 Constructor
-
-            let remoteUrl = url;
-            let remoteUrls = this.state.remoteUrls;
-            remoteUrls.push(remoteUrl);
-            this.setState({
-              remoteUrls
-            })
+            let url = response.secure_url;
+            let img = new Image(); // HTML5 Constructor
             img.src = url;
-            if(typeof this.props.getRemoteImages === 'function'){
-              this.props.getRemoteImages(remoteUrls);
-
+            img.width = 250
+            console.log(url)
+            self.props.setUrl(url)
+            if (this.props.single) {
+              this.refs.gallery.innerHTML = '';
+              this.refs.gallery.appendChild(img)
+            }else{
+                this.refs.gallery.appendChild(img)
             }
-            // img.alt = response.public_id;
-            // document.getElementById('gallery').innerHTML='';
-
-            document.getElementById('gallery').appendChild(img);
+           
           }
         };
-
         fd.append('upload_preset', unsignedUploadPreset);
         fd.append('tags', 'browser_upload'); // Optional - add tag for image admin in Cloudinary
         fd.append('file', file);
@@ -111,6 +97,7 @@ class UploadToCloudinary extends Component {
 
     handleFileChange=(e)=>{
         let files =  this.refs.fileElem.files;
+        console.log('确定上传图片')
         console.log(files);
         for (var i = 0; i < files.length; i++) {
             this.uploadFile(files[i]); // call the function to upload the file
@@ -118,56 +105,59 @@ class UploadToCloudinary extends Component {
 
     }
 
-    componentDidMount(){
-      console.log("走了这DID");
-        let fileElem = this.refs.fileElem;
-        // console.log(this.props.images);
-        // let images = this.props.images;
-        // if (typeof(images)!='undefined') {
-        //   for (var i = 0; i < images.length; i++) {
-        //     var img =new Image();
-        //     img.src  = images[i];
-        //     console.log(img);
-        //     document.getElementById('gallery').appendChild(img);
-        //   }
-        // }
-    }
+ 
+
+    
     childMethod = () => alert('xiaohesong')
 
-    componentWillReceiveProps(nextProps){
-      // console.log("走了WILL");
-      // this.setState({
-      //   remoteUrls:[]
-      // })
-      // console.log(nextProps.images_state);
-      let images_state=nextProps.images_state
-      if (nextProps.images_state) {
-        this.setState({
-          remoteUrls:[]
-        })
-      }
-      // console.log(this.state.remoteUrls);
-      // console.log(nextProps.images);
-      let images = nextProps.images;
-      if (this.state.remoteUrls.length==0) {
-        if (typeof(images)!='undefined') {
-          document.getElementById('gallery').innerHTML='';
-          for (var i = 0; i < images.length; i++) {
-            var img =new Image();
-            img.src  = images[i];
-            img.alt="old"
-            // console.log(img);
-            document.getElementById('gallery').appendChild(img);
-          }
-        }
-        else {
-          document.getElementById('gallery').innerHTML='';
-        }
-      }
+    // componentWillReceiveProps(nextProps){
+    //   // console.log("走了WILL");
+    //   // this.setState({
+    //   //   remoteUrls:[]
+    //   // })
+    //   // console.log(nextProps.images_state);
+    //   let images_state=nextProps.images_state
+    //   if (nextProps.images_state) {
+    //     this.setState({
+    //       remoteUrls:[]
+    //     })
+    //   }
+    //   // console.log(this.state.remoteUrls);
+    //   // console.log(nextProps.images);
+    //   let images = nextProps.images;
+    //   if (this.state.remoteUrls.length==0) {
+    //     if (typeof(images)!='undefined') {
+    //       document.getElementById('gallery').innerHTML='';
+    //       for (var i = 0; i < images.length; i++) {
+    //         var img =new Image();
+    //         img.src  = images[i];
+    //         img.alt="old"
+    //         // console.log(img);
+    //         document.getElementById('gallery').appendChild(img);
+    //       }
+    //     }
+    //     else {
+    //       document.getElementById('gallery').innerHTML='';
+    //     }
+    //   }
 
-
+    click(e){
+        this.props.deteleImage(e.target.src)
     }
+
+    // }
     render() {
+        const {single,initUrl } = this.props
+        let images=[]
+        let self = this
+        if (single) {
+            images = <img src={initUrl} width={250}/>;
+        } 
+        else if (initUrl !== undefined && initUrl.length>0){
+            for (let i = 0; i < initUrl.length; i++) {
+                images.push(<img src={initUrl[i]}   onClick={(e)=> self.click(e)}  width={250} />)
+            }
+        }
         return (
             <div id="dropbox"
             onDragEnter={(e)=>this.handleDrapenter(e)}
@@ -175,14 +165,13 @@ class UploadToCloudinary extends Component {
             onDrop={(e)=>this.handleDrop(e)}
             >
               <div style={{width:'100%',textAlign:'center'}}>
-                    <span style={{textAlign:"center"}}><a href="#" id="fileSelect" onClick={(e)=>this.handleClick(e)}>点击选择图片</a>或者拖拽</span>
+                    <span style={{textAlign:"center"}}><a href="#"  onClick={(e)=>this.handleClick(e)}>点击选择图片</a>或者拖拽</span>
               </div>
                     <form className="my-form">
                         <div className="form_line">
                         <div className="form_controls">
                             <div className="upload_button_holder">
                             <input onChange={(e)=>this.handleFileChange(e)} ref="fileElem" type="file" id="fileElem" multiple accept="image/*" style={{display: "none"}} />
-
                             </div>
                         </div>
                         </div>
@@ -190,11 +179,12 @@ class UploadToCloudinary extends Component {
                     <div className="progress-bar" id="progress-bar">
                         <div className="progress" id="progress"></div>
                     </div>
-                    <div id="gallery" />
+                    <div ref="gallery" >
+                        {images}
+                    </div>
             </div>
         );
     }
 }
-
 
 export default UploadToCloudinary;

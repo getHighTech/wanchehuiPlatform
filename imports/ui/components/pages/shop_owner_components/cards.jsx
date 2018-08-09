@@ -56,7 +56,8 @@ class Cards extends Component {
         this.setState({ data: [], fetching: true, confirmLoading: false });
         let condition = {
             $or: [
-                { username: eval("/" + value + "/") }
+                { username: eval("/" + value + "/") },
+                { 'profile.mobile': eval("/" + value + "/") },
             ]
         };
         this.getPageUsers(1, 20, condition);

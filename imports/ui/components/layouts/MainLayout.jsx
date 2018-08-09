@@ -11,6 +11,8 @@ const { Header, Content, Footer, Sider } = Layout;
 import "antd/lib/layout/style";
 import "antd/lib/menu/style";
 import "antd/lib/icon/style";
+const SubMenu = Menu.SubMenu;
+import { Link } from 'react-router'
 
 
 import PageHeader from "./PageHeader.jsx";
@@ -46,6 +48,8 @@ class MainLayout extends Component {
       {"key": "shop", "name": "我的店铺", "IconType": "shop"},
       {"key": "orders", "name": "订单管理", "IconType": "book"},
       { "key": "vips", "name": "会员管理", "IconType": "user" },
+ 
+
       { "key": "cards", "name": "卡片管理", "IconType": "credit-card" },
       { "key": "users", "name": "用户管理", "IconType": "user" },
     ]
@@ -105,6 +109,7 @@ class MainLayout extends Component {
     const { dispatch } = this.props;
     const shopId = this.state.shopId
     console.log(shopId)
+    console.log(item.key)
     switch (key) {
       case 'dashboard':
         dispatch(push('/'));
@@ -137,13 +142,16 @@ class MainLayout extends Component {
         dispatch(push('/productclass'));
         break;
       case "orderstate":
-        dispatch(push('/orderstate'));
+        dispatch(push('/order_state'));
         break;
       case "cards":
         dispatch(push('/cards'));
         break;
-      case "vips":
-        dispatch(push('/vips'));
+      case "svips":
+        dispatch(push('/svips'));
+        break;
+      case "cvips":
+        dispatch(push('/cvips'));
         break;
       case "shop":
         dispatch(push(`/shops/single_shop/shop_details/${shopId}`));
@@ -175,11 +183,28 @@ class MainLayout extends Component {
           >
           	{
               this.props.LeftMenuList.map((e, index) =>
-              <Menu.Item key={e.key}>
+              { if(e.name ==='会员管理'){
+                return(
+                  <SubMenu
+                    title={<span><Icon type="user" /><span>{e.name}</span></span>}
+                  >
+                    <Menu.Item key="svips">
+                      高级会员
+                    </Menu.Item>
+                    <Menu.Item key="cvips">
+                      普通会员
+                    </Menu.Item>
+                  </SubMenu>
+                )
+              }else{
+                return (
+                  <Menu.Item key={e.key}>
                     <Icon type={e.IconType} />
                     <span className="nav-text">{e.name}</span>
-              </Menu.Item>
-              )
+                  </Menu.Item>
+                )
+              } 
+              })
             }
           </Menu>
         </Sider>
