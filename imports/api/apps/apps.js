@@ -25,7 +25,7 @@ export function getHomePageProducts(appName) {
     if(shop){
         let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id}).fetch();
         return {
-            type: "products", 
+            type: "products",
             msg: products,
         }
     }
@@ -42,7 +42,7 @@ export function getAppNameProducts(appName) {
     let shop = getUserShop(appName);
     let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id}).fetch();
     return {
-        type: "products", 
+        type: "products",
         msg: products,
     }
 }
@@ -55,7 +55,7 @@ function getMember(shopId) {
       }else {
           return false
       }
-      
+
 }
 
 //
@@ -256,10 +256,10 @@ export function appLoginUser(type, loginParams, appName){
                 });
                 mobileUser = Meteor.users.findOne({_id: newUserId});
                 return {
-                        type: 'users',msg: 
+                        type: 'users',msg:
                             {
                                 stampedToken: stampedTokenMobile,
-                                userId: mobileUser._id, 
+                                userId: mobileUser._id,
                                 needToResetPassword: true
                             }
                         };
@@ -289,7 +289,7 @@ export function appLoginUser(type, loginParams, appName){
                     }
                 )
             }
-          
+
             return {type: "users", msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false,shopId}};
             }
 
@@ -565,7 +565,7 @@ export function createNewOrder(loginToken, appName, orderParams){
                     status: "unconfirmed"
                 });
 
-                
+
             }
         }
         return {
@@ -806,7 +806,7 @@ export function createBankcard(
             }
         }
 
-    }); 
+    });
 }
 export function removeBankcard(loginToken,appName,userId,bankcardId){
     return getUserInfo(loginToken, appName, "bankcards", function(){
@@ -860,7 +860,7 @@ export function getWithdrawals(loginToken, appName, userId,  page, pagesize){
             msg:  withdrawals.fetch(),
         }
     });
-    
+
 }
 
 
@@ -1127,16 +1127,16 @@ export function getIncomes(loginToken, appName, userId, page, pagesize){
 export function getOrders(loginToken, appName, userId, status, page, pagesize) {
     return getUserInfo(loginToken, appName, "orders", function(){
         let orders_confirmed = Orders.find({userId,status: "confirmed"}, {
-            skip: (page-1)*pagesize, limit: pagesize, 
+            skip: (page-1)*pagesize, limit: pagesize,
             sort: {createdAt: -1}}).fetch()
         let orders_cancel = Orders.find({userId,status: "cancel"}, {
-            skip: (page-1)*pagesize, limit: pagesize, 
+            skip: (page-1)*pagesize, limit: pagesize,
             sort: {createdAt: -1}}).fetch()
         let orders_paid = Orders.find({userId,status: "paid"}, {
-            skip: (page-1)*pagesize, limit: pagesize, 
+            skip: (page-1)*pagesize, limit: pagesize,
             sort: {createdAt: -1}}).fetch()
         let orders_recevied = Orders.find({userId,status: "recevied"}, {
-            skip: (page-1)*pagesize, limit: pagesize, 
+            skip: (page-1)*pagesize, limit: pagesize,
             sort: {createdAt: -1}}).fetch()
             return {
                 type: "orders",
@@ -1171,10 +1171,37 @@ export function cancelOrder(loginToken, appName, orderId,userId) {
                 }
             }
         }
-        
-       
+
+
     })
-} 
+}
+
+
+export function collectOrder(loginToken, appName, orderId,userId) {
+    return  getUserInfo(loginToken, appName, "orders", function(){
+        order = Orders.update(orderId,{
+            $set:{
+                status: 'recevied'
+            }
+        })
+        console.log(order);
+        if(!order || order.lenght === 0){
+            return {
+                type: "error",
+                reason: "ORDER NOT FOUND",
+            }
+        }else{
+            return {
+                type: "orders",
+                msg: {
+                    order
+                }
+            }
+        }
+
+
+    })
+}
 
 export function receviedOrder(loginToken, appName, orderId) {
     return  getUserInfo(loginToken, appName, "orders", function(){
@@ -1405,12 +1432,12 @@ export function getShopProducts(loginToken,appName, shopId, page, pagesize){
 }
 
 export function getUserShopPerminssion(userId) {
-  
+
     let shop = Shops.findOne({"acl.own.users": userId})
     return shop
 }
 
 // export function cancelAgencyProduct(loginToken,appName, productId,shopId){
-    
-    
+
+
 // }
