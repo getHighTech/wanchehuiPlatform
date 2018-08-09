@@ -163,7 +163,10 @@ export function syncUser(userId, stampedToken, appName){
          product = Products.find({shopId: platfromId,isSale: true, productClass: {
              "$in": ['common_card','advanced_card']
          }}).fetch()
-         if(product) {
+         console.log(`product:${product}`)
+         console.log(product[0].name)
+         console.log(product[1].name)
+         if(product.length>0) {
              role = UserRoles.findOne({userId,roleName: `${product[0].name}_holder`,status: true})
              if(!role){
                 role = UserRoles.findOne({userId,roleName: `${product[1].name}_holder`,status: true})
@@ -1201,6 +1204,12 @@ export function cancelOrder(loginToken, appName, orderId,userId) {
                 status: 'cancel'
             }
         })
+        ShopOrders.update(orderId,{
+            $set:{
+                status: 'cancel'
+            }
+        })
+
         if(!order || order.lenght === 0){
             return {
                 type: "error",
