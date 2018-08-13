@@ -29,10 +29,14 @@ import {
     getHomePageProducts,
     getAppNameProducts,
     agencyProducts,
+    getMyTeam,
     cancelAgencyProduct,
 } from './apps';
 
 Meteor.methods({
+
+
+
     'wanrenchehui.temp.home'(loginToken, appName){
         //临时的万人车汇项目首页，以后此接口将会被废止
         if(!findOneAppByName(appName)){
@@ -323,6 +327,14 @@ Meteor.methods({
                 fromMethod: "app.collect.one.order"
             })
         },
+        'get.agency_relation.my.teams'(loginToken,appName,userId){
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = getMyTeam(stampedTokenObj, appName,userId);
+            console.log(rltObj);
+            Object.assign({}, rltObj, {
+                fromMethod: "get.agency_relation.my.teams"
+            })
+        },
         'app.recevied.one.order'(loginToken,appName,orderId) {
             let stampedTokenObj = JSON.parse(loginToken);
             let rltObj = receviedOrder(stampedTokenObj, appName,orderId);
@@ -349,6 +361,7 @@ Meteor.methods({
         'app.agency.products'(loginToken, appName, shopId){
             let stampedTokenObj = JSON.parse(loginToken);
             let rltObj = agencyProducts(stampedTokenObj, appName,shopId);
+            console.log(rltObj);
             return Object.assign({}, rltObj, {
                 fromMethod: 'app.agency.products'
             })
@@ -372,6 +385,7 @@ Meteor.methods({
         "app.get.shop.products.limit"(loginToken, appName, shopId,  page,  pagesize){
             let stampedTokenObj = JSON.parse(loginToken);
             let rltObj = getShopProducts(stampedTokenObj, appName, shopId, page, pagesize);
+            console.log(rltObj);
             return Object.assign({}, rltObj, {
                 fromMethod: 'app.get.shop.products.limit',
             })
