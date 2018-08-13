@@ -163,10 +163,12 @@ export function syncUser(userId, stampedToken, appName){
          product = Products.find({shopId: platfromId,isSale: true, productClass: {
              "$in": ['common_card','advanced_card']
          }}).fetch()
-         if(product) {
+         if(product.length>0) {
              role = UserRoles.findOne({userId,roleName: `${product[0].name}_holder`,status: true})
-             if(!role){
+             if(!role && product[1]){
                 role = UserRoles.findOne({userId,roleName: `${product[1].name}_holder`,status: true})
+             }else{
+                 
              }
          }
       }
@@ -1198,11 +1200,17 @@ export function getOrders(loginToken, appName, userId, status, page, pagesize) {
 
 export function cancelOrder(loginToken, appName, orderId,userId) {
     return  getUserInfo(loginToken, appName, "orders", function(){
-        order = Orders.update(orderId,{
+        order = Orders.update({_id: orderId},{
             $set:{
                 status: 'cancel'
             }
         })
+        ShopOrders.update({'orderId': orderId},{
+            $set:{
+                status: 'cancel'
+            }
+        })
+
         if(!order || order.lenght === 0){
             return {
                 type: "error",
@@ -1353,6 +1361,13 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         let newShop = Shops.findOne({"acl.own.users": userId});
         let newShopId = null;
         if(!newShop){
+            if(!user.profile || user.profile.mobile){
+                Meteor.users.update(user._id, {
+                    $set: {
+                        'profile.mobile': user.username,
+                    }
+                })
+            }
             newShopId = Shops.insert({
                 name: user.username+"的店铺",
                 phone: user.profile.mobile,
