@@ -1238,6 +1238,11 @@ export function collectOrder(loginToken, appName, orderId,userId) {
                 status: 'recevied'
             }
         })
+        shop_order=ShopOrders.update({orderId:orderId},{
+          $set:{
+              status: 'recevied'
+          }
+        })
         console.log(order);
         if(!order || order.lenght === 0){
             return {
@@ -1255,6 +1260,26 @@ export function collectOrder(loginToken, appName, orderId,userId) {
 
 
     })
+}
+
+export function getMyTeam(loginToken,appName,userId){
+  return  getUserInfo(loginToken, appName, "agency_relation", function(){
+      let record = AgencyRelation.find({SuserId:userId}).fetch()
+      if(!record || record.lenght === 0){
+          return {
+              type: "error",
+              reason: "record NOT FOUND",
+          }
+      }
+      else {
+        return {
+            type: "agency_relation",
+            msg:{record}
+        }
+      }
+
+  })
+
 }
 
 export function receviedOrder(loginToken, appName, orderId) {
