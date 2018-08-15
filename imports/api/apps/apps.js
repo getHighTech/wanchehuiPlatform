@@ -168,7 +168,7 @@ export function syncUser(userId, stampedToken, appName){
              if(!role && product[1]){
                 role = UserRoles.findOne({userId,roleName: `${product[1].name}_holder`,status: true})
              }else{
-                 
+
              }
          }
       }
@@ -542,6 +542,7 @@ export function createNewOrder(loginToken, appName, orderParams){
                         userId: orderParams.userId,
                         SuserId: shop.acl.own.users,
                         status: false,
+                        createdAt:new Date()
                     })
                 }else{
 
