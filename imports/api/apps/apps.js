@@ -171,7 +171,7 @@ export function syncUser(userId, stampedToken, appName){
              if(!role && product[1]){
                 role = UserRoles.findOne({userId,roleName: `${product[1].name}_holder`,status: true})
              }else{
-                 
+
              }
          }
       }
@@ -545,6 +545,7 @@ export function createNewOrder(loginToken, appName, orderParams){
                         userId: orderParams.userId,
                         SuserId: shop.acl.own.users,
                         status: false,
+                        createdAt:new Date()
                     })
                 }else{
 
@@ -1203,12 +1204,12 @@ export function getOrders(loginToken, appName, userId, status, page, pagesize) {
 
 export function cancelOrder(loginToken, appName, orderId,userId) {
     return  getUserInfo(loginToken, appName, "orders", function(){
-        order = Orders.update(orderId,{
+        order = Orders.update({_id: orderId},{
             $set:{
                 status: 'cancel'
             }
         })
-        ShopOrders.update(orderId,{
+        ShopOrders.update({'orderId': orderId},{
             $set:{
                 status: 'cancel'
             }
@@ -1241,6 +1242,11 @@ export function collectOrder(loginToken, appName, orderId,userId) {
                 status: 'recevied'
             }
         })
+        shop_order=ShopOrders.update({orderId:orderId},{
+          $set:{
+              status: 'recevied'
+          }
+        })
         console.log(order);
         if(!order || order.lenght === 0){
             return {
@@ -1258,6 +1264,26 @@ export function collectOrder(loginToken, appName, orderId,userId) {
 
 
     })
+}
+
+export function getMyTeam(loginToken,appName,userId){
+  return  getUserInfo(loginToken, appName, "agency_relation", function(){
+      let record = AgencyRelation.find({SuserId:userId}).fetch()
+      if(!record || record.lenght === 0){
+          return {
+              type: "error",
+              reason: "record NOT FOUND",
+          }
+      }
+      else {
+        return {
+            type: "agency_relation",
+            msg:{record}
+        }
+      }
+
+  })
+
 }
 
 export function receviedOrder(loginToken, appName, orderId) {

@@ -34,15 +34,16 @@ Meteor.methods({
   },
   'get.orders.byShopId'(shopId,page,pageSize){
     let shop = Shops.findOne({ _id: shopId})
-    if (shop.name ==='万人车汇自营店'){
+    let appName = shop.appName
+    if (appName ==='wanrenchehui'){
       let result =  ShopOrders.find({ shopId: shopId, appName: { $exists: false } },{skip: (page - 1) * pageSize, limit: pageSize,
       sort: { "createdAt": -1 },}).fetch();
       result.forEach((item)=>{
         
       })
       return result
-    }else{
-      let result =  ShopOrders.find({ shopId: shopId},{skip: (page - 1) * pageSize, limit: pageSize,
+    }else if(appName){
+      let result =  ShopOrders.find({ appName: appName},{skip: (page - 1) * pageSize, limit: pageSize,
       sort: { "createdAt": -1 },}).fetch();
       result.forEach((item)=>{
         //-----格式化金额------//
@@ -79,6 +80,8 @@ Meteor.methods({
       })
      
       return result
+    }else{
+      return []
     }
   },
   'get.orders.count'(shopId){
