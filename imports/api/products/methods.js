@@ -500,10 +500,12 @@ Meteor.methods({
           //如果授卡成功，给该用户相应的角色
           if(!err){
             let user_role = UserRoles.findOne({ 'roleName': roleName, 'userId': user._id })
+           
             if (user_role){
               UserRoles.update(user_role,{
                 status: true
               })
+              console.log('用户角色存在，开发角色')
             }else{
               UserRoles.insert({
                 roleName: role.name,
@@ -512,6 +514,7 @@ Meteor.methods({
                 createdAt: new Date(),
                 status: true
               })
+              console.log('给用户角色')
             }
           //如果授卡成功，给该用户相应的角色
           //如果授卡成功，给该高级会员用户生成相应的店铺
