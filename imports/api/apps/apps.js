@@ -796,7 +796,8 @@ export function withdrawMoney(loginToken, appName, userId, amount, bank, bankId)
           balanceId: balance._id,
           status: "revoke",
           reasonType: "withdrawals",
-          createdAt: new Date()
+          createdAt: new Date(),
+          appName: appName
          });
 
          newTotalAmount = balance.amount;
