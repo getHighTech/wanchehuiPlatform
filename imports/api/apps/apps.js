@@ -163,14 +163,10 @@ export function syncUser(userId, stampedToken, appName){
          product = Products.find({shopId: platfromId,isSale: true, productClass: {
              "$in": ['common_card','advanced_card']
          }}).fetch()
-<<<<<<< HEAD
          console.log(`product:${product}`)
          console.log(product[0].name)
          console.log(product[1].name)
          if(product.length>0) {
-=======
-         if(product.length !== 0 && product) {
->>>>>>> 5a778d483ccefc705f7be5f5052d7b7be0c368ab
              role = UserRoles.findOne({userId,roleName: `${product[0].name}_holder`,status: true})
              if(!role && product[1]){
                 role = UserRoles.findOne({userId,roleName: `${product[1].name}_holder`,status: true})
