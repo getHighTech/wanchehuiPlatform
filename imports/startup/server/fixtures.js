@@ -15,6 +15,7 @@ import { ProductOwners } from '/imports/api/product_owners/product_owners.js';
 import { Tags } from '/imports/api/tags/tags.js';
 import { Orders } from '/imports/api/orders/orders.js';
 import { newProuct } from '../../core/new_product';
+import { AgencyRelation } from '/imports/api/agency_relation/agency_relation.js';
 
 Meteor.startup(() => {
   // checkAgencies();
@@ -23,15 +24,19 @@ Meteor.startup(() => {
   // checkBalances();
   // // 测试用户模块权限
   //
-  //
-  // Meteor.users.remove({username: "superAdmin"});CheckRolesAccess
+
+  // Meteor.users.remove({username: "superAdmin"});
+
+  // Meteor.users.remove({username: "superAdmin"});
+
+  // Meteor.users.remove({username: "superAdmin"});
   // Tags.remove({});
   // Products.remove({});
   // Roles.remove({});
   // UserRoles.remove({});
   // ProductOwners.remove({});
   // Shops.remove({});
-  // prebuildAdmin();//建立超级管理员
+  prebuildAdmin();//建立超级管理员
   // buildSelfShop();
   // buildBlackCard();//建立黑卡
   
@@ -168,5 +173,12 @@ Meteor.startup(() => {
       // });
       // let orderRmRlt = Orders.remove({totalAmount: {$exists: true}});
       // console.log(orderRmRlt);
+      // Meteor.users.find().forEach(user => {
+      //   Meteor.users.update(user._id, {
+      //     $set: {
+      //       fromApp: "wanrenchehui"
+      //     }
+      //   })
+      // });
       
 });

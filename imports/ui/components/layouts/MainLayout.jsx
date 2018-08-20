@@ -11,6 +11,8 @@ const { Header, Content, Footer, Sider } = Layout;
 import "antd/lib/layout/style";
 import "antd/lib/menu/style";
 import "antd/lib/icon/style";
+const SubMenu = Menu.SubMenu;
+import { Link } from 'react-router'
 
 
 import PageHeader from "./PageHeader.jsx";
@@ -22,7 +24,8 @@ class MainLayout extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      menuActiveKey: "dashboard"
+      menuActiveKey: "dashboard",
+      shopId:'',
     }
 
   }
@@ -42,9 +45,13 @@ class MainLayout extends Component {
     ]
     let ShopOwnerMenu = [
       {"key": "dashboard", "name": "控制面板", "IconType": "bars"},
-      {"key": "shops", "name": "店铺管理", "IconType": "shop"},
-      {"key": "orders", "name": "订单管理", "IconType": "book"}
+      {"key": "shop", "name": "我的店铺", "IconType": "shop"},
+      {"key": "orders", "name": "订单管理", "IconType": "book"},
+      { "key": "vips", "name": "会员管理", "IconType": "user" },
+ 
 
+      { "key": "cards", "name": "卡片管理", "IconType": "credit-card" },
+      { "key": "users", "name": "用户管理", "IconType": "user" },
     ]
     let self = this
     if (Meteor.userId() == null) {
@@ -60,6 +67,15 @@ class MainLayout extends Component {
         if(rlt.indexOf('superAdmin') == -1){
           console.log("不是超级管理员")
           dispatch(createMeunList(ShopOwnerMenu))
+          Meteor.call('shops.getByCurrentUser', userId, function (err, rlt) {
+            console.log(userId)
+            console.log(rlt)
+            if (!err) {
+              self.setState({
+                shopId: rlt._id
+              })
+            }
+          })
         }else{
           console.log("超级管理员")
           dispatch(createMeunList(SuperAdminMenu))
@@ -68,9 +84,8 @@ class MainLayout extends Component {
 
         console.log(self.props)
 
-
-
       })
+
     }
     const pathname = this.props.routing.locationBeforeTransitions.pathname;
     switch (pathname) {
@@ -88,12 +103,13 @@ class MainLayout extends Component {
         }
       });
     });
-
-
   }
   handleMenuItemClicked(item){
     const key = item.key;
     const { dispatch } = this.props;
+    const shopId = this.state.shopId
+    console.log(shopId)
+    console.log(item.key)
     switch (key) {
       case 'dashboard':
         dispatch(push('/'));
@@ -125,9 +141,21 @@ class MainLayout extends Component {
       case 'productclass':
         dispatch(push('/productclass'));
         break;
-        case "orderstate":
-          dispatch(push('/orderstate'));
-          break;
+      case "orderstate":
+        dispatch(push('/order_state'));
+        break;
+      case "cards":
+        dispatch(push('/cards'));
+        break;
+      case "svips":
+        dispatch(push('/svips'));
+        break;
+      case "cvips":
+        dispatch(push('/cvips'));
+        break;
+      case "shop":
+        dispatch(push(`/shops/single_shop/shop_details/${shopId}`));
+        break;
       default:
         dispatch(push('/'));
         break;
@@ -137,6 +165,8 @@ class MainLayout extends Component {
 
   render() {
     const { LeftMenuList } = this.props;
+    
+    console.log(this.state)
 
     return(  <Layout>
         <Sider
@@ -153,48 +183,29 @@ class MainLayout extends Component {
           >
           	{
               this.props.LeftMenuList.map((e, index) =>
-              <Menu.Item key={e.key}>
+              { if(e.name ==='会员管理'){
+                return(
+                  <SubMenu
+                    title={<span><Icon type="user" /><span>{e.name}</span></span>}
+                  >
+                    <Menu.Item key="svips">
+                      高级会员
+                    </Menu.Item>
+                    <Menu.Item key="cvips">
+                      普通会员
+                    </Menu.Item>
+                  </SubMenu>
+                )
+              }else{
+                return (
+                  <Menu.Item key={e.key}>
                     <Icon type={e.IconType} />
                     <span className="nav-text">{e.name}</span>
-              </Menu.Item>
-              )
+                  </Menu.Item>
+                )
+              } 
+              })
             }
-           {/* <Menu.Item key="dashboard">
-              <Icon type="bars" />
-              <span className="nav-text">控制面板</span>
-            </Menu.Item>
-            <Menu.Item key="users">
-              <Icon type="user" />
-              <span className="nav-text">用户管理</span>
-            </Menu.Item>
-            <Menu.Item key="shops">
-              <Icon type="shop" />
-              <span className="nav-text">店铺管理</span>
-            </Menu.Item>
-            <Menu.Item key="orders">
-              <Icon type="book" />
-              <span className="nav-text">订单管理</span>
-            </Menu.Item>
-            <Menu.Item key="withdrawals">
-              <Icon type="pay-circle-o" />
-              <span className="nav-text">提现管理</span>
-            </Menu.Item>
-            <Menu.Item key="roles">
-              <Icon type="paper-clip" />
-              <span className="nav-text">角色管理</span>
-            </Menu.Item>
-            <Menu.Item key="settings">
-              <Icon type="setting" />
-              <span className="nav-text">系统设置</span>
-            </Menu.Item>
-            <Menu.Item key="logs">
-              <Icon type="paper-clip" />
-              <span className="nav-text">系统日志</span>
-            </Menu.Item>
-            <Menu.Item key="component_test">
-              <Icon type="paper-clip" />
-              <span className="nav-text">组件测试页面</span>
-            </Menu.Item> */}
           </Menu>
         </Sider>
         <Layout>
@@ -230,6 +241,7 @@ class MainLayout extends Component {
 
 function mapStateToProps(state) {
   return {
+    state: state,
     routing: state.routing,
     currentRoles:state.RolesList.currentRoles,
     LeftMenuList:state.RolesList.LeftMenuList,

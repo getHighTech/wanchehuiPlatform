@@ -1,18 +1,8 @@
 import React, { Component } from 'react';
-import {Link} from 'react-router';
-import { connect } from 'react-redux';
-import { createContainer } from 'meteor/react-meteor-data';
-import Modal from 'antd/lib/modal';
-import Tooltip from 'antd/lib/tooltip';
-import TimePicker from 'antd/lib/time-picker';
-import Checkbox from 'antd/lib/checkbox';
-import Button from 'antd/lib/button';
 import Input from 'antd/lib/input';
 import Icon from 'antd/lib/icon';
 import Form from 'antd/lib/form';
 import Select from 'antd/lib/select';
-import Upload from 'antd/lib/upload';
-import message from 'antd/lib/upload';
 import "antd/lib/form/style";
 import "antd/lib/icon/style";
 import "antd/lib/input/style";
@@ -23,13 +13,10 @@ import "antd/lib/time-picker/style";
 import "antd/lib/select/style";
 import "antd/lib/upload/style";
 import 'antd/lib/modal/style';
-import AMapSearcher from '../tools/AMapSearcher.jsx';
 import AMapComplete from '../tools/AMapComplete.jsx';
-import { Roles } from '/imports/api/roles/roles.js';
-import moment from 'moment';
+import UploadToCloudinary from '../../public/UploadToCloudinary.js'
 
 const FormItem = Form.Item;
-const format = 'HH:mm';
 
 
 class ShopFormWrap extends Component {
@@ -47,27 +34,27 @@ class ShopFormWrap extends Component {
         this.setState(nextProps);
     }
 
-    handleChange(info) {
-      console.log(info)
-      let self = this
-      if (info.file.status === 'uploading') {
-          console.log("上传中。");
-      }
-      if (info.file.status === 'done') {
-          console.log("上传成功。");
-          console.log(info.file.response.data.link)
-          self.setState({
-            image_url:info.file.response.data.link
-          })
-          const setFieldsValue = this.props.form.setFieldsValue;
-          setFieldsValue({cover:self.state.image_url})
-          // const getFieldValue = this.props.form.getFieldValue;
-          // console.log(getFieldValue('shopPicture'))
-      } else if (info.file.status === 'error') {
-          console.log("上传失败。");
-      }
+    // handleChange(info) {
+    //   console.log(info)
+    //   let self = this
+    //   if (info.file.status === 'uploading') {
+    //       console.log("上传中。");
+    //   }
+    //   if (info.file.status === 'done') {
+    //       console.log("上传成功。");
+    //       console.log(info.file.response.data.link)
+    //       self.setState({
+    //         image_url:info.file.response.data.link
+    //       })
+    //       const setFieldsValue = this.props.form.setFieldsValue;
+    //       setFieldsValue({cover:self.state.image_url})
+    //       // const getFieldValue = this.props.form.getFieldValue;
+    //       // console.log(getFieldValue('shopPicture'))
+    //   } else if (info.file.status === 'error') {
+    //       console.log("上传失败。");
+    //   }
 
-    }
+    // }
     selectHandleChange(value){
       console.log(`selected ${value}`);
     }
@@ -84,29 +71,23 @@ class ShopFormWrap extends Component {
     componentDidMount(){
     }
 
-
+    setUrl(url){
+      let self = this
+      console.log('上传图片成功')
+      console.log(url)
+      this.setState({
+        image_url:url
+      })
+      const setFieldsValue = this.props.form.setFieldsValue;
+      setFieldsValue({ cover: self.state.image_url })
+    }
 
 
     componentWillReceiveProps(nextProps){
 
     }
 
-    // getDecoratorValue = (v) => {
-    //   console.log("地图组件绑定的方法")
-    //   let self = this
-    //   const setFieldsValue = this.props.form.setFieldsValue;
-    //   setFieldsValue({address: self.props.shop.shopAddress})
-    //   const getFieldValue = this.props.form.getFieldValue;
-    //   setFieldsValue({lntAndLat: self.props.shop.shopPoint})
-    // }
-
     render() {
-
-      const uploadProps = {
-        action: '/images/upload',
-        onChange: this.handleChange.bind(this),
-        listType: 'picture',
-      };
 
       const { getFieldDecorator } = this.props.form;
 
@@ -120,20 +101,20 @@ class ShopFormWrap extends Component {
                 sm: { span: 14 },
               },
             };
-            const tailFormItemLayout = {
-              wrapperCol: {
-                xs: {
-                  span: 24,
-                  offset: 0,
-                },
-                sm: {
-                  span: 14,
-                  offset: 6,
-                },
-              },
-            };
       return (
         <Form onSubmit={this.handleSubmit}>
+          <FormItem
+            {...formItemLayout}
+            label="APP名称"
+            hasFeedback
+          >
+            {getFieldDecorator('appName', {
+              initialValue: this.props.shop.appName,
+            })(
+
+              <Input className="shop-name-input" disabled={this.props.editState} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="公众号名称" />
+            )}
+          </FormItem>
         <FormItem
         {...formItemLayout}
         label="店铺名称"
@@ -170,11 +151,7 @@ class ShopFormWrap extends Component {
           })(
             <Input type="text"   style={{display:'none'}}   placeholder="图片地址" />
           )}
-          <Upload {...uploadProps}>
-              <Button>
-              <Icon type="upload" /> 上传图片
-              </Button>
-          </Upload>
+            <UploadToCloudinary setUrl={this.setUrl.bind(this)} />
       </FormItem>
       <FormItem
           {...formItemLayout}

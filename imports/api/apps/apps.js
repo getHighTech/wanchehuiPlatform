@@ -14,9 +14,61 @@ import {Agencies} from '/imports/api/agencies/agencies.js';
 import {Shops} from '/imports/api/shops/shops.js';
 import { ProductOwners } from '/imports/api/product_owners/product_owners.js';
 import { ShopOrders   } from '/imports/api/shop_orders/shop_orders.js';
+import { AgencyRelation } from '/imports/api/agency_relation/agency_relation.js';
 export const Apps = new Mongo.Collection('apps');
 export const AppCarts = new Mongo.Collection("app_carts");
 export const UserContacts = new Mongo.Collection("user_contacts");
+
+//home page products
+export function getHomePageProducts(appName) {
+    let shop = getUserShop(appName)
+    if(shop){
+        let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id,recommend: true},{sort: {createdAt: -1}}).fetch();
+        return {
+            type: "products",
+            msg: products,
+        }
+    }
+}
+
+// get appName products
+export function getAppNameProducts(appName) {
+    if(!findOneAppByName(appName)){
+        return {
+            type: "error",
+            reason: "invalid app"
+        }
+    }
+    let shop = getUserShop(appName);
+    let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id}).fetch();
+    return {
+        type: "products",
+        msg: products,
+    }
+}
+
+//get member
+function getMember(shopId) {
+    let shop = Shops.findOne({_id: shopId})
+      if (shop.isAdvanced===true){
+          return true
+      }else {
+          return false
+      }
+
+}
+
+//
+function getUserShopById(shopId) {
+    let shop = Shops.findOne({_id: shopId})
+    return shop
+}
+//添加visited
+
+function getUserShop(appName) {
+   let shop = Shops.findOne({appName})
+   return shop
+}
 
 //需要用的工具类函数，
 function validUserLogin(token){
@@ -102,9 +154,35 @@ export function syncUser(userId, stampedToken, appName){
       }
       let userContact = UserContacts.findOne({userId, default: true})
       roles.push("login_user");
+      let shop = getUserShopPerminssion(userId)
+      let shopId = shop? shop._id : null
+      let platfrom = getUserShop(appName)
+      let product, role, senior;
+      let platfromId = platfrom? platfrom._id: null
+      if(platfromId){
+         product = Products.find({shopId: platfromId,isSale: true, productClass: {
+             "$in": ['common_card','advanced_card']
+         }}).fetch()
+         if(product.length>0) {
+             role = UserRoles.findOne({userId,roleName: `${product[0].name}_holder`,status: true})
+             if(!role && product[1]){
+                role = UserRoles.findOne({userId,roleName: `${product[1].name}_holder`,status: true})
+             }else{
+
+             }
+         }
+      }
+      if(role!==undefined){
+      }else{
+          role = false
+      }
+      if(shop){
+        senior = shop.hasOwnProperty("isAdvanced") === true ? true : false
+      }
+
       return {
           type: "users",
-          msg: {roles, user, userId: user._id, userContact},
+          msg: {roles, user, userId: user._id, userContact,shopId,appNameShopId: platfromId,agencyRole: role,senior,product },
       }
 }
 
@@ -121,7 +199,18 @@ export function findOneAppByName(name){
                 breif: "专注网约车创业"
             });
         }
-    }Products
+    }
+    if (name === "xianzhi") {
+        if (Apps.find(name).count() === 0) {
+            Apps.insert({
+                name,
+                name_zh: "鲜至",
+                domain: "xianzhi.10000cars.cn",
+                // testDomain: "test1.10000cars.cn",
+                breif: "专注卖农产品"
+            });
+        }
+    }
     return Apps.findOne({name});
 }
 
@@ -164,6 +253,10 @@ export function appRegNewUser(userParams, appName){
 }
 
 export function appLoginUser(type, loginParams, appName){
+    // console.log(type);
+    // console.log(loginParams);
+
+
     if(!findOneAppByName(appName)){
         return {
             type: "error",
@@ -173,22 +266,48 @@ export function appLoginUser(type, loginParams, appName){
     switch (type) {
         case 'mobileSMS':
         //短线验证码登陆
+
             let mobileUser = Meteor.users.findOne({username: loginParams.mobile});
+            // console.log({mobileUser});
+
             if(mobileUser === undefined){
-            mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.username});
+            mobileUser = Meteor.users.findOne({'profile.mobile': loginParams.mobile});
             if(mobileUser===undefined){
                 let newUserId =Accounts.createUser({
                 username: loginParams.mobile,
                 password: loginParams.mobile
                 })
-                Meteor.update(mobileUser._id, {
+                Meteor.users.update(newUserId, {
                 "profile.mobile": loginParams.mobile,
                 "regPosition": loginParams.position,
                 "regAddress": loginParams.address,
                 "regCity": loginParams.city,
                 });
                 mobileUser = Meteor.users.findOne({_id: newUserId});
-                return {type: 'users',msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: true}};
+
+                let shop = getUserShop(appName)
+                let shopId;
+                if(shop){
+                    shopId = shop._id
+                    Meteor.users.update(mobileUser._id,
+                        {
+                            $addToSet: {
+                                'visited': shopId
+                            }
+                        }
+                    )
+                }
+
+
+                    return {
+                        type: 'users',msg:
+                            {
+                                stampedToken: stampedTokenMobile,
+                                userId: mobileUser._id,
+                                needToResetPassword: true,
+                                shopId
+                            }
+                        };
             }
             }
             if(mobileUser){
@@ -202,7 +321,24 @@ export function appLoginUser(type, loginParams, appName){
                     "logCity": loginParams.city,
                 }}
             );
-            return {type: "users", msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false}};
+
+            let shop = getUserShop(appName)
+            let shopId;
+            if(shop){
+                shopId = shop._id
+                Meteor.users.update(mobileUser._id,
+                    {
+                        $addToSet: {
+                            'visited': shopId
+                        }
+                    }
+                )
+            }
+
+
+            return {
+                type: "users", msg: {stampedToken: stampedTokenMobile, userId: mobileUser._id, needToResetPassword: false,shopId}
+            };
             }
 
         case 'password':
@@ -219,15 +355,17 @@ export function appLoginUser(type, loginParams, appName){
             let stampedToken = Accounts._generateStampedLoginToken();
             let hashStampedToken = Accounts._hashStampedToken(stampedToken);
             Meteor.users.update(user._id,
-                {$push: {
-                    'services.resume.loginTokens': hashStampedToken,
-                    'services.resume.loginLocation': {
-                        "logPosition": loginParams.position,
-                        "logAddress": loginParams.address,
-                        "logCity": loginParams.city,
-                        "loginedAt": new Date(),
-                    },
-                }}
+                    {
+                        $push: {
+                            'services.resume.loginTokens': hashStampedToken,
+                            'services.resume.loginLocation': {
+                                "logPosition": loginParams.position,
+                                "logAddress": loginParams.address,
+                                "logCity": loginParams.city,
+                                "loginedAt": new Date(),
+                            },
+                        }
+                    }
             );
             let roles = [];
                 UserRoles.find({userId: user._id}).forEach((item)=>{
@@ -235,10 +373,19 @@ export function appLoginUser(type, loginParams, appName){
                 });
             roles.push("login_user");
             let userContact = UserContacts.findOne({userId: user._id, default: true})
+            let shop = getUserShop(appName)
+            let shopId = shop._id
+            Meteor.users.update(user._id,
+                {
+                    $addToSet: {
+                        'visited': shopId
+                    }
+                }
+            )
 
             return {type: "users",
             msg:
-            {stampedToken, userId: user._id, roles, user, userContact}};
+            {stampedToken, userId: user._id, roles, user, userContact,shopId}};
           }else{
             return {type: "error", reason: "LOGIN PASS WRONG"};
           }
@@ -297,10 +444,11 @@ export function appNewOrder(cartParams, appName){
     }
 }
 
-export function getOneProduct(loginToken, appName, productId){
+
+export function getOneProduct(loginToken, appName, productId,shopId){
         let product = Products.findOne({_id: productId});
         if(!product){
-            product = Products.findOne({roleName: productId});
+            product = Products.findOne({productClass: "common_card",isSale: true, shopId})
         }
         if (!product) {
             return {
@@ -316,8 +464,6 @@ export function getOneProduct(loginToken, appName, productId){
 
 }
 export function updateShopOrders(orderId, orderParams){
-    console.log("orderId on updateShopOrders", orderId);
-
     if(!orderId){
         return {
             type: "error",
@@ -334,8 +480,6 @@ export function updateShopOrders(orderId, orderParams){
 
 }
 export function updateOrder(loginToken, appName, orderParams, orderId){
-    console.log("orderId on confirmed", orderId);
-
     return getUserInfo(loginToken, appName, "orders", function(){
         let updateRlt = Orders.update(orderId, {
             $set: {
@@ -359,6 +503,7 @@ export function updateOrder(loginToken, appName, orderParams, orderId){
 }
 
 export function createNewOrder(loginToken, appName, orderParams){
+    let   relation;
     if(orderParams.cartId){
         AppCarts.update(orderParams.cartId, {
             $set: {
@@ -383,6 +528,34 @@ export function createNewOrder(loginToken, appName, orderParams){
             }
         }
         let shopProducts = orderParams.shopProducts;
+        //判断代理
+        for(let i = 0; i < orderParams.products.length;i++){
+           if(orderParams.products[i].productClass==="common_card"){
+              let shop = getUserShopById(orderParams.products[i].shopId)
+              if(shop.isAdvanced===true){
+                let  agencyRelation = AgencyRelation.findOne({userId: orderParams.userId})
+                if(!agencyRelation){
+                relation =  AgencyRelation.insert({
+                        appName,
+                        shopId: null,
+                        SshopId: shop._id,
+                        userId: orderParams.userId,
+                        SuserId: shop.acl.own.users,
+                        status: false,
+                        createdAt:new Date()
+                    })
+                }else{
+
+                    relation =  AgencyRelation.findOne({userId: orderParams.userId})
+                }
+              }
+           }else{
+
+              relation =  AgencyRelation.findOne({userId: orderParams.userId})
+              break;
+           }
+        }
+
         //分店铺建立订单
 
         let orderParamsDealed = {
@@ -400,7 +573,9 @@ export function createNewOrder(loginToken, appName, orderParams){
             count: 1, //兼容1.0
             orderCode,
             status: "unconfirmed",
-            createdAt: new Date()
+            createdAt: new Date(),
+            appName,
+            agencyRelationId:  relation===undefined? null : relation._id,
         }
         let orderId = Orders.insert(orderParamsDealed);
         for(const shopId in shopProducts){//把这个订单拆分给各个店铺
@@ -429,7 +604,8 @@ export function createNewOrder(loginToken, appName, orderParams){
                     userId: orderParams.userId,
                     contact: orderParams.contact,
                     orderId,
-                    shopId
+                    shopId,
+                    appName
                 };
                 ShopOrders.insert({
                     ...shopOrder,
@@ -437,6 +613,8 @@ export function createNewOrder(loginToken, appName, orderParams){
                     orderCode: new Date().getTime().toString()+generateRondom(10).toString(),
                     status: "unconfirmed"
                 });
+
+
             }
         }
         return {
@@ -625,7 +803,6 @@ export function withdrawMoney(loginToken, appName, userId, amount, bank, bankId)
                  amount: newTotalAmount
              }
          })
-         console.log(newTotalAmount);
 
          if(chargeId){
             return {
@@ -642,8 +819,6 @@ export function withdrawMoney(loginToken, appName, userId, amount, bank, bankId)
 }
 
 export function getUserBankcards(loginToken, appName, userId){
-    console.log(userId);
-
     return getUserInfo(loginToken, appName, "bankcards", function(){
         let bankcards = Bankcards.find({userId},{sort: {createdAt: -1}});
         return {
@@ -682,25 +857,21 @@ export function createBankcard(
 
     });
 }
-export function removeBankcard(
-    loginToken,
-    appName,
-    bankcardId
-){
+export function removeBankcard(loginToken,appName,userId,bankcardId){
     return getUserInfo(loginToken, appName, "bankcards", function(){
-        Bankcards.remove(bankcardId,function(err,rlt){
-            if(!err){
-                return {
-                    type: "bankcards",
-                    msg: "REMOVE BANKCARD SUCCESS"
-                }
-            }else{
-                return {
-                    type: "error",
-                    reason: "CREATE BANKCARD ERROR"
-                }
+        let bankcard = Bankcards.remove({_id: bankcardId})
+        if(bankcard){
+            let bankcards = Bankcards.find({userId}).fetch()
+            return {
+                type: "bankcards",
+                msg: bankcards
             }
-        })
+        }else {
+            return {
+                type: "error",
+                reason: "CREATE BANKCARD ERROR"
+            }
+        }
     });
 }
 
@@ -738,14 +909,12 @@ export function getWithdrawals(loginToken, appName, userId,  page, pagesize){
             msg:  withdrawals.fetch(),
         }
     });
-    
+
 }
 
 
 
 export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
-    console.log(cartId);
-
     return getUserInfo(loginToken, appName, "app_carts", function(){
         let createNew = function(){
 
@@ -942,8 +1111,6 @@ export function getNewestUserOrders(loginToken, appName, status, userId, page, p
 
 export function getIncomeWithinTime(loginToken, appName, rangeLength, userId, unit){
     return getUserInfo(loginToken, appName, "balances", function(){
-        console.log('function in', unit);
-
         let yestoday = moment().subtract(rangeLength, unit);
         yestoday = yestoday.toISOString();
         let yestodayInData = new Date(yestoday);
@@ -1009,16 +1176,16 @@ export function getIncomes(loginToken, appName, userId, page, pagesize){
 export function getOrders(loginToken, appName, userId, status, page, pagesize) {
     return getUserInfo(loginToken, appName, "orders", function(){
         let orders_confirmed = Orders.find({userId,status: "confirmed"}, {
-            skip: (page-1)*pagesize, limit: pagesize, 
+            skip: (page-1)*pagesize, limit: pagesize,
             sort: {createdAt: -1}}).fetch()
         let orders_cancel = Orders.find({userId,status: "cancel"}, {
-            skip: (page-1)*pagesize, limit: pagesize, 
+            skip: (page-1)*pagesize, limit: pagesize,
             sort: {createdAt: -1}}).fetch()
         let orders_paid = Orders.find({userId,status: "paid"}, {
-            skip: (page-1)*pagesize, limit: pagesize, 
+            skip: (page-1)*pagesize, limit: pagesize,
             sort: {createdAt: -1}}).fetch()
         let orders_recevied = Orders.find({userId,status: "recevied"}, {
-            skip: (page-1)*pagesize, limit: pagesize, 
+            skip: (page-1)*pagesize, limit: pagesize,
             sort: {createdAt: -1}}).fetch()
             return {
                 type: "orders",
@@ -1032,25 +1199,89 @@ export function getOrders(loginToken, appName, userId, status, page, pagesize) {
     })
 }
 
-export function cancelOrder(loginToken, appName, orderId) {
+export function cancelOrder(loginToken, appName, orderId,userId) {
     return  getUserInfo(loginToken, appName, "orders", function(){
-        order = Orders.update(orderId,{
+        order = Orders.update({_id: orderId},{
             $set:{
                 status: 'cancel'
             }
         })
+        ShopOrders.update({'orderId': orderId},{
+            $set:{
+                status: 'cancel'
+            }
+        })
+
         if(!order || order.lenght === 0){
             return {
                 type: "error",
                 reason: "ORDER NOT FOUND",
             }
+        }else{
+            orders_confirmed = Orders.find({userId,status: "confirmed"}).fetch()
+            return {
+                type: "orders",
+                msg: {
+                    orders_confirmed
+                }
+            }
         }
-        return {
-            type: "order",
-            msg: order
-        }
+
+
     })
-} 
+}
+
+
+export function collectOrder(loginToken, appName, orderId,userId) {
+    return  getUserInfo(loginToken, appName, "orders", function(){
+        order = Orders.update(orderId,{
+            $set:{
+                status: 'recevied'
+            }
+        })
+        shop_order=ShopOrders.update({orderId:orderId},{
+          $set:{
+              status: 'recevied'
+          }
+        })
+        console.log(order);
+        if(!order || order.lenght === 0){
+            return {
+                type: "error",
+                reason: "ORDER NOT FOUND",
+            }
+        }else{
+            return {
+                type: "orders",
+                msg: {
+                    order
+                }
+            }
+        }
+
+
+    })
+}
+
+export function getMyTeam(loginToken,appName,userId){
+  return  getUserInfo(loginToken, appName, "agency_relation", function(){
+      let record = AgencyRelation.find({SuserId:userId}).fetch()
+      if(!record || record.lenght === 0){
+          return {
+              type: "error",
+              reason: "record NOT FOUND",
+          }
+      }
+      else {
+        return {
+            type: "agency_relation",
+            msg:{record}
+        }
+      }
+
+  })
+
+}
 
 export function receviedOrder(loginToken, appName, orderId) {
     return  getUserInfo(loginToken, appName, "orders", function(){
@@ -1086,7 +1317,6 @@ export function getProductByShopId(appName, shopId, page, pagesize){
     if(shopId === "000"){
         targetShopId = Shops.findOne({name: "万人车汇自营店"})._id;
     }
-    console.log("targetShopId", targetShopId);
 
     let products = Products.find({shopId: targetShopId}, {
         skip: (page-1)*pagesize,
@@ -1102,7 +1332,7 @@ export function getProductByShopId(appName, shopId, page, pagesize){
     }
 }
 
-export function agencyOneProduct(loginToken, appName, product, userId){
+export function agencyOneProduct(loginToken, appName, product, userId, appNameShopId,shopId){
     return getUserInfo(loginToken, appName, "shops", function(){
         if(!product.shopId){
             return {
@@ -1129,10 +1359,16 @@ export function agencyOneProduct(loginToken, appName, product, userId){
         }
 
 
-
         let newShop = Shops.findOne({"acl.own.users": userId});
         let newShopId = null;
         if(!newShop){
+            if(!user.profile || user.profile.mobile){
+                Meteor.users.update(user._id, {
+                    $set: {
+                        'profile.mobile': user.username,
+                    }
+                })
+            }
             newShopId = Shops.insert({
                 name: user.username+"的店铺",
                 phone: user.profile.mobile,
@@ -1168,14 +1404,22 @@ export function agencyOneProduct(loginToken, appName, product, userId){
         delete newProductParams._id;
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
-
-        console.log(newProductParams);
-
-        let newProductId = Products.insert({
-            ...newProductParams
-        });
-
-
+        let newProductId
+        let agencyProducts = Products.findOne({ name_zh: newProductParams.name_zh,shopId: newShopId})
+        if(!agencyProducts){
+            newProductId = Products.insert({
+                ...newProductParams
+            });
+        }
+        if(agencyProducts.isSale===false){
+            newProductId = Products.update({"_id": agencyProducts._id},
+                {
+                    $set: {
+                        "isSale": true
+                    }
+                }
+            )
+        }
         //标记被代理的商品
         let agencies = product.agencies;
         if(!agencies){
@@ -1198,16 +1442,10 @@ export function agencyOneProduct(loginToken, appName, product, userId){
                 agencyShops,
             }
         })
-        // console.log("new_product", Products.findOne(newProductId));
-
-        // console.log("updateRlt", updateRlt);
-        // console.log("newSHop", newShop);
-        // console.log("usreId", userId);
-
         if(!newProductId){
             return {
                 type: "error",
-                reason: "SERVICE ERROR"
+                reason: "product existed"
             }
         }
 
@@ -1233,6 +1471,83 @@ export function getProductOwners(loginToken, appName, userId){
         return {
             type: "product_owners",
             msg: cursor.fetch(),
+        }
+
+    });
+
+}
+
+export function agencyProducts(loginToken, appName, shopId) {
+    return getUserInfo(loginToken, appName,shopId, function(){
+        let products;
+        if(shopId!==undefined){
+            products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId}).fetch();
+
+        }else{
+            products = []
+        }
+        return {
+            type: "products",
+            msg: {
+                products
+            }
+        }
+
+    });
+}
+
+
+
+export function getShopProducts(loginToken,appName, shopId, page, pagesize){
+    if(!findOneAppByName(appName)){
+        return {
+            type: "error",
+            reason: "invalid app"
+        }
+    }
+
+    let shop = Shops.findOne({_id: shopId})
+    let products = Products.find({$nor: [{productClass: "advanced_card"}],shopId: shopId,isSale: true}, {
+        skip: (page-1)*pagesize,
+        limit: pagesize,
+        sort: {
+            createdAt: -1
+        }
+    }).fetch();
+
+
+
+    return {
+        type: "shops",
+        msg: {
+            shop,
+            products,
+            page
+        }
+    }
+}
+
+export function getUserShopPerminssion(userId) {
+
+    let shop = Shops.findOne({"acl.own.users": userId})
+    return shop
+}
+
+
+export function cancelAgencyProduct(loginToken,appName,shopId, productId){
+    return getUserInfo(loginToken, appName,shopId, function(){
+        let product = Products.update({_id: productId},{
+            $set: {
+                isSale: false
+            }
+        })
+        let products = Products.find({shopId,isSale: true}).fetch();
+
+        return {
+            type: "products",
+            msg: {
+                products
+            }
         }
 
     });

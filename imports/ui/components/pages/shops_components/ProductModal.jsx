@@ -1,5 +1,4 @@
 import React from "react";
-
 import Form from 'antd/lib/form';
 import Checkbox from 'antd/lib/checkbox';
 
@@ -26,8 +25,7 @@ import 'antd/lib/input/style';
 import { Roles } from '/imports/api/roles/roles.js';
 import ProductForm from './ProductForm.jsx';
 import {Link} from 'react-router';
-
-
+import { changeimagestate } from '/imports/ui/actions/products.js';
 
 class ProductModal extends React.Component{
   constructor(props){
@@ -36,9 +34,7 @@ class ProductModal extends React.Component{
   }
   state={
     xx:[],
-    fileState:'',
-    coverState:'',
-    detailsState:'',
+    init_images_url:'',
     spec : '',
     spec_length:0,
     descriptionKey:[],
@@ -66,7 +62,9 @@ class ProductModal extends React.Component{
    /**
    * 设置表单要显示的数据
    */
+
   setFormData(data) {
+    let self  = this
     console.log(data);
     // 注意这里, 由于antd modal的特殊性, this.formComponent可能是undefined, 要判断一下
     if (this.formComponent) {
@@ -87,6 +85,7 @@ class ProductModal extends React.Component{
   }
   componentDidMount(){
     // console.log(this.props.singleProduct);
+    const product = this.props.singleProduct
     let shopId=this.props.id;
     let self =this;
     Meteor.call('shops.findShopById',shopId,function(err,alt){
@@ -141,6 +140,7 @@ class ProductModal extends React.Component{
 
   handleModalOk = () => {
     let self = this;
+
     let validated = true;
     this.formComponent.validateFieldsAndScroll((err, values) => validated = err ? false : validated);
     if (!validated) {
@@ -300,6 +300,8 @@ class ProductModal extends React.Component{
       message.error('商品简介不能为空！');
       return
     }
+    const {dispatch } = self.props;
+    dispatch(changeimagestate())
     self.hideModal();
     if(self.props.modalState){
       //新增店铺到数据库
@@ -321,6 +323,7 @@ class ProductModal extends React.Component{
                 console.log("新增商品");
                 console.log(result);
                 //数据变化后，刷新表格
+
                 self.reflashTable();
                 self.setFormData({});
                 console.log("刷新表格成功");
@@ -334,9 +337,9 @@ class ProductModal extends React.Component{
                 )
                 self.props.changeLoading(false)
                 console.log(self.state.xx);
-                window.location.reload();
+                // window.location.reload();
               }else{
-                console.log(error);
+                message.error(error.error)
               }
             })
           }
@@ -360,6 +363,7 @@ class ProductModal extends React.Component{
                 console.log("新增商品");
                 console.log(result);
                 //数据变化后，刷新表格
+
                 self.reflashTable();
                 self.setFormData({});
                 console.log("刷新表格成功");
@@ -367,13 +371,14 @@ class ProductModal extends React.Component{
                   xx:[],
                   fileState:'',
                   coverState:'',
+                  init_images_url:'',
                   detailsState:''
                 })
                 self.props.changeLoading(false)
                 console.log(self.state.xx);
-                window.location.reload();
+                // window.location.reload();
               }else{
-                console.log(error);
+                message.error(error.error)
               }
             })
           }
@@ -393,6 +398,7 @@ class ProductModal extends React.Component{
             console.log("新增商品");
             console.log(result);
             //数据变化后，刷新表格
+
             self.reflashTable();
             self.setFormData({});
             console.log("刷新表格成功");
@@ -400,13 +406,14 @@ class ProductModal extends React.Component{
               xx:[],
               fileState:'',
               coverState:'',
-              detailsState:''
+              detailsState:'',
+              init_images_url:''
             })
             self.props.changeLoading(false)
             console.log(self.state.xx);
-            window.location.reload();
+            // window.location.reload();
           }else{
-            console.log(error);
+            message.error(error.error)
           }
         })
       }
@@ -420,18 +427,20 @@ class ProductModal extends React.Component{
       Meteor.call('product.update',this.props.singleProduct, newObj, function(error,result){
         if(!error){
           console.log('更新商品');
+
           self.reflashTable();
           self.setFormData({});
           self.setState({
             xx:[],
             fileState:'',
             coverState:'',
-            detailsState:''
+            detailsState:'',
+            init_images_url:''
           })
           self.props.changeLoading(false)
-          window.location.reload();
+          // window.location.reload();
         }else{
-          console.log(error);
+          message.error(error.error)
         }
       })
 
@@ -444,17 +453,18 @@ class ProductModal extends React.Component{
 
 
   handleCancel = (e) => {
-    console.log('走了这');
+    console.log('关闭Modal');
+    const {dispatch } = this.props;
+    dispatch(changeimagestate())
+
     this.props.onCancel();
     this.setFormData({});
     this.setState({
       descriptionKey:[],
       xx:[],
-      fileState:'',
-      coverState:'',
-      detailsState:''
+      init_images_url:''
     })
-    window.location.reload();
+    // window.location.reload();
 
 
   }
@@ -497,8 +507,32 @@ class ProductModal extends React.Component{
           onCancel={this.handleCancel.bind(this)}
           width={'80%'}
           style={{ top: 60 }}
+          okText="确认"
+          cancelText="取消"
         >
-          <ProductForm id={this.props.id} xx={this.state.xx} changeXX={this.changeXX.bind(this)}  fileState={this.state.fileState} changefileState={this.changefileState.bind(this)} coverState={this.state.coverState} detailsState={this.state.detailsState} changedetailsState={this.changedetailsState.bind(this)} changecoverState={this.changecoverState.bind(this)} spec={this.state.spec} descriptionKey={this.state.descriptionKey}  getSpec={this.getSpec.bind(this)}  product= {this.props.singleProduct} modalState={this.props.modalState} key_arr={this.props.key_arr}  key_agencyarr={this.props.key_agencyarr} key_parameterarr={this.props.key_parameterarr} productId={this.props.productId} kay_length={this.props.length}  editState = {this.props.editState} ref = {(input) => { this.formComponent = input; }}  />
+          <ProductForm 
+            id={this.props.id} 
+            fileState={this.state.fileState} 
+            changefileState={this.changefileState.bind(this)} 
+            coverState={this.state.coverState} 
+            init_images_url={this.state.init_images_url}
+            detailsState={this.state.detailsState} 
+            changedetailsState={this.changedetailsState.bind(this)} 
+            changecoverState={this.changecoverState.bind(this)} 
+            spec={this.state.spec} 
+            descriptionKey={this.state.descriptionKey}  
+            getSpec={this.getSpec.bind(this)}  
+            product= {this.props.singleProduct} 
+            images_state ={this.props.images_state}   
+            modalState={this.props.modalState} 
+            key_arr={this.props.key_arr}  
+            key_agencyarr={this.props.key_agencyarr} 
+            key_parameterarr={this.props.key_parameterarr} 
+            productId={this.props.productId} 
+            kay_length={this.props.length}  
+            editState = {this.props.editState} 
+            ref = {(input) => { this.formComponent = input; }} 
+          />
 
         </Modal>
       </div>
@@ -515,7 +549,8 @@ function mapStateToProps(state) {
     key_arr:state.ProductsList.key_arr,
     key_agencyarr:state.ProductsList.key_agencyarr,
     key_parameterarr:state.ProductsList.key_parameterarr,
-    productId:state.ProductsList.productId
+    productId:state.ProductsList.productId,
+    images_state:state.ProductsList.images_state
    };
 }
 

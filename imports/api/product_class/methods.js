@@ -5,21 +5,26 @@ import { ProductClass } from './product_class.js';
 
 
 Meteor.methods({
-  'get.productclass'(){
-    let aaa =ProductClass.find().fetch();
-    console.log(aaa);
-    let bbb=[]
-    if (typeof(aaa)!='undefined') {
-      for (var i = 0; i < aaa.length; i++) {
-        bbb.push(aaa[i].ProductClass)
-      }
-    }
-    return bbb;
+  'get.all_product_classes'(){
+    let data =  ProductClass.find().fetch()
+    return data
   },
-  'productclass.insert'(productclass){
-    ProductClass.insert({
-      ProductClass:productclass
-    })
+  'product_class.insert'(params){
+    let data = ProductClass.findOne({name:params.name})
+    if(data){
+      throw new Meteor.Error("添加失败，分类已经存在");
+    }else{
+      ProductClass.insert({
+        name: params.name,
+        name_zh:params.name_zh,
+        decription:params.decription,
+        createdAt:new Date(),
+        deletable:true,
+      })
+    }
+  },
+  'product_class.remove'(id){
+    return ProductClass.remove(id);
   }
 
 

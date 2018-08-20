@@ -27,3 +27,5 @@ import '/imports/api/apps/methods.js';
 import '/imports/api/apps/http.js';
 import '/imports/api/shop_orders/methods.js';
 import '/imports/api/product_class/methods.js'
+import '/imports/api/agency_relation/methods.js'
+import '/imports/api/order_status/methods.js'

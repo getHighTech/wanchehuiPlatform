@@ -56,6 +56,7 @@ class ShopDashBoard extends React.Component{
         console.log(this.foo);
         console.log(self.foo);
         (function (){
+          console.log(this.foo);
           console.log(self.foo);
         }())
       }

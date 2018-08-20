@@ -1,7 +1,6 @@
 import {UserRoles} from './user_roles.js';
 import { getRoleById,getRoleByName} from '/imports/api/roles/actions.js'
 import { Shops } from '../shops/shops.js';
-import {Roles} from '../roles/roles.js'
 
 export function userBindingRoles(userId,roleIds){
   let user_roles = UserRoles.find({'userId': userId,'status': true}).fetch();
@@ -78,27 +77,7 @@ export function rolesFindByUserId(userId){
   }
 }
 
-export function rolesACLFindByUserId(userId){
-  let user_role_record = UserRoles.find({'userId': userId,'status': true}).fetch();
-  if(user_role_record.length > 0){
-    let roleIds = []
-    for (let i = 0; i < user_role_record.length; i++) {
-      let result=Roles.findOne({_id:user_role_record[i].roleId}).permissions.orders.updatable;
-      if(result==true){
-        roleIds.push('true')
-      }
-      else {
-        roleIds.push('false')
-      }
 
-    }
-    console.log(roleIds);
-    return roleIds
-
-  } else{
-    return []
-  }
-}
 
 
 export function userBindingShopOwner(userId,OldOwner,role_name){
