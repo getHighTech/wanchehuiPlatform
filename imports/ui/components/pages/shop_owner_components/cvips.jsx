@@ -66,7 +66,19 @@ class Cvips extends Component {
         $(document).scrollTop(0);
         this.getPageCommonVips(this.state.common_card_id, page, pageSize);
     }
-
+    banUserCard(userId) {
+        let self = this
+        console.log(self.props.commonCard)
+        console.log(userId)
+        Meteor.call('product.cardUnbindUser', userId, self.props.commonCard, function (err, alt) {
+            if (!err) {
+                message.success('解除绑定成功')
+                self.getPageCommonVips(self.state.advance_card_id, 1, 5)
+            } else {
+                message.error(err.error)
+            }
+        })
+    }
     render() {
         
         const common_columns = [{
@@ -111,11 +123,13 @@ class Cvips extends Component {
             title: '操作',
             key: 'show',
             render: (text, record) => (
-                <span>
-                    <Tooltip placement="topLeft" title="授卡" arrowPointAtCenter>
-                        <Button shape="circle" onClick={() => this.giveItToUser(record._id)} icon="user-add" />
-                    </Tooltip>
-                </span>
+            <span>
+                <Popconfirm title="确定要取消该用户的代理资格，请谨慎操作!" onConfirm={() => this.banUserCard(record._id)} onCancel={this.cancel} okText="Yes" cancelText="No">
+                    <Button>
+                        <span>禁卡</span>
+                    </Button>
+                </Popconfirm>
+            </span>
             ),
         }];
         const common_vips = this.state.common_vips
