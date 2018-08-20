@@ -114,22 +114,22 @@ class DateRange extends React.Component {
           }
           }
         });
-        Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
-          if (!error) {
-            accoutHash = {}
-            for(let accout of accouts) {
-              accoutHash[accout.userId] = accout;
-            }
-            for(var charge of result) {
-              charge.bankId = accoutHash[charge.userId].accountNumber;
-              charge.address=  accoutHash[charge.userId].bankAddress;
-              charge.userId=  accoutHash[charge.userId].realName;
+        // Meteor.call("bankcards.accouts", bankIds, function(error, accouts) {
+        //   if (!error) {
+        //     accoutHash = {}
+        //     for(let accout of accouts) {
+        //       accoutHash[accout.userId] = accout;
+        //     }
+        //     for(var charge of result) {
+        //       charge.bankId = accoutHash[charge.userId].accountNumber;
+        //       charge.address=  accoutHash[charge.userId].bankAddress;
+        //       charge.userId=  accoutHash[charge.userId].realName;
 
-            }
-            self.props.getDateSearchData(result);
-            self.props.getChangeCondition(newcondition)
-          }
-        });
+        //     }
+        //     self.props.getDateSearchData(result);
+        //     self.props.getChangeCondition(newcondition)
+        //   }
+        // });
 
       }
       else{

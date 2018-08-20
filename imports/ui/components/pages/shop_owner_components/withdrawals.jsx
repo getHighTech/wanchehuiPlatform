@@ -26,9 +26,10 @@ class withdrawalsForShop extends Component {
     state = {
         balanceChargesData: [],
         loadingTip: "加载中...",
-        condition: {},
+        condition: { status: 'unpaid' },
         currentPage: 1,
         totalCount: 500,
+        shopId:''
     }
 
     getData() {
@@ -57,21 +58,26 @@ class withdrawalsForShop extends Component {
 
     componentDidMount() {
         let self = this;
-        console.log(self.state.condition);
-        let condition = { status: 'unpaid' };
-        self.getBalanceCharge(1, 20, condition);
+        let currentUserId = Meteor.userId();
+        let condition = self.state.condition
+        Meteor.call('shops.getByCurrentUser', currentUserId, function (err, rlt) {
+            console.log(rlt)
+            if(!err){
+                self.setState({
+                    shopId:rlt._id
+                })
+            self.getBalanceCharge(1, 20, condition);
+            }
+        })
+
         countBalanceCharge(condition, function (err, rlt) {
+            console.log(condition)
             if (!err) {
                 self.setState({
                     totalCount: rlt,
                 })
             }
         })
-        console.log(self.state.condition);
-        self.setState({
-            condition
-        })
-        console.log(self.state.condition);
     }
 
     handlePageChange(page, pageSize) {
@@ -82,11 +88,13 @@ class withdrawalsForShop extends Component {
 
 
     toggleBalanceCharges(key) {
+        console.log('111')
         let self = this;
         if (key == "unpaid") {
             let condition = { status: 'unpaid' };
             self.getBalanceCharge(1, 20, condition);
             countBalanceCharge(condition, function (err, rlt) {
+                console.log('查询未支付提现')
                 if (!err) {
                     self.setState({
                         totalCount: rlt,
@@ -99,6 +107,7 @@ class withdrawalsForShop extends Component {
         }
         if (key == "paid") {
             let condition = { status: 'paid' };
+            console.log('查询已支付提现')
             self.getBalanceCharge(1, 20, condition);
             countBalanceCharge(condition, function (err, rlt) {
                 if (!err) {
@@ -112,6 +121,7 @@ class withdrawalsForShop extends Component {
             })
         }
         if (key == "revoke") {
+            console.log('查询已撤销提现')
             let condition = { status: 'revoke' }
             self.getBalanceCharge(1, 20, condition);
             countBalanceCharge(condition, function (err, rlt) {
@@ -206,11 +216,25 @@ class withdrawalsForShop extends Component {
 
     getBalanceCharge(page, pageSize, condition) {
         let self = this;
-
-        getMeteorBalanceCharge(condition, page, pageSize, function (err, rlt) {
-            if (!err) {
+        let shopId = self.state.shopId;
+        // getMeteorBalanceCharge(condition, page, pageSize, function (err, rlt) {
+        //     if (!err) {
+        //         console.log(condition)
+        //         console.log('获取提现记录')
+        //         console.log('---------------')
+        //         console.log(rlt)
+        //         self.setState({
+        //             balanceChargesData: rlt,
+        //             currentPage: page,
+        //         })
+        //     }
+        // })
+        Meteor.call('get.balanceChargesByShopId',shopId,page, pageSize, condition,function(err,alt){
+            if(!err){
+                console.log('获取拼接后的数据')
+                console.log(alt)
                 self.setState({
-                    balanceChargesData: rlt,
+                    balanceChargesData:alt,
                     currentPage: page,
                 })
             }
@@ -236,18 +260,18 @@ class withdrawalsForShop extends Component {
             },
             {
                 title: '用户',
-                dataIndex: 'name',
-                key: 'name',
-                width: 100,
-            }, {
-                title: '银行卡号',
-                dataIndex: 'bankId',
-                key: 'bankId',
+                dataIndex: 'username',
+                key: 'username',
                 width: 150,
             }, {
+                title: '银行卡号',
+                dataIndex: 'bankId.accountNumber',
+                key: 'bankId.accountNumber',
+                width: 200,
+            }, {
                 title: '开户行',
-                dataIndex: 'address',
-                key: 'address',
+                dataIndex: 'bankId.bankAddress',
+                key: 'bankId.bankAddress',
                 width: 150,
             },
             {
@@ -255,10 +279,13 @@ class withdrawalsForShop extends Component {
                 dataIndex: 'money',
                 key: 'money',
                 width: 100,
+                render: (text, record) => {
+                    return (<span>{record.money/100}元</span>);
+                } 
             }, {
                 title: '姓名',
-                dataIndex: 'userId',
-                key: 'userId',
+                dataIndex: 'bankId.realName',
+                key: 'bankId.realName',
                 width: 100,
             },
             {
