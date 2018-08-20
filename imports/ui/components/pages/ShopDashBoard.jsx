@@ -26,6 +26,41 @@ class ShopDashBoard extends React.Component{
 
   componentDidMount(){
     console.log(Meteor.userId());
+    // for(var i = 0; i<5;i++){
+    //   console.log(i);
+    //   aaa(i);
+    // //   (function (i){
+    // //   setTimeout(function(){
+    // //     console.log(i);
+    // //     console.log(new Date, i );
+    // //   },1000)
+    // // })(i)
+    // }
+    //
+    //
+    //
+    // console.log(new Date , i);
+    // var a = 1;
+    // function b(){
+    //   function a(){}
+    //   a= 10 ;
+    //   return ;
+    //
+    // }
+    // b()
+    // console.log(a);
+    var aa ={
+      foo:'bb',
+      func:function(){
+        var self = this ;
+        console.log(this.foo);
+        console.log(self.foo);
+        (function (){
+          console.log(self.foo);
+        }())
+      }
+    }
+    aa.func()
   }
 
 
