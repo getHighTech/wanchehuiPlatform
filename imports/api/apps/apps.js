@@ -24,9 +24,35 @@ export function getHomePageProducts(appName) {
     let shop = getUserShop(appName)
     if(shop){
         let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id,recommend: true},{sort: {createdAt: -1}}).fetch();
+        function compare(property){
+          return function(a,b){
+              var value1 = a[property];
+              var value2 = b[property];
+              return value1 - value2;
+          }
+      }
+      products.sort(compare('endPrice'))
+      // var newproducts =console.log(products.sort(compare('endPrice')));
+      console.log(products.length);
+      var allArr = [];
+      for(var i=0;i<products.length;i++){
+      　　var flag = true;
+      　　for(var j=0;j<allArr.length;j++){
+      　　　　if(products[i].name == allArr[j].name){
+      　　　　　　flag = false;
+      　　　　};
+      　　};
+      　　if(flag){
+      　　　　allArr.push(products[i]);
+      　　};
+      };
+      allArr.sort(function (a, b) {
+          return a.createdAt<b.createdAt?1:-1;
+      });
+
         return {
             type: "products",
-            msg: products,
+            msg: allArr,
         }
     }
 }
