@@ -32,27 +32,26 @@ export function getHomePageProducts(appName) {
           }
       }
       products.sort(compare('endPrice'))
-      // var newproducts =console.log(products.sort(compare('endPrice')));
       console.log(products.length);
-      var allArr = [];
+      var newproducts = [];
       for(var i=0;i<products.length;i++){
       　　var flag = true;
-      　　for(var j=0;j<allArr.length;j++){
-      　　　　if(products[i].name == allArr[j].name){
+      　　for(var j=0;j<newproducts.length;j++){
+      　　　　if(products[i].name == newproducts[j].name){
       　　　　　　flag = false;
       　　　　};
       　　};
       　　if(flag){
-      　　　　allArr.push(products[i]);
+      　　　　newproducts.push(products[i]);
       　　};
       };
-      allArr.sort(function (a, b) {
+      newproducts.sort(function (a, b) {
           return a.createdAt<b.createdAt?1:-1;
       });
 
         return {
             type: "products",
-            msg: allArr,
+            msg: newproducts,
         }
     }
 }
