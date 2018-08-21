@@ -118,6 +118,7 @@ class Svips extends Component {
     showMyTeamDetails(userId) {
         let self = this
         Meteor.call('get.agency_relation.my.team', userId, function (err, alt) {
+            console.log(alt)
             if (!err) {
                 self.setState({
                     members: alt,
@@ -156,8 +157,8 @@ class Svips extends Component {
             },
             {
                 title: '手机号码',
-                dataIndex: 'profile.mobile',
-                key: 'profile.mobile',
+                dataIndex: 'mobile',
+                key: 'mobile',
             }
         ]
         const advanced_columns = [{

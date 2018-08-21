@@ -38,9 +38,6 @@ Meteor.methods({
     if (appName ==='wanrenchehui'){
       let result =  ShopOrders.find({ shopId: shopId, appName: { $exists: false } },{skip: (page - 1) * pageSize, limit: pageSize,
       sort: { "createdAt": -1 },}).fetch();
-      result.forEach((item)=>{
-        
-      })
       return result
     }else if(appName){
       let result =  ShopOrders.find({ appName: appName},{skip: (page - 1) * pageSize, limit: pageSize,

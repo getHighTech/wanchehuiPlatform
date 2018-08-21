@@ -505,7 +505,7 @@ Meteor.methods({
               UserRoles.update(user_role,{
                 status: true
               })
-              console.log('用户角色存在，开发角色')
+              console.log('用户角色存在，开放角色')
             }else{
               UserRoles.insert({
                 roleName: role.name,

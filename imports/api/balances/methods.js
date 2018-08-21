@@ -6,7 +6,7 @@ import {Balances} from './balances';
 import {allBalanceChargeCount,getCurrentMonthFirst,getCurrentMonthLast} from './actions.js';
 import { Bankcards } from "/imports/api/bankcards/bankcards.js";
 import { BalanceIncomes } from './balance_incomes.js';
-
+import {Shops} from '../shops/shops'
 import { findBalanceByUserId, findBalanceByUserIdAll, findBalanceByUsername } from './balances_actions.js'
 import { getIncomeRecords } from './balance_incomes_actions.js'
 import { log } from 'util';
@@ -173,5 +173,34 @@ Meteor.methods({
       return {formMethod: 'app.get.current.balance', err: "ACCESS DENY"}
     }
   },
+ 'get.balanceChargesByShopId'(shopId,page,pageSize,condition){
+  console.log('获取提现记录')
+  console.log(shopId)
+  console.log(condition)
+  let shop = Shops.findOne({ _id: shopId})
+  let appName = shop.appName
+  if (appName ==='wanrenchehui'){
+    let result =  BalanceCharges.find({appName: { $exists: false } },{skip: (page - 1) * pageSize, limit: pageSize,
+      sort: { "createdAt": -1 },}).fetch();
+      return result
+  }else if(appName){
+    console.log('测试查询条件合并')
+    let new_condition = Object.assign({'appName':appName},condition)
+    console.log(new_condition)
+    let result =  BalanceCharges.find(new_condition,{skip: (page - 1) * pageSize, limit: pageSize,
+      sort: { "createdAt": -1 },}).fetch();
+    result.forEach((item)=>{
+      let user =  Meteor.users.findOne({_id:item.userId})
+      if(user){
+        console.log(user)
+        item.username = user.username 
+      }
+    })
+    console.log(result)
+    return result
+  }else{
+    console.log('未获取到当前店铺ID')
+  }
 
+ }
 });
