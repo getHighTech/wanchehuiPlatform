@@ -490,7 +490,7 @@ Meteor.methods({
     if(user){
       let productOwener = ProductOwners.findOne({ userId: user._id, productId: cardId })
       if (productOwener){
-        throw new Meteor.Error("该用户已经是高级会员卡用户，请勿重复添加");
+        throw new Meteor.Error("用户已经有该会员卡，请勿重复添加");
       }else{
         ProductOwners.insert({
           userId: user._id, 
@@ -519,41 +519,87 @@ Meteor.methods({
           //如果授卡成功，给该用户相应的角色
           //如果授卡成功，给该高级会员用户生成相应的店铺
             let shop = Shops.findOne({ 'acl.own.users': user._id })
-            if(!shop){
-              Shops.insert({
-                name: user.username + "的店铺",
-                phone: user.profile.mobile,
-                pictures: [],
-                description: '欢迎光临' + user.username + "的店铺",
-                tags: ["高级会员", "代理", "挣钱"],
-                cover: user.headurl,
-                address: '',
-                lntAndLat: [],
-                isAdvanced:true,
-                status: true,
-                createdAt: new Date(),
-                acl: {
-                  own: {
-                    roles: ["shop_owner"],
-                    users: user._id,
-                  },
-                  read: {
-                    roles: ['nobody', 'login_user']
-                  },
-                  write: {
-                    roles: ["shop_owner", "shop_manager"],
-                    users: [],
+          
+            //判断是授高级卡还是普通卡
+            if(product.productClass === 'advanced_card'){
+              console.log('-------授高级卡片-----------')
+              if(!shop){
+                console.log('-------高级店铺不存在-----------')
+                Shops.insert({
+                  name: user.username + "的店铺",
+                  phone: user.profile.mobile,
+                  pictures: [],
+                  description: '欢迎光临' + user.username + "的店铺",
+                  tags: ["高级会员", "代理", "挣钱"],
+                  cover: user.headurl,
+                  address: '',
+                  lntAndLat: [],
+                  isAdvanced:true,
+                  status: true,
+                  createdAt: new Date(),
+                  acl: {
+                    own: {
+                      roles: ["shop_owner"],
+                      users: user._id,
+                    },
+                    read: {
+                      roles: ['nobody', 'login_user']
+                    },
+                    write: {
+                      roles: ["shop_owner", "shop_manager"],
+                      users: [],
+                    }
                   }
-                }
-              });
+                });
+              }else{
+                console.log('-------高级店铺存在-----------')
+                Shops.update(shop,{
+                  $set:{
+                    status: true,
+                    isAdvanced:true,
+                  }
+                })
+              }
+
             }else{
-              Shops.update(shop,{
-                $set:{
-                  status: true
-                }
-              })
+              console.log('-------授普通卡片卡片-----------')
+              if(!shop){
+                console.log('-------普通店铺不存在-----------')
+                Shops.insert({
+                  name: user.username + "的店铺",
+                  phone: user.profile.mobile,
+                  pictures: [],
+                  description: '欢迎光临' + user.username + "的店铺",
+                  tags: ["高级会员", "代理", "挣钱"],
+                  cover: user.headurl,
+                  address: '',
+                  lntAndLat: [],
+                  status: true,
+                  createdAt: new Date(),
+                  acl: {
+                    own: {
+                      roles: ["shop_owner"],
+                      users: user._id,
+                    },
+                    read: {
+                      roles: ['nobody', 'login_user']
+                    },
+                    write: {
+                      roles: ["shop_owner", "shop_manager"],
+                      users: [],
+                    }
+                  }
+                });
+              }else{
+                console.log('-------普通店铺存在-----------')
+                Shops.update(shop,{
+                  $set:{
+                    status: true,
+                  }
+                })
+              }
             }
-          }
+            }
         })
       }
     }else{
