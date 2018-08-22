@@ -24,9 +24,34 @@ export function getHomePageProducts(appName) {
     let shop = getUserShop(appName)
     if(shop){
         let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id,recommend: true},{sort: {createdAt: -1}}).fetch();
+        function compare(property){
+          return function(a,b){
+              var value1 = a[property];
+              var value2 = b[property];
+              return value1 - value2;
+          }
+      }
+      products.sort(compare('endPrice'))
+      console.log(products.length);
+      var newproducts = [];
+      for(var i=0;i<products.length;i++){
+      　　var flag = true;
+      　　for(var j=0;j<newproducts.length;j++){
+      　　　　if(products[i].name == newproducts[j].name){
+      　　　　　　flag = false;
+      　　　　};
+      　　};
+      　　if(flag){
+      　　　　newproducts.push(products[i]);
+      　　};
+      };
+      newproducts.sort(function (a, b) {
+          return a.createdAt<b.createdAt?1:-1;
+      });
+
         return {
             type: "products",
-            msg: products,
+            msg: newproducts,
         }
     }
 }
@@ -163,9 +188,6 @@ export function syncUser(userId, stampedToken, appName){
          product = Products.find({shopId: platfromId,isSale: true, productClass: {
              "$in": ['common_card','advanced_card']
          }}).fetch()
-         console.log(`product:${product}`)
-         console.log(product[0].name)
-         console.log(product[1].name)
          if(product.length>0) {
              role = UserRoles.findOne({userId,roleName: `${product[0].name}_holder`,status: true})
              if(!role && product[1]){
