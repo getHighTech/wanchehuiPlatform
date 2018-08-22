@@ -75,7 +75,7 @@ Meteor.methods({
         }
         item.allStatus = arr
       })
-     
+
       return result
     }else{
       return []
@@ -110,13 +110,26 @@ Meteor.methods({
     })
   },
   'shopOrder.updateTrackingnumber'(_id,number){
+    let orderId =ShopOrders.findOne({_id:_id}).orderId;
+    Orders.update({_id:orderId},{
+      $set:{
+      tracking_number:number
+    }
+    },function(err,alt){
+      if(!err){
+        console.log('更新快递单号成功1')
+      }else{
+        throw new Meteor.Error("更新快递单号失败")
+
+      }
+    })
     ShopOrders.update(_id,{
       $set:{
       tracking_number:number
     }
     },function(err,alt){
       if(!err){
-        console.log('更新快递单号成功')
+        console.log('更新快递单号成功2')
       }else{
         throw new Meteor.Error("更新快递单号失败")
 
