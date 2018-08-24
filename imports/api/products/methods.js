@@ -527,7 +527,7 @@ Meteor.methods({
                 console.log('-------高级店铺不存在-----------')
                 Shops.insert({
                   name: user.username + "的店铺",
-                  phone: user.profile.mobile,
+                  phone: user.profile ? (user.profile.mobile? user.profile.mobile: user.username) : user.username,
                   pictures: [],
                   description: '欢迎光临' + user.username + "的店铺",
                   tags: ["高级会员", "代理", "挣钱"],

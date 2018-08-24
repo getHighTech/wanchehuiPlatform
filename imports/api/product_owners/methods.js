@@ -59,7 +59,7 @@ Meteor.methods({
             let withdraw_count = 0
             let balance = 0
             //-------------查询上级--------------//
-            let agency_relation = AgencyRelation.findOne({ userId: item._id, status: false })
+            let agency_relation = AgencyRelation.findOne({ userId: item._id, status: true })
             if (agency_relation) {
                 let record = Meteor.users.findOne({ _id: agency_relation.SuserId })
                 if (record) {
