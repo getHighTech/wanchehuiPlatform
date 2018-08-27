@@ -43,6 +43,7 @@ Meteor.methods({
     },
     "get.commonCard.product.users"(productId, page = 1, pageSize = 5) {
         let userIds = []
+        console.log(productId)
         ProductOwners.find({ productId }).forEach(item => {
             userIds.push(item.userId);
             console.log(item.userId)
