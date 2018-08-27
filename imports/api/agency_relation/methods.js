@@ -4,7 +4,7 @@ import { Orders} from '../orders/orders'
 
 Meteor.methods({
     'get.agency_relation.my.team'(userId){
-        let record = AgencyRelation.find({'SuserId': userId,status:false}).fetch()
+        let record = AgencyRelation.find({'SuserId': userId,status:true}).fetch()
         if(record){
             record.forEach((item)=>{
                 let user = Meteor.users.findOne({_id:item.userId})
@@ -15,8 +15,7 @@ Meteor.methods({
                     let sales_value = 0
                     orders.forEach((item)=>{
                         sales_value += item.totalAmount
-                    })  
-                        
+                    })
                     console.log(sales_value)
                     console.log(orders_count)
                     item.sales_value = sales_value
