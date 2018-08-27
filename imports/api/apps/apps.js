@@ -1428,16 +1428,22 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         newShop = Shops.findOne(newShopId);
         let newProductParams = {};
         newProductParams = product;
+        console.log('此商品是：'+product);
         delete newProductParams._id;
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
         let newProductId
-        let agencyProducts = Products.findOne({ name_zh: newProductParams.name_zh,shopId: newShopId})
+        let agencyProducts = Products.findOne({ newSpecGroups: newProductParams.newSpecGroups,shopId: newShopId})
         if(!agencyProducts){
+          console.log('未代理此商品');
             newProductId = Products.insert({
                 ...newProductParams
             });
         }
+        else {
+          console.log('已经代理过此商品'+agencyProducts.name_zh);
+          console.log('已经代理过此商品是否上架'+agencyProducts.isSale);
+          console.log(agencyProducts.isSale);
           if(agencyProducts.isSale===false){
               newProductId = Products.update({"_id": agencyProducts._id},
                   {
@@ -1447,6 +1453,9 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
                   }
               )
           }
+        }
+
+
 
         //标记被代理的商品
         let agencies = product.agencies;
@@ -1470,7 +1479,7 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
                 agencyShops,
             }
         })
-        // console.log(newProductId);
+        console.log('是否是新的商品'+newProductId);
         if(!newProductId){
             return {
                 type: "error",
