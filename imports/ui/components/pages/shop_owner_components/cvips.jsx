@@ -73,7 +73,7 @@ class Cvips extends Component {
         Meteor.call('product.cardUnbindUser', userId, self.props.commonCard, function (err, alt) {
             if (!err) {
                 message.success('解除绑定成功')
-                self.getPageCommonVips(self.state.advance_card_id, 1, 5)
+                self.getPageCommonVips(self.state.common_card_id, 1, 5)
             } else {
                 message.error(err.error)
             }

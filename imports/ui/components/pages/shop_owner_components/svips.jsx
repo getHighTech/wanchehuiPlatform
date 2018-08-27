@@ -156,10 +156,23 @@ class Svips extends Component {
                 key: 'username',
             },
             {
-                title: '手机号码',
-                dataIndex: 'mobile',
-                key: 'mobile',
-            }
+                title: '销售量',
+                dataIndex: 'sales_volume',
+                key: 'sales_volume',
+            },
+            {
+                title: '销售额',
+                dataIndex: 'sales_value',
+                key: 'sales_value',
+            },
+            {
+                title: '加入时间',
+                dataIndex: 'createdAt',
+                key: 'createdAt',
+                render: (text, record) => {
+                    return (<span>{moment(record.createdAt).format("YYYY-MM-DD HH:mm:ss")}</span>);
+                }
+            },
         ]
         const advanced_columns = [{
             title: '用户名',

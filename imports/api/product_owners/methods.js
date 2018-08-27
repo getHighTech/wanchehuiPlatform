@@ -45,6 +45,7 @@ Meteor.methods({
         let userIds = []
         ProductOwners.find({ productId }).forEach(item => {
             userIds.push(item.userId);
+            console.log(item.userId)
         });
         let users = Meteor.users.find({ _id: { $in: userIds } }, {
             skip: (page - 1) * pageSize, limit: pageSize,
