@@ -1394,6 +1394,7 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         let newShop = Shops.findOne({"acl.own.users": userId});
         let newShopId = null;
         if(!newShop){
+          console.log('新店不存在');
             if(!user.profile || user.profile.mobile){
                 Meteor.users.update(user._id, {
                     $set: {
@@ -1427,10 +1428,10 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
                 }
               });
         }else{
+          console.log('新店存在');
             newShopId = newShop._id;
         }
         newShop = Shops.findOne(newShopId);
-
         let newProductParams = {};
         newProductParams = product;
         delete newProductParams._id;
@@ -1443,15 +1444,16 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
                 ...newProductParams
             });
         }
-        if(agencyProducts.isSale===false){
-            newProductId = Products.update({"_id": agencyProducts._id},
-                {
-                    $set: {
-                        "isSale": true
-                    }
-                }
-            )
-        }
+          if(agencyProducts.isSale===false){
+              newProductId = Products.update({"_id": agencyProducts._id},
+                  {
+                      $set: {
+                          "isSale": true
+                      }
+                  }
+              )
+          }
+
         //标记被代理的商品
         let agencies = product.agencies;
         if(!agencies){
@@ -1474,6 +1476,7 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
                 agencyShops,
             }
         })
+        // console.log(newProductId);
         if(!newProductId){
             return {
                 type: "error",
