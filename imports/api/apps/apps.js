@@ -1440,20 +1440,20 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         let newProductId
         let agencyProducts = Products.findOne({ name_zh: newProductParams.name_zh,shopId: newShopId,isSale: true})
         if(!agencyProducts){
+            console.log("上")
             newProductId = Products.insert({
                 ...newProductParams
             });
+        }else{
+            console.log("下")
+            newProductId = Products.update({"_id": agencyProducts._id},
+            {
+                $set: {
+                    "isSale": true
+                }
+            })
         }
-          if(agencyProducts.isSale===false){
-              newProductId = Products.update({"_id": agencyProducts._id},
-                  {
-                      $set: {
-                          "isSale": true
-                      }
-                  }
-              )
-          }
-
+    
         //标记被代理的商品
         let agencies = product.agencies;
         if(!agencies){
