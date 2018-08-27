@@ -503,7 +503,9 @@ Meteor.methods({
            
             if (user_role){
               UserRoles.update(user_role,{
-                status: true
+                $set:{
+                  status: true
+                }
               })
               console.log('用户角色存在，开放角色')
             }else{
