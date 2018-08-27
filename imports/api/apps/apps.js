@@ -188,9 +188,13 @@ export function syncUser(userId, stampedToken, appName){
          product = Products.find({shopId: platfromId,isSale: true, productClass: {
              "$in": ['common_card','advanced_card']
          }}).fetch()
+         console.log(`这里`)
+         console.log(product)
          if(product.length>0) {
+             console.log(111)
              role = UserRoles.findOne({userId,roleName: `${product[0].name}_holder`,status: true})
              if(!role && product[1]){
+                 console.log(222)
                 role = UserRoles.findOne({userId,roleName: `${product[1].name}_holder`,status: true})
              }else{
 
@@ -198,6 +202,7 @@ export function syncUser(userId, stampedToken, appName){
          }
       }
       if(role!==undefined){
+
       }else{
           role = false
       }
@@ -472,6 +477,7 @@ export function appNewOrder(cartParams, appName){
 
 export function getOneProduct(loginToken, appName, productId,shopId){
         let product = Products.findOne({_id: productId});
+        
         if(!product){
             product = Products.findOne({productClass: "common_card",isSale: true, shopId})
         }
@@ -1431,7 +1437,7 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
         let newProductId
-        let agencyProducts = Products.findOne({ name_zh: newProductParams.name_zh,shopId: newShopId})
+        let agencyProducts = Products.findOne({ name_zh: newProductParams.name_zh,shopId: newShopId,isSale: true})
         if(!agencyProducts){
             newProductId = Products.insert({
                 ...newProductParams
