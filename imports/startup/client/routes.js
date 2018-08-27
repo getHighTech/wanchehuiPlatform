@@ -36,6 +36,7 @@ import Vips from '../../ui/components/pages/shop_owner_components/vips';
 import Svips from '../../ui/components/pages/shop_owner_components/svips';
 import Cvips from '../../ui/components/pages/shop_owner_components/cvips';
 import OrderStates from '/imports/ui/components/pages/OrderStates';
+import withdrawalsForShop from '../../ui/components/pages/shop_owner_components/withdrawals';
 
 
 
@@ -58,12 +59,13 @@ const Routes = ({ location }) =>
      
         <Route path="/orders" component={{superAdmin:Orders,commonUser:OrdersForShop}} />
         <Route path="/users" component={{ superAdmin: Users, commonUser: UsersForShop }} />
+          <Route path="/withdrawals" component={{ superAdmin: Withdrawals, commonUser: withdrawalsForShop }} />
         <IndexRoute component={{superAdmin:DashBoard,commonUser:ShopDashBoard}} />
       </Route>
       {/* 以下一组路由为需要验证超级管理员之后才能访问 */}
       <Route component={PermissionAuth}>
         <Route path="/users" component={Users}/>
-        <Route path="/withdrawals" component={Withdrawals}/>
+        {/* <Route path="/withdrawals" component={Withdrawals}/> */}
         <Route path="/roles" component={Roles}/>
         <Route path="/give_card_to_users" component={GiveCardToUsers}/>
         <Route path="/agencies_relations" component={AgenciesRelations}/>

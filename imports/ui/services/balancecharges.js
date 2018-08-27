@@ -4,6 +4,7 @@ import { Meteor } from 'meteor/meteor';
 
 export function getMeteorBalanceCharge(condition,page,pageSize,callback){
   Meteor.call("balance.chargesdata",condition,page,pageSize,function(err,rlt){
+    console.log('执行后端方法')
     var bankIds = [];
     var result = [];
     var selectbank = [];
@@ -33,21 +34,21 @@ export function getMeteorBalanceCharge(condition,page,pageSize,callback){
     });
 
 
-    Meteor.call("bankcards.accouts", selectbank, function(error, accouts) {
+    // Meteor.call("bankcards.accouts", selectbank, function(error, accouts) {
 
-      if (!error) {
-        accoutHash = {}
-        for(let accout of accouts) {
-          accoutHash[accout._id] = accout;
-        }
-        for(var charge of result) {
-          charge.address= accoutHash[charge.bankId].bankAddress;
-          charge.userId =  accoutHash[charge.bankId].realName;
-          charge.bankId = accoutHash[charge.bankId].accountNumber;
-      }
-        callback(err, result);
-      }
-    });
+    //   if (!error) {
+    //     accoutHash = {}
+    //     for(let accout of accouts) {
+    //       accoutHash[accout._id] = accout;
+    //     }
+    //     for(var charge of result) {
+    //       charge.address= accoutHash[charge.bankId].bankAddress;
+    //       charge.userId =  accoutHash[charge.bankId].realName;
+    //       charge.bankId = accoutHash[charge.bankId].accountNumber;
+    //   }
+    //     callback(err, result);
+    //   }
+    // });
 
   });
 }

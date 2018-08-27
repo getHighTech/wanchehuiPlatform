@@ -47,9 +47,8 @@ class MainLayout extends Component {
       {"key": "dashboard", "name": "控制面板", "IconType": "bars"},
       {"key": "shop", "name": "我的店铺", "IconType": "shop"},
       {"key": "orders", "name": "订单管理", "IconType": "book"},
+      { "key": "withdrawals", "name": "提现管理", "IconType": "pay-circle-o" },
       { "key": "vips", "name": "会员管理", "IconType": "user" },
- 
-
       { "key": "cards", "name": "卡片管理", "IconType": "credit-card" },
       { "key": "users", "name": "用户管理", "IconType": "user" },
     ]

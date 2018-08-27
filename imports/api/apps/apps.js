@@ -24,9 +24,34 @@ export function getHomePageProducts(appName) {
     let shop = getUserShop(appName)
     if(shop){
         let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id,recommend: true},{sort: {createdAt: -1}}).fetch();
+        function compare(property){
+          return function(a,b){
+              var value1 = a[property];
+              var value2 = b[property];
+              return value1 - value2;
+          }
+      }
+      products.sort(compare('endPrice'))
+      console.log(products.length);
+      var newproducts = [];
+      for(var i=0;i<products.length;i++){
+      　　var flag = true;
+      　　for(var j=0;j<newproducts.length;j++){
+      　　　　if(products[i].name == newproducts[j].name){
+      　　　　　　flag = false;
+      　　　　};
+      　　};
+      　　if(flag){
+      　　　　newproducts.push(products[i]);
+      　　};
+      };
+      newproducts.sort(function (a, b) {
+          return a.createdAt<b.createdAt?1:-1;
+      });
+
         return {
             type: "products",
-            msg: products,
+            msg: newproducts,
         }
     }
 }
@@ -791,9 +816,10 @@ export function withdrawMoney(loginToken, appName, userId, amount, bank, bankId)
           bankId,
           bank,
           balanceId: balance._id,
-          status: "revoke",
+          status: "unpaid",
           reasonType: "withdrawals",
-          createdAt: new Date()
+          createdAt: new Date(),
+          appName: appName
          });
 
          newTotalAmount = balance.amount;
@@ -1362,6 +1388,7 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         let newShop = Shops.findOne({"acl.own.users": userId});
         let newShopId = null;
         if(!newShop){
+          console.log('新店不存在');
             if(!user.profile || user.profile.mobile){
                 Meteor.users.update(user._id, {
                     $set: {
@@ -1395,10 +1422,10 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
                 }
               });
         }else{
+          console.log('新店存在');
             newShopId = newShop._id;
         }
         newShop = Shops.findOne(newShopId);
-
         let newProductParams = {};
         newProductParams = product;
         delete newProductParams._id;
@@ -1411,15 +1438,16 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
                 ...newProductParams
             });
         }
-        if(agencyProducts.isSale===false){
-            newProductId = Products.update({"_id": agencyProducts._id},
-                {
-                    $set: {
-                        "isSale": true
-                    }
-                }
-            )
-        }
+          if(agencyProducts.isSale===false){
+              newProductId = Products.update({"_id": agencyProducts._id},
+                  {
+                      $set: {
+                          "isSale": true
+                      }
+                  }
+              )
+          }
+
         //标记被代理的商品
         let agencies = product.agencies;
         if(!agencies){
@@ -1442,6 +1470,7 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
                 agencyShops,
             }
         })
+        // console.log(newProductId);
         if(!newProductId){
             return {
                 type: "error",
