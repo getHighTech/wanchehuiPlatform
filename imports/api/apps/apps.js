@@ -185,7 +185,7 @@ export function syncUser(userId, stampedToken, appName){
       let product, role, senior;
       let platfromId = platfrom? platfrom._id: null
       if(platfromId){
-         product = Products.find({shopId: platfromId,isSale: true, productClass: {
+         product = Products.find({shopId: platfromId, isSale: true, productClass: {
              "$in": ['common_card','advanced_card']
          }}).fetch()
          console.log(`这里`)
@@ -296,7 +296,7 @@ export function appLoginUser(type, loginParams, appName){
     switch (type) {
         case 'mobileSMS':
         //短线验证码登陆
-
+            let stampedTokenMobile = Accounts._generateStampedLoginToken();
             let mobileUser = Meteor.users.findOne({username: loginParams.mobile});
             // console.log({mobileUser});
 
@@ -341,7 +341,7 @@ export function appLoginUser(type, loginParams, appName){
             }
             }
             if(mobileUser){
-            let stampedTokenMobile = Accounts._generateStampedLoginToken();
+                stampedTokenMobile = Accounts._generateStampedLoginToken();
             let hashStampedTokenMobile = Accounts._hashStampedToken(stampedTokenMobile);
             Meteor.users.update(mobileUser._id,
                 {$push: {
@@ -479,7 +479,7 @@ export function getOneProduct(loginToken, appName, productId,shopId){
         let product = Products.findOne({_id: productId});
         
         if(!product){
-            product = Products.findOne({productClass: "common_card",isSale: true, shopId})
+            product = Products.findOne({productClass: "common_card", isSale: true, shopId})
         }
         if (!product) {
             return {
@@ -949,7 +949,12 @@ export function getWithdrawals(loginToken, appName, userId,  page, pagesize){
 export function syncLocalCartToRemote(loginToken, appName, cartId, cartParams){
     return getUserInfo(loginToken, appName, "app_carts", function(){
         let createNew = function(){
-
+            if(cartParams._id){
+                return  {
+                    type: "app_carts",
+                    msg: cartParams._id
+                 }
+            }
             let newCartId = AppCarts.insert({
                 ...cartParams,
                 createdAt: new Date()
@@ -1438,7 +1443,7 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
         let newProductId
-        let agencyProducts = Products.findOne({ name_zh: newProductParams.name_zh,shopId: newShopId,isSale: true})
+        let agencyProducts = Products.findOne({ name_zh: newProductParams.name_zh,shopId: newShopId, isSale: true})
         if(!agencyProducts){
             console.log("上")
             newProductId = Products.insert({
