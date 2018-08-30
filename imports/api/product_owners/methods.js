@@ -30,7 +30,7 @@ Meteor.methods({
             return "ACCESS DENY";
         }
     },
-    "get.advancedCard.product.users"(productId, page = 1, pageSize = 5){
+    "get.advancedCard.product.users"(productId, page = 1, pageSize = 20){
         let userIds = []
         ProductOwners.find({ productId }).forEach(item => {
             userIds.push(item.userId);
@@ -41,13 +41,14 @@ Meteor.methods({
         }).fetch();
         return users;
     },
-    "get.commonCard.product.users"(productId, page = 1, pageSize = 5) {
+    "get.commonCard.product.users"(productIds, page = 1, pageSize = 20) {
         let userIds = []
-        console.log(productId)
-        ProductOwners.find({ productId }).forEach(item => {
-            userIds.push(item.userId);
-            console.log(item.userId)
-        });
+        productIds.forEach((item)=>{
+            ProductOwners.find({ productId:item }).forEach(item => {
+                userIds.push(item.userId);
+            });
+        })
+
         let users = Meteor.users.find({ _id: { $in: userIds } }, {
             skip: (page - 1) * pageSize, limit: pageSize,
             sort: { "createdAt": -1 },
@@ -60,14 +61,19 @@ Meteor.methods({
             let all_income = 0
             let withdraw_count = 0
             let balance = 0
+            let card_id = ''
             //-------------查询上级--------------//
             let agency_relation = AgencyRelation.findOne({ userId: item._id, status: true })
             if (agency_relation) {
                 let record = Meteor.users.findOne({ _id: agency_relation.SuserId })
                 if (record) {
                     superior = record.username
+                //查询买的是哪个店铺的会员卡
+                
+
                 }
             }
+            
 
             //-------------计算总订单数量--------------//
             let shop = Shops.findOne({ "acl.own.users": item._id });
@@ -102,6 +108,7 @@ Meteor.methods({
                 data['all_income'] = all_income
                 data['withdraw_count'] = withdraw_count
                 data['balance'] = balance
+                data['card_id'] = card_id
             }
             datas.push(data)
         });
@@ -117,7 +124,16 @@ Meteor.methods({
             throw new Meteor.Error("未知错误");
         }
     },
-    "get.vips.count"(productId){
+    "get.svips.count"(productId){
         return ProductOwners.find({ productId }).count()
+    },
+    "get.cvips.count"(productIds){
+        let userIds = []
+        productIds.forEach((item)=>{
+            ProductOwners.find({ productId:item }).forEach(item => {
+                userIds.push(item.userId);
+            });
+        })
+        return userIds.length
     },
 });

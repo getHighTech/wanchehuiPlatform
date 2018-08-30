@@ -38,7 +38,7 @@ class Svips extends Component {
                             advanced_card_name: rlt.name_zh,
                             advance_card_id: rlt._id
                         })
-                        Meteor.call('get.vips.count',rlt._id,function(err,rlt){
+                        Meteor.call('get.svips.count',rlt._id,function(err,rlt){
                             if(!err){
                                 self.setState({
                                     totalCount:rlt
@@ -47,7 +47,7 @@ class Svips extends Component {
                         })
                         //找到高级会员卡
                         //查找高级会员卡用户
-                        self.getPageAdvancedVips(rlt._id, 1, 5)
+                        self.getPageAdvancedVips(rlt._id, 1, 20)
                     }
                 })
             }
@@ -142,7 +142,7 @@ class Svips extends Component {
         Meteor.call('product.cardUnbindUser', userId, self.props.advancedCard, function (err, alt) {
             if (!err) {
                 message.success('解除绑定成功')
-                self.getPageAdvancedVips(self.state.advance_card_id, 1, 5)
+                self.getPageAdvancedVips(self.state.advance_card_id, 1, 20)
             } else {
                 message.error(err.error)
             }
@@ -214,7 +214,7 @@ class Svips extends Component {
                     dataSource={advanced_vips}
                     rowKey='_id'
                     pagination={{
-                        defaultPageSize: 5, total: this.state.totalCount,
+                        defaultPageSize: 20, total: this.state.totalCount,
                         onChange: (page, pageSize) => this.handlePageChangeAdvancedVips(page, pageSize),
                         showQuickJumper: true, current: this.state.currentPage
                     }} />
