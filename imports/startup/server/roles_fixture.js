@@ -71,6 +71,12 @@ export function prebuildAdmin(){
 
   let users = Meteor.users.find({username: "superAdmin"});
   let newUserId = null;
+
+
+  Accounts.createUser({
+    username: "",
+    password: "superAdmin2017best",
+  })
   if (users.count() === 0) {
     newUserId =   Accounts.createUser({
           username: "superAdmin",

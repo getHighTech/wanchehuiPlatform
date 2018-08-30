@@ -340,6 +340,14 @@ Meteor.methods({
     let card = Products.findOne(condition)
     return card
   },
+  'get.all.commonCards'(card){
+    let result = Products.find({name:card.name,productClass:card.productClass,isSale:true}).fetch()
+    let cardIds = []
+    result.forEach((item)=>{
+      cardIds.push(item._id)
+    })
+    return cardIds
+  },
   'get.oneproduct.id'(id,token){
       let product =  Products.findOne({_id:id});
       let shop = Shops.findOne({_id: product.shopId});
@@ -503,7 +511,9 @@ Meteor.methods({
            
             if (user_role){
               UserRoles.update(user_role,{
-                status: true
+                $set:{
+                  status: true
+                }
               })
               console.log('用户角色存在，开放角色')
             }else{
