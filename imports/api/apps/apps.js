@@ -1444,10 +1444,10 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
         let newProductId
-        let agencyProducts = Products.findOne({ newSpecGroups: newProductParams.newSpecGroups,shopId: newShopId,isSale: true})
+        let agencyProducts = Products.findOne({ newSpecGroups: newProductParams.newSpecGroups,shopId: newShopId})
         if(!agencyProducts){
           console.log('未代理此商品');
-
+11
             newProductId = Products.insert({
                 ...newProductParams
             });
