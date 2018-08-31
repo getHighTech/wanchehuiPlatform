@@ -92,11 +92,12 @@ class ShopDetails extends React.Component {
   }
   changeOnline(state,id) {
     let self =this;
+    console.log(state)
         Meteor.call('product.price',id,function(err,alt){
           if (!err) {
            let intprice = alt
            if (intprice!=0) {
-             Meteor.call('product.isSale',id, function(error,result){
+             Meteor.call('product.isSale',state,id, function(error,result){
                if(!error){
                    if (!result.isSale){
                      message.success('商品上架成功！')

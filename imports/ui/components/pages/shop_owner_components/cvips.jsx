@@ -135,19 +135,21 @@ class Cvips extends Component {
             render: (text, record) => {
                 return (record.balance / 100)
             }
-        }, {
-            title: '操作',
-            key: 'show',
-            render: (text, record) => (
-            <span>
-                <Popconfirm title="确定要取消该用户的代理资格，请谨慎操作!" onConfirm={() => this.banUserCard(record._id)} onCancel={this.cancel} okText="Yes" cancelText="No">
-                    <Button>
-                        <span>禁卡</span>
-                    </Button>
-                </Popconfirm>
-            </span>
-            ),
-        }];
+        },
+        //  {
+        //     title: '操作',
+        //     key: 'show',
+        //     render: (text, record) => (
+        //     <span>
+        //         <Popconfirm title="确定要取消该用户的代理资格，请谨慎操作!" onConfirm={() => this.banUserCard(record._id)} onCancel={this.cancel} okText="Yes" cancelText="No">
+        //             <Button>
+        //                 <span>禁卡</span>
+        //             </Button>
+        //         </Popconfirm>
+        //     </span>
+        //     ),
+        // }
+        ];
         const common_vips = this.state.common_vips
         return (
             <div>

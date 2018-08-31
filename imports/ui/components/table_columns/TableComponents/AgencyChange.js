@@ -26,7 +26,6 @@ class AgencyChange extends React.Component {
     const {dispatch, AgencyChange, agencyId} = self.props;
     let userAgency = function(){
       if (self.state.agencyId !=="") {
-        console.log(self.state.agencyId)
         return (
           <UserByAgencyId  agencyId={self.state.agencyId} />
         )
