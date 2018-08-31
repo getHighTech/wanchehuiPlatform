@@ -189,6 +189,7 @@ export function syncUser(userId, stampedToken, appName){
              "$in": ['common_card','advanced_card']
          }}).fetch()
          console.log(`这里`)
+         console.log(`product`)
          console.log(product)
          if(product.length>0) {
              console.log(111)
