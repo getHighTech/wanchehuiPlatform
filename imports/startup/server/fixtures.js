@@ -36,7 +36,7 @@ Meteor.startup(() => {
   // UserRoles.remove({});
   // ProductOwners.remove({});
   // Shops.remove({});
-  prebuildAdmin();//建立超级管理员
+  // prebuildAdmin();//建立超级管理员
   // buildSelfShop();
   // buildBlackCard();//建立黑卡
   
@@ -180,5 +180,12 @@ Meteor.startup(() => {
       //     }
       //   })
       // });
+      // for(let i=1;i<=100;i++) {  
+      //   console.log(i)
+      //   Accounts.createUser({
+      //     username: "user"+i,
+      //     password: "user"+i,
+      //   })
+      // }  
       
 });
