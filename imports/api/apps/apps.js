@@ -23,7 +23,7 @@ export const UserContacts = new Mongo.Collection("user_contacts");
 export function getHomePageProducts(appName) {
     let shop = getUserShop(appName)
     if(shop){
-        let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id,recommend: true},{sort: {createdAt: -1}}).fetch();
+        let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id,recommend: true,isDelete:false},{sort: {createdAt: -1}}).fetch();
         function compare(property){
           return function(a,b){
               var value1 = a[property];
@@ -477,7 +477,7 @@ export function appNewOrder(cartParams, appName){
 
 export function getOneProduct(loginToken, appName, productId,shopId){
         let product = Products.findOne({_id: productId});
-        
+
         if(!product){
             product = Products.findOne({productClass: "common_card", isSale: true, shopId})
         }
@@ -1439,13 +1439,15 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         newShop = Shops.findOne(newShopId);
         let newProductParams = {};
         newProductParams = product;
+        console.log('此商品是：'+product);
         delete newProductParams._id;
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
         let newProductId
-        let agencyProducts = Products.findOne({ name_zh: newProductParams.name_zh,shopId: newShopId, isSale: true})
+        let agencyProducts = Products.findOne({ newSpecGroups: newProductParams.newSpecGroups,shopId: newShopId,isSale: true})
         if(!agencyProducts){
-            console.log("上")
+          console.log('未代理此商品');
+
             newProductId = Products.insert({
                 ...newProductParams
             });
@@ -1458,7 +1460,8 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
                 }
             })
         }
-    
+
+
         //标记被代理的商品
         let agencies = product.agencies;
         if(!agencies){
@@ -1481,7 +1484,7 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
                 agencyShops,
             }
         })
-        // console.log(newProductId);
+        console.log('是否是新的商品'+newProductId);
         if(!newProductId){
             return {
                 type: "error",
