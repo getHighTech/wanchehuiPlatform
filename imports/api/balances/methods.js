@@ -178,7 +178,7 @@ Meteor.methods({
   console.log(shopId)
   console.log(condition)
   let shop = Shops.findOne({ _id: shopId})
-  let appName = shop.appName
+  let appName = shop?shop.appName:'未获取到店铺'
   if (appName ==='wanrenchehui'){
     let result =  BalanceCharges.find({appName: { $exists: false } },{skip: (page - 1) * pageSize, limit: pageSize,
       sort: { "createdAt": -1 },}).fetch();

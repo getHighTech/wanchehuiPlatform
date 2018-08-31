@@ -38,7 +38,7 @@ class Svips extends Component {
                             advanced_card_name: rlt.name_zh,
                             advance_card_id: rlt._id
                         })
-                        Meteor.call('get.vips.count',rlt._id,function(err,rlt){
+                        Meteor.call('get.svips.count',rlt._id,function(err,rlt){
                             if(!err){
                                 self.setState({
                                     totalCount:rlt
@@ -47,7 +47,7 @@ class Svips extends Component {
                         })
                         //找到高级会员卡
                         //查找高级会员卡用户
-                        self.getPageAdvancedVips(rlt._id, 1, 5)
+                        self.getPageAdvancedVips(rlt._id, 1, 20)
                     }
                 })
             }
@@ -142,7 +142,7 @@ class Svips extends Component {
         Meteor.call('product.cardUnbindUser', userId, self.props.advancedCard, function (err, alt) {
             if (!err) {
                 message.success('解除绑定成功')
-                self.getPageAdvancedVips(self.state.advance_card_id, 1, 5)
+                self.getPageAdvancedVips(self.state.advance_card_id, 1, 20)
             } else {
                 message.error(err.error)
             }
@@ -156,10 +156,23 @@ class Svips extends Component {
                 key: 'username',
             },
             {
-                title: '手机号码',
-                dataIndex: 'mobile',
-                key: 'mobile',
-            }
+                title: '销售量',
+                dataIndex: 'sales_volume',
+                key: 'sales_volume',
+            },
+            {
+                title: '销售额',
+                dataIndex: 'sales_value',
+                key: 'sales_value',
+            },
+            {
+                title: '加入时间',
+                dataIndex: 'createdAt',
+                key: 'createdAt',
+                render: (text, record) => {
+                    return (<span>{moment(record.createdAt).format("YYYY-MM-DD HH:mm:ss")}</span>);
+                }
+            },
         ]
         const advanced_columns = [{
             title: '用户名',
@@ -201,7 +214,7 @@ class Svips extends Component {
                     dataSource={advanced_vips}
                     rowKey='_id'
                     pagination={{
-                        defaultPageSize: 5, total: this.state.totalCount,
+                        defaultPageSize: 20, total: this.state.totalCount,
                         onChange: (page, pageSize) => this.handlePageChangeAdvancedVips(page, pageSize),
                         showQuickJumper: true, current: this.state.currentPage
                     }} />

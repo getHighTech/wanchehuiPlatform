@@ -11,11 +11,33 @@ class Cvips extends Component {
             visible: false,
             data: [],
             common_card_id: '',
+            common_card_ids:[],
             common_card_name: '',
             totalCount: 1000,
             currentPage: 1,
             members: [],
         }
+    }
+    //通过本店的会员卡找出所有被代理的会员卡
+    getAllCommonCards(card){
+        let self = this
+        Meteor.call('get.all.commonCards',card,function(err,alt){
+            if(!err){
+                console.log(alt)
+                self.setState({
+                    common_card_ids:alt
+                })
+            Meteor.call('get.cvips.count', alt, function (err, rlt) {
+                if (!err) {
+                    self.setState({
+                        totalCount: rlt
+                    })
+                }
+            })
+            self.getPageCommonVips(alt, 1, 20)
+            }
+        
+        })
     }
     componentDidMount() {
         let self = this
@@ -35,36 +57,30 @@ class Cvips extends Component {
                             common_card_name: rlt.name_zh,
                             common_card_id: rlt._id
                         })
-                        Meteor.call('get.vips.count', rlt._id, function (err, rlt) {
-                            if (!err) {
-                                self.setState({
-                                    totalCount: rlt
-                                })
-                            }
-                        })
-                        self.getPageCommonVips(rlt._id, 1, 5)
+                        self.getAllCommonCards(rlt)                       
                     }
                 })
             }
         })
     }
 
-    getPageCommonVips(productId, page, pageSize) {
+    getPageCommonVips(productIds, page, pageSize) {
         let self = this;
-        Meteor.call("get.commonCard.product.users", productId, page, pageSize, function (error, result) {
+        Meteor.call("get.commonCard.product.users", productIds, page, pageSize, function (error, result) {
             if (!error) {
                 console.log(result)
                 self.setState({
                     common_vips: result,
                     currentPage: page,
                 })
+            
             }
         })
     }
 
     handlePageChangeCommonVips(page, pageSize) {
         $(document).scrollTop(0);
-        this.getPageCommonVips(this.state.common_card_id, page, pageSize);
+        this.getPageCommonVips(this.state.common_card_ids, page, pageSize);
     }
     banUserCard(userId) {
         let self = this
@@ -73,7 +89,7 @@ class Cvips extends Component {
         Meteor.call('product.cardUnbindUser', userId, self.props.commonCard, function (err, alt) {
             if (!err) {
                 message.success('解除绑定成功')
-                self.getPageCommonVips(self.state.advance_card_id, 1, 5)
+                self.getPageCommonVips(self.state.common_card_ids, 1, 20)
             } else {
                 message.error(err.error)
             }
@@ -119,19 +135,21 @@ class Cvips extends Component {
             render: (text, record) => {
                 return (record.balance / 100)
             }
-        }, {
-            title: '操作',
-            key: 'show',
-            render: (text, record) => (
-            <span>
-                <Popconfirm title="确定要取消该用户的代理资格，请谨慎操作!" onConfirm={() => this.banUserCard(record._id)} onCancel={this.cancel} okText="Yes" cancelText="No">
-                    <Button>
-                        <span>禁卡</span>
-                    </Button>
-                </Popconfirm>
-            </span>
-            ),
-        }];
+        },
+        //  {
+        //     title: '操作',
+        //     key: 'show',
+        //     render: (text, record) => (
+        //     <span>
+        //         <Popconfirm title="确定要取消该用户的代理资格，请谨慎操作!" onConfirm={() => this.banUserCard(record._id)} onCancel={this.cancel} okText="Yes" cancelText="No">
+        //             <Button>
+        //                 <span>禁卡</span>
+        //             </Button>
+        //         </Popconfirm>
+        //     </span>
+        //     ),
+        // }
+        ];
         const common_vips = this.state.common_vips
         return (
             <div>
@@ -141,7 +159,7 @@ class Cvips extends Component {
                     dataSource={common_vips}
                     rowKey='_id'
                     pagination={{
-                        defaultPageSize: 5, total: this.state.totalCount,
+                        defaultPageSize: 20, total: this.state.totalCount,
                         onChange: (page, pageSize) => this.handlePageChangeCommonVips(page, pageSize),
                         showQuickJumper: true, current: this.state.currentPage
                     }} />

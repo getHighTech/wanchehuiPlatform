@@ -247,14 +247,27 @@ Meteor.methods({
     }
   },
 
-  'product.isSale'(_id){
-    let Product = Products.findOne({_id:_id})
-    Products.update(_id, {
-      $set: {
-        isSale: !Product.isSale,
-      }
-    });
-    return Product
+  'product.isSale'(state,_id){
+    if(state){
+      console.log('下架商品')
+      let product = Products.findOne({_id:_id})
+      let products = Products.find({name:product.name,newSpecGroups:product.newSpecGroups}).fetch()
+      //当前状态为true,说明是下架商品,应该批量下架所有代理的商品
+      products.forEach((item)=>{
+        console.log('批量下架')
+        Products.update(item, {
+          $set: {
+            isSale: false,
+          }
+        });
+      })
+    }else{
+      Products.update(_id, {
+        $set: {
+          isSale: true,
+        }
+      });
+    }
   },
 
   'product.isSaleFalse'(_id){
@@ -273,11 +286,16 @@ Meteor.methods({
   },
 
   'product.updatePrice'(id,price,endPrice){
-    Products.update(id,{
-      $set:{
-        price:price,
-        endPrice:endPrice
-      }
+    let product = Products.findOne({_id:id})
+    let products = Products.find({name:product.name,newSpecGroups:product.newSpecGroups}).fetch()
+    products.forEach((item)=>{
+      console.log('批量修改价格')
+      Products.update(item, {
+        $set: {
+          price:price,
+          endPrice:endPrice
+        }
+      });
     })
   },
 
@@ -340,6 +358,14 @@ Meteor.methods({
     let card = Products.findOne(condition)
     return card
   },
+  'get.all.commonCards'(card){
+    let result = Products.find({name:card.name,productClass:card.productClass,isSale:true}).fetch()
+    let cardIds = []
+    result.forEach((item)=>{
+      cardIds.push(item._id)
+    })
+    return cardIds
+  },
   'get.oneproduct.id'(id,token){
       let product =  Products.findOne({_id:id});
       let shop = Shops.findOne({_id: product.shopId});
@@ -397,6 +423,31 @@ Meteor.methods({
             }
           }
         })
+      //批量更新商品
+      let products = Products.find({name:old.name,newSpecGroups:old.newSpecGroups}).fetch()
+      products.forEach((item)=>{
+        console.log('批量更新')
+        Products.update(item, {
+          $set: {
+            name_zh: product.name_zh,
+            price: product.price,
+            sales_volume: product.sales_volume,
+            description: product.description,
+            brief: product.brief,
+            image_des: product.image_des,
+            images: product.images,
+            detailsImage: product.detailsImage,
+            cover: product.cover,
+            detailsImage: product.detailsImage,
+            endPrice: product.endPrice,
+            isTool: product.isTool,
+            recommend: product.recommend,
+            agencyLevelPrices: product.agencyPrice,
+            productClass: product.productClass,
+            isAppointment: product.isAppointment
+          }
+        });
+      })
   },
 
   'app.get.recommend.products'(page,pagesize){
@@ -503,7 +554,9 @@ Meteor.methods({
            
             if (user_role){
               UserRoles.update(user_role,{
-                status: true
+                $set:{
+                  status: true
+                }
               })
               console.log('用户角色存在，开放角色')
             }else{
