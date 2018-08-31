@@ -16,8 +16,6 @@ Meteor.methods({
                     orders.forEach((item)=>{
                         sales_value += item.totalAmount
                     })
-                    console.log(sales_value)
-                    console.log(orders_count)
                     item.sales_value = sales_value
                     item.sales_volume = orders_count
                 }
