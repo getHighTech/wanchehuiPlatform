@@ -288,7 +288,6 @@ Meteor.methods({
   'product.updatePrice'(id,price,endPrice){
     let product = Products.findOne({_id:id})
     let products = Products.find({name:product.name,newSpecGroups:product.newSpecGroups}).fetch()
-    //当前状态为true,说明是下架商品,应该批量下架所有代理的商品
     products.forEach((item)=>{
       console.log('批量修改价格')
       Products.update(item, {
