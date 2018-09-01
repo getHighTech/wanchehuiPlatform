@@ -70,7 +70,6 @@ export function findOrCreateBalanceByUser(userId){
     let balanceId = createBlanceByUserId(userId);
     balance = findBalanceById(balanceId);
   }
-  console.log(balance)
   return balance;
 }
 
@@ -98,7 +97,6 @@ export function loseMountFromBalance(balanceId, mount){
   if (!balance) {
     return "BALANCE NOT FOUND IN loseMountFromBalance";
   }
-  console.log(balance);
   let balance_amount = balance.amount;
   if (!balance.amount) {
     balance_amount = 0;

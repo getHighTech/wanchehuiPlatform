@@ -120,8 +120,6 @@ class UploadCoverToCloudinary extends Component {
     // }
     let self = this;
     let cover = nextProps.cover;
-    console.log(cover);
-    console.log(self.state.status);
     if (nextProps.images_state) {
         self.setState({
           status:false

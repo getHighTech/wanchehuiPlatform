@@ -7,7 +7,6 @@ import {Orders} from '../orders/orders'
 Meteor.methods({
   'get.shoporder'(id){
     let aaa= ShopOrders.findOne({orderId:id});
-    console.log('aaa'+aaa);
     if (typeof(aaa)!='undefined') {
       let products =aaa.products;
       for(var i = 0; i<products.length;i++){
@@ -20,7 +19,6 @@ Meteor.methods({
       }
     }else {
       let bbb =ShopOrders.findOne({_id:id});
-      console.log('bbb'+bbb);
       let products =bbb.products;
       for(var i = 0; i<products.length;i++){
         if (products[i].isAppointment==true) {
@@ -34,7 +32,7 @@ Meteor.methods({
   },
   'get.orders.byShopId'(shopId,page,pageSize){
     let shop = Shops.findOne({ _id: shopId})
-    let appName = shop.appName
+    let appName = shop?shop.appName:'未找到店铺'
     if (appName ==='wanrenchehui'){
       let result =  ShopOrders.find({ shopId: shopId, appName: { $exists: false } },{skip: (page - 1) * pageSize, limit: pageSize,
       sort: { "createdAt": -1 },}).fetch();
