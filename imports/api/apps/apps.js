@@ -1436,23 +1436,25 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
           console.log('新店存在');
             newShopId = newShop._id;
         }
+        console.log(newShopId);
         newShop = Shops.findOne(newShopId);
         let newProductParams = {};
         newProductParams = product;
-        console.log('此商品是：'+product);
+        console.log('此商品的商品名：'+product.name);
         delete newProductParams._id;
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
         let newProductId
-        let agencyProducts = Products.findOne({ newSpecGroups: newProductParams.newSpecGroups,shopId: newShopId})
+
+        let agencyProducts = Products.findOne({ newSpecGroups: newProductParams.newSpecGroups,name:newProductParams.name,shopId: newShopId})
         if(!agencyProducts){
           console.log('未代理此商品');
             newProductId = Products.insert({
                 ...newProductParams
             });
         }else{
-            console.log("下")
-            newProductId = Products.update({"_id": agencyProducts._id},
+            console.log("此商品已经代理")
+            let changeisSale = Products.update({"_id": agencyProducts._id},
             {
                 $set: {
                     "isSale": true
