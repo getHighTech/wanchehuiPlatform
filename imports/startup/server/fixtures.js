@@ -191,7 +191,9 @@ Meteor.startup(() => {
       //   })
       // }  
       
-      //兼容万人车汇和鲜至的佣金账户
+
+
+      // 兼容万人车汇和鲜至的佣金账户
       let user1 = Meteor.users.findOne({username:'小马过河'})
       let user2 = Meteor.users.findOne({username:'前台李博'})
       console.log('小马过河账户ID为：',user1._id)
@@ -206,15 +208,17 @@ Meteor.startup(() => {
         if(item._id ==user2._id){
           console.log('前台李博账户剔除失败')
         }
-        let income = BalanceIncomes.findOne({userId:item._id})
-        BalanceIncomes.update(income,{
-          $set:{
-            appName:"xianzhi"
-          }
-        },function(err,alt){
-          if(!err){
-            console.log('给用户收入加上APPNAME,用户名为：',item.username)
-          }
+        let incomes = BalanceIncomes.find({userId:item._id}).fetch()
+        incomes.forEach((income)=>{
+          BalanceIncomes.update(income,{
+            $set:{
+              appName:"xianzhi"
+            }
+          },function(err,alt){
+            if(!err){
+              console.log('给用户收入加上APPNAME,用户名为：',item.username)
+            }
+          })
         })
         let blance = Balances.findOne({userId:item._id})
         Balances.update(blance,{
