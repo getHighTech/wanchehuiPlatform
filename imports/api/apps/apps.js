@@ -1454,12 +1454,16 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
             });
         }else{
             console.log("此商品已经代理")
-            let changeisSale = Products.update({"_id": agencyProducts._id},
-            {
-                $set: {
-                    "isSale": true
-                }
-            })
+            if (agencyProducts.isSale!=true) {
+              console.log('此商品为下架');
+              newProductId = Products.update({"_id": agencyProducts._id},
+              {
+                  $set: {
+                      "isSale": true
+                  }
+              })
+            }
+
         }
 
 
