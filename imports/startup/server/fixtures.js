@@ -2,6 +2,9 @@
 import { Meteor } from 'meteor/meteor';
 import { prebuildAdmin } from './roles_fixture.js';
 import { BalanceIncomes } from '/imports/api/balances/balance_incomes.js';
+import { Balances } from '/imports/api/balances/balances.js';
+import { BalanceCharges } from '/imports/api/balances/balance_charges.js';
+
 import { checkAgencies } from '/imports/api/agencies/checkAgencies.js'
 import {buildSelfShop} from '/imports/api/shops/buildSelfShop.js'
 import {buildBlackCard} from '/imports/api/products/buildBlackCard.js'
@@ -188,4 +191,100 @@ Meteor.startup(() => {
       //   })
       // }  
       
+
+
+      // 兼容万人车汇和鲜至的佣金账户
+      let user1 = Meteor.users.findOne({username:'小马过河'})
+      let user2 = Meteor.users.findOne({username:'前台李博'})
+      console.log('小马过河账户ID为：',user1._id)
+      console.log('前台李博账户ID为：',user2._id)
+      let users = Meteor.users.find({_id:{$nin:[user1._id,user2._id]},visited:{$exists: true}}).fetch()
+      console.log('登陆过鲜至的用户个数为:',users.length)
+    
+      users.forEach(item => {
+        if(item._id ==user1._id){
+          console.log('小马过河账户剔除失败')
+        }
+        if(item._id ==user2._id){
+          console.log('前台李博账户剔除失败')
+        }
+        let incomes = BalanceIncomes.find({userId:item._id}).fetch()
+        incomes.forEach((income)=>{
+          BalanceIncomes.update(income,{
+            $set:{
+              appName:"xianzhi"
+            }
+          },function(err,alt){
+            if(!err){
+              console.log('给用户收入加上APPNAME,用户名为：',item.username)
+            }
+          })
+        })
+        let blance = Balances.findOne({userId:item._id})
+        Balances.update(blance,{
+          $set:{
+            appName:"xianzhi"
+          }
+        },function(err,alt){
+          if(!err){
+            console.log('给用户账户加上appName,用户名为：',item.username)
+          }
+        })
+      });
+      let maBlanceIncomes = BalanceIncomes.find({'userId':'znz5tYpY3EhCbKX4k'},{sort: {createdAt: -1},limit:20}).fetch()
+      let  maIncome = 0
+      maBlanceIncomes.forEach(item => {
+        maIncome += item.amount
+        console.log('单次收入为：',item.amount)
+        console.log('总收入为：',maIncome)
+        BalanceIncomes.update(item,{
+          $set:{
+            appName:"xianzhi"
+          }
+        },function(err,alt){
+          if(!err){
+            console.log('给马哥收入加上APPNAME')
+          }
+        })
+      });
+       Balances.insert({
+        userId: user1._id,
+        amount: maIncome,
+        createdAt: new Date(),
+        appName:'xianzhi'
+      });
+      Balances.insert({
+        userId: user2._id,
+        amount: 0,
+        createdAt: new Date(),
+        appName:'xianzhi'
+      });
+
+      //
+      let user3 = Meteor.users.findOne({username:'13751124249'})
+      console.log('修复淋太提现NAN',user3._id)
+      let charges = BalanceCharges.find({userId:user3._id}).fetch()
+      charges.forEach(item => {
+        BalanceCharges.update(item,{
+          $set:{
+            money:0
+          }
+        },function(err,alt){
+          console.log('将提现记录修复为提现金额为0')
+        })
+      });
+      let duanBlanceIncomes = BalanceIncomes.find({'userId':user3._id}).fetch()
+      let  duanIncome = 0
+      duanBlanceIncomes.forEach(item => {
+        duanIncome += item.amount
+
+        console.log('段单次收入为：',item.amount)
+        console.log('段总收入为：',duanIncome)
+      });
+      let duanBlance = Balances.findOne({userId:user3._id})
+      Balances.update(duanBlance,{
+        $set:{
+          amount: duanIncome
+        }
+      });
 });
