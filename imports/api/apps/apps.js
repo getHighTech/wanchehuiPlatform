@@ -1256,7 +1256,7 @@ export function cancelOrder(loginToken, appName, orderId,userId) {
                 reason: "ORDER NOT FOUND",
             }
         }else{
-            orders_confirmed = Orders.find({userId,status: "confirmed"}).fetch()
+            orders_confirmed = Orders.find({userId,status: "confirmed",appName:appName}).fetch()
             return {
                 type: "orders",
                 msg: {
@@ -1272,27 +1272,28 @@ export function cancelOrder(loginToken, appName, orderId,userId) {
 
 export function collectOrder(loginToken, appName, orderId,userId) {
     return  getUserInfo(loginToken, appName, "orders", function(){
-        order = Orders.update(orderId,{
+        order = Orders.update({_id: orderId,appName:appName},{
             $set:{
                 status: 'recevied'
             }
         })
-        shop_order=ShopOrders.update({orderId:orderId},{
-          $set:{
-              status: 'recevied'
-          }
+        ShopOrders.update({'orderId': orderId,appName:appName},{
+            $set:{
+                status: 'recevied'
+            }
         })
-        console.log(order);
+
         if(!order || order.lenght === 0){
             return {
                 type: "error",
                 reason: "ORDER NOT FOUND",
             }
         }else{
+            orders_paid = Orders.find({userId,status: "paid",appName:appName}).fetch()
             return {
                 type: "orders",
                 msg: {
-                    order
+                    orders_paid
                 }
             }
         }
@@ -1455,12 +1456,16 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
             });
         }else{
             console.log("此商品已经代理")
-            let changeisSale = Products.update({"_id": agencyProducts._id},
-            {
-                $set: {
-                    "isSale": true
-                }
-            })
+            if (agencyProducts.isSale!=true) {
+              console.log('此商品为下架');
+              newProductId = Products.update({"_id": agencyProducts._id},
+              {
+                  $set: {
+                      "isSale": true
+                  }
+              })
+            }
+
         }
 
 
