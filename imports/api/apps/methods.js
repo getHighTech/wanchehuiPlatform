@@ -113,7 +113,7 @@ Meteor.methods({
             }
         }
         console.log(appName);
-        
+
         let apikey = "11bd70b637fe474bcb617e691a5fba3d";
         if(appName == "xianzhi"){
             apikey = "05856ec439f15fa13b935f89988cf4d2";
@@ -127,7 +127,7 @@ Meteor.methods({
         if(appName === "xianzhi"){
             text = "【鲜至臻品】感谢使用鲜至臻品，您的验证码是"+num+"，让我们一起开启寻臻之旅。如非本人操作，请忽略本短信。"
         }
-        
+
         let uri = "https://sms.yunpian.com/v2/sms/single_send.json";
         let res = null
           try{
@@ -233,7 +233,6 @@ Meteor.methods({
     },
 
         "app.sync.remote.cart.local"(loginToken, appName,userId, cartId){
-
             let stampedTokenObj = JSON.parse(loginToken);
 
             let rltObj = syncRemoteCartToLocal(stampedTokenObj, appName, userId, cartId);
