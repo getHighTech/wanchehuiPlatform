@@ -261,9 +261,12 @@ Meteor.startup(() => {
       // });
 
       // //
+
       // let user4 = Meteor.users.findOne({username:'13540844297'})
       // console.log('修复淋太提现NAN',user4._id)
       // let charges = BalanceCharges.find({userId:user4._id}).fetch()
+
+
       // charges.forEach(item => {
       //   BalanceCharges.update(item,{
       //     $set:{

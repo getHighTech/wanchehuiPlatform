@@ -1266,7 +1266,7 @@ export function cancelOrder(loginToken, appName, orderId,userId) {
                 reason: "ORDER NOT FOUND",
             }
         }else{
-            orders_confirmed = Orders.find({userId,status: "confirmed"}).fetch()
+            orders_confirmed = Orders.find({userId,status: "confirmed",appName:appName}).fetch()
             return {
                 type: "orders",
                 msg: {
@@ -1282,27 +1282,28 @@ export function cancelOrder(loginToken, appName, orderId,userId) {
 
 export function collectOrder(loginToken, appName, orderId,userId) {
     return  getUserInfo(loginToken, appName, "orders", function(){
-        order = Orders.update(orderId,{
+        order = Orders.update({_id: orderId,appName:appName},{
             $set:{
                 status: 'recevied'
             }
         })
-        shop_order=ShopOrders.update({orderId:orderId},{
-          $set:{
-              status: 'recevied'
-          }
+        ShopOrders.update({'orderId': orderId,appName:appName},{
+            $set:{
+                status: 'recevied'
+            }
         })
-        console.log(order);
+
         if(!order || order.lenght === 0){
             return {
                 type: "error",
                 reason: "ORDER NOT FOUND",
             }
         }else{
+            orders_paid = Orders.find({userId,status: "paid",appName:appName}).fetch()
             return {
                 type: "orders",
                 msg: {
-                    order
+                    orders_paid
                 }
             }
         }
