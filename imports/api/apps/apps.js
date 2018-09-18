@@ -241,6 +241,17 @@ export function findOneAppByName(name){
             });
         }
     }
+    if (name === "test_appointment") {
+        if (Apps.find(name).count() === 0) {
+            Apps.insert({
+                name,
+                name_zh: "测试预约",
+                domain: "test3.10000cars.cn",
+                // testDomain: "test1.10000cars.cn",
+                breif: "测试预约"
+            });
+        }
+    }
     return Apps.findOne({name});
 }
 
