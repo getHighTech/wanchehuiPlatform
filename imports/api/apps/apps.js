@@ -1445,6 +1445,8 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
         let newProductId
+        console.log(`这是啥`)
+        console.log()
         let agencyProducts = Products.findOne({ newSpecGroups: newProductParams.newSpecGroups,shopId: newShopId})
         if(!agencyProducts){
           console.log('未代理此商品');
@@ -1453,6 +1455,7 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
             });
         }else{
             console.log("下")
+            console.log(agencyProducts._id)
             newProductId = Products.update({"_id": agencyProducts._id},
             {
                 $set: {
@@ -1595,4 +1598,26 @@ export function cancelAgencyProduct(loginToken,appName,shopId, productId){
 
     });
 
+}
+
+export function changePasswordAccount(loginToken,appName,userId,password,newPassword){
+    return getUserInfo(loginToken, appName,userId, function(){
+        //    let user = Accounts.changePassword(password,newPassword)
+       let user = Meteor.users.findOne({_id: userId})
+       let pwd = Accounts._checkPassword(user,password)
+       let checkPassowrStatus = pwd.hasOwnProperty('error')
+        // let user = Accounts.setPassword(userId, newPassword)
+        if(checkPassowrStatus){
+            return {
+                    type: "password",
+                    msg: "password wrong"
+                }
+        }else {
+           let newuser = Accounts.setPassword(user,newPassword,[])
+           return {
+                type: "password",
+                msg:  "password success"
+           }
+        }
+    })
 }

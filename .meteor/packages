@@ -32,7 +32,7 @@ lookback:emoji
 khrone:img-qrcode
 http@1.4.1
 cfs:http-methods
-dynamic-import@0.4.0
+dynamic-import@0.4.2
 react-meteor-data
 nimble:restivus
 pfafman:filesaver

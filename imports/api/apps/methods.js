@@ -31,6 +31,7 @@ import {
     agencyProducts,
     getMyTeam,
     cancelAgencyProduct,
+    changePasswordAccount,
 } from './apps';
 
 Meteor.methods({
@@ -413,6 +414,14 @@ Meteor.methods({
             let rltObj = cancelAgencyProduct(stampedTokenObj, appName, productId,shopId);
             return Object.assign({}, rltObj, {
                 fromMethod: 'app.cancel.agency.product'
+            })
+        },
+        "app.change.password"(loginToken, appName, userId, password, newPassword){
+            console.log(`userId: ${userId},password: ${password},newPassword: ${newPassword}`)
+            let stampedTokenObj = JSON.parse(loginToken);
+            let rltObj = changePasswordAccount(stampedTokenObj, appName, userId, password, newPassword);
+            return Object.assign({}, rltObj, {
+                fromMethod: 'app.change.password'
             })
         },
 });
