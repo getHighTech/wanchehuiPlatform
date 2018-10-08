@@ -242,6 +242,17 @@ export function findOneAppByName(name){
             });
         }
     }
+    if (name === "test_appointment") {
+        if (Apps.find(name).count() === 0) {
+            Apps.insert({
+                name,
+                name_zh: "测试预约",
+                domain: "test3.10000cars.cn",
+                // testDomain: "test1.10000cars.cn",
+                breif: "测试预约"
+            });
+        }
+    }
     return Apps.findOne({name});
 }
 
@@ -1256,7 +1267,7 @@ export function cancelOrder(loginToken, appName, orderId,userId) {
                 reason: "ORDER NOT FOUND",
             }
         }else{
-            orders_confirmed = Orders.find({userId,status: "confirmed"}).fetch()
+            orders_confirmed = Orders.find({userId,status: "confirmed",appName:appName}).fetch()
             return {
                 type: "orders",
                 msg: {
@@ -1272,27 +1283,28 @@ export function cancelOrder(loginToken, appName, orderId,userId) {
 
 export function collectOrder(loginToken, appName, orderId,userId) {
     return  getUserInfo(loginToken, appName, "orders", function(){
-        order = Orders.update(orderId,{
+        order = Orders.update({_id: orderId,appName:appName},{
             $set:{
                 status: 'recevied'
             }
         })
-        shop_order=ShopOrders.update({orderId:orderId},{
-          $set:{
-              status: 'recevied'
-          }
+        ShopOrders.update({'orderId': orderId,appName:appName},{
+            $set:{
+                status: 'recevied'
+            }
         })
-        console.log(order);
+
         if(!order || order.lenght === 0){
             return {
                 type: "error",
                 reason: "ORDER NOT FOUND",
             }
         }else{
+            orders_paid = Orders.find({userId,status: "paid",appName:appName}).fetch()
             return {
                 type: "orders",
                 msg: {
-                    order
+                    orders_paid
                 }
             }
         }
@@ -1437,23 +1449,30 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
           console.log('新店存在');
             newShopId = newShop._id;
         }
+        console.log(newShopId);
         newShop = Shops.findOne(newShopId);
         let newProductParams = {};
         newProductParams = product;
-        console.log('此商品是：'+product);
+        console.log('此商品的商品名：'+product.name);
         delete newProductParams._id;
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
         let newProductId
+<<<<<<< HEAD
         console.log(`这是啥`)
         console.log()
         let agencyProducts = Products.findOne({ newSpecGroups: newProductParams.newSpecGroups,shopId: newShopId})
+=======
+
+        let agencyProducts = Products.findOne({ newSpecGroups: newProductParams.newSpecGroups,name:newProductParams.name,shopId: newShopId})
+>>>>>>> 4639840af603023f30d6c139a54a910ab7898b60
         if(!agencyProducts){
           console.log('未代理此商品');
             newProductId = Products.insert({
                 ...newProductParams
             });
         }else{
+<<<<<<< HEAD
             console.log("下")
             console.log(agencyProducts._id)
             newProductId = Products.update({"_id": agencyProducts._id},
@@ -1462,6 +1481,19 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
                     "isSale": true
                 }
             })
+=======
+            console.log("此商品已经代理")
+            if (agencyProducts.isSale!=true) {
+              console.log('此商品为下架');
+              newProductId = Products.update({"_id": agencyProducts._id},
+              {
+                  $set: {
+                      "isSale": true
+                  }
+              })
+            }
+
+>>>>>>> 4639840af603023f30d6c139a54a910ab7898b60
         }
 
 
