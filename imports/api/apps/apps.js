@@ -1458,30 +1458,14 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
         newProductParams.shopId = newShopId;
         newProductParams.createdAt = new Date();
         let newProductId
-<<<<<<< HEAD
-        console.log(`这是啥`)
-        console.log()
-        let agencyProducts = Products.findOne({ newSpecGroups: newProductParams.newSpecGroups,shopId: newShopId})
-=======
 
         let agencyProducts = Products.findOne({ newSpecGroups: newProductParams.newSpecGroups,name:newProductParams.name,shopId: newShopId})
->>>>>>> 4639840af603023f30d6c139a54a910ab7898b60
         if(!agencyProducts){
           console.log('未代理此商品');
             newProductId = Products.insert({
                 ...newProductParams
             });
         }else{
-<<<<<<< HEAD
-            console.log("下")
-            console.log(agencyProducts._id)
-            newProductId = Products.update({"_id": agencyProducts._id},
-            {
-                $set: {
-                    "isSale": true
-                }
-            })
-=======
             console.log("此商品已经代理")
             if (agencyProducts.isSale!=true) {
               console.log('此商品为下架');
@@ -1493,7 +1477,6 @@ export function agencyOneProduct(loginToken, appName, product, userId, appNameSh
               })
             }
 
->>>>>>> 4639840af603023f30d6c139a54a910ab7898b60
         }
 
 
