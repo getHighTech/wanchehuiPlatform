@@ -5,21 +5,22 @@ import React from "react";
 import { connect } from 'react-redux';
 import { createContainer } from 'meteor/react-meteor-data';
 import 'antd/lib/card/style';
-import { Table ,Divider,Input} from 'antd';
+import {Table ,Divider,Input} from 'antd';
 import "antd/lib/icon/style";
 import { Select } from 'antd';
 import { Modal } from 'antd';
 import Button from 'antd/lib/button';
 import "antd/lib/button/style";
 import { Roles } from '/imports/api/roles/roles.js';
-const Option = Select.Option;
+
 import { Radio } from 'antd';
 import { editOrderStatus } from '/imports/ui/actions/order_status.js';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style';
 import { Spin } from 'antd';
 import { push } from 'react-router-redux';
-const RadioGroup = Radio.Group;
+
+const Option = Select.Option;
 
 class OrdersForShop extends React.Component {
     constructor(props) {
@@ -261,6 +262,14 @@ class OrdersForShop extends React.Component {
             trackingNumber: e.target.value
         })
     }
+    getDefaultValue(record){
+        console.log(record)
+        console.log('获取初始订单状态')
+        return {
+            label:record.status_zh,
+            value:record.status
+        }
+    }
     
     render() {
         const { getStatus } = this.props
@@ -315,11 +324,13 @@ class OrdersForShop extends React.Component {
             { title: '状态', dataIndex: 'allStatus', key: 'allStatus',
             width: 100,
             render: (text, record) => {
+
                 // return (<span>{record.status_zh}</span>);
                 return (
-                    <Select labelInValue defaultValue={{ key: record.status, label: record.status_zh, }} style={{ width: 120 }} onChange={(value)=>this.handleStatusChange(value,record)} onFocus={()=>this.onFocus(record.allStatus)} notFoundContent="没有转移状态">
-                    {children}
-                </Select>
+                    <Select labelInValue value={this.getDefaultValue(record)} style={{ width: 120 }} onChange={(value)=>this.handleStatusChange(value,record)} onFocus={()=>this.onFocus(record.allStatus)} notFoundContent="没有转移状态">
+                        {children}
+                    </Select>
+
                 )
             }  },
             {

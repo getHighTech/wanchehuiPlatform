@@ -261,9 +261,12 @@ Meteor.startup(() => {
       // });
 
       // //
-      // let user3 = Meteor.users.findOne({username:'13751124249'})
-      // console.log('修复淋太提现NAN',user3._id)
-      // let charges = BalanceCharges.find({userId:user3._id}).fetch()
+
+      // let user4 = Meteor.users.findOne({username:'13540844297'})
+      // console.log('修复淋太提现NAN',user4._id)
+      // let charges = BalanceCharges.find({userId:user4._id}).fetch()
+
+
       // charges.forEach(item => {
       //   BalanceCharges.update(item,{
       //     $set:{
@@ -273,7 +276,7 @@ Meteor.startup(() => {
       //     console.log('将提现记录修复为提现金额为0')
       //   })
       // });
-      // let duanBlanceIncomes = BalanceIncomes.find({'userId':user3._id}).fetch()
+      // let duanBlanceIncomes = BalanceIncomes.find({'userId':user4._id}).fetch()
       // let  duanIncome = 0
       // duanBlanceIncomes.forEach(item => {
       //   duanIncome += item.amount
@@ -281,10 +284,22 @@ Meteor.startup(() => {
       //   console.log('段单次收入为：',item.amount)
       //   console.log('段总收入为：',duanIncome)
       // });
-      // let duanBlance = Balances.findOne({userId:user3._id})
+      // let duanBlanceCharges = BalanceCharges.find({'userId':user4._id,appName:'xianzhi',status:'paid'}).fetch()
+      // let  duanCharges = 0
+      // duanBlanceCharges.forEach(item => {
+      //     if(isNaN(item.money)){
+      //       // console.log('NaN')
+      //       item.money = 0
+      //     }
+      //     duanCharges += item.money
+      //   console.log('段单次支出为：',item.money)
+      //   console.log('段总支出为：',duanCharges)
+      // });
+      // let duanBlance = Balances.findOne({userId:user4._id})
+      // let duanBlanceAmount = duanIncome - duanCharges
       // Balances.update(duanBlance,{
       //   $set:{
-      //     amount: duanIncome
+      //     amount: duanBlanceAmount
       //   }
       // });
 });

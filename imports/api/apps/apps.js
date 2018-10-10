@@ -190,6 +190,7 @@ export function syncUser(userId, stampedToken, appName){
              "$in": ['common_card','advanced_card']
          }}).fetch()
          console.log(`这里`)
+         console.log(`product`)
          console.log(product)
          if(product.length>0) {
              console.log(111)
@@ -239,6 +240,17 @@ export function findOneAppByName(name){
                 domain: "xianzhi.10000cars.cn",
                 // testDomain: "test1.10000cars.cn",
                 breif: "专注卖农产品"
+            });
+        }
+    }
+    if (name === "test_appointment") {
+        if (Apps.find(name).count() === 0) {
+            Apps.insert({
+                name,
+                name_zh: "测试预约",
+                domain: "test3.10000cars.cn",
+                // testDomain: "test1.10000cars.cn",
+                breif: "测试预约"
             });
         }
     }
@@ -1602,4 +1614,26 @@ export function cancelAgencyProduct(loginToken,appName,shopId, productId){
 
     });
 
+}
+
+export function changePasswordAccount(loginToken,appName,userId,password,newPassword){
+    return getUserInfo(loginToken, appName,userId, function(){
+        //    let user = Accounts.changePassword(password,newPassword)
+       let user = Meteor.users.findOne({_id: userId})
+       let pwd = Accounts._checkPassword(user,password)
+       let checkPassowrStatus = pwd.hasOwnProperty('error')
+        // let user = Accounts.setPassword(userId, newPassword)
+        if(checkPassowrStatus){
+            return {
+                    type: "password",
+                    msg: "password wrong"
+                }
+        }else {
+           let newuser = Accounts.setPassword(user,newPassword,[])
+           return {
+                type: "password",
+                msg:  "password success"
+           }
+        }
+    })
 }
