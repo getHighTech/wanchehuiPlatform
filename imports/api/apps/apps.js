@@ -33,7 +33,6 @@ export function getHomePageProducts(appName) {
           }
       }
       products.sort(compare('endPrice'))
-      console.log(products.length);
       var newproducts = [];
       for(var i=0;i<products.length;i++){
       　　var flag = true;

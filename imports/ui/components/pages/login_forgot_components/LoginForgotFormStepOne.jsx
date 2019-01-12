@@ -74,6 +74,7 @@ class LoginForgotFormStepOneWrap extends Component {
           }
           Meteor.call("role.by.username", values.userName, function(error, result){
             if (!error) {
+              console.log(result);
               if (!result) {
                 message.warning('此用户并不存在!');
                 return false;
