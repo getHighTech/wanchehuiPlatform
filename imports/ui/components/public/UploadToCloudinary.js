@@ -47,6 +47,7 @@ class UploadToCloudinary extends Component {
         return false;
       }
       for (var i = 0; i < files.length; i++) {
+        console.log(files[i]);
         this.uploadFile(files[i]); // call the function to upload the file
       }
     }
@@ -85,7 +86,7 @@ class UploadToCloudinary extends Component {
             }else{
                 this.refs.gallery.appendChild(img)
             }
-           
+
           }
         };
         fd.append('upload_preset', unsignedUploadPreset);
@@ -105,9 +106,9 @@ class UploadToCloudinary extends Component {
 
     }
 
- 
 
-    
+
+
     childMethod = () => alert('xiaohesong')
 
     // componentWillReceiveProps(nextProps){
@@ -152,7 +153,7 @@ class UploadToCloudinary extends Component {
         let self = this
         if (single) {
             images = <img src={initUrl} width={250}/>;
-        } 
+        }
         else if (initUrl !== undefined && initUrl.length>0){
             for (let i = 0; i < initUrl.length; i++) {
                 images.push(<img src={initUrl[i]}   onClick={(e)=> self.click(e)}  width={250} />)

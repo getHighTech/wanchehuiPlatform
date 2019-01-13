@@ -1,11 +1,13 @@
 import { Roles } from './roles.js';
 
-import {getUserByUsername} from '/imports/api/users/actions.js'
+import {getUserByUsername} from '/imports/api/users/basic_actions.js'
 
 export function getRoleByUsername(username){
 //根据用户名获取角色
   let user = getUserByUsername(username);
+  console.log('打印用户'+user.username);
   if (user === undefined) {
+    console.log('走了这');
     return null;
   }
   return Roles.findOne({_id: user.roleId});

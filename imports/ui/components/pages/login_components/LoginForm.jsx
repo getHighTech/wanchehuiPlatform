@@ -172,6 +172,8 @@ class LoginWrap extends Component {
               <Checkbox>记住我</Checkbox>
             )}
             <Link className="login-form-forgot" to="/login/forgot">忘记密码</Link>
+            <br/><br/>
+            <Link className="login-form-forgot" to="/login/signup">注册账号</Link>
             <Button type="primary" htmlType="submit" className="login-form-button">
               登录
             </Button>

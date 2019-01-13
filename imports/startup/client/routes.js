@@ -6,6 +6,7 @@ import { syncHistoryWithStore} from 'react-router-redux';
 import MainLayout from '/imports/ui/components/layouts/MainLayout';
 import Login from '/imports/ui/components/pages/Login';
 import LoginForgot from '/imports/ui/components/pages/LoginForgot';
+import SignupForm from '/imports/ui/components/pages/SignupForm';
 import Users from '/imports/ui/components/pages/Users';
 import Shops from '/imports/ui/components/pages/Shops';
 import SingleShop from '/imports/ui/components/pages/SingleShop';
@@ -56,7 +57,7 @@ const Routes = ({ location }) =>
       {/* <IndexRoute component={DashBoard} /> */}
       {/* 以下一组路由不同的角色访问不同的组件 */}
       <Route component={CheckRoles}>
-     
+
         <Route path="/orders" component={{superAdmin:Orders,commonUser:OrdersForShop}} />
         <Route path="/users" component={{ superAdmin: Users, commonUser: UsersForShop }} />
           <Route path="/withdrawals" component={{ superAdmin: Withdrawals, commonUser: withdrawalsForShop }} />
@@ -80,11 +81,12 @@ const Routes = ({ location }) =>
       <Route path="/productclass" component={ProductClass}/>
       <Route path="/cards" component={Cards}/>
       <Route path="/vips" component={Vips} />
-      <Route path="/svips" component={Svips} /> 
+      <Route path="/svips" component={Svips} />
       <Route path="/cvips" component={Cvips} />
     </Route>
     <Route path="/login" component={Login}/>
     <Route path="/login/forgot" component={LoginForgot}/>
+    <Route path="/login/signup" component={SignupForm}/>
     <Route path="/new_member/apply" component={NewMemberApply}/>
     <Route path="/new_member/apply/confirm" component={NewMemberApplyConfirm}/>
     {/* <Route path="/*" component={Login}/> */}

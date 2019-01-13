@@ -23,6 +23,7 @@ export const UserContacts = new Mongo.Collection("user_contacts");
 export function getHomePageProducts(appName) {
     let shop = getUserShop(appName)
     if(shop){
+
         let products = Products.find({$nor: [{productClass: "advanced_card"}],isSale: true, shopId: shop._id,recommend: true,isDelete: {$exists: false}},{sort: {createdAt: -1}}).fetch();
         function compare(property){
           return function(a,b){
@@ -32,7 +33,6 @@ export function getHomePageProducts(appName) {
           }
       }
       products.sort(compare('endPrice'))
-      console.log(products.length);
       var newproducts = [];
       for(var i=0;i<products.length;i++){
       　　var flag = true;
