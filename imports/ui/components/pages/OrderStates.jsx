@@ -28,11 +28,11 @@ const CollectionCreateForm = Form.create()(
                 <Input  placeholder="请填写中文名，不超过26个字符" />
               )}
             </FormItem>
-            <FormItem label="英文标识">
+              <FormItem label="英文标识">
               {getFieldDecorator('name', {
                   rules: [{ required: true, message: '英文标识必须填写' }],
                 })(
-                  <Input   placeholder="请填写英文名，不超过26个字符" />
+                  <Input   placeholder="请填写英文名，不超过26个字符"/>
                 )}
             </FormItem>
           </Form>
@@ -105,7 +105,7 @@ const StateRelationShipCreateForm = Form.create()(
 class OrderStates extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       visible: false,
       relationVisible:false,
       allStatus:[],
@@ -154,7 +154,7 @@ class OrderStates extends Component {
           message.error(err.error);
         }
       })
-     
+
     });
   }
 
@@ -235,8 +235,8 @@ class OrderStates extends Component {
   }
   cancel(e) {
   }
-  
-  render() { 
+
+  render() {
     const columns = [
       {title:'起点状态',width:200,dataIndex:'sFrom',key:'sFrom'},
       {title:'终点状态',width:200,dataIndex:'sTo',key:'sTo'},
@@ -252,12 +252,13 @@ class OrderStates extends Component {
                     <Button shape="circle" icon="delete" ></Button>
                   </Tooltip>
                 </Popconfirm>
+
             </span>
           )
         }
       },
     ]
-    return ( 
+    return (
       <div>
         <Button type="primary" icon="plus"  onClick={this.showModal}>增加新状态</Button>
         <CollectionCreateForm
@@ -266,8 +267,9 @@ class OrderStates extends Component {
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}
         />
-        
+
         <Button type="primary" icon="tool"  onClick={this.showRelationModal}>设置状态关系</Button>
+
         <StateRelationShipCreateForm
           wrappedComponentRef={this.saveRelationFormRef}
           visible={this.state.relationVisible}
@@ -277,7 +279,7 @@ class OrderStates extends Component {
         />
         <br /><br />
         <Input.Search
-              placeholder="搜索关系相关"
+              placeholder="搜索关系"
               onSearch={value => console.log(value)}
               size="large"
               style={{ width: '75%' }}
@@ -290,8 +292,5 @@ class OrderStates extends Component {
      );
   }
 }
- 
+
 export default OrderStates;
-
-
-
