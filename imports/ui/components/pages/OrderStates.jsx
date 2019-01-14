@@ -14,39 +14,25 @@ const CollectionCreateForm = Form.create()(
       return (
         <Modal
           visible={visible}
-          title="添加新用户"
+          title="新增订单状态"
           okText="确定"
           cancelText="取消"
           onCancel={onCancel}
           onOk={onCreate}
         >
           <Form layout="vertical">
-            <FormItem label="用户名">
+            <FormItem label="状态名字">
               {getFieldDecorator('name_zh', {
                 rules: [{ required: true, message: '状态名字必须填写' }],
               })(
-                <Input  placeholder="请填写用户名" />
+                <Input  placeholder="请填写中文名，不超过26个字符" />
               )}
             </FormItem>
-              <FormItem label="电话">
-                {getFieldDecorator('name_zha', {
-                  rules: [{ required: true, message: '状态名字必须填写' }],
-                })(
-                  <Input  placeholder="请填写电话号码" />
-                )}
-              </FormItem>
-                <FormItem label="地址">
-                  {getFieldDecorator('name_zhd', {
-                    rules: [{ required: true, message: '状态名字必须填写' }],
-                  })(
-                    <Input  placeholder="请填写地址"/>
-                  )}
-                </FormItem>
-            <FormItem label="邮箱">
+              <FormItem label="英文标识">
               {getFieldDecorator('name', {
                   rules: [{ required: true, message: '英文标识必须填写' }],
                 })(
-                  <Input   placeholder="请填写邮箱"/>
+                  <Input   placeholder="请填写英文名，不超过26个字符"/>
                 )}
             </FormItem>
           </Form>
@@ -226,7 +212,7 @@ class OrderStates extends Component {
   handleSearchInput(str){
     let self = this ;
     let condition = {$or: [{sFrom:eval("/"+str+"/")},{sTo:eval("/"+str+"/")}]};
-    Meteor.call('get.user.byCondition',condition,function(err,alt){
+    Meteor.call('get.OrderState.byCondition',condition,function(err,alt){
       if (!err) {
         console.log(alt);
         self.setState({
@@ -238,7 +224,7 @@ class OrderStates extends Component {
   confirm(id) {
     console.log(id);
     let self = this
-    Meteor.call('delete.user_access',id,function(err,alt){
+    Meteor.call('delete.order_status_access',id,function(err,alt){
       if(!err){
         message.success('删除成功')
         self.getDataSource();
@@ -252,10 +238,8 @@ class OrderStates extends Component {
 
   render() {
     const columns = [
-      {title:'用户名',width:200,dataIndex:'sFrom',key:'sFrom'},
-      {title:'电话',width:200,dataIndex:'sNumber',key:'sTo'},
-      {title:'地址',width:200,dataIndex:'sTo',key:'sFrom'},
-      {title:'邮箱',width:200,dataIndex:'sEmail',key:'sTo'},
+      {title:'起点状态',width:200,dataIndex:'sFrom',key:'sFrom'},
+      {title:'终点状态',width:200,dataIndex:'sTo',key:'sTo'},
       {
         title: '状态操作',
         key: 'action',
@@ -263,17 +247,12 @@ class OrderStates extends Component {
         render: (text,record) => {
           return(
             <span>
-              <Popconfirm title="是否删除该用户" onConfirm={ () => this.confirm(record._id)} onCancel={this.cancel} okText="是" cancelText="否">
+              <Popconfirm title="确定删除该状态关系?" onConfirm={ () => this.confirm(record._id)} onCancel={this.cancel} okText="是" cancelText="否">
                   <Tooltip placement="topLeft" title="删除" arrowPointAtCenter>
                     <Button shape="circle" icon="delete" ></Button>
                   </Tooltip>
                 </Popconfirm>
 
-                <Popconfirm  onConfirm={ () => this.confirm(record._id)} onCancel={this.cancel} okText="是" cancelText="否">
-                    <Tooltip placement="topLeft" title="编辑" arrowPointAtCenter>
-                      <Button shape="circle" icon="edit" ></Button>
-                    </Tooltip>
-                  </Popconfirm>
             </span>
           )
         }
@@ -281,13 +260,15 @@ class OrderStates extends Component {
     ]
     return (
       <div>
-        <Button type="primary" icon="plus"  onClick={this.showModal}>增加新用户</Button>
+        <Button type="primary" icon="plus"  onClick={this.showModal}>增加新状态</Button>
         <CollectionCreateForm
           wrappedComponentRef={this.saveFormRef}
           visible={this.state.visible}
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}
         />
+
+        <Button type="primary" icon="tool"  onClick={this.showRelationModal}>设置状态关系</Button>
 
         <StateRelationShipCreateForm
           wrappedComponentRef={this.saveRelationFormRef}
@@ -298,7 +279,7 @@ class OrderStates extends Component {
         />
         <br /><br />
         <Input.Search
-              placeholder="搜索用户"
+              placeholder="搜索关系"
               onSearch={value => console.log(value)}
               size="large"
               style={{ width: '75%' }}

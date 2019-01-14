@@ -231,7 +231,7 @@ Meteor.methods({
         }
        })
     }
-    
+
   },
 
   'get.current.user'(){
@@ -261,6 +261,25 @@ Meteor.methods({
   },
   'user.findUserByName'(username){
     return Meteor.users.findOne({"username": username});
+  },
+  'user.create'(values){
+    let mobileUser = Meteor.users.findOne({username: values.userName});
+    if (mobileUser === undefined) {
+      let newone = Accounts.createUser({
+        username: values.userName,
+        password: values.password,
+      })
+      return{
+        status:200,
+        newone
+      }
+    }else {
+      return{
+        status:406,
+        msg:'此账号已存在'
+      }
+    }
+
   },
   'user.login.from.fancyshop'(type, loginParams){
     switch (type) {
@@ -309,7 +328,7 @@ Meteor.methods({
         }else{
           return rlt;
         }
-        
+
       default:
         return "error";
     }
@@ -330,7 +349,7 @@ Meteor.methods({
       return null;
     }
   },
-  
+
   'user.changeNickname'(userId,nickname){
     if(userId==undefined){
       return "未获取到当前用户"
@@ -413,14 +432,14 @@ Meteor.methods({
       sort: { "createdAt": -1 },
     }).fetch();
     return users;
-  }, 
+  },
   'user.get.by.dimSearch'(condition,shopId, page, pageSize) {
     let users = Meteor.users.find(
       {
         visited: { $in: [shopId] },
         ...condition
-      }, 
-    
+      },
+
       {
       skip: (page - 1) * pageSize, limit: pageSize,
       sort: { "createdAt": -1 },
@@ -428,5 +447,5 @@ Meteor.methods({
       ).fetch();
     console.log(users)
     return users;
-  } 
+  }
 });
