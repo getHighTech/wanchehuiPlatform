@@ -1,7 +1,7 @@
 module.exports = {
   servers: {
     one: {
-      host: '139.198.3.158',
+      host: '139.198.12.188',
       username: 'simon',
       password: 'wanchehui112358'
     }
@@ -31,7 +31,7 @@ module.exports = {
         // Show progress bar while uploading bundle to server
     // You might need to disable it on CI servers
     enableUploadProgressBar: true,
-    deployCheckWaitTime: 600
+    deployCheckWaitTime: 1000
   },
   // proxy: {
   //   domains: 'p.10000cars.cn',
