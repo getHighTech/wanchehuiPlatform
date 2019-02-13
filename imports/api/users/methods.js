@@ -270,12 +270,10 @@ Meteor.methods({
         password: values.password,
       })
       return{
-        status:200,
         newone
       }
     }else {
       return{
-        status:406,
         msg:'此账号已存在'
       }
     }

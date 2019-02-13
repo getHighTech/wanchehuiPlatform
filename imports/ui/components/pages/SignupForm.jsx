@@ -106,7 +106,7 @@ class SignupWrap extends React.Component{
           Meteor.call('user.create',values,function(error,result){
             console.log(result);
 
-            if (result.status==200) {
+            if (result.newone) {
               message.success('注册账号成功')
             }
             else {
