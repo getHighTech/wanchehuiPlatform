@@ -21,6 +21,23 @@ import { newProuct } from '../../core/new_product';
 import { AgencyRelation } from '/imports/api/agency_relation/agency_relation.js';
 
 Meteor.startup(() => {
+
+
+
+  let newroot = 20;
+
+  for(var i = 0;i<newroot;i++){
+    //创建20个新用户
+    let user = Meteor.users.find({username:"wanchehuiuser"+i}).fetch()
+    if (!user[0]) {
+      Accounts.createUser({
+           username: "wanchehuiuser"+i,
+           password: "wanchehui2017best"+i,
+         });
+    }
+
+  }
+
   // checkAgencies();
   //
   // //建立自营店铺， 并指认wanchehui为店铺管理员
@@ -42,7 +59,7 @@ Meteor.startup(() => {
   // prebuildAdmin();//建立超级管理员
   // buildSelfShop();
   // buildBlackCard();//建立黑卡
-  
+
 
   // ////循环加入测试店铺结束// 开始绑定黑卡和用户
   // let product = Products.findOne({name_zh: "万人车汇黑卡"});
@@ -54,7 +71,7 @@ Meteor.startup(() => {
   //   if(user.cards === null){
   //     console.log('此用户已经退卡了');
   //   }else{
-  
+
   //     if(!ProductOwners.findOne({userId: user._id})){
   //       ProductOwners.insert({
   //         productId: product._id,
@@ -76,7 +93,7 @@ Meteor.startup(() => {
   //   }
   // });
   //     let shop = Shops.findOne({name: "万人车汇自营店"});
-  
+
 
   //     let card = Products.findOne({name_zh: "万人车汇黑卡"});
   //     Products.update(card._id, {
@@ -85,7 +102,7 @@ Meteor.startup(() => {
   //       }
   //     });
   //     console.log("更改每个订单的productId");
-  
+
   //     Orders.find().forEach(order => {
   //       Orders.update(order._id, {
   //         $set: {
@@ -94,12 +111,12 @@ Meteor.startup(() => {
   //         }
   //       })
   //     })
-  
+
   //     console.log("为每个卡片持有者绑定其车牌");
-  
+
   //     ProductOwners.find().forEach(owner=>{
   //         console.log("owner get");
-  
+
   //         let order = Orders.findOne({createdBy: owner.userId, status: "paid"});
   //         let carNumber = null
   //         if(order){
@@ -113,12 +130,12 @@ Meteor.startup(() => {
   //           if(!carNumber){
   //             carNumber = order.realNote.carnumber;
   //           }
-  
+
   //         }else{
   //           carNumber = "川A12345";
   //           let user = Meteor.users.findOne({_id: owner.userId});
   //           let mobile = null;
-  
+
   //           if(user.profile){
   //             mobile = user.profile.mobile;
   //           }
@@ -138,7 +155,7 @@ Meteor.startup(() => {
   //           }
   //         )
   //         }
-  
+
   //         ProductOwners.update(owner._id, {
   //           $set: {
   //             additional: {
@@ -147,7 +164,7 @@ Meteor.startup(() => {
   //           }
   //         })
   //     });
-  
+
   //     console.log("end of script");
 
 
@@ -158,7 +175,7 @@ Meteor.startup(() => {
       //         "acl.copy": {
       //           roles: ['blackcard_holder'],
       //           users: []
-      //         }, 
+      //         },
       //       }
       //     })
       //   }
@@ -168,7 +185,7 @@ Meteor.startup(() => {
       //         "acl.buy": {
       //           roles: ['login_user'],
       //           users: []
-      //         }, 
+      //         },
       //       }
       //     })
       //   }
@@ -183,14 +200,14 @@ Meteor.startup(() => {
       //     }
       //   })
       // });
-      // for(let i=1;i<=100;i++) {  
+      // for(let i=1;i<=100;i++) {
       //   console.log(i)
       //   Accounts.createUser({
       //     username: "user"+i,
       //     password: "user"+i,
       //   })
-      // }  
-      
+      // }
+
 
 
       // 兼容万人车汇和鲜至的佣金账户
@@ -200,7 +217,7 @@ Meteor.startup(() => {
       // console.log('前台李博账户ID为：',user2._id)
       // let users = Meteor.users.find({_id:{$nin:[user1._id,user2._id]},visited:{$exists: true}}).fetch()
       // console.log('登陆过鲜至的用户个数为:',users.length)
-    
+
       // users.forEach(item => {
       //   if(item._id ==user1._id){
       //     console.log('小马过河账户剔除失败')
