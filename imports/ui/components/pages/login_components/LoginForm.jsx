@@ -34,7 +34,8 @@ class LoginWrap extends Component {
   handleSubmit = (e) => {
       e.preventDefault();
       let self = this;
-
+      console.log('提交');
+      
       if (!this.checkBlank(this.props.form)) {
         return false;
       }
